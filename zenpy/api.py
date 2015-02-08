@@ -32,7 +32,7 @@ class Api(object):
     def query(self, endpoint):
         log.info("Querying endpoint: " + self.get_url(endpoint=endpoint))
         response = self.raw_request(self.get_url(endpoint=endpoint))
-        return ApiResponse(self, endpoint, response.json())
+        return ApiResponse(self, response.json())
 
     def raw_request(self, url, stream=False):
         response = requests.get(url, auth=self.get_auth(), stream=stream)
@@ -150,9 +150,8 @@ class ApiResponse(object):
     response_json = None
     count = 0
 
-    def __init__(self, api, endpoint, response_json):
+    def __init__(self, api, response_json):
         self.response_json = response_json
-        self.endpoint = endpoint
         self.api = api
 
         if 'count' in self.response_json:
