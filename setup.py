@@ -4,6 +4,7 @@ from setuptools import setup
 
 setup(name='zenpy',
       version='0.1',
+      install_requires=['requests'],
       description='Wrapper for the zendesk API',
       url='',
       author='facetoe',
