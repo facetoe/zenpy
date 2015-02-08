@@ -159,7 +159,3 @@ class ApiResponse(object):
 
     def items(self):
         return ApiCallGenerator(self.api, self.response_json)
-
-
-
-
