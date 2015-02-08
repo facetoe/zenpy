@@ -20,10 +20,10 @@ class BaseApiObject(object):
     )
 
     def __getattribute__(self, name):
-        if name.endswith("_at"):
-            return dateutil.parser.parse(object.__getattribute__(self, name))
-
         obj = object.__getattribute__(self, name)
+        if name.endswith("_at"):
+            return dateutil.parser.parse(obj)
+
         if name in object.__getattribute__(self, 'SINGLE_GENERATORS'):
             if isinstance(obj, ApiCallGenerator) or isinstance(obj, types.GeneratorType):
                 return obj.next()
