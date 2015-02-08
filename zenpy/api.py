@@ -29,24 +29,6 @@ class Api(object):
         self.base_url = self.get_url()
         self.endpoint = ApiEndpoint()
 
-
-    @staticmethod
-    def get_class_name_from_json(response_json):
-        if 'email' in response_json:
-            return 'User'
-        elif 'requester_id' in response_json:
-            return 'Ticket'
-        elif 'results' in response_json:
-            return "SearchResult"
-        elif 'author_id' in response_json:
-            return 'Comment'
-        elif 'file_name':
-            return 'Attachment'
-        elif 'name' in response_json:
-            return 'Group'
-        else:
-            raise Exception("Unknown Type: " + str(response_json))
-
     def query(self, endpoint):
         log.info("Querying endpoint: " + self.get_url(endpoint=endpoint))
         response = self.raw_request(self.get_url(endpoint=endpoint))
@@ -66,6 +48,23 @@ class Api(object):
 
     def get_auth(self):
         return self.email + '/token', self.token
+
+    @staticmethod
+    def get_class_name_from_json(response_json):
+        if 'email' in response_json:
+            return 'User'
+        elif 'requester_id' in response_json:
+            return 'Ticket'
+        elif 'results' in response_json:
+            return "SearchResult"
+        elif 'author_id' in response_json:
+            return 'Comment'
+        elif 'file_name':
+            return 'Attachment'
+        elif 'name' in response_json:
+            return 'Group'
+        else:
+            raise Exception("Unknown Type: " + str(response_json))
 
 
 class ApiEndpoint(object):
