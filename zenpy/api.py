@@ -1,32 +1,13 @@
 __author__ = 'facetoe'
+
 import requests
 import logging
 from zenpy.api_object import ApiCallGenerator
+from zenpy.exception import ApiException
 from datetime import datetime
 from collections import defaultdict
 
-
 log = logging.getLogger(__name__)
-
-
-class ApiException(Exception):
-    pass
-
-
-class ApiResponse(object):
-    response_json = None
-    count = 0
-
-    def __init__(self, api, endpoint, response_json):
-        self.response_json = response_json
-        self.endpoint = endpoint
-        self.api = api
-
-        if 'count' in self.response_json:
-            self.count = self.response_json['count']
-
-    def items(self):
-        return ApiCallGenerator(self.api, self.response_json)
 
 
 class Api(object):
@@ -166,23 +147,21 @@ class ApiEndpoint(object):
         return self.__format(**renamed_kwargs) + '?include=' + self.__format_many(items)
 
 
-class Zenpy(object):
-    api = None
+class ApiResponse(object):
+    response_json = None
+    count = 0
 
-    def __init__(self, subdomain, email, token):
-        self.api = Api(subdomain, email, token)
+    def __init__(self, api, endpoint, response_json):
+        self.response_json = response_json
+        self.endpoint = endpoint
+        self.api = api
 
-    def tickets(self, **kwargs):
-        return self.api.query(self.api.endpoint.tickets(**kwargs))
+        if 'count' in self.response_json:
+            self.count = self.response_json['count']
 
-    def comments(self, **kwargs):
-        return self.api.query(self.api.endpoint.comments(**kwargs))
+    def items(self):
+        return ApiCallGenerator(self.api, self.response_json)
 
-    def users(self, **kwargs):
-        return self.api.query(self.api.endpoint.users(**kwargs))
-
-    def search(self, **kwargs):
-        return self.api.query(self.api.endpoint.search(**kwargs))
 
 
 

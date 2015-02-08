@@ -1,10 +1,11 @@
-import types
-
 __author__ = 'facetoe'
-from cStringIO import StringIO
+
+import types
 import dateutil.parser
 import dateutil
 import logging
+from cStringIO import StringIO
+
 log = logging.getLogger(__name__)
 
 
