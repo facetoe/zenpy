@@ -4,7 +4,7 @@ import requests
 import logging
 from zenpy.api_object import ApiCallGenerator
 from zenpy.exception import ApiException
-from datetime import datetime
+from datetime import datetime, date
 from collections import defaultdict
 
 log = logging.getLogger(__name__)
@@ -68,11 +68,12 @@ class Api(object):
 
 
 class ApiEndpoint(object):
-    __USERS = '/users/'
-    __TICKETS = '/tickets/'
-    __GROUPS = '/groups/'
-    __SEARCH = '/search.json?query='
-    __COMMENTS = '/tickets/%(id)s/comments.json'
+    __USERS = 'users/'
+    __TICKETS = 'tickets/'
+    __GROUPS = 'groups/'
+    __SEARCH = 'search.json?query='
+    __COMMENTS = 'tickets/%(id)s/comments.json'
+    __INCREMENTAL = 'incremental/'  # Not implemented
 
     def search(self, **kwargs):
         renamed_kwargs = dict()
@@ -159,3 +160,9 @@ class ApiResponse(object):
 
     def items(self):
         return ApiCallGenerator(self.api, self.response_json)
+
+    def item(self):
+        try:
+            return ApiCallGenerator(self.api, self.response_json).next()
+        except StopIteration:
+            pass
