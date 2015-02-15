@@ -1,3 +1,5 @@
+import json
+
 __author__ = 'facetoe'
 
 import types
@@ -16,12 +18,13 @@ class BaseApiObject(object):
         'assignee',
         'group',
         'content',
-        'author'
+        'author',
+        'photo'
     )
 
     def __getattribute__(self, name):
         obj = object.__getattribute__(self, name)
-        if name.endswith("_at"):
+        if name.endswith("_at") and obj:
             return dateutil.parser.parse(obj)
 
         if name in object.__getattribute__(self, 'SINGLE_GENERATORS'):
@@ -31,6 +34,9 @@ class BaseApiObject(object):
         if isinstance(obj, list):
             if all([isinstance(o, dict) for o in obj]):
                 return self.handle_dicts(obj)
+        elif isinstance(obj, dict):
+            class_name = self.api.get_class_name_from_json(obj)
+            return ApiClassFactory(class_name, obj, self.api)
 
         return object.__getattribute__(self, name)
 
@@ -55,7 +61,16 @@ class BaseApiObject(object):
         return self.__name__ == 'Attachment'
 
     def __repr__(self):
-        return self.__name__.lower()
+        if self.is_user():
+            return str(self.name)
+        elif self.is_group():
+            return self.name
+        elif self.is_ticket():
+            return self.id
+        elif self.is_attachment():
+            return self.file_name
+        else:
+            return self.__name__.lower()
 
 
 class ApiCallGenerator(object):
@@ -75,7 +90,7 @@ class ApiCallGenerator(object):
         values = list()
         for result_type in self.multiple_results:
             if result_type in request_json:
-                values = self.values + request_json[result_type]
+                values = values + request_json[result_type]
         for result_type in self.single_results:
             if result_type in request_json:
                 values.append(request_json[result_type])
@@ -121,6 +136,9 @@ def ApiClassFactory(name, member_dict, api, BaseClass=BaseApiObject):
         BaseClass.__init__(self)
 
     def get_items(item_ids, endpoint):
+        if item_ids is None:
+            return None
+
         if isinstance(item_ids, int):
             item_id = item_ids
             if item_id in api.object_cache.keys():
