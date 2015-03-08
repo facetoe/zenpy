@@ -1,6 +1,7 @@
 import logging
 import sys
 from zenpy.api import Api
+from zenpy.exception import NoResult
 
 __author__ = 'facetoe'
 log = logging.getLogger()
@@ -20,13 +21,25 @@ class Zenpy(object):
         self.api = Api(subdomain, email, token)
 
     def tickets(self, **kwargs):
-        return self.api.query(self.api.endpoint.tickets(**kwargs))
+        try:
+            return self.api.query(self.api.endpoint.tickets(**kwargs))
+        except NoResult:
+            pass
 
     def comments(self, **kwargs):
-        return self.api.query(self.api.endpoint.comments(**kwargs))
+        try:
+            return self.api.query(self.api.endpoint.comments(**kwargs))
+        except NoResult:
+            pass
 
     def users(self, **kwargs):
-        return self.api.query(self.api.endpoint.users(**kwargs))
+        try:
+            return self.api.query(self.api.endpoint.users(**kwargs))
+        except NoResult:
+            pass
 
     def search(self, **kwargs):
-        return self.api.query(self.api.endpoint.search(**kwargs))
+        try:
+            return self.api.query(self.api.endpoint.search(**kwargs))
+        except NoResult:
+            pass

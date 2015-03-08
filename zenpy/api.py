@@ -3,7 +3,7 @@ __author__ = 'facetoe'
 import requests
 import logging
 from zenpy.api_object import ApiCallGenerator
-from zenpy.exception import ApiException
+from zenpy.exception import ApiException, NoResult
 from datetime import datetime, date
 from collections import defaultdict
 
@@ -38,6 +38,8 @@ class Api(object):
         response = requests.get(url, auth=self.get_auth(), stream=stream)
         if response.status_code == 422:
             raise ApiException("Api rejected query: " + url)
+        elif response.status_code == 404 and 'application/json' in response.headers['content-type']:
+            raise NoResult(response.json()['description'])
         elif response.status_code != 200:
             response.raise_for_status()
         else:
