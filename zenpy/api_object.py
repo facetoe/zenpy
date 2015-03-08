@@ -169,7 +169,7 @@ def ApiClassFactory(name, member_dict, api, BaseClass=BaseApiObject):
 
         if isinstance(item_ids, int):
             item_id = item_ids
-            if item_id in api.object_cache.keys():
+            if item_id in api.object_cache:
                 return api.object_cache[item_id]
             else:
                 url = api.get_url(endpoint(id=item_id))
@@ -206,7 +206,7 @@ def ApiClassFactory(name, member_dict, api, BaseClass=BaseApiObject):
     if api_object.is_ticket():
         populate_ticket()
     else:
-        if api_object.id not in api.object_cache.keys():
+        if api_object.id not in api.object_cache:
             log.debug("Adding object to cache: " + str(api_object))
             api.object_cache.update({api_object.id: api_object})
         else:
