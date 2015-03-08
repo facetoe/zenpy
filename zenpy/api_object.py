@@ -10,7 +10,6 @@ from cStringIO import StringIO
 
 log = logging.getLogger(__name__)
 
-
 class BaseApiObject(object):
     SINGLE_GENERATORS = (
         'requester',
@@ -22,14 +21,25 @@ class BaseApiObject(object):
         'photo'
     )
 
+    requested_cache = dict()
+
     def __getattribute__(self, name):
         obj = object.__getattribute__(self, name)
         if name.endswith("_at") and obj:
             return dateutil.parser.parse(obj)
 
         if name in object.__getattribute__(self, 'SINGLE_GENERATORS'):
-            if isinstance(obj, ApiCallGenerator) or isinstance(obj, types.GeneratorType):
-                return obj.next()
+            requested_cache = object.__getattribute__(self, 'requested_cache')
+            if name in requested_cache:
+                return requested_cache[name]
+
+            elif isinstance(obj, ApiCallGenerator) or isinstance(obj, types.GeneratorType):
+                try:
+                    requested_obj = obj.next()
+                    requested_cache.update({name: requested_obj})
+                    return requested_obj
+                except StopIteration:
+                    return None
 
         if isinstance(obj, list):
             if all([isinstance(o, dict) for o in obj]):
@@ -39,6 +49,21 @@ class BaseApiObject(object):
             return ApiClassFactory(class_name, obj, self.api)
 
         return object.__getattribute__(self, name)
+
+    def __getattr__(self, item):
+        if item == 'content' and hasattr(self, 'content_url'):
+            # This is nasty, figure out a better way to do it
+            def download_file(api, url):
+                log.info("Downloading: " + url)
+                response = api.raw_request(url, stream=True)
+                outfile = StringIO()
+                for chunk in response.iter_content():
+                    outfile.write(chunk)
+                file_contents = outfile.getvalue()
+                outfile.close()
+                return file_contents
+
+            return download_file(self.api, self.content_url)
 
     def handle_dicts(self, dicts):
         for item in dicts:
@@ -66,7 +91,7 @@ class BaseApiObject(object):
         elif self.is_group():
             return self.name
         elif self.is_ticket():
-            return self.id
+            return '#' + str(self.id)
         elif self.is_attachment():
             return self.file_name
         else:
@@ -98,6 +123,9 @@ class ApiCallGenerator(object):
 
     def __iter__(self):
         return self
+
+    def __len__(self):
+        return len(self.values)
 
     # Python 3 compatibility
     def __next__(self):
@@ -159,18 +187,6 @@ def ApiClassFactory(name, member_dict, api, BaseClass=BaseApiObject):
         request_json = dict(next_page=url)
         return ApiCallGenerator(api, request_json)
 
-    def get_attachment_content():
-        yield download_file(member_dict['content_url'])
-
-    def download_file(url):
-        response = api.raw_request(url, stream=True)
-        outfile = StringIO()
-        for chunk in response.iter_content():
-            outfile.write(chunk)
-        file_contents = outfile.getvalue()
-        outfile.close()
-        return file_contents
-
     def populate_ticket():
         for user_type in ('submitter_id', 'requester_id', 'assignee_id', 'collaborator_ids'):
             item = get_items(member_dict[user_type], api.endpoint.users)
@@ -181,10 +197,6 @@ def ApiClassFactory(name, member_dict, api, BaseClass=BaseApiObject):
 
         comments = get_items(member_dict['id'], api.endpoint.comments)
         setattr(api_object, 'comments', comments)
-
-    def populate_attachment():
-        content = get_attachment_content()
-        setattr(api_object, 'content', content)
 
     def populate_comment():
         author = get_items(member_dict['author_id'], api.endpoint.users)
@@ -200,9 +212,9 @@ def ApiClassFactory(name, member_dict, api, BaseClass=BaseApiObject):
         else:
             log.debug("Object in cache: " + str(api_object.id))
 
-        if api_object.is_attachment():
-            populate_attachment()
-        elif api_object.is_comment():
+        if api_object.is_comment():
             populate_comment()
 
     return api_object
+
+
