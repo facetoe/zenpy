@@ -3,7 +3,7 @@ __author__ = 'facetoe'
 import requests
 import logging
 from zenpy.api_object import ApiCallGenerator
-from zenpy.exception import ApiException, NoResult
+from zenpy.exception import ApiException, NoResult, TooManyResults
 from datetime import datetime, date
 from collections import defaultdict
 
@@ -161,11 +161,15 @@ class ApiResponse(object):
         elif any([result in self.response_json for result in ApiCallGenerator.single_results]):
             self.count = 1
 
-    def items(self):
+    def all(self):
         return ApiCallGenerator(self.api, self.response_json)
 
-    def item(self):
+    def one(self):
+        generator = ApiCallGenerator(self.api, self.response_json)
+        if len(generator) > 1:
+            raise TooManyResults("More than one result returned from query")
+
         try:
-            return ApiCallGenerator(self.api, self.response_json).next()
+            return generator.next()
         except StopIteration:
             pass
