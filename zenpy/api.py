@@ -154,9 +154,10 @@ class ApiResponse(object):
     def __init__(self, api, response_json):
         self.response_json = response_json
         self.api = api
-
         if 'count' in self.response_json:
             self.count = self.response_json['count']
+        elif any([result in self.response_json for result in ApiCallGenerator.single_results]):
+            self.count = 1
 
     def items(self):
         return ApiCallGenerator(self.api, self.response_json)
