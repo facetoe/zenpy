@@ -9,18 +9,18 @@ Create a Zenpy object:
     zenpy = Zenpy(subdomain=subdomain, email=email, token=token)
 ```
 
-Query an API endpoint to obtain an ApiResult:
+Query an API endpoint to obtain an ApiResponse:
 
 ```python
-    result = zenpy.tickets(id=3)
+    api_response = zenpy.tickets(id=3)
     => <zenpy.api.ApiResponse object at 0x7fd056947610>
 ```
 
 
-The ApiResult contains the full JSON returned by the API:
+The ApiResponse contains the full JSON returned by the API:
 
 ```python
-    print type(result.response_json)
+    print type(api_response.response_json)
     => <type 'dict'>
 ```
 
@@ -28,7 +28,7 @@ The ApiResult contains the full JSON returned by the API:
 Along with the number of results returned:
 
 ```python
-    print "The query returned %s results" % result.count
+    print "The query returned %s results" % api_response.count
     => The query returned 1 results
 ```
     
@@ -38,14 +38,14 @@ And two methods for accessing the returned objects: `one()` and `all()`.
    
  ```python 
     # If there are more than one result, a TooManyResults exception is raised
-    print type(result.one())
+    print type(api_response.one())
     => <class 'zenpy.api_object.Ticket'>
 ```
 
 `all()` returns a generator:
 
 ```python
-    print type(result.all())
+    print type(api_response.all())
     => <class 'zenpy.api_object.ApiCallGenerator'>
 ```
     
@@ -69,8 +69,8 @@ are exactly the same as the keys in the JSON returned by the Zendesk API, with o
 ends with `_id` in the JSON will not have this suffix, and will return an object instead of an ID:
 
 ```python
-        result = zenpy.tickets(id=3)
-        ticket = result.one()
+        api_response = zenpy.tickets(id=3)
+        ticket = api_response.one()
         
         print type(ticket.assignee)
         print "Assignee: [%s]" % ticket.assignee.name
@@ -118,8 +118,8 @@ All objects except for Tickets are cached. At the moment the cache is very dumb 
 ### Download all PNG attachments for a ticket:
 
 ```python
-result = zenpy.tickets(id=2)
-ticket = result.one()
+api_response = zenpy.tickets(id=2)
+ticket = api_response.one()
 for comment in ticket.comments:
     for attachment in comment.attachments:
         with open('/tmp/' + attachment.file_name, 'w+') as f:
