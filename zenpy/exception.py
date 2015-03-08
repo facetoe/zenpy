@@ -7,3 +7,6 @@ class ApiException(Exception):
 
 class NoResult(ApiException):
     pass
+
+class TooManyResults(ApiException):
+    pass
