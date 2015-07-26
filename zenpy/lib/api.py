@@ -1,18 +1,15 @@
-from collections import namedtuple
-from zenpy.lib.objects.attachment import Attachment
-from zenpy.lib.objects.comment import Comment
-from zenpy.lib.objects.thumbnail import Thumbnail
-
 __author__ = 'facetoe'
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.util import cached, ApiObjectEncoder
 from zenpy.lib.objects.brand import Brand
 from zenpy.lib.objects.group import Group
 from zenpy.lib.objects.organization import Organization
-from zenpy.lib.objects.result import Result
 from zenpy.lib.objects.ticket import Ticket
 from zenpy.lib.objects.topic import Topic
 from zenpy.lib.objects.user import User
+from zenpy.lib.objects.attachment import Attachment
+from zenpy.lib.objects.comment import Comment
+from zenpy.lib.objects.thumbnail import Thumbnail
 from cachetools import LRUCache, TTLCache
 import json
 import requests
@@ -105,6 +102,11 @@ class BaseApi(object):
 		clazz = self.class_for_type('attachment')
 		for attachment in attachments:
 			yield self._object_from_json(clazz, attachment)
+
+	def get_thumbnails(self, thumbnails):
+		clazz = self.class_for_type('thumbnail')
+		for thumbnail in thumbnails:
+			yield self._object_from_json(clazz, thumbnail)
 
 	def cache_user(self, user_json):
 		self._cache_item(self.user_cache, user_json, User)
