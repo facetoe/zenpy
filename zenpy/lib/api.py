@@ -1,4 +1,7 @@
 from collections import namedtuple
+from zenpy.lib.objects.attachment import Attachment
+from zenpy.lib.objects.comment import Comment
+from zenpy.lib.objects.thumbnail import Thumbnail
 
 __author__ = 'facetoe'
 from zenpy.lib.endpoint import Endpoint
@@ -31,6 +34,14 @@ class BaseApi(object):
 	group_cache = LRUCache(maxsize=100)
 	brand_cache = LRUCache(maxsize=100)
 	ticket_cache = TTLCache(maxsize=100, ttl=30)
+
+	cache_mapping = {
+		'user': user_cache,
+		'organization': organization_cache,
+		'group': group_cache,
+		'brand': brand_cache,
+		'ticket': ticket_cache
+	}
 
 	def __init__(self, subdomain, email, token):
 		self.email = email
@@ -69,6 +80,32 @@ class BaseApi(object):
 			clazz = self.class_for_type(object_type)
 			return self._object_from_json(clazz, _json[object_type])
 
+	def query_cache(self, object_type, id):
+		cache = self.cache_mapping[object_type]
+		if id in cache:
+			return cache[id]
+
+	@cached(user_cache)
+	def get_user(self, id, endpoint=Endpoint().users, object_type='user'):
+		return self.get_item(id, endpoint, object_type, sideload=True)
+
+	@cached(organization_cache)
+	def get_organization(self, id, endpoint=Endpoint().organizations, object_type='organization'):
+		return self.get_item(id, endpoint, object_type, sideload=True)
+
+	@cached(group_cache)
+	def get_group(self, id, endpoint=Endpoint().groups, object_type='group'):
+		return self.get_item(id, endpoint, object_type, sideload=True)
+
+	@cached(brand_cache)
+	def get_brand(self, id, endpoint=Endpoint().brands, object_type='brand'):
+		return self.get_item(id, endpoint, object_type, sideload=True)
+
+	def get_attachments(self, attachments):
+		clazz = self.class_for_type('attachment')
+		for attachment in attachments:
+			yield self._object_from_json(clazz, attachment)
+
 	def cache_user(self, user_json):
 		self._cache_item(self.user_cache, user_json, User)
 
@@ -85,7 +122,7 @@ class BaseApi(object):
 		self._cache_item(self.organization_cache, brand_json, Brand)
 
 	def _cache_item(self, cache, item_json, item_type):
-		cache.update([((self, item_json['id']), self._object_from_json(item_type, item_json))])
+		cache[item_json['id']] = self._object_from_json(item_type, item_json)
 
 	def _query(self, endpoint):
 		response = self.get(self._get_url(endpoint=endpoint))
@@ -122,12 +159,18 @@ class BaseApi(object):
 			return User
 		elif object_type == 'organization':
 			return Organization
-		elif object_type.startswith('group'):
+		elif object_type == 'group':
 			return Group
 		elif object_type == 'brand':
 			return Brand
 		elif object_type == 'topic':
 			return Topic
+		elif object_type == 'comment':
+			return Comment
+		elif object_type == 'attachment':
+			return Attachment
+		elif object_type == 'thumbnail':
+			return Thumbnail
 		else:
 			raise Exception("Unknown object_type: " + object_type)
 
@@ -150,21 +193,32 @@ class BaseApi(object):
 		return self.email + '/token', self.token
 
 	def update_caches(self, _json):
+		if 'tickets' in _json:
+			tickets = _json['tickets']
+			log.debug("Caching %s Tickets" % len(tickets))
+			for ticket in tickets:
+				self.cache_ticket(ticket)
 		if 'users' in _json:
 			users = _json['users']
-			log.debug("Caching %s users" % len(users))
+			log.debug("Caching %s Users" % len(users))
 			for user in users:
 				self.cache_user(user)
 		if 'organizations' in _json:
 			orgs = _json['organizations']
-			log.debug("Caching %s organizations" % len(orgs))
+			log.debug("Caching %s Organizations" % len(orgs))
 			for org in orgs:
 				self.cache_organization(org)
 		if 'groups' in _json:
 			groups = _json['groups']
-			log.debug("Caching %s groups" % len(groups))
+			log.debug("Caching %s Groups" % len(groups))
 			for group in groups:
 				self.cache_group(group)
+
+		if 'brands' in _json:
+			brands = _json['brands']
+			log.debug("Caching %s Brands" % len(brands))
+			for brand in brands:
+				self.cache_brand(brand)
 
 
 class SimpleApi(BaseApi):
@@ -208,11 +262,17 @@ class TicketApi(BaseApi):
 		self.endpoint = endpoint
 		self.object_type = 'ticket'
 
+	def __call__(self, **kwargs):
+		return self.get_items(self.endpoint, self.object_type, kwargs)
+
 	def organizations(self, **kwargs):
 		return self.get_items(self.endpoint.organizations, 'ticket', kwargs)
 
 	def recent(self, **kwargs):
 		return self.get_items(self.endpoint.recent, 'ticket', kwargs)
+
+	def comments(self, **kwargs):
+		return self.get_items(self.endpoint.comments, 'comment', kwargs)
 
 
 class Api(BaseApi):
@@ -244,7 +304,17 @@ class Api(BaseApi):
 		                        token,
 		                        endpoint=endpoint.search,
 		                        object_type='results')
+		self.topics = SimpleApi(subdomain,
+		                        email,
+		                        token,
+		                        endpoint=endpoint.topics,
+		                        object_type='topic')
 
+		self.attachments = SimpleApi(subdomain,
+		                             email,
+		                             token,
+		                             endpoint=endpoint.attachments,
+		                             object_type='attachment')
 
 	# self.groups = ApiEndpoint(subdomain, email, token, endpoint.groups, 'group')
 
@@ -259,7 +329,9 @@ class ResultGenerator(object):
 		'ticket': 'tickets',
 		'group': 'groups',
 		'results': 'results',
-		'organization': 'organizations'
+		'organization': 'organizations',
+		'topic': 'topics',
+		'comment' : 'comments'
 	}
 
 	def __init__(self, api, result_key, _json):

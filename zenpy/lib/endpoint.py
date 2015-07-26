@@ -83,9 +83,16 @@ class Endpoint(object):
 		self.users.assigned = SecondaryEndpoint('users/%(id)s/tickets/assigned.json')
 
 		self.groups = PrimaryEndpoint('groups', ['users'])
+
+		self.brands = PrimaryEndpoint('brands')
+		self.topics = PrimaryEndpoint('topics')
+
 		self.tickets = PrimaryEndpoint('tickets', ['users', 'groups', 'organizations'])
 		self.tickets.organizations = SecondaryEndpoint('organizations/%(id)s/tickets.json')
+		self.tickets.comments = SecondaryEndpoint('tickets/%(id)s/comments.json')
 		self.tickets.recent = SecondaryEndpoint('tickets/recent.json')
+
+		self.attachments = PrimaryEndpoint('attachments')
 
 
 		self.organizations = PrimaryEndpoint('organizations')

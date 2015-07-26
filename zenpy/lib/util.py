@@ -19,14 +19,13 @@ def cached(cache):
 	"""
 	def outer(func):
 		def inner(*args):
-			if not isinstance(args, collections.Hashable):
-				log.warn("Unhashable type passed to cache")
-				return func(*args)
-			if args in cache:
-				return cache[args]
+			id = args[1]
+			if id in cache:
+				return cache[id]
 			else:
 				value = func(*args)
-				cache.update([((value.api, value.id), value)])
+				log.debug("Caching: " + value.__class__.__name__)
+				cache[id] = value
 				return value
 
 		return inner

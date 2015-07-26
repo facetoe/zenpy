@@ -103,7 +103,7 @@ def generate_class(spec_path, class_name):
 
 
 spec_path = '/home/facetoe/git/zenpyreloaded/zenpy/specification'
-out_path = '/home/facetoe/git/zenpyreloaded/zenpy/lib/objects'
+out_path = '/home/facetoe/tmp/test'
 
 
 generate_all(spec_path, out_path)
