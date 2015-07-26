@@ -21,10 +21,12 @@ def cached(cache):
 		def inner(*args):
 			id = args[1]
 			if id in cache:
-				return cache[id]
+				value = cache[id]
+				log.debug("Cache HIT: [%s %s]" % (value.__class__.__name__, id))
+				return value
 			else:
 				value = func(*args)
-				log.debug("Caching: " + value.__class__.__name__)
+				log.debug("Cache MISS: [%s %s]" % (value.__class__.__name__, id))
 				cache[id] = value
 				return value
 

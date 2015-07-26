@@ -30,7 +30,7 @@ class BaseEndpoint(object):
 
 
 class PrimaryEndpoint(BaseEndpoint):
-	def __call__(self, id=None, ids=None, sideload=False):
+	def __call__(self, id=None, ids=None, sideload=True):
 		if id and ids:
 			raise ValueError("id and ids are mutually exclusive")
 
@@ -58,6 +58,8 @@ class SearchEndpoint(BaseEndpoint):
 		for key, value in kwargs.iteritems():
 			if isinstance(value, datetime):
 				kwargs[key] = value.strftime("%Y-%m-%d")
+			elif isinstance(value, list):
+				value = self._format_many(value)
 
 			if '_after' in key:
 				renamed_kwargs[key.replace('_after', '>')] = kwargs[key]
@@ -81,19 +83,13 @@ class Endpoint(object):
 		self.users.requested = SecondaryEndpoint('users/%(id)s/tickets/requested.json')
 		self.users.cced = SecondaryEndpoint('users/%(id)s/tickets/ccd.json')
 		self.users.assigned = SecondaryEndpoint('users/%(id)s/tickets/assigned.json')
-
 		self.groups = PrimaryEndpoint('groups', ['users'])
-
 		self.brands = PrimaryEndpoint('brands')
 		self.topics = PrimaryEndpoint('topics')
-
 		self.tickets = PrimaryEndpoint('tickets', ['users', 'groups', 'organizations'])
 		self.tickets.organizations = SecondaryEndpoint('organizations/%(id)s/tickets.json')
 		self.tickets.comments = SecondaryEndpoint('tickets/%(id)s/comments.json')
 		self.tickets.recent = SecondaryEndpoint('tickets/recent.json')
-
 		self.attachments = PrimaryEndpoint('attachments')
-
-
 		self.organizations = PrimaryEndpoint('organizations')
 		self.search = SearchEndpoint('search.json?query=')

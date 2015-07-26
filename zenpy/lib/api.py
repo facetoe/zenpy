@@ -26,18 +26,20 @@ class BaseApi(object):
 	version = None
 	base_url = None
 
-	user_cache = LRUCache(maxsize=100)
+	user_cache = LRUCache(maxsize=200)
 	organization_cache = LRUCache(maxsize=100)
 	group_cache = LRUCache(maxsize=100)
 	brand_cache = LRUCache(maxsize=100)
 	ticket_cache = TTLCache(maxsize=100, ttl=30)
+	comment_cache = TTLCache(maxsize=100, ttl=30)
 
 	cache_mapping = {
 		'user': user_cache,
 		'organization': organization_cache,
 		'group': group_cache,
 		'brand': brand_cache,
-		'ticket': ticket_cache
+		'ticket': ticket_cache,
+		'comment' : comment_cache
 	}
 
 	def __init__(self, subdomain, email, token):
@@ -66,10 +68,17 @@ class BaseApi(object):
 		return ResultGenerator(self, object_type, _json)
 
 	def get_item(self, id, endpoint, object_type, sideload=False):
+
+		# If this is called with an id from a subclass
+		# the cache won't be checked, so check it explicitly.
+		cached_item = self.query_cache(object_type, id)
+		if cached_item:
+			return cached_item
+
 		_json = self._query(endpoint=endpoint(id=id, sideload=sideload))
 
 		# Executing a secondary endpoint with an ID will lead here.
-		# Just return a generator
+		# If the result is paginated return a generator
 		if 'next_page' in _json:
 			return self.result_generator(_json, result_key=object_type)
 		else:
@@ -80,7 +89,10 @@ class BaseApi(object):
 	def query_cache(self, object_type, id):
 		cache = self.cache_mapping[object_type]
 		if id in cache:
+			log.debug("Cache HIT: [%s %s]" % (object_type.capitalize(), id))
 			return cache[id]
+		else:
+			log.debug('Cache MISS: [%s %s]' % (object_type.capitalize(), id))
 
 	@cached(user_cache)
 	def get_user(self, id, endpoint=Endpoint().users, object_type='user'):
@@ -333,7 +345,7 @@ class ResultGenerator(object):
 		'results': 'results',
 		'organization': 'organizations',
 		'topic': 'topics',
-		'comment' : 'comments'
+		'comment': 'comments'
 	}
 
 	def __init__(self, api, result_key, _json):

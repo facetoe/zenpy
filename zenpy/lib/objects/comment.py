@@ -1,5 +1,8 @@
+import os
+from multiprocessing.pool import ThreadPool
 import dateutil.parser
 from zenpy.lib.objects.base_object import BaseObject
+
 
 class Comment(BaseObject):
 	def __init__(self, api=None):
@@ -32,7 +35,6 @@ class Comment(BaseObject):
 		if self.created_at:
 			return dateutil.parser.parse(self.created_at)
 
-
 	@created.setter
 	def created(self, value):
 		self._created = value
@@ -45,3 +47,21 @@ class Comment(BaseObject):
 	@author.setter
 	def author(self, value):
 		self._author = value
+
+	def save_attachments(self, out_path, exlude_suffixs=list()):
+		urls = []
+		for attachment in self.attachments:
+			if not any([attachment.file_name.endswith(suffix) for suffix in exlude_suffixs]):
+				urls.append((attachment.content_url, os.path.join(out_path, attachment.file_name)))
+		p = ThreadPool(10)
+		p.map(self.save, urls)
+
+	def save(self, target_tuple):
+		self._save(target_tuple[0], target_tuple[1])
+
+	def _save(self, url, out_path):
+		r = self.api.get(url, stream=True)
+		if r.status_code == 200:
+			with open(out_path, 'wb') as f:
+				for chunk in r:
+					f.write(chunk)
