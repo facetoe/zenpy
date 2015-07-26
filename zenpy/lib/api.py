@@ -39,7 +39,19 @@ class BaseApi(object):
 		'group': group_cache,
 		'brand': brand_cache,
 		'ticket': ticket_cache,
-		'comment' : comment_cache
+		'comment': comment_cache
+	}
+
+	class_mapping = {
+		'ticket': Ticket,
+		'user': User,
+		'organization': Organization,
+		'group': Group,
+		'brand': Brand,
+		'topic': Topic,
+		'comment': Comment,
+		'attachment': Attachment,
+		'thumbnail': Thumbnail
 	}
 
 	def __init__(self, subdomain, email, token):
@@ -120,21 +132,6 @@ class BaseApi(object):
 		for thumbnail in thumbnails:
 			yield self._object_from_json(clazz, thumbnail)
 
-	def cache_user(self, user_json):
-		self._cache_item(self.user_cache, user_json, User)
-
-	def cache_ticket(self, ticket_json):
-		self._cache_item(self.ticket_cache, ticket_json, Ticket)
-
-	def cache_organization(self, organization_json):
-		self._cache_item(self.organization_cache, organization_json, Organization)
-
-	def cache_group(self, group_json):
-		self._cache_item(self.organization_cache, group_json, Group)
-
-	def cache_brand(self, brand_json):
-		self._cache_item(self.organization_cache, brand_json, Brand)
-
 	def _cache_item(self, cache, item_json, item_type):
 		cache[item_json['id']] = self._object_from_json(item_type, item_json)
 
@@ -165,28 +162,11 @@ class BaseApi(object):
 		else:
 			return response
 
-	@staticmethod
-	def class_for_type(object_type):
-		if object_type == 'ticket':
-			return Ticket
-		elif object_type == 'user':
-			return User
-		elif object_type == 'organization':
-			return Organization
-		elif object_type == 'group':
-			return Group
-		elif object_type == 'brand':
-			return Brand
-		elif object_type == 'topic':
-			return Topic
-		elif object_type == 'comment':
-			return Comment
-		elif object_type == 'attachment':
-			return Attachment
-		elif object_type == 'thumbnail':
-			return Thumbnail
-		else:
+	def class_for_type(self, object_type):
+		if object_type not in self.class_mapping:
 			raise Exception("Unknown object_type: " + object_type)
+		else:
+			return self.class_mapping[object_type]
 
 	def objects_from_json(self, object_type, object_json):
 		obj = self.class_for_type(object_type)
@@ -206,33 +186,37 @@ class BaseApi(object):
 	def _get_auth(self):
 		return self.email + '/token', self.token
 
-	def update_caches(self, _json):
-		if 'tickets' in _json:
-			tickets = _json['tickets']
-			log.debug("Caching %s Tickets" % len(tickets))
-			for ticket in tickets:
-				self.cache_ticket(ticket)
-		if 'users' in _json:
-			users = _json['users']
-			log.debug("Caching %s Users" % len(users))
-			for user in users:
-				self.cache_user(user)
-		if 'organizations' in _json:
-			orgs = _json['organizations']
-			log.debug("Caching %s Organizations" % len(orgs))
-			for org in orgs:
-				self.cache_organization(org)
-		if 'groups' in _json:
-			groups = _json['groups']
-			log.debug("Caching %s Groups" % len(groups))
-			for group in groups:
-				self.cache_group(group)
+	def add_to_cache(self, object_type, object_json):
+		cache = self.cache_mapping[object_type]
+		clazz = self.class_for_type(object_type)
+		multiple_key = object_type + 's'
 
-		if 'brands' in _json:
-			brands = _json['brands']
-			log.debug("Caching %s Brands" % len(brands))
-			for brand in brands:
-				self.cache_brand(brand)
+		if object_type in object_json:
+			obj = object_json[object_type]
+			log.debug("Caching: [%s %s]" % (object_type.capitalize(), obj['id']))
+			self._cache_item(cache, obj, clazz)
+
+		elif multiple_key in object_json:
+			objects = object_json[multiple_key]
+			log.debug("Caching %s %s " % (len(objects), multiple_key.capitalize()))
+			for obj in object_json[multiple_key]:
+				self._cache_item(cache, obj, clazz)
+
+	def update_caches(self, _json):
+		if 'results' in _json:
+			self.cache_search_results(_json)
+		else:
+			for object_type in self.cache_mapping.keys():
+				self.add_to_cache(object_type, _json)
+
+	def cache_search_results(self, _json):
+		results = _json['results']
+		log.debug("Caching %s search results" % len(results))
+		for result in results:
+			object_type = result['result_type']
+			clazz = self.class_mapping[object_type]
+			cache = self.cache_mapping[object_type]
+			self._cache_item(cache, result, clazz)
 
 
 class SimpleApi(BaseApi):
