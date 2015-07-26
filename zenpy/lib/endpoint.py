@@ -48,8 +48,8 @@ class PrimaryEndpoint(BaseEndpoint):
 
 
 class SecondaryEndpoint(BaseEndpoint):
-	def __call__(self, id):
-		return self.endpoint % locals()
+	def __call__(self, **kwargs):
+		return self.endpoint % kwargs
 
 
 class SearchEndpoint(BaseEndpoint):
@@ -78,7 +78,15 @@ class Endpoint(object):
 		self.users = PrimaryEndpoint('users', ['organizations', 'abilities', 'roles', 'identities', 'groups'])
 		self.users.groups = SecondaryEndpoint('users/%(id)s/groups.json')
 		self.users.organizations = SecondaryEndpoint('users/%(id)s/organizations.json')
+		self.users.requested = SecondaryEndpoint('users/%(id)s/tickets/requested.json')
+		self.users.cced = SecondaryEndpoint('users/%(id)s/tickets/ccd.json')
+		self.users.assigned = SecondaryEndpoint('users/%(id)s/tickets/assigned.json')
+
 		self.groups = PrimaryEndpoint('groups', ['users'])
 		self.tickets = PrimaryEndpoint('tickets', ['users', 'groups', 'organizations'])
+		self.tickets.organizations = SecondaryEndpoint('organizations/%(id)s/tickets.json')
+		self.tickets.recent = SecondaryEndpoint('tickets/recent.json')
+
+
 		self.organizations = PrimaryEndpoint('organizations')
 		self.search = SearchEndpoint('search')

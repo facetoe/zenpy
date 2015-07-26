@@ -1,6 +1,6 @@
 import logging
 import sys
-from zenpy.lib.api import Api
+from zenpy.lib.api import BaseApi
 
 log = logging.getLogger()
 log.setLevel(logging.DEBUG)
@@ -16,7 +16,7 @@ __author__ = 'facetoe'
 class Zenpy(object):
 
 	def __init__(self, domain, email, token):
-		self.api = Api(domain, email, token)
+		self.api = BaseApi(domain, email, token)
 
 	def search(self, **kwargs):
 		return self.api.search(**kwargs)

@@ -1,3 +1,5 @@
+from collections import namedtuple
+
 __author__ = 'facetoe'
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.util import cached, ApiObjectEncoder
@@ -15,14 +17,14 @@ import logging
 
 log = logging.getLogger(__name__)
 
-class Api(object):
+
+class BaseApi(object):
 	email = None
 	token = None
 	subdomain = None
 	protocol = None
 	version = None
 	base_url = None
-	endpoint = Endpoint()
 
 	user_cache = LRUCache(maxsize=100)
 	organization_cache = LRUCache(maxsize=100)
@@ -48,80 +50,43 @@ class Api(object):
 		_json = self._query(endpoint=self.endpoint.search(**kwargs))
 		return self._object_from_json(Result, _json)
 
-	def users(self, **kwargs):
-		if 'id' in kwargs:
-			return self.get_user(kwargs['id'])
-
-		_json = self._query(endpoint=self.endpoint.users(**kwargs))
-		return ResultGenerator(self, 'users', _json)
-
-	def tickets(self, **kwargs):
-		if 'id' in kwargs:
-			return self.get_ticket(kwargs['id'])
-
-		_json = self._query(endpoint=self.endpoint.tickets(**kwargs))
-		return ResultGenerator(self, 'tickets', _json)
-
-	def groups(self, **kwargs):
-		if 'id' in kwargs:
-			return self.get_group(kwargs['id'])
-
-		_json = self._query(endpoint=self.endpoint.groups(**kwargs))
-		self.update_caches(_json)
-		return ResultGenerator(self, 'groups', _json)
-
 	def result_generator(self, _json, result_key='results'):
 		return ResultGenerator(self, result_key, _json)
 
-	@cached(user_cache)
-	def get_user(self, user_id, sideload=False):
-		_json = self._query(endpoint=self.endpoint.users(id=user_id, sideload=sideload))
+	def get_items(self, endpoint, object_type, kwargs):
+		if 'id' in kwargs:
+			return self.get_item(kwargs['id'], endpoint, object_type, True)
+
+		_json = self._query(endpoint=endpoint(**kwargs))
 		self.update_caches(_json)
-		return self._object_from_json(User, _json['user'])
+		return ResultGenerator(self, object_type, _json)
+
+	def get_item(self, id, endpoint, object_type, sideload=False):
+		_json = self._query(endpoint=endpoint(id=id, sideload=sideload))
+
+		# Executing a secondary endpoint with an ID will lead here.
+		# Just return a generator
+		if 'next_page' in _json:
+			return self.result_generator(_json, result_key=object_type)
+		else:
+			self.update_caches(_json)
+			clazz = self.class_for_type(object_type)
+			return self._object_from_json(clazz, _json[object_type])
 
 	def cache_user(self, user_json):
 		self._cache_item(self.user_cache, user_json, User)
 
-	@cached(ticket_cache)
-	def get_ticket(self, ticket_id):
-		_json = self._query(endpoint=self.endpoint.tickets(id=ticket_id, sideload='users'))
-		self.update_caches(_json)
-		return self._object_from_json(Ticket, _json['ticket'])
-
 	def cache_ticket(self, ticket_json):
 		self._cache_item(self.ticket_cache, ticket_json, Ticket)
-
-	@cached(organization_cache)
-	def get_organization(self, organization_id, sideload=False):
-		_json = self._query(endpoint=self.endpoint.organizations(id=organization_id, sideload=sideload))
-		self.update_caches(_json)
-		return self._object_from_json(Organization, _json['organization'])
 
 	def cache_organization(self, organization_json):
 		self._cache_item(self.organization_cache, organization_json, Organization)
 
-	@cached(group_cache)
-	def get_group(self, group_id, sideload=False):
-		_json = self._query(endpoint=self.endpoint.groups(group_id, sideload=sideload))
-		self.update_caches(_json)
-		return self._object_from_json(Group, _json['group'])
-
 	def cache_group(self, group_json):
 		self._cache_item(self.organization_cache, group_json, Group)
 
-	@cached(brand_cache)
-	def get_brand(self, brand_id):
-		_json = self._query(endpoint='brands/%s.json' % brand_id)
-		self.update_caches(_json)
-		return self._object_from_json(Brand, _json['brand'])
-
 	def cache_brand(self, brand_json):
 		self._cache_item(self.organization_cache, brand_json, Brand)
-
-	def get_topic(self, brand_id):
-		_json = self._query(endpoint='topics/%s.json' % brand_id)
-		self.update_caches(_json)
-		return self._object_from_json(Topic, _json['topic'])
 
 	def _cache_item(self, cache, item_json, item_type):
 		cache.update([((self, item_json['id']), self._object_from_json(item_type, item_json))])
@@ -153,21 +118,26 @@ class Api(object):
 		else:
 			return response
 
-	def object_from_json(self, object_type, object_json):
+	@staticmethod
+	def class_for_type(object_type):
 		if object_type == 'ticket':
-			return self._object_from_json(Ticket, object_json)
+			return Ticket
 		elif object_type == 'user':
-			return self._object_from_json(User, object_json)
+			return User
 		elif object_type == 'organization':
-			return self._object_from_json(Organization, object_json)
-		elif object_type == 'group':
-			return self._object_from_json(Group, object_json)
+			return Organization
+		elif object_type.startswith('group'):
+			return Group
 		elif object_type == 'brand':
-			return self._object_from_json(Brand, object_json)
+			return Brand
 		elif object_type == 'topic':
-			return self._object_from_json(Topic, object_json)
+			return Topic
 		else:
 			raise Exception("Unknown object_type: " + object_type)
+
+	def objects_from_json(self, object_type, object_json):
+		obj = self.class_for_type(object_type)
+		return self._object_from_json(obj, object_json)
 
 	def _object_from_json(self, object_type, object_json):
 		obj = object_type(api=self)
@@ -201,19 +171,102 @@ class Api(object):
 				self.cache_group(group)
 
 
+class SimpleApi(BaseApi):
+	def __init__(self, subdomain, email, token, endpoint, object_type):
+		BaseApi.__init__(self, subdomain, email, token)
+		self.endpoint = endpoint
+		self.object_type = object_type
+
+	def __call__(self, **kwargs):
+		return self.get_items(self.endpoint, self.object_type, kwargs)
+
+
+class UserApi(BaseApi):
+	def __init__(self, subdomain, email, token, endpoint):
+		BaseApi.__init__(self, subdomain, email, token)
+		self.endpoint = endpoint
+		self.object_type = 'user'
+
+	def __call__(self, **kwargs):
+		return self.get_items(self.endpoint, self.object_type, kwargs)
+
+	def groups(self, **kwargs):
+		return self.get_items(self.endpoint.groups, 'group', kwargs)
+
+	def organizations(self, **kwargs):
+		return self.get_items(self.endpoint.organizations, 'organization', kwargs)
+
+	def requested(self, **kwargs):
+		return self.get_items(self.endpoint.requested, 'ticket', kwargs)
+
+	def cced(self, **kwargs):
+		return self.get_items(self.endpoint.cced, 'ticket', kwargs)
+
+	def assigned(self, **kwargs):
+		return self.get_items(self.endpoint.assigned, 'ticket', kwargs)
+
+
+class TicketApi(BaseApi):
+	def __init__(self, subdomain, email, token, endpoint):
+		BaseApi.__init__(self, subdomain, email, token)
+		self.endpoint = endpoint
+		self.object_type = 'ticket'
+
+	def organizations(self, **kwargs):
+		return self.get_items(self.endpoint.organizations, 'ticket', kwargs)
+
+	def recent(self, **kwargs):
+		return self.get_items(self.endpoint.recent, 'ticket', kwargs)
+
+
+class Api(BaseApi):
+	def __init__(self, subdomain, email, token):
+		BaseApi.__init__(self, subdomain, email, token)
+		endpoint = Endpoint()
+		self.users = UserApi(subdomain,
+		                     email,
+		                     token,
+		                     endpoint=endpoint.users)
+		self.groups = SimpleApi(subdomain,
+		                        email,
+		                        token,
+		                        endpoint=endpoint.groups,
+		                        object_type='group')
+
+		self.organizations = SimpleApi(subdomain,
+		                               email,
+		                               token,
+		                               endpoint=endpoint.organizations,
+		                               object_type='organization')
+		self.tickets = TicketApi(subdomain,
+		                         email,
+		                         token,
+		                         endpoint=endpoint.tickets)
+
+	# self.groups = ApiEndpoint(subdomain, email, token, endpoint.groups, 'group')
+
+
 class ResultGenerator(object):
 	api = None
 	_json = None
 	position = 0
 
+	endpoint_mapping = {
+		'user': 'users',
+		'ticket': 'tickets',
+		'group': 'groups',
+		'results': 'results',
+		'organization': 'organizations'
+	}
+
 	def __init__(self, api, result_key, _json):
 		self.api = api
 		self._json = _json
-		self.result_key = result_key
-		if result_key == 'results':  # hack because of results array in search
+		self.result_key = self.endpoint_mapping[result_key]
+		if self.result_key == 'results':  # hack because of results array in search
 			self.values = _json['_results']
 		else:
-			self.values = _json[result_key]
+			self.values = _json[self.result_key]
 
 	def __iter__(self):
 		return self
@@ -247,6 +300,4 @@ class ResultGenerator(object):
 			object_type = item_json.pop('result_type')
 		else:
 			object_type = self.result_key[:-1]
-		return self.api.object_from_json(object_type, item_json)
-
-
+		return self.api.objects_from_json(object_type, item_json)
