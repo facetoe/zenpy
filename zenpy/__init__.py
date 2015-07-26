@@ -1,11 +1,9 @@
 import logging
 import sys
-from zenpy.api import Api
-from zenpy.exception import NoResult
+from zenpy.lib.api import Api
 
-__author__ = 'facetoe'
 log = logging.getLogger()
-log.setLevel(logging.INFO)
+log.setLevel(logging.DEBUG)
 ch = logging.StreamHandler(sys.stdout)
 ch.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(levelname)s - %(message)s')
@@ -13,33 +11,21 @@ ch.setFormatter(formatter)
 log.addHandler(ch)
 logging.getLogger("requests").setLevel(logging.WARNING)
 
+__author__ = 'facetoe'
 
 class Zenpy(object):
-    api = None
 
-    def __init__(self, subdomain, email, token):
-        self.api = Api(subdomain, email, token)
+	def __init__(self, domain, email, token):
+		self.api = Api(domain, email, token)
 
-    def tickets(self, **kwargs):
-        try:
-            return self.api.query(self.api.endpoint.tickets(**kwargs))
-        except NoResult:
-            pass
+	def search(self, **kwargs):
+		return self.api.search(**kwargs)
 
-    def comments(self, **kwargs):
-        try:
-            return self.api.query(self.api.endpoint.comments(**kwargs))
-        except NoResult:
-            pass
+	def users(self, **kwargs):
+		return self.api.users(**kwargs)
 
-    def users(self, **kwargs):
-        try:
-            return self.api.query(self.api.endpoint.users(**kwargs))
-        except NoResult:
-            pass
+	def tickets(self, **kwargs):
+		return self.api.tickets(**kwargs)
 
-    def search(self, **kwargs):
-        try:
-            return self.api.query(self.api.endpoint.search(**kwargs))
-        except NoResult:
-            pass
+	def groups(self, **kwargs):
+		return self.api.groups(**kwargs)
