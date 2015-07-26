@@ -89,4 +89,4 @@ class Endpoint(object):
 
 
 		self.organizations = PrimaryEndpoint('organizations')
-		self.search = SearchEndpoint('search')
+		self.search = SearchEndpoint('search.json?query=')

@@ -46,10 +46,6 @@ class BaseApi(object):
 		self.group_cache.clear()
 		self.brand_cache.clear()
 
-	def search(self, **kwargs):
-		_json = self._query(endpoint=self.endpoint.search(**kwargs))
-		return self._object_from_json(Result, _json)
-
 	def result_generator(self, _json, result_key='results'):
 		return ResultGenerator(self, result_key, _json)
 
@@ -243,6 +239,13 @@ class Api(BaseApi):
 		                         token,
 		                         endpoint=endpoint.tickets)
 
+		self.search = SimpleApi(subdomain,
+		                        email,
+		                        token,
+		                        endpoint=endpoint.search,
+		                        object_type='results')
+
+
 	# self.groups = ApiEndpoint(subdomain, email, token, endpoint.groups, 'group')
 
 
@@ -263,10 +266,7 @@ class ResultGenerator(object):
 		self.api = api
 		self._json = _json
 		self.result_key = self.endpoint_mapping[result_key]
-		if self.result_key == 'results':  # hack because of results array in search
-			self.values = _json['_results']
-		else:
-			self.values = _json[self.result_key]
+		self.values = _json[self.result_key]
 
 	def __iter__(self):
 		return self
