@@ -63,7 +63,7 @@ keyword= : (equality)
 
 For example, the code:
 
-```
+```python
 yesterday = datetime.now() - timedelta(days=1)
 for ticket in zenpy.search(type='ticket', status_greater_than='new', created_before=yesterday):
 	print ticket.subject
