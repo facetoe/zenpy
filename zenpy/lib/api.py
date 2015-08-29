@@ -8,8 +8,6 @@ from zenpy.lib.objects.source import Source
 from zenpy.lib.objects.system import System
 from zenpy.lib.objects.ticket_audit import TicketAudit
 from zenpy.lib.objects.via import Via
-from zenpy.lib.endpoint import Endpoint
-from zenpy.lib.util import cached
 from zenpy.lib.objects.brand import Brand
 from zenpy.lib.objects.group import Group
 from zenpy.lib.objects.organization import Organization
@@ -20,6 +18,8 @@ from zenpy.lib.objects.attachment import Attachment
 from zenpy.lib.objects.comment import Comment
 from zenpy.lib.objects.thumbnail import Thumbnail
 from cachetools import LRUCache, TTLCache
+from zenpy.lib.util import cached
+from zenpy.lib.endpoint import Endpoint
 from json import JSONEncoder
 import json
 import requests
@@ -52,7 +52,7 @@ class BaseApi(object):
 	ticket_cache = TTLCache(maxsize=100, ttl=30)
 	comment_cache = TTLCache(maxsize=100, ttl=30)
 
-	skip_cache = ('job_status',)
+	skip_cache = ('job_status', 'attachment')
 
 	cache_mapping = {
 		'user': user_cache,
@@ -167,8 +167,9 @@ class BaseApi(object):
 		return self._check_response(response)
 
 	def _get_items(self, endpoint, object_type, kwargs):
+		sideload = 'sideload' not in kwargs or ('sideload' in kwargs and kwargs['sideload'])
 		if 'id' in kwargs:
-			return self._get_item(kwargs['id'], endpoint, object_type, True)
+			return self._get_item(kwargs['id'], endpoint, object_type, sideload)
 
 		if 'ids' in kwargs:
 			cached_objects = []
@@ -222,6 +223,7 @@ class BaseApi(object):
 		else:
 			raise Exception("Unknown Response: " + str(response_json))
 			response = None
+
 		return response
 
 	def _build_ticket_audit(self, response_json):
@@ -240,6 +242,11 @@ class BaseApi(object):
 			else:
 				response.raise_for_status()
 		else:
+			try:
+				_json = response.json()
+				self._update_caches(_json)
+			except ValueError:
+				pass
 			return response
 
 	def _class_for_type(self, object_type):

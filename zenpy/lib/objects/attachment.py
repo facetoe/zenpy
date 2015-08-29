@@ -16,8 +16,6 @@ class Attachment(BaseObject):
 		if self.api and self._thumbnails:
 			for thumbnail in self._thumbnails:
 				yield self.api.object_from_json('thumbnail', thumbnail)
-		else:
-			yield []
 
 	@thumbnails.setter
 	def thumbnails(self, value):
