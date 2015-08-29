@@ -18,7 +18,8 @@ class Audit(BaseObject):
 	@property
 	def events(self):
 		if self.api and self._events:
-			return self.api.get_events(self._events)\
+			for event in self._events:
+				yield self.api.object_from_json(event['type'].lower(), event)
 
 	@events.setter
 	def events(self, value):

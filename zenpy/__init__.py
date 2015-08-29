@@ -56,6 +56,12 @@ class Zenpy(object):
 		                             token,
 		                             endpoint=endpoint.attachments,
 		                             object_type='attachment')
+		self.brands = SimpleApi(subdomain,
+		                             email,
+		                             token,
+		                             endpoint=endpoint.brands,
+		                             object_type='brand')
+
 		self.job_status = SimpleApi(subdomain,
 		                            email,
 		                            token,

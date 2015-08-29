@@ -22,9 +22,10 @@ class Comment(BaseObject):
 	@property
 	def attachments(self):
 		if self.api and self._attachments:
-			return self.api.get_attachments(self._attachments)
+			for attachment in self._attachments:
+				yield self.api.object_from_json('attachment', attachment)
 		else:
-			return []
+			yield []
 
 	@attachments.setter
 	def attachments(self, value):
