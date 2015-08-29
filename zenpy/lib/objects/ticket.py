@@ -3,7 +3,7 @@ import dateutil.parser
 from zenpy.lib.objects.base_object import BaseObject
 
 class Ticket(BaseObject):
-	def __init__(self, api=None):
+	def __init__(self, api=None, **kwargs):
 		self.api = api
 		self.via = None
 		self.updated_at = None
@@ -44,6 +44,8 @@ class Ticket(BaseObject):
 		self._external = None
 		self.external_id = None
 
+		for key, value in kwargs.iteritems():
+			setattr(self, key, value)
 
 
 	@property

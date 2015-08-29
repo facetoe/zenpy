@@ -1,6 +1,7 @@
 import logging
 import sys
-from zenpy.lib.api import Api
+from zenpy.lib.api import UserApi, SimpleApi, TicketApi
+from zenpy.lib.endpoint import Endpoint
 
 log = logging.getLogger()
 log.setLevel(logging.DEBUG)
@@ -13,6 +14,50 @@ logging.getLogger("requests").setLevel(logging.WARNING)
 
 __author__ = 'facetoe'
 
-class Zenpy(Api):
-	def __init__(self, domain, email, token):
-		Api.__init__(self, domain, email, token)
+
+class Zenpy(object):
+	def __init__(self, subdomain, email, token):
+		endpoint = Endpoint()
+		self.users = UserApi(subdomain,
+		                     email,
+		                     token,
+		                     endpoint=endpoint.users)
+		self.groups = SimpleApi(subdomain,
+		                        email,
+		                        token,
+		                        endpoint=endpoint.groups,
+		                        object_type='group')
+
+		self.organizations = SimpleApi(subdomain,
+		                               email,
+		                               token,
+		                               endpoint=endpoint.organizations,
+		                               object_type='organization')
+
+		self.tickets = TicketApi(subdomain,
+		                         email,
+		                         token,
+		                         endpoint=endpoint.tickets)
+
+		self.search = SimpleApi(subdomain,
+		                        email,
+		                        token,
+		                        endpoint=endpoint.search,
+		                        object_type='results')
+
+		self.topics = SimpleApi(subdomain,
+		                        email,
+		                        token,
+		                        endpoint=endpoint.topics,
+		                        object_type='topic')
+
+		self.attachments = SimpleApi(subdomain,
+		                             email,
+		                             token,
+		                             endpoint=endpoint.attachments,
+		                             object_type='attachment')
+		self.job_status = SimpleApi(subdomain,
+		                            email,
+		                            token,
+		                            endpoint=endpoint.job_statuses,
+		                            object_type='job_status')

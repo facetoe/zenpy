@@ -236,7 +236,7 @@ class BaseApi(object):
 		elif 'job_status' in response_json:
 			response = self.object_from_json('job_status', response_json['job_status'])
 		else:
-			print json.dumps(response_json, indent=2)
+			raise Exception("Unknown Response: " + response_json)
 			response = None
 		return response
 
@@ -285,7 +285,7 @@ class BaseApi(object):
 	def query_cache(self, object_type, id):
 		if object_type in self.skip_cache:
 			return None
-		
+
 		cache = self.cache_mapping[object_type]
 		if id in cache:
 			log.debug("Cache HIT: [%s %s]" % (object_type.capitalize(), id))
@@ -394,54 +394,6 @@ class TicketApi(ModifiableApi):
 	def comments(self, **kwargs):
 		return self.get_items(self.endpoint.comments, 'comment', kwargs)
 
-
-class Api(BaseApi):
-	def __init__(self, subdomain, email, token):
-		BaseApi.__init__(self, subdomain, email, token)
-		endpoint = Endpoint()
-		self.users = UserApi(subdomain,
-		                     email,
-		                     token,
-		                     endpoint=endpoint.users)
-		self.groups = SimpleApi(subdomain,
-		                        email,
-		                        token,
-		                        endpoint=endpoint.groups,
-		                        object_type='group')
-
-		self.organizations = SimpleApi(subdomain,
-		                               email,
-		                               token,
-		                               endpoint=endpoint.organizations,
-		                               object_type='organization')
-
-		self.tickets = TicketApi(subdomain,
-		                         email,
-		                         token,
-		                         endpoint=endpoint.tickets)
-
-		self.search = SimpleApi(subdomain,
-		                        email,
-		                        token,
-		                        endpoint=endpoint.search,
-		                        object_type='results')
-
-		self.topics = SimpleApi(subdomain,
-		                        email,
-		                        token,
-		                        endpoint=endpoint.topics,
-		                        object_type='topic')
-
-		self.attachments = SimpleApi(subdomain,
-		                             email,
-		                             token,
-		                             endpoint=endpoint.attachments,
-		                             object_type='attachment')
-		self.job_status = SimpleApi(subdomain,
-		                            email,
-		                            token,
-		                            endpoint=endpoint.job_statuses,
-		                            object_type='job_status')
 
 
 class ResultGenerator(object):
