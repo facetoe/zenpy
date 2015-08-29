@@ -43,6 +43,10 @@ class PrimaryEndpoint(BaseEndpoint):
 				query += self._many(self.endpoint, value)
 			elif key == 'destroy_ids':
 				query += self._destroy_many(self.endpoint, value)
+			elif key == 'create_many':
+				query = "".join([self.endpoint, '/create_many.json'])
+			elif key == 'update_many':
+				query = "".join([self.endpoint, '/update_many.json'])
 			elif key in ('sort_by', 'sort_order'):
 				modifiers.append((key, value))
 
@@ -105,3 +109,4 @@ class Endpoint(object):
 		self.attachments = PrimaryEndpoint('attachments')
 		self.organizations = PrimaryEndpoint('organizations')
 		self.search = SearchEndpoint('search.json?query=')
+		self.job_statuses = PrimaryEndpoint('job_statuses')

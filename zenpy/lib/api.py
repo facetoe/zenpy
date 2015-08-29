@@ -1,6 +1,8 @@
+import itertools
 from zenpy.lib.objects.audit import Audit
 from zenpy.lib.objects.events.create import CreateEvent
 from zenpy.lib.objects.events.notification import Notification
+from zenpy.lib.objects.job_status import JobStatus
 from zenpy.lib.objects.metadata import Metadata
 from zenpy.lib.objects.source import Source
 from zenpy.lib.objects.system import System
@@ -52,6 +54,8 @@ class BaseApi(object):
 	ticket_cache = TTLCache(maxsize=100, ttl=30)
 	comment_cache = TTLCache(maxsize=100, ttl=30)
 
+	skip_cache = ('job_status',)
+
 	cache_mapping = {
 		'user': user_cache,
 		'organization': organization_cache,
@@ -76,7 +80,8 @@ class BaseApi(object):
 		'create': CreateEvent,
 		'notification': Notification,
 		'via': Via,
-		'source': Source
+		'source': Source,
+		'job_status' : JobStatus
 	}
 
 	def __init__(self, subdomain, email, token):
@@ -163,14 +168,35 @@ class BaseApi(object):
 		response = self._get(self._get_url(endpoint=endpoint))
 		return response.json()
 
-	def create_item(self, endpoint, item):
-		object_type = "%s" % item.__class__.__name__.lower()
-		return self._post(self._get_url(endpoint=endpoint), payload={object_type: vars(item)})
+	def create_items(self, endpoint, items):
+		if isinstance(items, list) and items:
+			first_obj = next((x for x in items))
+			object_type = "%ss" % first_obj.__class__.__name__.lower()
+			return self._post(self._get_url(endpoint=endpoint(create_many=True, sideload=False)),
+			                  payload={object_type: [vars(i) for i in items]})
+		elif items:
+			object_type = "%s" % items.__class__.__name__.lower()
+			return self._post(self._get_url(endpoint=endpoint(sideload=False)),
+			                  payload={object_type: vars(items)})
+
+	def update_items(self, endpoint, items):
+		if isinstance(items, list) or isinstance(items, ResultGenerator):
+			first_obj = next((x for x in items))
+			object_type = "%ss" % first_obj.__class__.__name__.lower()
+			response = self._put(self._get_url(endpoint=endpoint(update_many=True, sideload=False)),
+			                     payload={object_type: [vars(i) for i in items]})
+			response_json = response.json()
+		else:
+			object_type = "%s" % items.__class__.__name__.lower()
+			response = self._put(self._get_url(endpoint=endpoint(id=items.id, sideload=False)),
+			                     payload={object_type: vars(items)})
+			response_json = response.json()
+
+		return self.build_create_response(response_json)
 
 	def delete_items(self, endpoint, items):
 		if isinstance(items, list) or isinstance(items, ResultGenerator):
-			ids = [i.id for i in items]
-			response = self._delete(self._get_url(endpoint=endpoint(destroy_ids=ids, sideload=False)))
+			response = self._delete(self._get_url(endpoint=endpoint(destroy_ids=[i.id for i in items], sideload=False)))
 		else:
 			response = self._delete(self._get_url(endpoint=endpoint(id=items.id, sideload=False)))
 		if response.status_code != 200:
@@ -207,8 +233,10 @@ class BaseApi(object):
 			response = self.build_ticket_audit(response_json)
 		elif 'user' in response_json:
 			response = self.object_from_json('user', response_json['user'])
+		elif 'job_status' in response_json:
+			response = self.object_from_json('job_status', response_json['job_status'])
 		else:
-			print response_json
+			print json.dumps(response_json, indent=2)
 			response = None
 		return response
 
@@ -219,14 +247,6 @@ class BaseApi(object):
 		if 'audit' in response_json:
 			ticket_audit.audit = self._object_from_json(Audit, response_json['audit'])
 		return ticket_audit
-
-	def update_item(self, endpoint, item):
-		object_type = "%s" % item.__class__.__name__.lower()
-		print {object_type: vars(item)}
-		response = self._put(self._get_url(endpoint=endpoint(id=item.id, sideload=False)),
-		                     payload={object_type: vars(item)})
-		response_json = response.json()
-		return self.build_create_response(response_json)
 
 	def _check_response(self, response):
 		if response.status_code > 299 or response.status_code < 200:
@@ -263,6 +283,9 @@ class BaseApi(object):
 		return self.email + '/token', self.token
 
 	def query_cache(self, object_type, id):
+		if object_type in self.skip_cache:
+			return None
+		
 		cache = self.cache_mapping[object_type]
 		if id in cache:
 			log.debug("Cache HIT: [%s %s]" % (object_type.capitalize(), id))
@@ -309,13 +332,13 @@ class ModifiableApi(BaseApi):
 		self.endpoint = endpoint
 
 	def create(self, item):
-		return self.create_item(self.endpoint(sideload=False), item)
+		return self.create_items(self.endpoint, item)
 
 	def delete(self, items):
 		return self.delete_items(self.endpoint, items)
 
 	def update(self, items):
-		return self.update_item(self.endpoint, items)
+		return self.update_items(self.endpoint, items)
 
 
 class SimpleApi(BaseApi):
@@ -414,6 +437,11 @@ class Api(BaseApi):
 		                             token,
 		                             endpoint=endpoint.attachments,
 		                             object_type='attachment')
+		self.job_status = SimpleApi(subdomain,
+		                            email,
+		                            token,
+		                            endpoint=endpoint.job_statuses,
+		                            object_type='job_status')
 
 
 class ResultGenerator(object):

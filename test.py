@@ -23,25 +23,28 @@ comment.body = "PARTY LIKE A BEAST"
 
 # zenpy.api.tickets.create(ticket)
 
-user = User()
-user.name = "SUPER MAN THING"
-user.email = 'this@super.com.au'
+# user = User()
+# user.name = "Amazing Agent"
+# user.email = 'this@super.agentman.com.au'
+# # user.role = 'agent'
+# id = zenpy.api.users.create(user).id
 
-for user in zenpy.users():
-	if user.name.startswith('Face') or user.name.startswith('Sample'):
-		continue
-	user.name = "Jim Hendy"
-	print user.name
-	user.active = True
-	print zenpy.api.users.update(user).name
-	break
+tickets = zenpy.tickets()
+
+resp = zenpy.tickets.update(tickets)
+id=  resp.id
+status = zenpy.job_status(id=id)
+print status.status
+print status.message
+for result in status.results:
+	print result
 
 sys.exit()
 tickets = zenpy.tickets()
 zenpy.api.tickets.delete(tickets)
 zenpy.api.tickets.create(ticket)
 for ticket in zenpy.api.tickets():
-	ticket.comment = comment
+	ticket.comment = "SUCH ME THATR"
 
 	ticket.status = 'open'
 	result = zenpy.api.tickets.update(ticket)

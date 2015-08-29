@@ -13,22 +13,6 @@ logging.getLogger("requests").setLevel(logging.WARNING)
 
 __author__ = 'facetoe'
 
-class Zenpy(object):
-
+class Zenpy(Api):
 	def __init__(self, domain, email, token):
-		self.api = Api(domain, email, token)
-
-	def search(self, **kwargs):
-		return self.api.search(**kwargs)
-
-	def users(self, **kwargs):
-		return self.api.users(**kwargs)
-
-	def tickets(self, **kwargs):
-		return self.api.tickets(**kwargs)
-
-	def groups(self, **kwargs):
-		return self.api.groups(**kwargs)
-
-	def organizations(self, **kwargs):
-		return self.api.organizations(**kwargs)
+		Api.__init__(self, domain, email, token)
