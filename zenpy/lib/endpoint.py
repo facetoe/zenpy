@@ -10,10 +10,13 @@ class BaseEndpoint(object):
 
 	@staticmethod
 	def _single(endpoint, user_id):
-		return "%s/%s%s" % (endpoint, str(user_id), '.json')
+		return "%s/%s%s" % (endpoint, user_id, '.json')
 
 	def _many(self, endpoint, user_ids):
-		return endpoint + '/' + 'show_many.json?ids=' + self._format_many(user_ids)
+		return "%s/%s%s" % (endpoint, 'show_many.json?ids=', self._format_many(user_ids))
+
+	def _destroy_many(self, endpoint, ids):
+		return "%s/%s%s" % (endpoint, 'destroy_many.json?ids=', self._format_many(ids))
 
 	@staticmethod
 	def _format(**kwargs):
@@ -30,21 +33,29 @@ class BaseEndpoint(object):
 
 
 class PrimaryEndpoint(BaseEndpoint):
-	def __call__(self, id=None, ids=None, sideload=True):
-		if id and ids:
-			raise ValueError("id and ids are mutually exclusive")
+	def __call__(self, **kwargs):
+		query = ""
+		modifiers = []
+		for key, value in kwargs.iteritems():
+			if key == 'id':
+				query += self._single(self.endpoint, value)
+			elif key == 'ids':
+				query += self._many(self.endpoint, value)
+			elif key == 'destroy_ids':
+				query += self._destroy_many(self.endpoint, value)
+			elif key in ('sort_by', 'sort_order'):
+				modifiers.append((key, value))
 
-		if id:
-			query = self._single(self.endpoint, id)
-		elif ids:
-			query = self._many(self.endpoint, ids)
-		else:
-			query = self.endpoint + '.json'
+		if modifiers:
+			query += '&' + "&".join(["%s=%s" % (k, v) for k, v in modifiers])
 
-		if sideload:
-			return "/".join([query, self._format_sideload(self.sideload)])
-		else:
+		if self.endpoint not in query:
+			query = self.endpoint + '.json' + query
+
+		if 'sideload' in kwargs and not kwargs['sideload']:
 			return query
+		else:
+			return query + self._format_sideload(self.sideload)
 
 
 class SecondaryEndpoint(BaseEndpoint):
@@ -54,6 +65,7 @@ class SecondaryEndpoint(BaseEndpoint):
 
 class SearchEndpoint(BaseEndpoint):
 	def __call__(self, **kwargs):
+
 		renamed_kwargs = dict()
 		for key, value in kwargs.iteritems():
 			if isinstance(value, datetime):

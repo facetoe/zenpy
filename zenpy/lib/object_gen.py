@@ -41,10 +41,12 @@ def get_properties(item):
 	for key in item:
 		if not key == 'locale_id':
 			if key.endswith('_id'):
-				if key in ('assignee_id', 'submitter_id', 'requester_id'):
+				if key in ('assignee_id', 'submitter_id', 'requester_id', 'author_id'):
 					object_type = 'user'
 				elif key in ('forum_topic_id'):
 					object_type = 'topic'
+				elif key == 'id':
+					object_type = 'id'
 				else:
 					object_type = key.replace('_id', '')
 				property_name = key.replace('_id', '')
@@ -82,13 +84,13 @@ def get_init_section(item):
 		if key.endswith('_id'):
 			init += "\t\tself._%s = None\n" % key.replace('_id', '')
 
-
 		init += "\t\tself.%s = None\n" % key
 	return init
 
 def generate_all(specification_path, out_path):
-	for file_path in glob.glob(os.path.join(specification_path, '*.json')):
+	for file_path in glob.glob(os.path.join(specification_path, '*')):
 		class_name = os.path.basename(os.path.splitext(file_path)[0]).capitalize()
+		class_name = "".join([w.capitalize() for w in class_name.split('_')])
 		class_code = generate_class(file_path, class_name)
 		with open(os.path.join(out_path, "%s.py" % class_name.lower()), 'w+') as out_file:
 			out_file.write(class_code)

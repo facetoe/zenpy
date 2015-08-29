@@ -1,3 +1,12 @@
+from zenpy.lib.objects.audit import Audit
+from zenpy.lib.objects.events.create import CreateEvent
+from zenpy.lib.objects.events.notification import Notification
+from zenpy.lib.objects.metadata import Metadata
+from zenpy.lib.objects.source import Source
+from zenpy.lib.objects.system import System
+from zenpy.lib.objects.ticket_audit import TicketAudit
+from zenpy.lib.objects.via import Via
+
 __author__ = 'facetoe'
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.util import cached, ApiObjectEncoder
@@ -51,7 +60,13 @@ class BaseApi(object):
 		'topic': Topic,
 		'comment': Comment,
 		'attachment': Attachment,
-		'thumbnail': Thumbnail
+		'thumbnail': Thumbnail,
+		'metadata': Metadata,
+		'system': System,
+		'create': CreateEvent,
+		'notification': Notification,
+		'via': Via,
+		'source': Source
 	}
 
 	def __init__(self, subdomain, email, token):
@@ -62,27 +77,31 @@ class BaseApi(object):
 		self.version = 'v2'
 		self.base_url = self._get_url()
 
-	def invalidate_caches(self):
-		self.user_cache.clear()
-		self.organization_cache.clear()
-		self.group_cache.clear()
-		self.brand_cache.clear()
-
-	def result_generator(self, _json, result_key='results'):
-		return ResultGenerator(self, result_key, _json)
-
 	def get_items(self, endpoint, object_type, kwargs):
 		if 'id' in kwargs:
 			return self.get_item(kwargs['id'], endpoint, object_type, True)
 
+		if 'ids' in kwargs:
+			cached_objects = []
+			for id in kwargs['ids']:
+				obj = self.query_cache(object_type, id)
+				if obj:
+					cached_objects.append(obj)
+				else:
+					return self.get_paginated(endpoint, kwargs, object_type)
+			return cached_objects
+
+		return self.get_paginated(endpoint, kwargs, object_type)
+
+	def get_paginated(self, endpoint, kwargs, object_type):
 		_json = self._query(endpoint=endpoint(**kwargs))
 		self.update_caches(_json)
 		return ResultGenerator(self, object_type, _json)
 
-	def get_item(self, id, endpoint, object_type, sideload=False):
+	def get_item(self, id, endpoint, object_type, sideload=True):
 
 		# If this is called with an id from a subclass
-		# the cache won't be checked, so check it explicitly.
+		# the cache won't be checked by the decorator, so check it explicitly.
 		cached_item = self.query_cache(object_type, id)
 		if cached_item:
 			return cached_item
@@ -92,19 +111,11 @@ class BaseApi(object):
 		# Executing a secondary endpoint with an ID will lead here.
 		# If the result is paginated return a generator
 		if 'next_page' in _json:
-			return self.result_generator(_json, result_key=object_type)
+			return ResultGenerator(self, object_type, _json)
 		else:
 			self.update_caches(_json)
 			clazz = self.class_for_type(object_type)
 			return self._object_from_json(clazz, _json[object_type])
-
-	def query_cache(self, object_type, id):
-		cache = self.cache_mapping[object_type]
-		if id in cache:
-			log.debug("Cache HIT: [%s %s]" % (object_type.capitalize(), id))
-			return cache[id]
-		else:
-			log.debug('Cache MISS: [%s %s]' % (object_type.capitalize(), id))
 
 	@cached(user_cache)
 	def get_user(self, id, endpoint=Endpoint().users, object_type='user'):
@@ -127,10 +138,13 @@ class BaseApi(object):
 		for attachment in attachments:
 			yield self._object_from_json(clazz, attachment)
 
+	def get_events(self, events):
+		for event in events:
+			yield self.object_from_json(event['type'].lower(), event)
+
 	def get_thumbnails(self, thumbnails):
-		clazz = self.class_for_type('thumbnail')
 		for thumbnail in thumbnails:
-			yield self._object_from_json(clazz, thumbnail)
+			yield self.object_from_json('thumbnail', thumbnail)
 
 	def _cache_item(self, cache, item_json, item_type):
 		cache[item_json['id']] = self._object_from_json(item_type, item_json)
@@ -139,15 +153,36 @@ class BaseApi(object):
 		response = self.get(self._get_url(endpoint=endpoint))
 		return response.json()
 
-	def post_ticket(self, ticket):
-		_json = self._post(self._get_url(endpoint='tickets.json'), payload=dict(ticket=vars(ticket)))
+	def create_object(self, endpoint, object):
+		_json = self._post(self._get_url(endpoint=endpoint), payload=dict(ticket=vars(object)))
 		return _json
+
+	def delete_items(self, endpoint, items):
+		if isinstance(items,list) or isinstance(items, ResultGenerator):
+			ids = [i.id for i in items]
+			response = self._delete(self._get_url(endpoint=endpoint(destroy_ids=ids, sideload=False)))
+		else:
+			response = self._delete(self._get_url(endpoint=endpoint(id=items.id, sideload=False)))
+		if response.status_code != 200:
+			response.raise_for_status
 
 	def _post(self, url, payload):
 		log.debug("POST: " + url)
 		payload = json.loads(json.dumps(payload, cls=ApiObjectEncoder))
 		headers = {'Content-type': 'application/json'}
 		response = requests.post(url, auth=self._get_auth(), json=payload, headers=headers)
+		response_json = response.json()
+		return self.build_audit(response_json)
+
+	def build_audit(self, response_json):
+		ticket_audit = TicketAudit()
+		ticket_audit.ticket = self._object_from_json(Ticket, response_json['ticket'])
+		ticket_audit.audit = self._object_from_json(Audit, response_json['audit'])
+		return ticket_audit
+
+	def _delete(self, url):
+		log.debug("DELETE: " + url)
+		response = requests.delete(url, auth=self._get_auth())
 		return response
 
 	def get(self, url, stream=False):
@@ -164,19 +199,19 @@ class BaseApi(object):
 
 	def class_for_type(self, object_type):
 		if object_type not in self.class_mapping:
-			raise Exception("Unknown object_type: " + object_type)
+			raise Exception("Unknown object_type: " + str(object_type))
 		else:
 			return self.class_mapping[object_type]
 
-	def objects_from_json(self, object_type, object_json):
+	def object_from_json(self, object_type, object_json):
 		obj = self.class_for_type(object_type)
 		return self._object_from_json(obj, object_json)
 
 	def _object_from_json(self, object_type, object_json):
 		obj = object_type(api=self)
 		for key, value in object_json.iteritems():
-			if key == 'results':
-				key = '_results'
+			if key in ('results', 'metadata', 'from'):
+				key = '_%s' % key
 			setattr(obj, key, value)
 		return obj
 
@@ -185,6 +220,14 @@ class BaseApi(object):
 
 	def _get_auth(self):
 		return self.email + '/token', self.token
+
+	def query_cache(self, object_type, id):
+		cache = self.cache_mapping[object_type]
+		if id in cache:
+			log.debug("Cache HIT: [%s %s]" % (object_type.capitalize(), id))
+			return cache[id]
+		else:
+			log.debug('Cache MISS: [%s %s]' % (object_type.capitalize(), id))
 
 	def add_to_cache(self, object_type, object_json):
 		cache = self.cache_mapping[object_type]
@@ -272,6 +315,12 @@ class TicketApi(BaseApi):
 	def comments(self, **kwargs):
 		return self.get_items(self.endpoint.comments, 'comment', kwargs)
 
+	def create(self, ticket):
+		return self.create_object(self.endpoint(sideload=False), ticket)
+
+	def delete(self, items):
+		return self.delete_items(self.endpoint, items)
+
 
 class Api(BaseApi):
 	def __init__(self, subdomain, email, token):
@@ -292,6 +341,7 @@ class Api(BaseApi):
 		                               token,
 		                               endpoint=endpoint.organizations,
 		                               object_type='organization')
+
 		self.tickets = TicketApi(subdomain,
 		                         email,
 		                         token,
@@ -302,6 +352,7 @@ class Api(BaseApi):
 		                        token,
 		                        endpoint=endpoint.search,
 		                        object_type='results')
+
 		self.topics = SimpleApi(subdomain,
 		                        email,
 		                        token,
@@ -313,8 +364,6 @@ class Api(BaseApi):
 		                             token,
 		                             endpoint=endpoint.attachments,
 		                             object_type='attachment')
-
-	# self.groups = ApiEndpoint(subdomain, email, token, endpoint.groups, 'group')
 
 
 class ResultGenerator(object):
@@ -370,4 +419,4 @@ class ResultGenerator(object):
 			object_type = item_json.pop('result_type')
 		else:
 			object_type = self.result_key[:-1]
-		return self.api.objects_from_json(object_type, item_json)
+		return self.api.object_from_json(object_type, item_json)
