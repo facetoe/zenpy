@@ -60,7 +60,7 @@ class Comment(BaseObject):
 		self._save(target_tuple[0], target_tuple[1])
 
 	def _save(self, url, out_path):
-		r = self.api.get(url, stream=True)
+		r = self.api._get(url, stream=True)
 		if r.status_code == 200:
 			with open(out_path, 'wb') as f:
 				for chunk in r:

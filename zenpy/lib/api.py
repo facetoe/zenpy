@@ -9,7 +9,7 @@ from zenpy.lib.objects.via import Via
 
 __author__ = 'facetoe'
 from zenpy.lib.endpoint import Endpoint
-from zenpy.lib.util import cached, ApiObjectEncoder
+from zenpy.lib.util import cached
 from zenpy.lib.objects.brand import Brand
 from zenpy.lib.objects.group import Group
 from zenpy.lib.objects.organization import Organization
@@ -20,11 +20,21 @@ from zenpy.lib.objects.attachment import Attachment
 from zenpy.lib.objects.comment import Comment
 from zenpy.lib.objects.thumbnail import Thumbnail
 from cachetools import LRUCache, TTLCache
+from json import JSONEncoder
 import json
 import requests
 import logging
 
 log = logging.getLogger(__name__)
+
+
+class ApiObjectEncoder(JSONEncoder):
+	""" Class for encoding API objects"""
+
+	def default(self, o):
+		if issubclass(o.__class__, BaseApi):
+			return None
+		return o.to_dict()
 
 
 class BaseApi(object):
@@ -150,15 +160,15 @@ class BaseApi(object):
 		cache[item_json['id']] = self._object_from_json(item_type, item_json)
 
 	def _query(self, endpoint):
-		response = self.get(self._get_url(endpoint=endpoint))
+		response = self._get(self._get_url(endpoint=endpoint))
 		return response.json()
 
-	def create_object(self, endpoint, object):
-		_json = self._post(self._get_url(endpoint=endpoint), payload=dict(ticket=vars(object)))
-		return _json
+	def create_item(self, endpoint, item):
+		object_type = "%s" % item.__class__.__name__.lower()
+		return self._post(self._get_url(endpoint=endpoint), payload={object_type: vars(item)})
 
 	def delete_items(self, endpoint, items):
-		if isinstance(items,list) or isinstance(items, ResultGenerator):
+		if isinstance(items, list) or isinstance(items, ResultGenerator):
 			ids = [i.id for i in items]
 			response = self._delete(self._get_url(endpoint=endpoint(destroy_ids=ids, sideload=False)))
 		else:
@@ -171,29 +181,60 @@ class BaseApi(object):
 		payload = json.loads(json.dumps(payload, cls=ApiObjectEncoder))
 		headers = {'Content-type': 'application/json'}
 		response = requests.post(url, auth=self._get_auth(), json=payload, headers=headers)
+		self._check_response(response)
 		response_json = response.json()
-		return self.build_audit(response_json)
+		return self.build_create_response(response_json)
 
-	def build_audit(self, response_json):
-		ticket_audit = TicketAudit()
-		ticket_audit.ticket = self._object_from_json(Ticket, response_json['ticket'])
-		ticket_audit.audit = self._object_from_json(Audit, response_json['audit'])
-		return ticket_audit
+	def _put(self, url, payload):
+		log.debug("PUT: " + url)
+		payload = json.loads(json.dumps(payload, cls=ApiObjectEncoder))
+		headers = {'Content-type': 'application/json'}
+		response = requests.put(url, auth=self._get_auth(), json=payload, headers=headers)
+		return self._check_response(response)
+
+	def _get(self, url, stream=False):
+		log.debug("GET: " + url)
+		response = requests.get(url, auth=self._get_auth(), stream=stream)
+		return self._check_response(response)
 
 	def _delete(self, url):
 		log.debug("DELETE: " + url)
 		response = requests.delete(url, auth=self._get_auth())
+		return self._check_response(response)
+
+	def build_create_response(self, response_json):
+		if 'ticket' and 'audit' in response_json:
+			response = self.build_ticket_audit(response_json)
+		elif 'user' in response_json:
+			response = self.object_from_json('user', response_json['user'])
+		else:
+			print response_json
+			response = None
 		return response
 
-	def get(self, url, stream=False):
-		log.debug("GET: " + url)
-		response = requests.get(url, auth=self._get_auth(), stream=stream)
-		if response.status_code == 422:
-			raise Exception("Api rejected query: " + url)
-		elif response.status_code == 404 and 'application/json' in response.headers['content-type']:
-			raise Exception(response.json()['description'])
-		elif response.status_code != 200:
-			response.raise_for_status()
+	def build_ticket_audit(self, response_json):
+		ticket_audit = TicketAudit()
+		if 'ticket' in response_json:
+			ticket_audit.ticket = self._object_from_json(Ticket, response_json['ticket'])
+		if 'audit' in response_json:
+			ticket_audit.audit = self._object_from_json(Audit, response_json['audit'])
+		return ticket_audit
+
+	def update_item(self, endpoint, item):
+		object_type = "%s" % item.__class__.__name__.lower()
+		print {object_type: vars(item)}
+		response = self._put(self._get_url(endpoint=endpoint(id=item.id, sideload=False)),
+		                     payload={object_type: vars(item)})
+		response_json = response.json()
+		return self.build_create_response(response_json)
+
+	def _check_response(self, response):
+		if response.status_code > 299 or response.status_code < 200:
+			if 'application/json' in response.headers['content-type']:
+				error_msg = "\n".join(["%s: %s" % (k, v) for k, v in response.json().iteritems()])
+				raise Exception(error_msg)
+			else:
+				response.raise_for_status()
 		else:
 			return response
 
@@ -262,6 +303,21 @@ class BaseApi(object):
 			self._cache_item(cache, result, clazz)
 
 
+class ModifiableApi(BaseApi):
+	def __init__(self, subdomain, email, token, endpoint):
+		BaseApi.__init__(self, subdomain, email, token)
+		self.endpoint = endpoint
+
+	def create(self, item):
+		return self.create_item(self.endpoint(sideload=False), item)
+
+	def delete(self, items):
+		return self.delete_items(self.endpoint, items)
+
+	def update(self, items):
+		return self.update_item(self.endpoint, items)
+
+
 class SimpleApi(BaseApi):
 	def __init__(self, subdomain, email, token, endpoint, object_type):
 		BaseApi.__init__(self, subdomain, email, token)
@@ -272,7 +328,7 @@ class SimpleApi(BaseApi):
 		return self.get_items(self.endpoint, self.object_type, kwargs)
 
 
-class UserApi(BaseApi):
+class UserApi(ModifiableApi):
 	def __init__(self, subdomain, email, token, endpoint):
 		BaseApi.__init__(self, subdomain, email, token)
 		self.endpoint = endpoint
@@ -297,7 +353,7 @@ class UserApi(BaseApi):
 		return self.get_items(self.endpoint.assigned, 'ticket', kwargs)
 
 
-class TicketApi(BaseApi):
+class TicketApi(ModifiableApi):
 	def __init__(self, subdomain, email, token, endpoint):
 		BaseApi.__init__(self, subdomain, email, token)
 		self.endpoint = endpoint
@@ -314,12 +370,6 @@ class TicketApi(BaseApi):
 
 	def comments(self, **kwargs):
 		return self.get_items(self.endpoint.comments, 'comment', kwargs)
-
-	def create(self, ticket):
-		return self.create_object(self.endpoint(sideload=False), ticket)
-
-	def delete(self, items):
-		return self.delete_items(self.endpoint, items)
 
 
 class Api(BaseApi):
@@ -390,20 +440,16 @@ class ResultGenerator(object):
 	def __iter__(self):
 		return self
 
-	# Python 3 compatibility
-	def __next__(self):
-		return self.next()
-
 	def get_as_json(self, url):
 		log.debug("GENERATOR: " + url)
-		response = self.api.get(url)
+		response = self.api._get(url)
 		return response.json()
 
 	def next(self):
 		# Pagination
 		if self.position >= len(self.values):
 			if self._json.get('next_page'):
-				self._json = self.get_as_json(self._json.get('next_page'))
+				self._json = self.get_as_json(self._json._get('next_page'))
 				self.values = self._json[self.result_key]
 				self.position = 0
 			else:

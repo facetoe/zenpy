@@ -1,15 +1,7 @@
-import collections
-from json import JSONEncoder
 import logging
 
 __author__ = 'facetoe'
 log = logging.getLogger(__name__)
-
-
-class ApiObjectEncoder(JSONEncoder):
-	""" Class for encoding API objects"""
-	def default(self, o):
-		return o.to_dict()
 
 
 def cached(cache):
