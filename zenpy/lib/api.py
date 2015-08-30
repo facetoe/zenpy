@@ -1,4 +1,5 @@
 __author__ = 'facetoe'
+
 from zenpy.lib.objects.audit import Audit
 from zenpy.lib.objects.events.create import CreateEvent
 from zenpy.lib.objects.events.notification import Notification
@@ -17,6 +18,8 @@ from zenpy.lib.objects.user import User
 from zenpy.lib.objects.attachment import Attachment
 from zenpy.lib.objects.comment import Comment
 from zenpy.lib.objects.thumbnail import Thumbnail
+
+from zenpy.lib.exception import ZenpyException, APIException
 from cachetools import LRUCache, TTLCache
 from zenpy.lib.util import cached
 from zenpy.lib.endpoint import Endpoint
@@ -57,15 +60,15 @@ class ClassManager(object):
 		'audit': Audit
 	}
 
-	def class_for_type(self, object_type):
+	def object_from_json(self, object_type, object_json):
+		obj = self._class_for_type(object_type)
+		return self._object_from_json(obj, object_json)
+
+	def _class_for_type(self, object_type):
 		if object_type not in self.class_mapping:
-			raise Exception("Unknown object_type: " + str(object_type))
+			raise ZenpyException("Unknown object_type: " + str(object_type))
 		else:
 			return self.class_mapping[object_type]
-
-	def object_from_json(self, object_type, object_json):
-		obj = self.class_for_type(object_type)
-		return self._object_from_json(obj, object_json)
 
 	def _object_from_json(self, object_type, object_json):
 		obj = object_type(api=self)
@@ -99,6 +102,20 @@ class ObjectManager(object):
 	def object_from_json(self, object_type, object_json):
 		return self.class_manager.object_from_json(object_type, object_json)
 
+	def delete_from_cache(self, obj):
+		if isinstance(obj, list):
+			for o in obj:
+				self._delete_from_cache(o)
+		else:
+			self._delete_from_cache(obj)
+
+	def _delete_from_cache(self, obj):
+		object_type = obj.__class__.__name__.lower()
+		cache = self.cache_mapping[object_type]
+		obj = cache.pop(obj.id, None)
+		if obj:
+			log.debug("Cache RM: [%s %s]" % (object_type.capitalize(), obj.id))
+
 	def query_cache(self, object_type, id):
 		if object_type in self.skip_cache:
 			return None
@@ -111,6 +128,8 @@ class ObjectManager(object):
 			log.debug('Cache MISS: [%s %s]' % (object_type.capitalize(), id))
 
 	def update_caches(self, _json):
+		if 'tickets' in _json:
+			self._add_to_cache('ticket', _json)
 		if 'results' in _json:
 			self._cache_search_results(_json)
 		else:
@@ -120,7 +139,6 @@ class ObjectManager(object):
 	def _add_to_cache(self, object_type, object_json):
 		cache = self.cache_mapping[object_type]
 		multiple_key = object_type + 's'
-
 		if object_type in object_json:
 			obj = object_json[object_type]
 			log.debug("Caching: [%s %s]" % (object_type.capitalize(), obj['id']))
@@ -137,9 +155,8 @@ class ObjectManager(object):
 		log.debug("Caching %s search results" % len(results))
 		for result in results:
 			object_type = result['result_type']
-			clazz = self.class_manager.class_for_type(object_type)
 			cache = self.cache_mapping[object_type]
-			self._cache_item(cache, result, clazz)
+			self._cache_item(cache, result, object_type)
 
 	def _cache_item(self, cache, item_json, item_type):
 		cache[item_json['id']] = self.object_from_json(item_type, item_json)
@@ -196,15 +213,25 @@ class BaseApi(object):
 					sideload=False)),
 				payload={object_type: vars(items)})
 
-		return self._build_create_response(response.json())
+		return self._build_response(response.json())
 
 	def delete_items(self, endpoint, items):
 		if isinstance(items, list) or isinstance(items, ResultGenerator):
-			response = self._delete(self._get_url(endpoint=endpoint(destroy_ids=[i.id for i in items], sideload=False)))
+			# Consume the generator here so when we pass it to delete_from_cache
+			# there is something to delete.
+			items = [i for i in items]
+			response = self._delete(self._get_url(
+				endpoint=endpoint(
+					destroy_ids=[i.id for i in items],
+					sideload=False)))
 		else:
-			response = self._delete(self._get_url(endpoint=endpoint(id=items.id, sideload=False)))
-		if response.status_code != 200:
-			response.raise_for_status
+			response = self._delete(self._get_url(
+				endpoint=endpoint(
+					id=items.id,
+					sideload=False)))
+
+		self.object_manager.delete_from_cache(items)
+		return response
 
 	@cached(object_manager.user_cache)
 	def get_user(self, id, endpoint=Endpoint().users, object_type='user'):
@@ -228,8 +255,7 @@ class BaseApi(object):
 		headers = {'Content-type': 'application/json'}
 		response = requests.post(url, auth=self._get_auth(), json=payload, headers=headers)
 		self._check_and_cache_response(response)
-		response_json = response.json()
-		return self._build_create_response(response_json)
+		return self._build_response(response.json())
 
 	def _put(self, url, payload):
 		log.debug("PUT: " + url)
@@ -273,7 +299,7 @@ class BaseApi(object):
 		if 'next_page' in _json:
 			return ResultGenerator(self, object_type, _json)
 		else:
-			return self.object_manager.object_from_json(_json[object_type], _json)
+			return self.object_manager.object_from_json(object_type, _json)
 
 	def _get_paginated(self, endpoint, kwargs, object_type):
 		_json = self._query(endpoint=endpoint(**kwargs))
@@ -283,7 +309,7 @@ class BaseApi(object):
 		response = self._get(self._get_url(endpoint=endpoint))
 		return response.json()
 
-	def _build_create_response(self, response_json):
+	def _build_response(self, response_json):
 		if 'ticket' and 'audit' in response_json:
 			response = self._build_ticket_audit(response_json)
 		elif 'user' in response_json:
@@ -293,7 +319,7 @@ class BaseApi(object):
 		elif 'group' in response_json:
 			response = self.object_manager.object_from_json('group', response_json['group'])
 		else:
-			raise Exception("Unknown Response: " + str(response_json))
+			raise ZenpyException("Unknown Response: " + str(response_json))
 
 		return response
 
@@ -307,11 +333,17 @@ class BaseApi(object):
 
 	def _check_and_cache_response(self, response):
 		if response.status_code > 299 or response.status_code < 200:
+			# Try and get a nice error message
 			if 'application/json' in response.headers['content-type']:
-				error_msg = "\n".join(["%s: %s" % (k, v) for k, v in response.json().iteritems()])
-				raise Exception(error_msg)
-			else:
+				try:
+					raise APIException(json.dumps(response.json()))
+				except ValueError:
+					pass
+			# No can do, just raise the correct Exception.
+			try:
 				response.raise_for_status()
+			except requests.exceptions.HTTPError, e:
+				raise APIException(e.message)
 		else:
 			try:
 				self.object_manager.update_caches(response.json())
@@ -428,7 +460,8 @@ class ResultGenerator(object):
 		# Pagination
 		if self.position >= len(self.values):
 			if self._json.get('next_page'):
-				self._json = self.get_as_json(self._json._get('next_page'))
+
+				self._json = self.get_as_json(self._json.get('next_page'))
 				self.values = self._json[self.result_key]
 				self.position = 0
 			else:
