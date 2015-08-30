@@ -4,9 +4,8 @@ from zenpy.lib.api import UserApi, SimpleApi, TicketApi
 from zenpy.lib.endpoint import Endpoint
 
 log = logging.getLogger()
-log.setLevel(logging.DEBUG)
+log.setLevel(logging.INFO)
 ch = logging.StreamHandler(sys.stdout)
-ch.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(levelname)s - %(message)s')
 ch.setFormatter(formatter)
 log.addHandler(ch)
@@ -16,7 +15,9 @@ __author__ = 'facetoe'
 
 
 class Zenpy(object):
-	def __init__(self, subdomain, email, token):
+	def __init__(self, subdomain, email, token, debug=False):
+		if debug:
+			log.setLevel(logging.DEBUG)
 		endpoint = Endpoint()
 		self.users = UserApi(
 			subdomain,
