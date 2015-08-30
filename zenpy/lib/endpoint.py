@@ -63,6 +63,7 @@ class PrimaryEndpoint(BaseEndpoint):
 
 
 class SecondaryEndpoint(BaseEndpoint):
+
 	def __call__(self, **kwargs):
 		return self.endpoint % kwargs
 

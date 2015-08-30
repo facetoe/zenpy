@@ -32,19 +32,52 @@ class ApiObjectEncoder(JSONEncoder):
 	""" Class for encoding API objects"""
 
 	def default(self, o):
-		if issubclass(o.__class__, BaseApi):
-			return None
-		return o.to_dict()
+		if hasattr(o, 'to_dict'):
+			return o.to_dict()
 
 
-class BaseApi(object):
-	email = None
-	token = None
-	subdomain = None
-	protocol = None
-	version = None
-	base_url = None
+class ClassManager(object):
+	class_mapping = {
+		'ticket': Ticket,
+		'user': User,
+		'organization': Organization,
+		'group': Group,
+		'brand': Brand,
+		'topic': Topic,
+		'comment': Comment,
+		'attachment': Attachment,
+		'thumbnail': Thumbnail,
+		'metadata': Metadata,
+		'system': System,
+		'create': CreateEvent,
+		'notification': Notification,
+		'via': Via,
+		'source': Source,
+		'job_status': JobStatus,
+		'audit': Audit
+	}
 
+	def class_for_type(self, object_type):
+		if object_type not in self.class_mapping:
+			raise Exception("Unknown object_type: " + str(object_type))
+		else:
+			return self.class_mapping[object_type]
+
+	def object_from_json(self, object_type, object_json):
+		obj = self.class_for_type(object_type)
+		return self._object_from_json(obj, object_json)
+
+	def _object_from_json(self, object_type, object_json):
+		obj = object_type(api=self)
+		for key, value in object_json.iteritems():
+			if key in ('results', 'metadata', 'from'):
+				key = '_%s' % key
+			setattr(obj, key, value)
+		return obj
+
+
+class ObjectManager(object):
+	class_manager = ClassManager()
 	user_cache = LRUCache(maxsize=200)
 	organization_cache = LRUCache(maxsize=100)
 	group_cache = LRUCache(maxsize=100)
@@ -63,24 +96,64 @@ class BaseApi(object):
 		'comment': comment_cache
 	}
 
-	class_mapping = {
-		'ticket': Ticket,
-		'user': User,
-		'organization': Organization,
-		'group': Group,
-		'brand': Brand,
-		'topic': Topic,
-		'comment': Comment,
-		'attachment': Attachment,
-		'thumbnail': Thumbnail,
-		'metadata': Metadata,
-		'system': System,
-		'create': CreateEvent,
-		'notification': Notification,
-		'via': Via,
-		'source': Source,
-		'job_status': JobStatus
-	}
+	def object_from_json(self, object_type, object_json):
+		return self.class_manager.object_from_json(object_type, object_json)
+
+	def query_cache(self, object_type, id):
+		if object_type in self.skip_cache:
+			return None
+
+		cache = self.cache_mapping[object_type]
+		if id in cache:
+			log.debug("Cache HIT: [%s %s]" % (object_type.capitalize(), id))
+			return cache[id]
+		else:
+			log.debug('Cache MISS: [%s %s]' % (object_type.capitalize(), id))
+
+	def update_caches(self, _json):
+		if 'results' in _json:
+			self._cache_search_results(_json)
+		else:
+			for object_type in self.cache_mapping.keys():
+				self._add_to_cache(object_type, _json)
+
+	def _add_to_cache(self, object_type, object_json):
+		cache = self.cache_mapping[object_type]
+		multiple_key = object_type + 's'
+
+		if object_type in object_json:
+			obj = object_json[object_type]
+			log.debug("Caching: [%s %s]" % (object_type.capitalize(), obj['id']))
+			self._cache_item(cache, obj, object_type)
+
+		elif multiple_key in object_json:
+			objects = object_json[multiple_key]
+			log.debug("Caching %s %s " % (len(objects), multiple_key.capitalize()))
+			for obj in object_json[multiple_key]:
+				self._cache_item(cache, obj, object_type)
+
+	def _cache_search_results(self, _json):
+		results = _json['results']
+		log.debug("Caching %s search results" % len(results))
+		for result in results:
+			object_type = result['result_type']
+			clazz = self.class_manager.class_for_type(object_type)
+			cache = self.cache_mapping[object_type]
+			self._cache_item(cache, result, clazz)
+
+	def _cache_item(self, cache, item_json, item_type):
+		cache[item_json['id']] = self.object_from_json(item_type, item_json)
+
+
+class BaseApi(object):
+	email = None
+	token = None
+	subdomain = None
+	protocol = None
+	version = None
+	base_url = None
+
+	object_manager = ObjectManager()
 
 	def __init__(self, subdomain, email, token):
 		self.email = email
@@ -94,27 +167,36 @@ class BaseApi(object):
 		if isinstance(items, list) and items:
 			first_obj = next((x for x in items))
 			object_type = "%ss" % first_obj.__class__.__name__.lower()
-			return self._post(self._get_url(endpoint=endpoint(create_many=True, sideload=False)),
-			                  payload={object_type: [vars(i) for i in items]})
+			return self._post(self._get_url(
+				endpoint=endpoint(
+					create_many=True,
+					sideload=False)),
+				payload={object_type: [vars(i) for i in items]})
 		elif items:
 			object_type = "%s" % items.__class__.__name__.lower()
-			return self._post(self._get_url(endpoint=endpoint(sideload=False)),
-			                  payload={object_type: vars(items)})
+			return self._post(self._get_url(
+				endpoint=endpoint(
+					sideload=False)),
+				payload={object_type: vars(items)})
 
 	def update_items(self, endpoint, items):
 		if isinstance(items, list) or isinstance(items, ResultGenerator):
 			first_obj = next((x for x in items))
 			object_type = "%ss" % first_obj.__class__.__name__.lower()
-			response = self._put(self._get_url(endpoint=endpoint(update_many=True, sideload=False)),
-			                     payload={object_type: [vars(i) for i in items]})
-			response_json = response.json()
+			response = self._put(self._get_url(
+				endpoint=endpoint(
+					update_many=True,
+					sideload=False)),
+				payload={object_type: [vars(i) for i in items]})
 		else:
 			object_type = "%s" % items.__class__.__name__.lower()
-			response = self._put(self._get_url(endpoint=endpoint(id=items.id, sideload=False)),
-			                     payload={object_type: vars(items)})
-			response_json = response.json()
+			response = self._put(self._get_url(
+				endpoint=endpoint(
+					id=items.id,
+					sideload=False)),
+				payload={object_type: vars(items)})
 
-		return self._build_create_response(response_json)
+		return self._build_create_response(response.json())
 
 	def delete_items(self, endpoint, items):
 		if isinstance(items, list) or isinstance(items, ResultGenerator):
@@ -124,19 +206,19 @@ class BaseApi(object):
 		if response.status_code != 200:
 			response.raise_for_status
 
-	@cached(user_cache)
+	@cached(object_manager.user_cache)
 	def get_user(self, id, endpoint=Endpoint().users, object_type='user'):
 		return self._get_item(id, endpoint, object_type, sideload=True)
 
-	@cached(organization_cache)
+	@cached(object_manager.organization_cache)
 	def get_organization(self, id, endpoint=Endpoint().organizations, object_type='organization'):
 		return self._get_item(id, endpoint, object_type, sideload=True)
 
-	@cached(group_cache)
+	@cached(object_manager.group_cache)
 	def get_group(self, id, endpoint=Endpoint().groups, object_type='group'):
 		return self._get_item(id, endpoint, object_type, sideload=True)
 
-	@cached(brand_cache)
+	@cached(object_manager.brand_cache)
 	def get_brand(self, id, endpoint=Endpoint().brands, object_type='brand'):
 		return self._get_item(id, endpoint, object_type, sideload=True)
 
@@ -145,7 +227,7 @@ class BaseApi(object):
 		payload = json.loads(json.dumps(payload, cls=ApiObjectEncoder))
 		headers = {'Content-type': 'application/json'}
 		response = requests.post(url, auth=self._get_auth(), json=payload, headers=headers)
-		self._check_response(response)
+		self._check_and_cache_response(response)
 		response_json = response.json()
 		return self._build_create_response(response_json)
 
@@ -154,17 +236,17 @@ class BaseApi(object):
 		payload = json.loads(json.dumps(payload, cls=ApiObjectEncoder))
 		headers = {'Content-type': 'application/json'}
 		response = requests.put(url, auth=self._get_auth(), json=payload, headers=headers)
-		return self._check_response(response)
+		return self._check_and_cache_response(response)
 
 	def _get(self, url, stream=False):
 		log.debug("GET: " + url)
 		response = requests.get(url, auth=self._get_auth(), stream=stream)
-		return self._check_response(response)
+		return self._check_and_cache_response(response)
 
 	def _delete(self, url):
 		log.debug("DELETE: " + url)
 		response = requests.delete(url, auth=self._get_auth())
-		return self._check_response(response)
+		return self._check_and_cache_response(response)
 
 	def _get_items(self, endpoint, object_type, kwargs):
 		sideload = 'sideload' not in kwargs or ('sideload' in kwargs and kwargs['sideload'])
@@ -174,7 +256,7 @@ class BaseApi(object):
 		if 'ids' in kwargs:
 			cached_objects = []
 			for id in kwargs['ids']:
-				obj = self._query_cache(object_type, id)
+				obj = self.object_manager.query_cache(object_type, id)
 				if obj:
 					cached_objects.append(obj)
 				else:
@@ -184,13 +266,6 @@ class BaseApi(object):
 		return self._get_paginated(endpoint, kwargs, object_type)
 
 	def _get_item(self, id, endpoint, object_type, sideload=True):
-
-		# If this is called with an id from a subclass
-		# the cache won't be checked by the decorator, so check it explicitly.
-		cached_item = self._query_cache(object_type, id)
-		if cached_item:
-			return cached_item
-
 		_json = self._query(endpoint=endpoint(id=id, sideload=sideload))
 
 		# Executing a secondary endpoint with an ID will lead here.
@@ -198,13 +273,10 @@ class BaseApi(object):
 		if 'next_page' in _json:
 			return ResultGenerator(self, object_type, _json)
 		else:
-			self._update_caches(_json)
-			clazz = self._class_for_type(object_type)
-			return self._object_from_json(clazz, _json[object_type])
+			return self.object_manager.object_from_json(_json[object_type], _json)
 
 	def _get_paginated(self, endpoint, kwargs, object_type):
 		_json = self._query(endpoint=endpoint(**kwargs))
-		self._update_caches(_json)
 		return ResultGenerator(self, object_type, _json)
 
 	def _query(self, endpoint):
@@ -215,26 +287,25 @@ class BaseApi(object):
 		if 'ticket' and 'audit' in response_json:
 			response = self._build_ticket_audit(response_json)
 		elif 'user' in response_json:
-			response = self.object_from_json('user', response_json['user'])
+			response = self.object_manager.object_from_json('user', response_json['user'])
 		elif 'job_status' in response_json:
-			response = self.object_from_json('job_status', response_json['job_status'])
+			response = self.object_manager.object_from_json('job_status', response_json['job_status'])
 		elif 'group' in response_json:
-			response = self.object_from_json('group', response_json['group'])
+			response = self.object_manager.object_from_json('group', response_json['group'])
 		else:
 			raise Exception("Unknown Response: " + str(response_json))
-			response = None
 
 		return response
 
 	def _build_ticket_audit(self, response_json):
 		ticket_audit = TicketAudit()
 		if 'ticket' in response_json:
-			ticket_audit.ticket = self._object_from_json(Ticket, response_json['ticket'])
+			ticket_audit.ticket = self.object_manager.object_from_json('ticket', response_json['ticket'])
 		if 'audit' in response_json:
-			ticket_audit.audit = self._object_from_json(Audit, response_json['audit'])
+			ticket_audit.audit = self.object_manager.object_from_json('audit', response_json['audit'])
 		return ticket_audit
 
-	def _check_response(self, response):
+	def _check_and_cache_response(self, response):
 		if response.status_code > 299 or response.status_code < 200:
 			if 'application/json' in response.headers['content-type']:
 				error_msg = "\n".join(["%s: %s" % (k, v) for k, v in response.json().iteritems()])
@@ -243,81 +314,16 @@ class BaseApi(object):
 				response.raise_for_status()
 		else:
 			try:
-				_json = response.json()
-				self._update_caches(_json)
+				self.object_manager.update_caches(response.json())
 			except ValueError:
 				pass
 			return response
-
-	def _class_for_type(self, object_type):
-		if object_type not in self.class_mapping:
-			raise Exception("Unknown object_type: " + str(object_type))
-		else:
-			return self.class_mapping[object_type]
-
-	def object_from_json(self, object_type, object_json):
-		obj = self._class_for_type(object_type)
-		return self._object_from_json(obj, object_json)
-
-	def _object_from_json(self, object_type, object_json):
-		obj = object_type(api=self)
-		for key, value in object_json.iteritems():
-			if key in ('results', 'metadata', 'from'):
-				key = '_%s' % key
-			setattr(obj, key, value)
-		return obj
 
 	def _get_url(self, endpoint=''):
 		return "%(protocol)s://%(subdomain)s.zendesk.com/api/%(version)s/" % self.__dict__ + endpoint
 
 	def _get_auth(self):
 		return self.email + '/token', self.token
-
-	def _query_cache(self, object_type, id):
-		if object_type in self.skip_cache:
-			return None
-
-		cache = self.cache_mapping[object_type]
-		if id in cache:
-			log.debug("Cache HIT: [%s %s]" % (object_type.capitalize(), id))
-			return cache[id]
-		else:
-			log.debug('Cache MISS: [%s %s]' % (object_type.capitalize(), id))
-
-	def _cache_item(self, cache, item_json, item_type):
-		cache[item_json['id']] = self._object_from_json(item_type, item_json)
-
-	def _add_to_cache(self, object_type, object_json):
-		cache = self.cache_mapping[object_type]
-		clazz = self._class_for_type(object_type)
-		multiple_key = object_type + 's'
-
-		if object_type in object_json:
-			obj = object_json[object_type]
-			log.debug("Caching: [%s %s]" % (object_type.capitalize(), obj['id']))
-			self._cache_item(cache, obj, clazz)
-
-		elif multiple_key in object_json:
-			objects = object_json[multiple_key]
-			log.debug("Caching %s %s " % (len(objects), multiple_key.capitalize()))
-			for obj in object_json[multiple_key]:
-				self._cache_item(cache, obj, clazz)
-
-	def _update_caches(self, _json):
-		if 'results' in _json:
-			self._cache_search_results(_json)
-		else:
-			for object_type in self.cache_mapping.keys():
-				self._add_to_cache(object_type, _json)
-
-	def _cache_search_results(self, _json):
-		results = _json['results']
-		log.debug("Caching %s search results" % len(results))
-		for result in results:
-			object_type = result['result_type']
-			clazz = self.class_mapping[object_type]
-			cache = self.cache_mapping[object_type]
-			self._cache_item(cache, result, clazz)
 
 
 class ModifiableApi(BaseApi):
@@ -432,10 +438,9 @@ class ResultGenerator(object):
 			raise StopIteration()
 
 		item_json = self.values[self.position]
-		self.api._update_caches(item_json)
 		self.position += 1
 		if 'result_type' in item_json:
 			object_type = item_json.pop('result_type')
 		else:
 			object_type = self.result_key[:-1]
-		return self.api.object_from_json(object_type, item_json)
+		return self.api.object_manager.object_from_json(object_type, item_json)
