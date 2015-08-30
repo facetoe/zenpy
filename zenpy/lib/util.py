@@ -25,3 +25,4 @@ def cached(cache):
 		return inner
 
 	return outer
+
