@@ -4,6 +4,9 @@ __author__ = 'facetoe'
 
 
 class BaseEndpoint(object):
+	"""
+	BaseEndpoint supplies common formatting operations.
+	"""
 	def __init__(self, endpoint, sideload=None):
 		self.endpoint = endpoint
 		self.sideload = sideload or []
@@ -33,6 +36,10 @@ class BaseEndpoint(object):
 
 
 class PrimaryEndpoint(BaseEndpoint):
+	"""
+	A PrimaryEndpoint takes an id or list of ids and either returns the objects
+	associated with them or performs actions on them (eg, update/delete).
+	"""
 	def __call__(self, **kwargs):
 		query = ""
 		modifiers = []
@@ -63,12 +70,25 @@ class PrimaryEndpoint(BaseEndpoint):
 
 
 class SecondaryEndpoint(BaseEndpoint):
-
+	"""
+	A SecondaryEndpoint takes a single ID and returns the
+	object associated with it.
+	"""
 	def __call__(self, **kwargs):
 		return self.endpoint % kwargs
 
 
 class SearchEndpoint(BaseEndpoint):
+	"""
+	The SearchEndpoint is special as it takes a great variety of parameters.
+	The various comparisons map to the Zendesk Search documentation as follows:
+
+		keyword= : (equality)
+		*_greater_than = >
+		*_less_than = <
+		*_after = >
+		*_before = <
+	"""
 	def __call__(self, **kwargs):
 
 		renamed_kwargs = dict()
@@ -87,12 +107,15 @@ class SearchEndpoint(BaseEndpoint):
 			elif '_less_than' in key:
 				renamed_kwargs[key.replace('_less_than', '<')] = kwargs[key]
 			else:
-				renamed_kwargs.update({key + ':': value})  # Equal to , eg subject:party
+				renamed_kwargs.update({key + ':': value})
 
 		return self.endpoint + self._format(**renamed_kwargs)
 
 
 class Endpoint(object):
+	"""
+	The Endpoint object ties it all together.
+	"""
 	def __init__(self):
 		self.users = PrimaryEndpoint('users', ['organizations', 'abilities', 'roles', 'identities', 'groups'])
 		self.users.groups = SecondaryEndpoint('users/%(id)s/groups.json')

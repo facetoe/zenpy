@@ -15,6 +15,9 @@ log = logging.getLogger(__name__)
 
 
 class BaseApi(object):
+	"""
+	Base class for API.
+	"""
 	email = None
 	token = None
 	subdomain = None
@@ -33,6 +36,7 @@ class BaseApi(object):
 		self.base_url = self._get_url()
 
 	def create_items(self, endpoint, items):
+		# 'items' is a bit misleading, it's either an object or a list
 		if isinstance(items, list) and items:
 			first_obj = next((x for x in items))
 			object_type = "%ss" % first_obj.__class__.__name__.lower()
@@ -68,22 +72,23 @@ class BaseApi(object):
 		return self._build_response(response.json())
 
 	def delete_items(self, endpoint, items):
-		if isinstance(items, list) or isinstance(items, ResultGenerator):
+		if (isinstance(items, list) or isinstance(items, ResultGenerator)) and len(items) == 0:
 			# Consume the generator here so when we pass it to delete_from_cache
 			# there is something to delete.
 			items = [i for i in items]
-			response = self._delete(self._get_url(
+			self._delete(self._get_url(
 				endpoint=endpoint(
 					destroy_ids=[i.id for i in items],
 					sideload=False)))
-		else:
-			response = self._delete(self._get_url(
+		elif items:
+			self._delete(self._get_url(
 				endpoint=endpoint(
 					id=items.id,
 					sideload=False)))
+		else:
+			return
 
 		self.object_manager.delete_from_cache(items)
-		return response
 
 	@cached(object_manager.user_cache)
 	def get_user(self, _id, endpoint=Endpoint().users, object_type='user'):
@@ -128,11 +133,15 @@ class BaseApi(object):
 
 	def _get_items(self, endpoint, object_type, kwargs):
 		sideload = 'sideload' not in kwargs or ('sideload' in kwargs and kwargs['sideload'])
+
+		# If an ID is present a single object has been requested
 		if 'id' in kwargs:
 			return self._get_item(kwargs['id'], endpoint, object_type, sideload)
 
 		if 'ids' in kwargs:
 			cached_objects = []
+			# Check to see if we have all objects in the cache.
+			# If we are missing even one we need to request them all again.
 			for _id in kwargs['ids']:
 				obj = self.object_manager.query_cache(object_type, _id)
 				if obj:
@@ -141,6 +150,7 @@ class BaseApi(object):
 					return self._get_paginated(endpoint, kwargs, object_type)
 			return cached_objects
 
+		# If we get here all bets are off, best return a paginated response
 		return self._get_paginated(endpoint, kwargs, object_type)
 
 	def _get_item(self, _id, endpoint, object_type, sideload=True):
@@ -162,6 +172,8 @@ class BaseApi(object):
 		return response.json()
 
 	def _build_response(self, response_json):
+		# When updating and deleting API objects various responses can be returned
+		# We can figure out what we have by the keys in the returned JSON
 		if 'ticket' and 'audit' in response_json:
 			response = self._build_ticket_audit(response_json)
 		elif 'user' in response_json:
@@ -211,6 +223,11 @@ class BaseApi(object):
 
 
 class ModifiableApi(BaseApi):
+	"""
+	Add an Endpoint to direct the update/create/delete functions
+	to the correct API location.
+	"""
+
 	def __init__(self, subdomain, email, token, endpoint):
 		BaseApi.__init__(self, subdomain, email, token)
 		self.endpoint = endpoint
@@ -226,6 +243,10 @@ class ModifiableApi(BaseApi):
 
 
 class SimpleApi(ModifiableApi):
+	"""
+	A SimpleApi doesn't need any special syntax for the calls or additional methods.
+	"""
+
 	def __init__(self, subdomain, email, token, endpoint, object_type):
 		BaseApi.__init__(self, subdomain, email, token)
 		self.endpoint = endpoint
@@ -236,6 +257,10 @@ class SimpleApi(ModifiableApi):
 
 
 class UserApi(ModifiableApi):
+	"""
+	The UserApi adds some User specific functionality
+	"""
+
 	def __init__(self, subdomain, email, token, endpoint):
 		BaseApi.__init__(self, subdomain, email, token)
 		self.endpoint = endpoint
@@ -261,6 +286,10 @@ class UserApi(ModifiableApi):
 
 
 class TicketApi(ModifiableApi):
+	"""
+	The TicketApi adds some Ticket specific functionality
+	"""
+
 	def __init__(self, subdomain, email, token, endpoint):
 		BaseApi.__init__(self, subdomain, email, token)
 		self.endpoint = endpoint

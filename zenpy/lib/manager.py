@@ -36,6 +36,11 @@ class ApiObjectEncoder(JSONEncoder):
 
 
 class ClassManager(object):
+	"""
+	ClassManager provides methods for converting JSON objects
+	to the correct Python ones.
+	"""
+
 	class_mapping = {
 		'ticket': Ticket,
 		'user': User,
@@ -76,6 +81,11 @@ class ClassManager(object):
 
 
 class ObjectManager(object):
+	"""
+	The ObjectManager is responsible for maintaining various caches
+	and also provides access to the ClassManager
+	"""
+
 	class_manager = ClassManager()
 	user_cache = LRUCache(maxsize=200)
 	organization_cache = LRUCache(maxsize=100)
