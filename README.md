@@ -8,9 +8,10 @@ The wrapper supports both reading and writing from the API.
 
 
 * [Usage](#usage)
+*  [Searching the API](#searching-the-api)
 * [Querying the API](#querying-the-api)
-* [Searching the API](#searching-the-api)
 * [Creating, Updating and Deleting API Objects](#creating-updating-and-deleting-api-objects)
+* [Bulk Operations](#bulk-operations)
 * [Caching](#caching)
 
 # Usage
@@ -18,6 +19,36 @@ First, create a Zenpy object:
 ```python
 zenpy = Zenpy('yourdomain', 'youremail', 'yourtoken')
 ```
+
+### Searching the API
+
+All of the search paramaters defined in the Zendesk search documentation (https://support.zendesk.com/hc/en-us/articles/203663226) should work fine in Zenpy. Searches are performed by passing keyword arguments to the `search` endpoint. The keyword arguments line up with the Zendesk search documentation and are mapped as follows:
+```
+		keyword			= : (equality)
+		*_greater_than 	= >
+		*_less_than 	= <
+		*_after 		= >
+		*_before 		= <
+		minus			= - (negation)
+		*_between		= > < (only works with dates)
+		query           = literal string, eg "product"
+```
+
+For example, the code:
+
+```python
+yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
+today = datetime.datetime.now()
+for ticket in zenpy.search(query="zenpy", created_between=[yesterday, today], type='ticket', minus='negated'):
+	print ticket
+```
+
+Would generate the following API call:
+
+```
+/api/v2/search.json?query=zenpy+created>2015-08-29 created<2015-08-30+type:ticket+-negated
+```
+
 
 ### Querying the API
 The Zenpy object contains methods for accessing the following top level API endpoints: `search`, `groups`, `users`, `organizations` and `tickets`. The `groups`, `users`, `organizations` and `tickets` top level endpoints are pretty simple, and they can be called in one of two ways - no arguments returns all results (as a generator):
@@ -49,34 +80,6 @@ for organization in zenpy.users.organizations(id=1276936927):
 
 You could do so with these second level endpoints. 
 
-### Searching the API
-
-All of the search paramaters defined in the Zendesk search documentation (https://support.zendesk.com/hc/en-us/articles/203663226) should work fine in Zenpy. Searches are performed by passing keyword arguments to the `search` endpoint. The keyword arguments line up with the Zendesk search documentation and are mapped as follows:
-```
-keyword= : (equality)
-*_greater_than = >
-*_less_than = <
-*_after = >
-*_before = <
-```
-
-
-For example, the code:
-
-```python
-yesterday = datetime.now() - timedelta(days=1)
-for ticket in zenpy.search(type='ticket', status_greater_than='new', created_before=yesterday):
-	print ticket.subject
-```
-
-Would generate the following API call:
-
-```
-/api/v2/search.json?query=status>new+created<2015-08-28+type:ticket
-```
-
-
-
 ### Creating, Updating and Deleting API Objects
 
 Many endpoints support the `create`, `update` and `delete` operations. For example we can create a `User` with the following code:
@@ -88,7 +91,7 @@ created_user = zenpy.users.create(user)
 
 The `create` method returns the created object with it's various attributes (such as `id`/ `created_at`) filled in by Zendesk.
 
-We can update this user by modifying it's attributes and calling the `users.update` method:
+We can update this user by modifying it's attributes and calling the `update` method:
 
 ```python
 created_user.role = 'agent'
@@ -116,6 +119,17 @@ for ticket in zenpy.search(type='ticket', assignee='John Doe'):
 ```
 
 Deleting  ticket returns nothing on success and raises an `Exception` on failure. 
+
+### Bulk Operations
+
+Zendesk supports bulk creating, updating and deleting API objects, and so does Zenpy. The `create`, `update` and `delete` methods all accept either an object, a list of objects or a `ResultGenerator`. For example, the code:
+
+```python
+job_status = zenpy.tickets.create([Ticket(subject="Ticket%s" % i, description="Bulk")for i in range(0, 20)])
+```
+will create 20 tickets in one API call. When performing bulk operations, a `JobStatus` object is returned (https://developer.zendesk.com/rest_api/docs/core/job_statuses). The only exception to this is bulk `delete` operations, which return nothing on success and raise a `APIException` on failure.
+
+It is important to note that these bulk endpoints have restrictions on the number of objects that can be processed at one time (usually 100). Zenpy makes no attempt to regulate this. Most endpoints will throw an `APIException` if that limit is exceeded, however some simply process the first N objects and silently discard the rest. 
 
 
 ### Caching
@@ -152,6 +166,7 @@ Contributions are very welcome.
 
 
  
+
 
 
 
