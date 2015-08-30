@@ -1,4 +1,5 @@
 from datetime import datetime
+from zenpy.lib.exception import ZenpyException
 
 __author__ = 'facetoe'
 
@@ -22,8 +23,8 @@ class BaseEndpoint(object):
 		return "%s/%s%s" % (endpoint, 'destroy_many.json?ids=', self._format_many(ids))
 
 	@staticmethod
-	def _format(**kwargs):
-		return '+'.join(['%s%s' % (key, value) for (key, value) in kwargs.items()])
+	def _format(*args, **kwargs):
+		return '+'.join(['%s%s' % (key, value) for (key, value) in kwargs.items()] + [a for a in args])
 
 	@staticmethod
 	def _format_many(items):
@@ -83,33 +84,67 @@ class SearchEndpoint(BaseEndpoint):
 	The SearchEndpoint is special as it takes a great variety of parameters.
 	The various comparisons map to the Zendesk Search documentation as follows:
 
-		keyword= : (equality)
-		*_greater_than = >
-		*_less_than = <
-		*_after = >
-		*_before = <
+		keyword			= : (equality)
+		*_greater_than 	= >
+		*_less_than 	= <
+		*_after 		= >
+		*_before 		= <
+		minus			= - (negation)
+		*_between		= > < (only works with dates)
 	"""
+
+	ZENDESK_DATE_FORMAT = "%Y-%m-%d"
+
 	def __call__(self, **kwargs):
 
 		renamed_kwargs = dict()
+		args = list()
 		for key, value in kwargs.iteritems():
+			if key.endswith('_between'):
+				renamed_kwargs[''] = self.format_between(key, value)
+				continue
+			elif key == 'query':
+				continue
+			elif key == 'minus':
+				if isinstance(value, list):
+					[args.append("-%s" % v) for v in value]
+				else:
+					args.append("-%s" % value)
+				continue
+
 			if isinstance(value, datetime):
-				kwargs[key] = value.strftime("%Y-%m-%d")
+				kwargs[key] = value.strftime(self.ZENDESK_DATE_FORMAT)
 			elif isinstance(value, list):
 				value = self._format_many(value)
 
-			if '_after' in key:
+			if key.endswith('_after'):
 				renamed_kwargs[key.replace('_after', '>')] = kwargs[key]
-			elif '_before' in key:
+			elif key.endswith('_before'):
 				renamed_kwargs[key.replace('_before', '<')] = kwargs[key]
-			elif '_greater_than' in key:
+			elif key.endswith('_greater_than'):
 				renamed_kwargs[key.replace('_greater_than', '>')] = kwargs[key]
-			elif '_less_than' in key:
+			elif key.endswith('_less_than'):
 				renamed_kwargs[key.replace('_less_than', '<')] = kwargs[key]
 			else:
 				renamed_kwargs.update({key + ':': value})
 
-		return self.endpoint + self._format(**renamed_kwargs)
+		if 'query' in kwargs:
+			endpoint = self.endpoint + 'query=' + kwargs['query'] + '+'
+		else:
+			endpoint = self.endpoint + 'query='
+
+		return endpoint + self._format(*args, **renamed_kwargs)
+
+	def format_between(self, key, value):
+		if not isinstance(value, list):
+			raise ZenpyException("*_between requires a list!")
+		elif not len(value) == 2:
+			raise ZenpyException("*_between requires exactly 2 items!")
+		elif not all([isinstance(d, datetime) for d in value]):
+			raise ZenpyException("*_between only works with dates!")
+		key = key.replace('_between', '')
+		dates = [v.strftime(self.ZENDESK_DATE_FORMAT) for v in value]
+		return "%s>%s %s<%s" % (key, dates[0], key, dates[1])
 
 
 class Endpoint(object):
@@ -132,5 +167,5 @@ class Endpoint(object):
 		self.tickets.recent = SecondaryEndpoint('tickets/recent.json')
 		self.attachments = PrimaryEndpoint('attachments')
 		self.organizations = PrimaryEndpoint('organizations')
-		self.search = SearchEndpoint('search.json?query=')
+		self.search = SearchEndpoint('search.json?')
 		self.job_statuses = PrimaryEndpoint('job_statuses')

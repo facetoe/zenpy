@@ -72,7 +72,7 @@ class BaseApi(object):
 		return self._build_response(response.json())
 
 	def delete_items(self, endpoint, items):
-		if (isinstance(items, list) or isinstance(items, ResultGenerator)) and len(items) == 0:
+		if (isinstance(items, list) or isinstance(items, ResultGenerator)) and len(items) > 0:
 			# Consume the generator here so when we pass it to delete_from_cache
 			# there is something to delete.
 			items = [i for i in items]
