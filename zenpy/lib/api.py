@@ -86,20 +86,20 @@ class BaseApi(object):
 		return response
 
 	@cached(object_manager.user_cache)
-	def get_user(self, id, endpoint=Endpoint().users, object_type='user'):
-		return self._get_item(id, endpoint, object_type, sideload=True)
+	def get_user(self, _id, endpoint=Endpoint().users, object_type='user'):
+		return self._get_item(_id, endpoint, object_type, sideload=True)
 
 	@cached(object_manager.organization_cache)
-	def get_organization(self, id, endpoint=Endpoint().organizations, object_type='organization'):
-		return self._get_item(id, endpoint, object_type, sideload=True)
+	def get_organization(self, _id, endpoint=Endpoint().organizations, object_type='organization'):
+		return self._get_item(_id, endpoint, object_type, sideload=True)
 
 	@cached(object_manager.group_cache)
-	def get_group(self, id, endpoint=Endpoint().groups, object_type='group'):
-		return self._get_item(id, endpoint, object_type, sideload=True)
+	def get_group(self, _id, endpoint=Endpoint().groups, object_type='group'):
+		return self._get_item(_id, endpoint, object_type, sideload=True)
 
 	@cached(object_manager.brand_cache)
-	def get_brand(self, id, endpoint=Endpoint().brands, object_type='brand'):
-		return self._get_item(id, endpoint, object_type, sideload=True)
+	def get_brand(self, _id, endpoint=Endpoint().brands, object_type='brand'):
+		return self._get_item(_id, endpoint, object_type, sideload=True)
 
 	def _post(self, url, payload):
 		log.debug("POST: " + url)
@@ -133,8 +133,8 @@ class BaseApi(object):
 
 		if 'ids' in kwargs:
 			cached_objects = []
-			for id in kwargs['ids']:
-				obj = self.object_manager.query_cache(object_type, id)
+			for _id in kwargs['ids']:
+				obj = self.object_manager.query_cache(object_type, _id)
 				if obj:
 					cached_objects.append(obj)
 				else:
@@ -143,8 +143,8 @@ class BaseApi(object):
 
 		return self._get_paginated(endpoint, kwargs, object_type)
 
-	def _get_item(self, id, endpoint, object_type, sideload=True):
-		_json = self._query(endpoint=endpoint(id=id, sideload=sideload))
+	def _get_item(self, _id, endpoint, object_type, sideload=True):
+		_json = self._query(endpoint=endpoint(id=_id, sideload=sideload))
 
 		# Executing a secondary endpoint with an ID will lead here.
 		# If the result is paginated return a generator

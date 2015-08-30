@@ -21,9 +21,11 @@ from cachetools import LRUCache, TTLCache
 from json import JSONEncoder
 
 import logging
+
 log = logging.getLogger(__name__)
 
 __author__ = 'facetoe'
+
 
 class ApiObjectEncoder(JSONEncoder):
 	""" Class for encoding API objects"""
@@ -110,16 +112,16 @@ class ObjectManager(object):
 		if obj:
 			log.debug("Cache RM: [%s %s]" % (object_type.capitalize(), obj.id))
 
-	def query_cache(self, object_type, id):
+	def query_cache(self, object_type, _id):
 		if object_type in self.skip_cache:
 			return None
 
 		cache = self.cache_mapping[object_type]
-		if id in cache:
-			log.debug("Cache HIT: [%s %s]" % (object_type.capitalize(), id))
-			return cache[id]
+		if _id in cache:
+			log.debug("Cache HIT: [%s %s]" % (object_type.capitalize(), _id))
+			return cache[_id]
 		else:
-			log.debug('Cache MISS: [%s %s]' % (object_type.capitalize(), id))
+			log.debug('Cache MISS: [%s %s]' % (object_type.capitalize(), _id))
 
 	def update_caches(self, _json):
 		if 'tickets' in _json:

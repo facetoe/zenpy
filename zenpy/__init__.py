@@ -18,52 +18,63 @@ __author__ = 'facetoe'
 class Zenpy(object):
 	def __init__(self, subdomain, email, token):
 		endpoint = Endpoint()
-		self.users = UserApi(subdomain,
-		                     email,
-		                     token,
-		                     endpoint=endpoint.users)
-		self.groups = SimpleApi(subdomain,
-		                        email,
-		                        token,
-		                        endpoint=endpoint.groups,
-		                        object_type='group')
+		self.users = UserApi(
+			subdomain,
+			email,
+			token,
+			endpoint=endpoint.users)
 
-		self.organizations = SimpleApi(subdomain,
-		                               email,
-		                               token,
-		                               endpoint=endpoint.organizations,
-		                               object_type='organization')
+		self.groups = SimpleApi(
+			subdomain,
+			email,
+			token,
+			endpoint=endpoint.groups,
+			object_type='group')
 
-		self.tickets = TicketApi(subdomain,
-		                         email,
-		                         token,
-		                         endpoint=endpoint.tickets)
+		self.organizations = SimpleApi(
+			subdomain,
+			email,
+			token,
+			endpoint=endpoint.organizations,
+			object_type='organization')
 
-		self.search = SimpleApi(subdomain,
-		                        email,
-		                        token,
-		                        endpoint=endpoint.search,
-		                        object_type='results')
+		self.tickets = TicketApi(
+			subdomain,
+			email,
+			token,
+			endpoint=endpoint.tickets)
 
-		self.topics = SimpleApi(subdomain,
-		                        email,
-		                        token,
-		                        endpoint=endpoint.topics,
-		                        object_type='topic')
+		self.search = SimpleApi(
+			subdomain,
+			email,
+			token,
+			endpoint=endpoint.search,
+			object_type='results')
 
-		self.attachments = SimpleApi(subdomain,
-		                             email,
-		                             token,
-		                             endpoint=endpoint.attachments,
-		                             object_type='attachment')
-		self.brands = SimpleApi(subdomain,
-		                             email,
-		                             token,
-		                             endpoint=endpoint.brands,
-		                             object_type='brand')
+		self.topics = SimpleApi(
+			subdomain,
+			email,
+			token,
+			endpoint=endpoint.topics,
+			object_type='topic')
 
-		self.job_status = SimpleApi(subdomain,
-		                            email,
-		                            token,
-		                            endpoint=endpoint.job_statuses,
-		                            object_type='job_status')
+		self.attachments = SimpleApi(
+			subdomain,
+			email,
+			token,
+			endpoint=endpoint.attachments,
+			object_type='attachment')
+
+		self.brands = SimpleApi(
+			subdomain,
+			email,
+			token,
+			endpoint=endpoint.brands,
+			object_type='brand')
+
+		self.job_status = SimpleApi(
+			subdomain,
+			email,
+			token,
+			endpoint=endpoint.job_statuses,
+			object_type='job_status')

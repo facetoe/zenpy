@@ -1,7 +1,9 @@
 __author__ = 'facetoe'
 
 import logging
+
 log = logging.getLogger(__name__)
+
 
 class ResultGenerator(object):
 	api = None
