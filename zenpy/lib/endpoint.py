@@ -91,6 +91,7 @@ class SearchEndpoint(BaseEndpoint):
 		*_before 		= <
 		minus			= - (negation)
 		*_between		= > < (only works with dates)
+		query			= literal string, eg "product"
 	"""
 
 	ZENDESK_DATE_FORMAT = "%Y-%m-%d"
