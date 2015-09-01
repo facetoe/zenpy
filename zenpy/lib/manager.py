@@ -26,6 +26,12 @@ log = logging.getLogger(__name__)
 
 __author__ = 'facetoe'
 
+user_cache = LRUCache(maxsize=200)
+organization_cache = LRUCache(maxsize=100)
+group_cache = LRUCache(maxsize=100)
+brand_cache = LRUCache(maxsize=100)
+ticket_cache = TTLCache(maxsize=100, ttl=30)
+comment_cache = TTLCache(maxsize=100, ttl=30)
 
 class ApiObjectEncoder(JSONEncoder):
 	""" Class for encoding API objects"""
@@ -61,6 +67,9 @@ class ClassManager(object):
 		'audit': Audit
 	}
 
+	def __init__(self, api):
+		self.api = api
+
 	def object_from_json(self, object_type, object_json):
 		obj = self._class_for_type(object_type)
 		return self._object_from_json(obj, object_json)
@@ -72,27 +81,18 @@ class ClassManager(object):
 			return self.class_mapping[object_type]
 
 	def _object_from_json(self, object_type, object_json):
-		obj = object_type(api=self)
+		obj = object_type(api=self.api)
 		for key, value in object_json.iteritems():
 			if key in ('results', 'metadata', 'from'):
 				key = '_%s' % key
 			setattr(obj, key, value)
 		return obj
 
-
 class ObjectManager(object):
 	"""
 	The ObjectManager is responsible for maintaining various caches
 	and also provides access to the ClassManager
 	"""
-
-	class_manager = ClassManager()
-	user_cache = LRUCache(maxsize=200)
-	organization_cache = LRUCache(maxsize=100)
-	group_cache = LRUCache(maxsize=100)
-	brand_cache = LRUCache(maxsize=100)
-	ticket_cache = TTLCache(maxsize=100, ttl=30)
-	comment_cache = TTLCache(maxsize=100, ttl=30)
 
 	skip_cache = ('job_status', 'attachment')
 
@@ -104,6 +104,9 @@ class ObjectManager(object):
 		'ticket': ticket_cache,
 		'comment': comment_cache
 	}
+
+	def __init__(self, api):
+		self.class_manager = ClassManager(api)
 
 	def object_from_json(self, object_type, object_json):
 		return self.class_manager.object_from_json(object_type, object_json)

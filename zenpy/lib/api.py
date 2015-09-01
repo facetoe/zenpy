@@ -3,7 +3,6 @@ __author__ = 'facetoe'
 from zenpy.lib.manager import ObjectManager, ApiObjectEncoder
 from zenpy.lib.objects.ticket_audit import TicketAudit
 from zenpy.lib.exception import ZenpyException, APIException
-from zenpy.lib.util import cached
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.generator import ResultGenerator
 
@@ -25,8 +24,6 @@ class BaseApi(object):
 	version = None
 	base_url = None
 
-	object_manager = ObjectManager()
-
 	def __init__(self, subdomain, email, token):
 		self.email = email
 		self.token = token
@@ -34,6 +31,7 @@ class BaseApi(object):
 		self.protocol = 'https'
 		self.version = 'v2'
 		self.base_url = self._get_url()
+		self.object_manager = ObjectManager(self)
 
 	def create_items(self, endpoint, items):
 		# 'items' is a bit misleading, it's either an object or a list
@@ -90,19 +88,15 @@ class BaseApi(object):
 
 		self.object_manager.delete_from_cache(items)
 
-	@cached(object_manager.user_cache)
 	def get_user(self, _id, endpoint=Endpoint().users, object_type='user'):
 		return self._get_item(_id, endpoint, object_type, sideload=True)
 
-	@cached(object_manager.organization_cache)
 	def get_organization(self, _id, endpoint=Endpoint().organizations, object_type='organization'):
 		return self._get_item(_id, endpoint, object_type, sideload=True)
 
-	@cached(object_manager.group_cache)
 	def get_group(self, _id, endpoint=Endpoint().groups, object_type='group'):
 		return self._get_item(_id, endpoint, object_type, sideload=True)
 
-	@cached(object_manager.brand_cache)
 	def get_brand(self, _id, endpoint=Endpoint().brands, object_type='brand'):
 		return self._get_item(_id, endpoint, object_type, sideload=True)
 
@@ -154,6 +148,11 @@ class BaseApi(object):
 		return self._get_paginated(endpoint, kwargs, object_type)
 
 	def _get_item(self, _id, endpoint, object_type, sideload=True):
+		# Check if we already have this item in the cache
+		item = self.object_manager.query_cache(object_type, _id)
+		if item:
+			return item
+
 		_json = self._query(endpoint=endpoint(id=_id, sideload=sideload))
 
 		# Executing a secondary endpoint with an ID will lead here.
