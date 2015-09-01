@@ -155,7 +155,6 @@ class BaseApi(object):
 
 		_json = self._query(endpoint=endpoint(id=_id, sideload=sideload))
 
-		# Executing a secondary endpoint with an ID will lead here.
 		# If the result is paginated return a generator
 		if 'next_page' in _json:
 			return ResultGenerator(self, object_type, _json)

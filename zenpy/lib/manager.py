@@ -26,12 +26,6 @@ log = logging.getLogger(__name__)
 
 __author__ = 'facetoe'
 
-user_cache = LRUCache(maxsize=200)
-organization_cache = LRUCache(maxsize=100)
-group_cache = LRUCache(maxsize=100)
-brand_cache = LRUCache(maxsize=100)
-ticket_cache = TTLCache(maxsize=100, ttl=30)
-comment_cache = TTLCache(maxsize=100, ttl=30)
 
 class ApiObjectEncoder(JSONEncoder):
 	""" Class for encoding API objects"""
@@ -88,6 +82,7 @@ class ClassManager(object):
 			setattr(obj, key, value)
 		return obj
 
+
 class ObjectManager(object):
 	"""
 	The ObjectManager is responsible for maintaining various caches
@@ -96,17 +91,24 @@ class ObjectManager(object):
 
 	skip_cache = ('job_status', 'attachment')
 
-	cache_mapping = {
-		'user': user_cache,
-		'organization': organization_cache,
-		'group': group_cache,
-		'brand': brand_cache,
-		'ticket': ticket_cache,
-		'comment': comment_cache
-	}
-
 	def __init__(self, api):
 		self.class_manager = ClassManager(api)
+
+		self.user_cache = LRUCache(maxsize=200)
+		self.organization_cache = LRUCache(maxsize=100)
+		self.group_cache = LRUCache(maxsize=100)
+		self.brand_cache = LRUCache(maxsize=100)
+		self.ticket_cache = TTLCache(maxsize=100, ttl=30)
+		self.comment_cache = TTLCache(maxsize=100, ttl=30)
+
+		self.cache_mapping = {
+			'user': self.user_cache,
+			'organization': self.organization_cache,
+			'group': self.group_cache,
+			'brand': self.brand_cache,
+			'ticket': self.ticket_cache,
+			'comment': self.comment_cache
+		}
 
 	def object_from_json(self, object_type, object_json):
 		return self.class_manager.object_from_json(object_type, object_json)
