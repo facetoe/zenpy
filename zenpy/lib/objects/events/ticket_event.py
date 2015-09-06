@@ -10,7 +10,6 @@ class TicketEvent(BaseObject):
 		self.updater_id = None
 		self.child_events = None
 		self.timestamp = None
-		self._ticket = None
 		self.ticket_id = None
 		self._system = None
 
@@ -27,12 +26,3 @@ class TicketEvent(BaseObject):
 	@updater.setter
 	def updater(self, value):
 		self._updater = value
-
-	@property
-	def ticket(self):
-		if self.api and self.ticket_id:
-			return self.api.get_ticket(self.ticket_id, skip_cache=True)
-
-	@ticket.setter
-	def ticket(self, value):
-		self._ticket = value
