@@ -1,3 +1,5 @@
+from time import sleep
+
 __author__ = 'facetoe'
 
 from zenpy.lib.manager import ObjectManager, ApiObjectEncoder
@@ -9,6 +11,7 @@ from zenpy.lib.generator import ResultGenerator
 import json
 import requests
 import logging
+import datetime
 
 log = logging.getLogger(__name__)
 
@@ -100,6 +103,9 @@ class BaseApi(object):
 	def get_brand(self, _id, endpoint=Endpoint().brands, object_type='brand'):
 		return self._get_item(_id, endpoint, object_type, sideload=True)
 
+	def get_ticket(self, _id, endpoint=Endpoint().tickets, object_type='ticket', skip_cache=False):
+		return self._get_item(_id, endpoint, object_type, sideload=False, skip_cache=skip_cache)
+
 	def _post(self, url, payload):
 		log.debug("POST: " + url)
 		payload = json.loads(json.dumps(payload, cls=ApiObjectEncoder))
@@ -118,6 +124,16 @@ class BaseApi(object):
 	def _get(self, url, stream=False):
 		log.debug("GET: " + url)
 		response = requests.get(url, auth=self._get_auth(), stream=stream)
+
+		# If we are being rate-limited, wait the required period before trying again.
+		while 'retry-after' in response.headers and int(response.headers['retry-after']) > 0:
+			retry_after_seconds = int(response.headers['retry-after'])
+			log.warn("APIRateLimitExceeded - sleeping for requested retry-after period: %s seconds" % retry_after_seconds)
+			while retry_after_seconds > 0:
+				retry_after_seconds -= 1
+				log.debug("APIRateLimitExceeded - sleeping: %s more seconds" % retry_after_seconds)
+				sleep(1)
+			response = requests.get(url, auth=self._get_auth(), stream=stream)
 		return self._check_and_cache_response(response)
 
 	def _delete(self, url):
@@ -144,14 +160,14 @@ class BaseApi(object):
 					return self._get_paginated(endpoint, kwargs, object_type)
 			return cached_objects
 
-		# If we get here all bets are off, best return a paginated response
 		return self._get_paginated(endpoint, kwargs, object_type)
 
-	def _get_item(self, _id, endpoint, object_type, sideload=True):
-		# Check if we already have this item in the cache
-		item = self.object_manager.query_cache(object_type, _id)
-		if item:
-			return item
+	def _get_item(self, _id, endpoint, object_type, sideload=True, skip_cache=False):
+		if not skip_cache:
+			# Check if we already have this item in the cache
+			item = self.object_manager.query_cache(object_type, _id)
+			if item:
+				return item
 
 		_json = self._query(endpoint=endpoint(id=_id, sideload=sideload))
 
@@ -159,7 +175,7 @@ class BaseApi(object):
 		if 'next_page' in _json:
 			return ResultGenerator(self, object_type, _json)
 		else:
-			return self.object_manager.object_from_json(object_type, _json)
+			return self.object_manager.object_from_json(object_type, _json[object_type])
 
 	def _get_paginated(self, endpoint, kwargs, object_type):
 		_json = self._query(endpoint=endpoint(**kwargs))
@@ -282,6 +298,22 @@ class UserApi(ModifiableApi):
 	def assigned(self, **kwargs):
 		return self._get_items(self.endpoint.assigned, 'ticket', kwargs)
 
+	def incremental(self, **kwargs):
+		return self._get_items(self.endpoint.incremental, 'user', kwargs)
+
+
+class OranizationApi(ModifiableApi):
+	def __init__(self, subdomain, email, token, endpoint):
+		BaseApi.__init__(self, subdomain, email, token)
+		self.endpoint = endpoint
+		self.object_type = 'organization'
+
+	def __call__(self, **kwargs):
+		return self._get_items(self.endpoint, self.object_type, kwargs)
+
+	def incremental(self, **kwargs):
+		return self._get_items(self.endpoint.incremental, 'organization', kwargs)
+
 
 class TicketApi(ModifiableApi):
 	"""
@@ -304,3 +336,9 @@ class TicketApi(ModifiableApi):
 
 	def comments(self, **kwargs):
 		return self._get_items(self.endpoint.comments, 'comment', kwargs)
+
+	def incremental(self, **kwargs):
+		return self._get_items(self.endpoint.incremental, 'ticket', kwargs)
+
+	def ticket_events(self, **kwargs):
+		return self._get_items(self.endpoint.ticket_events, 'ticket_event', kwargs)

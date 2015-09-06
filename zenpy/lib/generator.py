@@ -1,6 +1,10 @@
+import json
+from datetime import datetime, timedelta
+
 __author__ = 'facetoe'
 
 import logging
+
 log = logging.getLogger(__name__)
 
 
@@ -16,7 +20,8 @@ class ResultGenerator(object):
 		'results': 'results',
 		'organization': 'organizations',
 		'topic': 'topics',
-		'comment': 'comments'
+		'comment': 'comments',
+		'ticket_event': 'ticket_events'
 	}
 
 	def __init__(self, api, result_key, _json):
@@ -25,6 +30,11 @@ class ResultGenerator(object):
 		self.result_key = self.endpoint_mapping[result_key]
 		self.values = _json[self.result_key]
 		self.position = 0
+
+		# Add attributes such as count/end_time that can be present
+		for key, value in self._json.iteritems():
+			if key != self.result_key:
+				setattr(self, key, value)
 
 	def __iter__(self):
 		return self
@@ -35,6 +45,12 @@ class ResultGenerator(object):
 	def next(self):
 		# Pagination
 		if self.position >= len(self.values):
+			# If we are calling an incremental API, make sure to honour the restrictions
+			if 'end_time' in self._json and self._json['end_time']:
+				print json.dumps(self._json, indent=2)
+				if (datetime.fromtimestamp(int(self._json['end_time'])) + timedelta(minutes=5)) >= datetime.now():
+					raise StopIteration
+
 			if self._json.get('next_page'):
 				self._json = self._get_as_json(self._json.get('next_page'))
 				self.values = self._json[self.result_key]

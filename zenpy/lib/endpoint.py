@@ -30,10 +30,10 @@ class BaseEndpoint(object):
 	def _format_many(items):
 		return ",".join([str(i) for i in items])
 
-	def _format_sideload(self, items):
+	def _format_sideload(self, items, seperator='?'):
 		if isinstance(items, basestring):
 			items = [items]
-		return '?include=' + self._format_many(items)
+		return '%sinclude=%s' % (seperator, self._format_many(items))
 
 
 class PrimaryEndpoint(BaseEndpoint):
@@ -77,6 +77,22 @@ class SecondaryEndpoint(BaseEndpoint):
 	"""
 	def __call__(self, **kwargs):
 		return self.endpoint % kwargs
+
+class IncrementalEndpoint(BaseEndpoint):
+	"""
+	An IncrementalEndpoint takes a start_time and/or end_time parameter
+	for querying the an incremental api endpoint
+	"""
+
+	UNIX_TIME = "%s"
+
+	def __call__(self, **kwargs):
+		query = ""
+		for key, value in kwargs.iteritems():
+			if isinstance(value, datetime):
+				query += key + '=' + value.strftime(self.UNIX_TIME)
+
+		return self.endpoint +  query + self._format_sideload(self.sideload, seperator='&')
 
 
 class SearchEndpoint(BaseEndpoint):
@@ -159,6 +175,7 @@ class Endpoint(object):
 		self.users.requested = SecondaryEndpoint('users/%(id)s/tickets/requested.json')
 		self.users.cced = SecondaryEndpoint('users/%(id)s/tickets/ccd.json')
 		self.users.assigned = SecondaryEndpoint('users/%(id)s/tickets/assigned.json')
+		self.users.incremental = IncrementalEndpoint('incremental/users.json?')
 		self.groups = PrimaryEndpoint('groups', ['users'])
 		self.brands = PrimaryEndpoint('brands')
 		self.topics = PrimaryEndpoint('topics')
@@ -166,7 +183,11 @@ class Endpoint(object):
 		self.tickets.organizations = SecondaryEndpoint('organizations/%(id)s/tickets.json')
 		self.tickets.comments = SecondaryEndpoint('tickets/%(id)s/comments.json')
 		self.tickets.recent = SecondaryEndpoint('tickets/recent.json')
+		self.tickets.incremental = IncrementalEndpoint('incremental/tickets.json?', sideload=['users', 'groups', 'organizations'])
+		self.tickets.ticket_events = IncrementalEndpoint('incremental/ticket_events.json?')
 		self.attachments = PrimaryEndpoint('attachments')
 		self.organizations = PrimaryEndpoint('organizations')
+		self.organizations.incremental = IncrementalEndpoint('incremental/organizations.json?')
 		self.search = SearchEndpoint('search.json?')
 		self.job_statuses = PrimaryEndpoint('job_statuses')
+

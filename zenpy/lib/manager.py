@@ -1,4 +1,6 @@
 from zenpy.lib.exception import ZenpyException
+from zenpy.lib.objects.events import ticket_event
+from zenpy.lib.objects.events.ticket_event import TicketEvent
 from zenpy.lib.objects.via import Via
 from zenpy.lib.objects.brand import Brand
 from zenpy.lib.objects.group import Group
@@ -58,7 +60,8 @@ class ClassManager(object):
 		'via': Via,
 		'source': Source,
 		'job_status': JobStatus,
-		'audit': Audit
+		'audit': Audit,
+		'ticket_event': TicketEvent
 	}
 
 	def __init__(self, api):
@@ -77,7 +80,7 @@ class ClassManager(object):
 	def _object_from_json(self, object_type, object_json):
 		obj = object_type(api=self.api)
 		for key, value in object_json.iteritems():
-			if key in ('results', 'metadata', 'from'):
+			if key in ('results', 'metadata', 'from', 'system'):
 				key = '_%s' % key
 			setattr(obj, key, value)
 		return obj

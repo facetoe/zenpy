@@ -1,6 +1,6 @@
 import logging
 import sys
-from zenpy.lib.api import UserApi, SimpleApi, TicketApi
+from zenpy.lib.api import UserApi, SimpleApi, TicketApi, OranizationApi
 from zenpy.lib.endpoint import Endpoint
 
 log = logging.getLogger()
@@ -32,12 +32,11 @@ class Zenpy(object):
 			endpoint=endpoint.groups,
 			object_type='group')
 
-		self.organizations = SimpleApi(
+		self.organizations = OranizationApi(
 			subdomain,
 			email,
 			token,
-			endpoint=endpoint.organizations,
-			object_type='organization')
+			endpoint=endpoint.organizations)
 
 		self.tickets = TicketApi(
 			subdomain,
