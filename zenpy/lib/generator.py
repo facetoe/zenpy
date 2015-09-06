@@ -47,7 +47,10 @@ class ResultGenerator(object):
 		if self.position >= len(self.values):
 			# If we are calling an incremental API, make sure to honour the restrictions
 			if 'end_time' in self._json and self._json['end_time']:
-				print json.dumps(self._json, indent=2)
+
+				# We can't request updates from an incremental api if the
+				# start_time value is less than 5 minutes in the future.
+				# (end_time is added as start_time to the next_page URL)
 				if (datetime.fromtimestamp(int(self._json['end_time'])) + timedelta(minutes=5)) >= datetime.now():
 					raise StopIteration
 
