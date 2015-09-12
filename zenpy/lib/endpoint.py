@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from zenpy.lib.exception import ZenpyException
 
 __author__ = 'facetoe'
@@ -133,10 +134,13 @@ class SearchEndpoint(BaseEndpoint):
 				else:
 					args.append("-%s" % value)
 				continue
+			elif isinstance(value, list):
+				args.append(self.format_or(key, value))
+				continue
 
 			if isinstance(value, datetime):
 				kwargs[key] = value.strftime(self.ZENDESK_DATE_FORMAT)
-			elif isinstance(value, list):
+			elif isinstance(value, list) and key == 'ids':
 				value = self._format_many(value)
 
 			if key.endswith('_after'):
@@ -157,16 +161,19 @@ class SearchEndpoint(BaseEndpoint):
 
 		return endpoint + self._format(*args, **renamed_kwargs)
 
-	def format_between(self, key, value):
-		if not isinstance(value, list):
+	def format_between(self, key, values):
+		if not isinstance(values, list):
 			raise ZenpyException("*_between requires a list!")
-		elif not len(value) == 2:
+		elif not len(values) == 2:
 			raise ZenpyException("*_between requires exactly 2 items!")
-		elif not all([isinstance(d, datetime) for d in value]):
+		elif not all([isinstance(d, datetime) for d in values]):
 			raise ZenpyException("*_between only works with dates!")
 		key = key.replace('_between', '')
-		dates = [v.strftime(self.ZENDESK_DATE_FORMAT) for v in value]
+		dates = [v.strftime(self.ZENDESK_DATE_FORMAT) for v in values]
 		return "%s>%s %s<%s" % (key, dates[0], key, dates[1])
+
+	def format_or(self, key, values):
+		return " ".join(["%s:%s" % (key, v) for v in values])
 
 
 class Endpoint(object):
