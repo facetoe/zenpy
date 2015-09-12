@@ -240,15 +240,22 @@ class BaseApi(object):
 		return self.email + '/token', self.token
 
 
-class ModifiableApi(BaseApi):
+class Api(BaseApi):
 	"""
-	Add an Endpoint to direct the update/create/delete functions
-	to the correct API location.
+	Add an Endpoint to direct the various operations
+	to the correct API location. Also add an object_type to define
+	the type of object this Api returns
 	"""
 
-	def __init__(self, subdomain, email, token, endpoint):
+	def __init__(self, subdomain, email, token, endpoint, object_type):
 		BaseApi.__init__(self, subdomain, email, token)
 		self.endpoint = endpoint
+		self.object_type = object_type
+
+class ModifiableApi(Api):
+	"""
+	ModifiableApi supports create/update/delete operations
+	"""
 
 	def create(self, item):
 		return self.create_items(self.endpoint, item)
@@ -260,7 +267,7 @@ class ModifiableApi(BaseApi):
 		return self.update_items(self.endpoint, items)
 
 
-class SimpleApi(ModifiableApi):
+class SimpleApi(Api):
 	"""
 	A SimpleApi doesn't need any special syntax for the calls or additional methods.
 	"""
@@ -274,7 +281,11 @@ class SimpleApi(ModifiableApi):
 		return self._get_items(self.endpoint, self.object_type, kwargs)
 
 
-class TaggableApi(BaseApi):
+class TaggableApi(Api):
+	"""
+	TaggableApi supports getting, setting, adding and deleting tags.
+	"""
+
 	def __init__(self, subdomain, email, token, endpoint):
 		BaseApi.__init__(self, subdomain, email, token)
 		self.endpoint = endpoint
@@ -304,15 +315,22 @@ class TaggableApi(BaseApi):
 		return self._get_items(self.endpoint.tags, 'tag', kwargs)
 
 
-class UserApi(ModifiableApi, TaggableApi):
+class IncrementalApi(Api):
+	"""
+	TaggableApi supports getting, setting, adding and deleting tags.
+	"""
+
+	def incremental(self, **kwargs):
+		return self._get_items(self.endpoint.incremental, self.object_type, kwargs)
+
+
+class UserApi(TaggableApi, IncrementalApi, ModifiableApi):
 	"""
 	The UserApi adds some User specific functionality
 	"""
 
 	def __init__(self, subdomain, email, token, endpoint):
-		BaseApi.__init__(self, subdomain, email, token)
-		self.endpoint = endpoint
-		self.object_type = 'user'
+		Api.__init__(self, subdomain, email, token, endpoint=endpoint, object_type='user')
 
 	def __call__(self, **kwargs):
 		return self._get_items(self.endpoint, self.object_type, kwargs)
@@ -332,32 +350,22 @@ class UserApi(ModifiableApi, TaggableApi):
 	def assigned(self, **kwargs):
 		return self._get_items(self.endpoint.assigned, 'ticket', kwargs)
 
-	def incremental(self, **kwargs):
-		return self._get_items(self.endpoint.incremental, 'user', kwargs)
 
-
-class OranizationApi(ModifiableApi):
+class OranizationApi(TaggableApi, IncrementalApi, ModifiableApi):
 	def __init__(self, subdomain, email, token, endpoint):
-		BaseApi.__init__(self, subdomain, email, token)
-		self.endpoint = endpoint
-		self.object_type = 'organization'
+		Api.__init__(self, subdomain, email, token, endpoint=endpoint, object_type='organization')
 
 	def __call__(self, **kwargs):
 		return self._get_items(self.endpoint, self.object_type, kwargs)
 
-	def incremental(self, **kwargs):
-		return self._get_items(self.endpoint.incremental, 'organization', kwargs)
 
-
-class TicketApi(ModifiableApi, TaggableApi):
+class TicketApi(TaggableApi, IncrementalApi, ModifiableApi):
 	"""
 	The TicketApi adds some Ticket specific functionality
 	"""
 
 	def __init__(self, subdomain, email, token, endpoint):
-		BaseApi.__init__(self, subdomain, email, token)
-		self.endpoint = endpoint
-		self.object_type = 'ticket'
+		Api.__init__(self, subdomain, email, token, endpoint=endpoint, object_type='ticket')
 
 	def __call__(self, **kwargs):
 		return self._get_items(self.endpoint, self.object_type, kwargs)
@@ -370,9 +378,6 @@ class TicketApi(ModifiableApi, TaggableApi):
 
 	def comments(self, **kwargs):
 		return self._get_items(self.endpoint.comments, 'comment', kwargs)
-
-	def incremental(self, **kwargs):
-		return self._get_items(self.endpoint.incremental, 'ticket', kwargs)
 
 	def events(self, **kwargs):
 		return self._get_items(self.endpoint.events, 'ticket_event', kwargs)
