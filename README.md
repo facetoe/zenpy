@@ -12,6 +12,7 @@ The wrapper supports both reading and writing from the API.
 * [Querying the API](#querying-the-api)
 * [Creating, Updating and Deleting API Objects](#creating-updating-and-deleting-api-objects)
 * [Bulk Operations](#bulk-operations)
+* [Incremental Exports](#incremental-exports)
 * [Caching](#caching)
 
 
@@ -139,6 +140,27 @@ will create 20 tickets in one API call. When performing bulk operations, a `JobS
 It is important to note that these bulk endpoints have restrictions on the number of objects that can be processed at one time (usually 100). Zenpy makes no attempt to regulate this. Most endpoints will throw an `APIException` if that limit is exceeded, however some simply process the first N objects and silently discard the rest. 
 
 
+### Incremental Exports
+
+Zendesk has several incremental API endpoints (https://developer.zendesk.com/rest_api/docs/core/incremental_export) to export items in bulk (up to 1000 items per request) and also to poll the API for changes since a point in time. 
+
+Incremental endpoints accept either a datetime object or a unix timestamp as the `start_time` parameter. For example, the following code will retrieve all tickets created or modified in the last day:
+
+```python
+yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
+result_generator = zenpy.tickets.incremental(start_time=yesterday)
+for ticket in result_generator:
+	print ticket.id
+```
+
+The last `end_time` value can be retrieved from the generator:
+
+```python
+print result_generator.end_time
+```
+
+Passing this value to a new call as the `start_time` will return items created or modified since that point in time. 
+
 ### Caching
 
 Zenpy maintains several caches to prevent unecessary API calls. 
@@ -168,16 +190,4 @@ Cover all parts of the API properly.
 
 ### Contributions
 Contributions are very welcome. 
-
-
-
-
- 
-
-
-
-
-
-
-
 
