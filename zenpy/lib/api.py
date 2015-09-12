@@ -189,7 +189,7 @@ class BaseApi(object):
 		# When updating and deleting API objects various responses can be returned
 		# We can figure out what we have by the keys in the returned JSON
 		if 'ticket' and 'audit' in response_json:
-			response = self._build_ticket_audit(response_json)
+			response = self.object_manager.object_from_json('ticket_audit', response_json['ticket_audit'])
 		elif 'user' in response_json:
 			response = self.object_manager.object_from_json('user', response_json['user'])
 		elif 'job_status' in response_json:
@@ -200,14 +200,6 @@ class BaseApi(object):
 			raise ZenpyException("Unknown Response: " + str(response_json))
 
 		return response
-
-	def _build_ticket_audit(self, response_json):
-		ticket_audit = TicketAudit()
-		if 'ticket' in response_json:
-			ticket_audit.ticket = self.object_manager.object_from_json('ticket', response_json['ticket'])
-		if 'audit' in response_json:
-			ticket_audit.audit = self.object_manager.object_from_json('audit', response_json['audit'])
-		return ticket_audit
 
 	def _check_and_cache_response(self, response):
 		if response.status_code > 299 or response.status_code < 200:
@@ -340,5 +332,8 @@ class TicketApi(ModifiableApi):
 	def incremental(self, **kwargs):
 		return self._get_items(self.endpoint.incremental, 'ticket', kwargs)
 
-	def ticket_events(self, **kwargs):
-		return self._get_items(self.endpoint.ticket_events, 'ticket_event', kwargs)
+	def events(self, **kwargs):
+		return self._get_items(self.endpoint.events, 'ticket_event', kwargs)
+
+	def audits(self, **kwargs):
+		return self._get_items(self.endpoint.audits, 'ticket_audit', kwargs)

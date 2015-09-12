@@ -16,7 +16,7 @@ class JobStatus(BaseObject):
 	def results(self):
 		if self.api and self._results:
 			for status in self._results:
-				yield self.api.object_from_json('status', status)
+				yield self.api.object_manager.object_from_json('status', status)
 
 	@results.setter
 	def results(self, value):

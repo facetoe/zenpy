@@ -1,5 +1,5 @@
 from zenpy.lib.exception import ZenpyException
-from zenpy.lib.objects.events import ticket_event
+from zenpy.lib.objects.base_object import BaseObject
 from zenpy.lib.objects.events.ticket_event import TicketEvent
 from zenpy.lib.objects.via import Via
 from zenpy.lib.objects.brand import Brand
@@ -78,10 +78,18 @@ class ClassManager(object):
 			return self.class_mapping[object_type]
 
 	def _object_from_json(self, object_type, object_json):
+		# This method is recursive, if we have already
+		# created this object just return it.
+		if not isinstance(object_json, dict):
+			return object_json
+
 		obj = object_type(api=self.api)
 		for key, value in object_json.iteritems():
 			if key in ('results', 'metadata', 'from', 'system'):
 				key = '_%s' % key
+
+			if key in self.class_mapping.keys():
+				value = self.object_from_json(key, value)
 			setattr(obj, key, value)
 		return obj
 
@@ -92,7 +100,7 @@ class ObjectManager(object):
 	and also provides access to the ClassManager
 	"""
 
-	skip_cache = ('job_status', 'attachment')
+	skip_cache = ('job_status', 'attachment', 'ticket_audit')
 
 	def __init__(self, api):
 		self.class_manager = ClassManager(api)

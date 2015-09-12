@@ -23,7 +23,7 @@ class Comment(BaseObject):
 	def attachments(self):
 		if self.api and self._attachments:
 			for attachment in self._attachments:
-				yield self.api.object_from_json('attachment', attachment)
+				yield self.api.object_manager.object_from_json('attachment', attachment)
 
 
 	@attachments.setter

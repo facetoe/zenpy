@@ -19,7 +19,7 @@ class Audit(BaseObject):
 	def events(self):
 		if self.api and self._events:
 			for event in self._events:
-				yield self.api.object_from_json(event['type'].lower(), event)
+				yield self.api.object_manager.object_from_json(event['type'].lower(), event)
 
 	@events.setter
 	def events(self, value):
@@ -56,7 +56,7 @@ class Audit(BaseObject):
 	@property
 	def metadata(self):
 		if self.api and self._metadata:
-			return self.api.object_from_json('metadata', self._metadata)
+			return self.api.object_manager.object_from_json('metadata', self._metadata)
 
 	@metadata.setter
 	def metadata(self, value):

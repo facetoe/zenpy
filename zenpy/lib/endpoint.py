@@ -191,7 +191,8 @@ class Endpoint(object):
 		self.tickets.recent = SecondaryEndpoint('tickets/recent.json')
 		self.tickets.incremental = IncrementalEndpoint('incremental/tickets.json?',
 													   sideload=['users', 'groups', 'organizations'])
-		self.tickets.ticket_events = IncrementalEndpoint('incremental/ticket_events.json?')
+		self.tickets.events = IncrementalEndpoint('incremental/ticket_events.json?')
+		self.tickets.audits = SecondaryEndpoint('tickets/%(id)s/audits.json')
 		self.attachments = PrimaryEndpoint('attachments')
 		self.organizations = PrimaryEndpoint('organizations')
 		self.organizations.incremental = IncrementalEndpoint('incremental/organizations.json?')

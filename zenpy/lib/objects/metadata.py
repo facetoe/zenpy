@@ -10,7 +10,7 @@ class Metadata(BaseObject):
 	@property
 	def system(self):
 		if self.api and self._system:
-			return self.api.object_from_json('system', self._system)
+			return self.api.object_manager.object_from_json('system', self._system)
 
 	@system.setter
 	def system(self, value):

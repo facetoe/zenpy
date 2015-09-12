@@ -21,7 +21,8 @@ class ResultGenerator(object):
 		'organization': 'organizations',
 		'topic': 'topics',
 		'comment': 'comments',
-		'ticket_event': 'ticket_events'
+		'ticket_event': 'ticket_events',
+		'ticket_audit': 'audits'
 	}
 
 	def __init__(self, api, result_key, _json):
