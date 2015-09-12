@@ -5,13 +5,13 @@ import setuptools
 setup(
 	name='zenpy',
 	packages=setuptools.find_packages(),
-	version='0.0.16',
+	version='0.0.17',
 	description='Python wrapper for the Zendesk API',
 	license='GPLv3',
 	author='Face Toe',
 	author_email='facetoe@facetoe.com.au',
 	url='https://github.com/facetoe/zenpy',
-	download_url='https://github.com/facetoe/zenpy/releases/tag/0.0.16',
+	download_url='https://github.com/facetoe/zenpy/releases/tag/0.0.17',
 	install_requires=[
 		'requests',
 		'python-dateutil',
