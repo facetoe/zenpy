@@ -94,6 +94,9 @@ class BaseApi(object):
 	def get_user(self, _id, endpoint=Endpoint().users, object_type='user'):
 		return self._get_item(_id, endpoint, object_type, sideload=True)
 
+	def get_comment(self, _id, endpoint=Endpoint().tickets.comments, object_type='comment'):
+		return self._get_item(_id, endpoint, object_type, sideload=True)
+
 	def get_organization(self, _id, endpoint=Endpoint().organizations, object_type='organization'):
 		return self._get_item(_id, endpoint, object_type, sideload=True)
 

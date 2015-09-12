@@ -1,6 +1,22 @@
+from json import JSONEncoder
+import logging
+
+from cachetools import LRUCache, TTLCache
+
 from zenpy.lib.exception import ZenpyException
-from zenpy.lib.objects.base_object import BaseObject
+from zenpy.lib.objects.events.ccevent import CcEvent
+from zenpy.lib.objects.events.commentprivacychangeevent import CommentPrivacyChangeEvent
+from zenpy.lib.objects.events.errorevent import ErrorEvent
+from zenpy.lib.objects.events.externalevent import ExternalEvent
+from zenpy.lib.objects.events.facebookcommentevent import FacebookCommentEvent
+from zenpy.lib.objects.events.facebookevent import FacebookEvent
+from zenpy.lib.objects.events.logmeintranscriptevent import LogmeinTranscriptEvent
+from zenpy.lib.objects.events.organizationactivityevent import OrganizationActivityEvent
+from zenpy.lib.objects.events.pushevent import PushEvent
+from zenpy.lib.objects.events.satisfactionratingevent import SatisfactionRatingEvent
 from zenpy.lib.objects.events.ticket_event import TicketEvent
+from zenpy.lib.objects.events.ticketsharingevent import TicketSharingEvent
+from zenpy.lib.objects.events.tweetevent import TweetEvent
 from zenpy.lib.objects.via import Via
 from zenpy.lib.objects.brand import Brand
 from zenpy.lib.objects.group import Group
@@ -18,11 +34,7 @@ from zenpy.lib.objects.job_status import JobStatus
 from zenpy.lib.objects.metadata import Metadata
 from zenpy.lib.objects.source import Source
 from zenpy.lib.objects.system import System
-
-from cachetools import LRUCache, TTLCache
-from json import JSONEncoder
-
-import logging
+from zenpy.lib.objects.events.voice_comment_event import VoiceCommentEvent
 
 log = logging.getLogger(__name__)
 
@@ -57,6 +69,19 @@ class ClassManager(object):
 		'system': System,
 		'create': CreateEvent,
 		'notification': Notification,
+		'voicecomment': VoiceCommentEvent,
+		'commentprivacychange': CommentPrivacyChangeEvent,
+		'satisfactionrating': SatisfactionRatingEvent,
+		'ticketsharingevent': TicketSharingEvent,
+		'organizationactivity': OrganizationActivityEvent,
+		'error': ErrorEvent,
+		'tweet': TweetEvent,
+		'facebookevent': FacebookEvent,
+		'facebookcomment': FacebookCommentEvent,
+		'external': ExternalEvent,
+		'logmeintranscript': LogmeinTranscriptEvent,
+		'push': PushEvent,
+		'cc': CcEvent,
 		'via': Via,
 		'source': Source,
 		'job_status': JobStatus,
