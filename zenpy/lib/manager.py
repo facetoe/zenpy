@@ -18,6 +18,7 @@ from zenpy.lib.objects.events.satisfactionratingevent import SatisfactionRatingE
 from zenpy.lib.objects.events.ticket_event import TicketEvent
 from zenpy.lib.objects.events.ticketsharingevent import TicketSharingEvent
 from zenpy.lib.objects.events.tweetevent import TweetEvent
+from zenpy.lib.objects.tag import Tag
 from zenpy.lib.objects.via import Via
 from zenpy.lib.objects.brand import Brand
 from zenpy.lib.objects.group import Group
@@ -88,7 +89,8 @@ class ClassManager(object):
 		'source': Source,
 		'job_status': JobStatus,
 		'audit': Audit,
-		'ticket_event': TicketEvent
+		'ticket_event': TicketEvent,
+		'tag': Tag
 	}
 
 	def __init__(self, api):
@@ -127,7 +129,11 @@ class ObjectManager(object):
 	and also provides access to the ClassManager
 	"""
 
-	skip_cache = ('job_status', 'attachment', 'ticket_audit')
+	skip_cache = (
+		'job_status',
+		'attachment',
+		'ticket_audit',
+		'tag')
 
 	def __init__(self, api):
 		self.class_manager = ClassManager(api)

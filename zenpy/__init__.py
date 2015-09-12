@@ -78,3 +78,11 @@ class Zenpy(object):
 			token,
 			endpoint=endpoint.job_statuses,
 			object_type='job_status')
+
+		self.tags = SimpleApi(
+			subdomain,
+			email,
+			token,
+			endpoint=endpoint.tags,
+			object_type='tag'
+		)

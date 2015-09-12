@@ -3,7 +3,6 @@ from time import sleep
 __author__ = 'facetoe'
 
 from zenpy.lib.manager import ObjectManager, ApiObjectEncoder
-from zenpy.lib.objects.ticket_audit import TicketAudit
 from zenpy.lib.exception import ZenpyException, APIException
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.generator import ResultGenerator
@@ -11,7 +10,6 @@ from zenpy.lib.generator import ResultGenerator
 import json
 import requests
 import logging
-import datetime
 
 log = logging.getLogger(__name__)
 
@@ -26,6 +24,9 @@ class BaseApi(object):
 	protocol = None
 	version = None
 	base_url = None
+
+	headers = {'Content-type': 'application/json'}
+
 
 	def __init__(self, subdomain, email, token):
 		self.email = email
@@ -112,16 +113,23 @@ class BaseApi(object):
 	def _post(self, url, payload):
 		log.debug("POST: " + url)
 		payload = json.loads(json.dumps(payload, cls=ApiObjectEncoder))
-		headers = {'Content-type': 'application/json'}
-		response = requests.post(url, auth=self._get_auth(), json=payload, headers=headers)
+		response = requests.post(url, auth=self._get_auth(), json=payload, headers=self.headers)
 		self._check_and_cache_response(response)
 		return self._build_response(response.json())
 
 	def _put(self, url, payload):
 		log.debug("PUT: " + url)
 		payload = json.loads(json.dumps(payload, cls=ApiObjectEncoder))
-		headers = {'Content-type': 'application/json'}
-		response = requests.put(url, auth=self._get_auth(), json=payload, headers=headers)
+		response = requests.put(url, auth=self._get_auth(), json=payload, headers=self.headers)
+		return self._check_and_cache_response(response)
+
+	def _delete(self, url, payload=None):
+		log.debug("DELETE: " + url)
+		if payload:
+			response = requests.delete(url, auth=self._get_auth(), json=payload, headers=self.headers)
+		else:
+			response = requests.delete(url, auth=self._get_auth())
+		print response.json()
 		return self._check_and_cache_response(response)
 
 	def _get(self, url, stream=False):
@@ -131,17 +139,13 @@ class BaseApi(object):
 		# If we are being rate-limited, wait the required period before trying again.
 		while 'retry-after' in response.headers and int(response.headers['retry-after']) > 0:
 			retry_after_seconds = int(response.headers['retry-after'])
-			log.warn("APIRateLimitExceeded - sleeping for requested retry-after period: %s seconds" % retry_after_seconds)
+			log.warn(
+				"APIRateLimitExceeded - sleeping for requested retry-after period: %s seconds" % retry_after_seconds)
 			while retry_after_seconds > 0:
 				retry_after_seconds -= 1
 				log.debug("APIRateLimitExceeded - sleeping: %s more seconds" % retry_after_seconds)
 				sleep(1)
 			response = requests.get(url, auth=self._get_auth(), stream=stream)
-		return self._check_and_cache_response(response)
-
-	def _delete(self, url):
-		log.debug("DELETE: " + url)
-		response = requests.delete(url, auth=self._get_auth())
 		return self._check_and_cache_response(response)
 
 	def _get_items(self, endpoint, object_type, kwargs):
@@ -177,6 +181,9 @@ class BaseApi(object):
 		# If the result is paginated return a generator
 		if 'next_page' in _json:
 			return ResultGenerator(self, object_type, _json)
+		# Annoyingly, tags is always plural.
+		if 'tags' in _json:
+			return self.object_manager.object_from_json(object_type, _json[object_type + 's'])
 		else:
 			return self.object_manager.object_from_json(object_type, _json[object_type])
 
@@ -199,6 +206,8 @@ class BaseApi(object):
 			response = self.object_manager.object_from_json('job_status', response_json['job_status'])
 		elif 'group' in response_json:
 			response = self.object_manager.object_from_json('group', response_json['group'])
+		elif 'tags' in response_json:
+			return response_json['tags']
 		else:
 			raise ZenpyException("Unknown Response: " + str(response_json))
 
@@ -265,7 +274,37 @@ class SimpleApi(ModifiableApi):
 		return self._get_items(self.endpoint, self.object_type, kwargs)
 
 
-class UserApi(ModifiableApi):
+class TaggableApi(BaseApi):
+	def __init__(self, subdomain, email, token, endpoint):
+		BaseApi.__init__(self, subdomain, email, token)
+		self.endpoint = endpoint
+
+	def add_tags(self, id, tags):
+		return self._put(self._get_url(
+			endpoint=self.endpoint.tags(
+				id=id,
+				sideload=False)),
+			payload={'tags': tags})
+
+	def set_tags(self, id, tags):
+		return self._post(self._get_url(
+			endpoint=self.endpoint.tags(
+				id=id,
+				sideload=False)),
+			payload={'tags': tags})
+
+	def delete_tags(self, id, tags):
+		return self._delete(self._get_url(
+			endpoint=self.endpoint.tags(
+				id=id,
+				sideload=False,)),
+			payload={'tags': tags})
+
+	def tags(self, **kwargs):
+		return self._get_items(self.endpoint.tags, 'tag', kwargs)
+
+
+class UserApi(ModifiableApi, TaggableApi):
 	"""
 	The UserApi adds some User specific functionality
 	"""
@@ -310,7 +349,7 @@ class OranizationApi(ModifiableApi):
 		return self._get_items(self.endpoint.incremental, 'organization', kwargs)
 
 
-class TicketApi(ModifiableApi):
+class TicketApi(ModifiableApi, TaggableApi):
 	"""
 	The TicketApi adds some Ticket specific functionality
 	"""

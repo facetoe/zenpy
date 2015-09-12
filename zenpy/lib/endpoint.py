@@ -124,7 +124,7 @@ class SearchEndpoint(BaseEndpoint):
 		args = list()
 		for key, value in kwargs.iteritems():
 			if key.endswith('_between'):
-				renamed_kwargs[''] = self.format_between(key, value)
+				args.append(self.format_between(key, value))
 				continue
 			elif key == 'query':
 				continue
@@ -152,7 +152,7 @@ class SearchEndpoint(BaseEndpoint):
 			elif key.endswith('_less_than'):
 				renamed_kwargs[key.replace('_less_than', '<')] = kwargs[key]
 			else:
-				renamed_kwargs.update({key + ':': value})
+				renamed_kwargs.update({key + ':': '"%s"' % value})
 
 		if 'query' in kwargs:
 			endpoint = self.endpoint + 'query=' + kwargs['query'] + '+'
@@ -173,7 +173,7 @@ class SearchEndpoint(BaseEndpoint):
 		return "%s>%s %s<%s" % (key, dates[0], key, dates[1])
 
 	def format_or(self, key, values):
-		return " ".join(["%s:%s" % (key, v) for v in values])
+		return " ".join(['%s:"%s"' % (key, v) for v in values])
 
 
 class Endpoint(object):
@@ -189,9 +189,11 @@ class Endpoint(object):
 		self.users.cced = SecondaryEndpoint('users/%(id)s/tickets/ccd.json')
 		self.users.assigned = SecondaryEndpoint('users/%(id)s/tickets/assigned.json')
 		self.users.incremental = IncrementalEndpoint('incremental/users.json?')
+		self.users.tags = SecondaryEndpoint('users/%(id)s/tags.json')
 		self.groups = PrimaryEndpoint('groups', ['users'])
 		self.brands = PrimaryEndpoint('brands')
 		self.topics = PrimaryEndpoint('topics')
+		self.topics.tags = SecondaryEndpoint('topics/%(id)s/tags.json')
 		self.tickets = PrimaryEndpoint('tickets', ['users', 'groups', 'organizations'])
 		self.tickets.organizations = SecondaryEndpoint('organizations/%(id)s/tickets.json')
 		self.tickets.comments = SecondaryEndpoint('tickets/%(id)s/comments.json')
@@ -200,8 +202,11 @@ class Endpoint(object):
 													   sideload=['users', 'groups', 'organizations'])
 		self.tickets.events = IncrementalEndpoint('incremental/ticket_events.json?')
 		self.tickets.audits = SecondaryEndpoint('tickets/%(id)s/audits.json')
+		self.tickets.tags = SecondaryEndpoint('tickets/%(id)s/tags.json')
 		self.attachments = PrimaryEndpoint('attachments')
 		self.organizations = PrimaryEndpoint('organizations')
 		self.organizations.incremental = IncrementalEndpoint('incremental/organizations.json?')
+		self.organizations.tags = SecondaryEndpoint('organizations/%(id)s/tags.json')
 		self.search = SearchEndpoint('search.json?')
 		self.job_statuses = PrimaryEndpoint('job_statuses')
+		self.tags = PrimaryEndpoint('tags')
