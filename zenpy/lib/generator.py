@@ -30,12 +30,7 @@ class ResultGenerator(object):
 		self.result_key = self.endpoint_mapping[result_key]
 		self.values = _json[self.result_key]
 		self.position = 0
-		self.end_time = None
-
-		# Add attributes such as count/end_time that can be present
-		for key, value in self._json.iteritems():
-			if key != self.result_key:
-				setattr(self, key, value)
+		self.update_attrs(self._json)
 
 	def __iter__(self):
 		return self
@@ -48,7 +43,7 @@ class ResultGenerator(object):
 		if self.position >= len(self.values):
 			# If we are calling an incremental API, make sure to honour the restrictions
 			if 'end_time' in self._json and self._json['end_time']:
-				
+
 				# I'm not sure if this is being handled correctly. If we simply continue iterating
 				# while there are still items we end up in an infinite loop that returns the same item
 				# over and over again.
@@ -56,8 +51,9 @@ class ResultGenerator(object):
 				# stop prematurely when a very high number of tickets was created for that instant.
 				if self.end_time == self._json['end_time'] and self._json['count'] <= 1:
 					raise StopIteration
-				else:
-					self.end_time = self._json['end_time']
+
+				# Update end_time etc
+				self.update_attrs(self._json)
 
 				# We can't request updates from an incremental api if the
 				# start_time value is less than 5 minutes in the future.
@@ -82,6 +78,12 @@ class ResultGenerator(object):
 		else:
 			object_type = self.result_key[:-1]  # If many objects are returned the key is plural.
 		return self.api.object_manager.object_from_json(object_type, item_json)
+
+	def update_attrs(self, _json):
+		# Add attributes such as count/end_time that can be present
+		for key, value in _json.iteritems():
+			if key != self.result_key:
+				setattr(self, key, value)
 
 	def _get_as_json(self, url):
 		log.debug("GENERATOR: " + url)
