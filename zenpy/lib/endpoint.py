@@ -8,6 +8,7 @@ class BaseEndpoint(object):
 	"""
 	BaseEndpoint supplies common formatting operations.
 	"""
+
 	def __init__(self, endpoint, sideload=None):
 		self.endpoint = endpoint
 		self.sideload = sideload or []
@@ -41,6 +42,7 @@ class PrimaryEndpoint(BaseEndpoint):
 	A PrimaryEndpoint takes an id or list of ids and either returns the objects
 	associated with them or performs actions on them (eg, update/delete).
 	"""
+
 	def __call__(self, **kwargs):
 		query = ""
 		modifiers = []
@@ -75,24 +77,27 @@ class SecondaryEndpoint(BaseEndpoint):
 	A SecondaryEndpoint takes a single ID and returns the
 	object associated with it.
 	"""
+
 	def __call__(self, **kwargs):
 		return self.endpoint % kwargs
 
+
 class IncrementalEndpoint(BaseEndpoint):
 	"""
-	An IncrementalEndpoint takes a start_time and/or end_time parameter
-	for querying the an incremental api endpoint
+	An IncrementalEndpoint takes a start_time parameter
+	for querying the incremental api endpoint
 	"""
 
 	UNIX_TIME = "%s"
 
-	def __call__(self, **kwargs):
-		query = ""
-		for key, value in kwargs.iteritems():
-			if isinstance(value, datetime):
-				query += key + '=' + value.strftime(self.UNIX_TIME)
+	def __call__(self, start_time=None):
+		query = "start_time="
+		if isinstance(start_time, datetime):
+			query += start_time.strftime(self.UNIX_TIME)
+		else:
+			query += str(start_time)
 
-		return self.endpoint +  query + self._format_sideload(self.sideload, seperator='&')
+		return self.endpoint + query + self._format_sideload(self.sideload, seperator='&')
 
 
 class SearchEndpoint(BaseEndpoint):
@@ -168,6 +173,7 @@ class Endpoint(object):
 	"""
 	The Endpoint object ties it all together.
 	"""
+
 	def __init__(self):
 		self.users = PrimaryEndpoint('users', ['organizations', 'abilities', 'roles', 'identities', 'groups'])
 		self.users.groups = SecondaryEndpoint('users/%(id)s/groups.json')
@@ -183,11 +189,11 @@ class Endpoint(object):
 		self.tickets.organizations = SecondaryEndpoint('organizations/%(id)s/tickets.json')
 		self.tickets.comments = SecondaryEndpoint('tickets/%(id)s/comments.json')
 		self.tickets.recent = SecondaryEndpoint('tickets/recent.json')
-		self.tickets.incremental = IncrementalEndpoint('incremental/tickets.json?', sideload=['users', 'groups', 'organizations'])
+		self.tickets.incremental = IncrementalEndpoint('incremental/tickets.json?',
+													   sideload=['users', 'groups', 'organizations'])
 		self.tickets.ticket_events = IncrementalEndpoint('incremental/ticket_events.json?')
 		self.attachments = PrimaryEndpoint('attachments')
 		self.organizations = PrimaryEndpoint('organizations')
 		self.organizations.incremental = IncrementalEndpoint('incremental/organizations.json?')
 		self.search = SearchEndpoint('search.json?')
 		self.job_statuses = PrimaryEndpoint('job_statuses')
-
