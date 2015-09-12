@@ -5,6 +5,7 @@ from cachetools import LRUCache, TTLCache
 
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.objects.events.ccevent import CcEvent
+from zenpy.lib.objects.events.changeevent import ChangeEvent
 from zenpy.lib.objects.events.commentprivacychangeevent import CommentPrivacyChangeEvent
 from zenpy.lib.objects.events.errorevent import ErrorEvent
 from zenpy.lib.objects.events.externalevent import ExternalEvent
@@ -68,6 +69,7 @@ class ClassManager(object):
 		'metadata': Metadata,
 		'system': System,
 		'create': CreateEvent,
+		'change': ChangeEvent,
 		'notification': Notification,
 		'voicecomment': VoiceCommentEvent,
 		'commentprivacychange': CommentPrivacyChangeEvent,
