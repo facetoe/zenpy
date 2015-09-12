@@ -27,7 +27,6 @@ class BaseApi(object):
 
 	headers = {'Content-type': 'application/json'}
 
-
 	def __init__(self, subdomain, email, token):
 		self.email = email
 		self.token = token
@@ -36,79 +35,6 @@ class BaseApi(object):
 		self.version = 'v2'
 		self.base_url = self._get_url()
 		self.object_manager = ObjectManager(self)
-
-	def create_items(self, endpoint, items):
-		# 'items' is a bit misleading, it's either an object or a list
-		if isinstance(items, list) and items:
-			first_obj = next((x for x in items))
-			object_type = "%ss" % first_obj.__class__.__name__.lower()
-			return self._post(self._get_url(
-				endpoint=endpoint(
-					create_many=True,
-					sideload=False)),
-				payload={object_type: [vars(i) for i in items]})
-		elif items:
-			object_type = "%s" % items.__class__.__name__.lower()
-			return self._post(self._get_url(
-				endpoint=endpoint(
-					sideload=False)),
-				payload={object_type: vars(items)})
-
-	def update_items(self, endpoint, items):
-		if isinstance(items, list) or isinstance(items, ResultGenerator):
-			first_obj = next((x for x in items))
-			object_type = "%ss" % first_obj.__class__.__name__.lower()
-			response = self._put(self._get_url(
-				endpoint=endpoint(
-					update_many=True,
-					sideload=False)),
-				payload={object_type: [vars(i) for i in items]})
-		else:
-			object_type = "%s" % items.__class__.__name__.lower()
-			response = self._put(self._get_url(
-				endpoint=endpoint(
-					id=items.id,
-					sideload=False)),
-				payload={object_type: vars(items)})
-
-		return self._build_response(response.json())
-
-	def delete_items(self, endpoint, items):
-		if (isinstance(items, list) or isinstance(items, ResultGenerator)) and len(items) > 0:
-			# Consume the generator here so when we pass it to delete_from_cache
-			# there is something to delete.
-			items = [i for i in items]
-			self._delete(self._get_url(
-				endpoint=endpoint(
-					destroy_ids=[i.id for i in items],
-					sideload=False)))
-		elif items:
-			self._delete(self._get_url(
-				endpoint=endpoint(
-					id=items.id,
-					sideload=False)))
-		else:
-			return
-
-		self.object_manager.delete_from_cache(items)
-
-	def get_user(self, _id, endpoint=Endpoint().users, object_type='user'):
-		return self._get_item(_id, endpoint, object_type, sideload=True)
-
-	def get_comment(self, _id, endpoint=Endpoint().tickets.comments, object_type='comment'):
-		return self._get_item(_id, endpoint, object_type, sideload=True)
-
-	def get_organization(self, _id, endpoint=Endpoint().organizations, object_type='organization'):
-		return self._get_item(_id, endpoint, object_type, sideload=True)
-
-	def get_group(self, _id, endpoint=Endpoint().groups, object_type='group'):
-		return self._get_item(_id, endpoint, object_type, sideload=True)
-
-	def get_brand(self, _id, endpoint=Endpoint().brands, object_type='brand'):
-		return self._get_item(_id, endpoint, object_type, sideload=True)
-
-	def get_ticket(self, _id, endpoint=Endpoint().tickets, object_type='ticket', skip_cache=False):
-		return self._get_item(_id, endpoint, object_type, sideload=False, skip_cache=skip_cache)
 
 	def _post(self, url, payload):
 		log.debug("POST: " + url)
@@ -129,7 +55,6 @@ class BaseApi(object):
 			response = requests.delete(url, auth=self._get_auth(), json=payload, headers=self.headers)
 		else:
 			response = requests.delete(url, auth=self._get_auth())
-		print response.json()
 		return self._check_and_cache_response(response)
 
 	def _get(self, url, stream=False):
@@ -187,6 +112,61 @@ class BaseApi(object):
 		else:
 			return self.object_manager.object_from_json(object_type, _json[object_type])
 
+	def create_items(self, endpoint, items):
+		# 'items' is a bit misleading, it's either an object or a list
+		if isinstance(items, list) and items:
+			first_obj = next((x for x in items))
+			object_type = "%ss" % first_obj.__class__.__name__.lower()
+			return self._post(self._get_url(
+				endpoint=endpoint(
+					create_many=True,
+					sideload=False)),
+				payload={object_type: [vars(i) for i in items]})
+		elif items:
+			object_type = "%s" % items.__class__.__name__.lower()
+			return self._post(self._get_url(
+				endpoint=endpoint(
+					sideload=False)),
+				payload={object_type: vars(items)})
+
+	def update_items(self, endpoint, items):
+		if isinstance(items, list) or isinstance(items, ResultGenerator):
+			first_obj = next((x for x in items))
+			object_type = "%ss" % first_obj.__class__.__name__.lower()
+			response = self._put(self._get_url(
+				endpoint=endpoint(
+					update_many=True,
+					sideload=False)),
+				payload={object_type: [vars(i) for i in items]})
+		else:
+			object_type = "%s" % items.__class__.__name__.lower()
+			response = self._put(self._get_url(
+				endpoint=endpoint(
+					id=items.id,
+					sideload=False)),
+				payload={object_type: vars(items)})
+
+		return self._build_response(response.json())
+
+	def delete_items(self, endpoint, items):
+		if (isinstance(items, list) or isinstance(items, ResultGenerator)) and len(items) > 0:
+			# Consume the generator here so when we pass it to delete_from_cache
+			# there is something to delete.
+			items = [i for i in items]
+			self._delete(self._get_url(
+				endpoint=endpoint(
+					destroy_ids=[i.id for i in items],
+					sideload=False)))
+		elif items:
+			self._delete(self._get_url(
+				endpoint=endpoint(
+					id=items.id,
+					sideload=False)))
+		else:
+			return
+
+		self.object_manager.delete_from_cache(items)
+
 	def _get_paginated(self, endpoint, kwargs, object_type):
 		_json = self._query(endpoint=endpoint(**kwargs))
 		return ResultGenerator(self, object_type, _json)
@@ -242,15 +222,34 @@ class BaseApi(object):
 
 class Api(BaseApi):
 	"""
-	Add an Endpoint to direct the various operations
-	to the correct API location. Also add an object_type to define
-	the type of object this Api returns
+	Add an Endpoint to direct the various operations to the correct API location.
+	Also add an object_type to define the type of object this Api returns as
+	well as some convenience methods.
 	"""
 
 	def __init__(self, subdomain, email, token, endpoint, object_type):
 		BaseApi.__init__(self, subdomain, email, token)
 		self.endpoint = endpoint
 		self.object_type = object_type
+
+	def get_user(self, _id, endpoint=Endpoint().users, object_type='user'):
+		return self._get_item(_id, endpoint, object_type, sideload=True)
+
+	def get_comment(self, _id, endpoint=Endpoint().tickets.comments, object_type='comment'):
+		return self._get_item(_id, endpoint, object_type, sideload=True)
+
+	def get_organization(self, _id, endpoint=Endpoint().organizations, object_type='organization'):
+		return self._get_item(_id, endpoint, object_type, sideload=True)
+
+	def get_group(self, _id, endpoint=Endpoint().groups, object_type='group'):
+		return self._get_item(_id, endpoint, object_type, sideload=True)
+
+	def get_brand(self, _id, endpoint=Endpoint().brands, object_type='brand'):
+		return self._get_item(_id, endpoint, object_type, sideload=True)
+
+	def get_ticket(self, _id, endpoint=Endpoint().tickets, object_type='ticket', skip_cache=False):
+		return self._get_item(_id, endpoint, object_type, sideload=False, skip_cache=skip_cache)
+
 
 class ModifiableApi(Api):
 	"""
@@ -308,7 +307,7 @@ class TaggableApi(Api):
 		return self._delete(self._get_url(
 			endpoint=self.endpoint.tags(
 				id=id,
-				sideload=False,)),
+				sideload=False, )),
 			payload={'tags': tags})
 
 	def tags(self, **kwargs):
@@ -317,7 +316,7 @@ class TaggableApi(Api):
 
 class IncrementalApi(Api):
 	"""
-	TaggableApi supports getting, setting, adding and deleting tags.
+	IncrementalApi supports the incremental endpoint.
 	"""
 
 	def incremental(self, **kwargs):
