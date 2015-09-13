@@ -12,6 +12,7 @@ class ResultGenerator(object):
 	Generator for handling pagination.
 	"""
 
+	# TODO fix this
 	endpoint_mapping = {
 		'user': 'users',
 		'ticket': 'tickets',
@@ -25,7 +26,8 @@ class ResultGenerator(object):
 		'tag': 'tags',
 		'suspended_ticket': 'suspended_tickets',
 		'satisfaction_rating': 'satisfaction_ratings',
-		'activity': 'activities'
+		'activity': 'activities',
+		'group_membership' : 'group_memberships'
 	}
 
 	def __init__(self, api, result_key, _json):

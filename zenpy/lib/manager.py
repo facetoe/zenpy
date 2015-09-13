@@ -19,6 +19,7 @@ from zenpy.lib.objects.events.satisfactionratingevent import SatisfactionRatingE
 from zenpy.lib.objects.events.ticket_event import TicketEvent
 from zenpy.lib.objects.events.ticketsharingevent import TicketSharingEvent
 from zenpy.lib.objects.events.tweetevent import TweetEvent
+from zenpy.lib.objects.groupmembership import GroupMembership
 from zenpy.lib.objects.satisfactionrating import SatisfactionRating
 from zenpy.lib.objects.suspendedticket import SuspendedTicket
 from zenpy.lib.objects.tag import Tag
@@ -98,7 +99,8 @@ class ClassManager(object):
 		'suspended_ticket': SuspendedTicket,
 		'ticket_audit': TicketAudit,
 		'satisfaction_rating': SatisfactionRating,
-		'activity': Activity
+		'activity': Activity,
+		'group_membership': GroupMembership
 	}
 
 	def __init__(self, api):

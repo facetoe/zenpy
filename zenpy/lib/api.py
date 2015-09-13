@@ -364,6 +364,9 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
 	def assigned(self, **kwargs):
 		return self._get_items(self.endpoint.assigned, 'ticket', kwargs)
 
+	def group_memberships(self, **kwargs):
+		return self._get_items(self.endpoint.group_memberships, 'group_membership', kwargs)
+
 
 class OranizationApi(TaggableApi, IncrementalApi, CRUDApi):
 	def __init__(self, subdomain, email, token, password, endpoint):

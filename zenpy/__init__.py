@@ -18,7 +18,6 @@ __author__ = 'facetoe'
 
 class Zenpy(object):
 	def __init__(self, subdomain, email, token=None, password=None, debug=False):
-
 		if not password and not token:
 			raise ZenpyException("password or token are required!")
 		elif password and token:
@@ -131,3 +130,11 @@ class Zenpy(object):
 			object_type='activity'
 		)
 
+		self.group_memberships = Api(
+			subdomain,
+			email,
+			token=token,
+			password=password,
+			endpoint=endpoint.group_memberships,
+			object_type='group_membership'
+		)
