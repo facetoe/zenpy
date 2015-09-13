@@ -47,6 +47,7 @@ class BaseApi(object):
 		log.debug("PUT: " + url)
 		payload = json.loads(json.dumps(payload, cls=ApiObjectEncoder))
 		response = requests.put(url, auth=self._get_auth(), json=payload, headers=self.headers)
+		self._check_and_cache_response(response)
 		return self._check_and_cache_response(response)
 
 	def _delete(self, url, payload=None):
@@ -112,61 +113,6 @@ class BaseApi(object):
 		else:
 			return self.object_manager.object_from_json(object_type, _json[object_type])
 
-	def create_items(self, endpoint, items):
-		# 'items' is a bit misleading, it's either an object or a list
-		if isinstance(items, list) and items:
-			first_obj = next((x for x in items))
-			object_type = "%ss" % first_obj.__class__.__name__.lower()
-			return self._post(self._get_url(
-				endpoint=endpoint(
-					create_many=True,
-					sideload=False)),
-				payload={object_type: [vars(i) for i in items]})
-		elif items:
-			object_type = "%s" % items.__class__.__name__.lower()
-			return self._post(self._get_url(
-				endpoint=endpoint(
-					sideload=False)),
-				payload={object_type: vars(items)})
-
-	def update_items(self, endpoint, items):
-		if isinstance(items, list) or isinstance(items, ResultGenerator):
-			first_obj = next((x for x in items))
-			object_type = "%ss" % first_obj.__class__.__name__.lower()
-			response = self._put(self._get_url(
-				endpoint=endpoint(
-					update_many=True,
-					sideload=False)),
-				payload={object_type: [vars(i) for i in items]})
-		else:
-			object_type = "%s" % items.__class__.__name__.lower()
-			response = self._put(self._get_url(
-				endpoint=endpoint(
-					id=items.id,
-					sideload=False)),
-				payload={object_type: vars(items)})
-
-		return self._build_response(response.json())
-
-	def delete_items(self, endpoint, items):
-		if (isinstance(items, list) or isinstance(items, ResultGenerator)) and len(items) > 0:
-			# Consume the generator here so when we pass it to delete_from_cache
-			# there is something to delete.
-			items = [i for i in items]
-			self._delete(self._get_url(
-				endpoint=endpoint(
-					destroy_ids=[i.id for i in items],
-					sideload=False)))
-		elif items:
-			self._delete(self._get_url(
-				endpoint=endpoint(
-					id=items.id,
-					sideload=False)))
-		else:
-			return
-
-		self.object_manager.delete_from_cache(items)
-
 	def _get_paginated(self, endpoint, kwargs, object_type):
 		_json = self._query(endpoint=endpoint(**kwargs))
 		return ResultGenerator(self, object_type, _json)
@@ -179,7 +125,7 @@ class BaseApi(object):
 		# When updating and deleting API objects various responses can be returned
 		# We can figure out what we have by the keys in the returned JSON
 		if 'ticket' and 'audit' in response_json:
-			response = self.object_manager.object_from_json('ticket_audit', response_json['ticket_audit'])
+			response = self.object_manager.object_from_json('ticket_audit', response_json)
 		elif 'user' in response_json:
 			response = self.object_manager.object_from_json('user', response_json['user'])
 		elif 'job_status' in response_json:
@@ -251,43 +197,64 @@ class Api(BaseApi):
 		return self._get_item(_id, endpoint, object_type, sideload=False, skip_cache=skip_cache)
 
 
-class ModifiableApi(Api):
-	"""
-	ModifiableApi supports create/update/delete operations
-	"""
-
-	def create(self, item):
-		return self.create_items(self.endpoint, item)
-
-	def delete(self, items):
-		return self.delete_items(self.endpoint, items)
-
-	def update(self, items):
-		return self.update_items(self.endpoint, items)
-
-
 class SimpleApi(Api):
 	"""
 	A SimpleApi doesn't need any special syntax for the calls or additional methods.
 	"""
 
-	def __init__(self, subdomain, email, token, endpoint, object_type):
-		BaseApi.__init__(self, subdomain, email, token)
-		self.endpoint = endpoint
-		self.object_type = object_type
-
 	def __call__(self, **kwargs):
 		return self._get_items(self.endpoint, self.object_type, kwargs)
+
+
+class ModifiableApi(Api):
+	"""
+	ModifiableApi supports create/update/delete operations
+	"""
+
+	def create(self, items):
+		object_type, payload = self._get_type_and_payload(items)
+		if object_type.endswith('s'):
+			return self._do(self._post, dict(create_many=True, sideload=False), payload=payload)
+		else:
+			return self._do(self._post, dict(sideload=False), payload=payload)
+
+	def update(self, items):
+		object_type, payload = self._get_type_and_payload(items)
+		if object_type.endswith('s'):
+			return self._do(self._put, dict(update_many=True, sideload=False), payload=payload)
+		else:
+			return self._do(self._put, dict(id=items.id, sideload=False), payload=payload)
+
+	def delete(self, items):
+		object_type, payload = self._get_type_and_payload(items)
+		if object_type.endswith('s'):
+			response = self._do(self._delete, dict(destroy_ids=[i.id for i in items], sideload=False))
+		else:
+			response = self._do(self._delete, dict(id=items.id, sideload=False))
+		self.object_manager.delete_from_cache(items)
+		return response
+
+	def _get_type_and_payload(self, items):
+		if isinstance(items, list):
+			first_obj = next((x for x in items))
+			# Object name needs to be plural when creating many
+			object_type = "%ss" % first_obj.__class__.__name__.lower()
+			payload = {object_type: [vars(i) for i in items]}
+		else:
+			object_type = items.__class__.__name__.lower()
+			payload = {object_type: vars(items)}
+		return object_type, payload
+
+	def _do(self, action, endpoint_kwargs, payload=None):
+		return action(self._get_url(
+			endpoint=self.endpoint(**endpoint_kwargs)),
+			payload=payload)
 
 
 class TaggableApi(Api):
 	"""
 	TaggableApi supports getting, setting, adding and deleting tags.
 	"""
-
-	def __init__(self, subdomain, email, token, endpoint):
-		BaseApi.__init__(self, subdomain, email, token)
-		self.endpoint = endpoint
 
 	def add_tags(self, id, tags):
 		return self._put(self._get_url(
@@ -383,3 +350,15 @@ class TicketApi(TaggableApi, IncrementalApi, ModifiableApi):
 
 	def audits(self, **kwargs):
 		return self._get_items(self.endpoint.audits, 'ticket_audit', kwargs)
+
+
+class SuspendedTicketApi(ModifiableApi):
+	"""
+	The SuspendedTicketApi adds some SuspendedTicket specific functionality
+	"""
+
+	def __init__(self, subdomain, email, token, endpoint):
+		Api.__init__(self, subdomain, email, token, endpoint=endpoint, object_type='suspended_ticket')
+
+	def recover(self, items):
+		pass
