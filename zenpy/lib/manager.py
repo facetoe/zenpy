@@ -1,5 +1,4 @@
 from json import JSONEncoder
-import json
 import logging
 
 from cachetools import LRUCache, TTLCache
@@ -19,6 +18,7 @@ from zenpy.lib.objects.events.satisfactionratingevent import SatisfactionRatingE
 from zenpy.lib.objects.events.ticket_event import TicketEvent
 from zenpy.lib.objects.events.ticketsharingevent import TicketSharingEvent
 from zenpy.lib.objects.events.tweetevent import TweetEvent
+from zenpy.lib.objects.satisfactionrating import SatisfactionRating
 from zenpy.lib.objects.suspendedticket import SuspendedTicket
 from zenpy.lib.objects.tag import Tag
 from zenpy.lib.objects.ticket_audit import TicketAudit
@@ -94,8 +94,9 @@ class ClassManager(object):
 		'audit': Audit,
 		'ticket_event': TicketEvent,
 		'tag': Tag,
-		'suspended_ticket' : SuspendedTicket,
-		'ticket_audit' : TicketAudit
+		'suspended_ticket': SuspendedTicket,
+		'ticket_audit': TicketAudit,
+		'satisfaction_rating': SatisfactionRating
 	}
 
 	def __init__(self, api):

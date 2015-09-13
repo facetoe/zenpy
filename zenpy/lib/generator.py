@@ -1,4 +1,3 @@
-import json
 from datetime import datetime, timedelta
 
 __author__ = 'facetoe'
@@ -23,8 +22,9 @@ class ResultGenerator(object):
 		'comment': 'comments',
 		'ticket_event': 'ticket_events',
 		'ticket_audit': 'audits',
-		'tag' : 'tags',
-		'suspended_ticket' : 'suspended_tickets'
+		'tag': 'tags',
+		'suspended_ticket': 'suspended_tickets',
+		'satisfaction_rating': 'satisfaction_ratings'
 	}
 
 	def __init__(self, api, result_key, _json):

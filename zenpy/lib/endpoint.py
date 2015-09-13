@@ -199,6 +199,7 @@ class Endpoint(object):
 		self.tickets.recent = SecondaryEndpoint('tickets/recent.json')
 		self.tickets.incremental = IncrementalEndpoint('incremental/tickets.json?',
 													   sideload=['users', 'groups', 'organizations'])
+		self.tickets.satisfaction_ratings = SecondaryEndpoint('tickets/%(id)s/satisfaction_rating.json')
 		self.tickets.events = IncrementalEndpoint('incremental/ticket_events.json?')
 		self.tickets.audits = SecondaryEndpoint('tickets/%(id)s/audits.json')
 		self.tickets.tags = SecondaryEndpoint('tickets/%(id)s/tags.json')
@@ -211,3 +212,4 @@ class Endpoint(object):
 		self.search = SearchEndpoint('search.json?')
 		self.job_statuses = PrimaryEndpoint('job_statuses')
 		self.tags = PrimaryEndpoint('tags')
+		self.satisfaction_ratings = PrimaryEndpoint('satisfaction_ratings')

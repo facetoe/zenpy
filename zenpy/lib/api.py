@@ -20,6 +20,7 @@ class BaseApi(object):
 	"""
 	email = None
 	token = None
+	password = None
 	subdomain = None
 	protocol = None
 	version = None
@@ -27,9 +28,10 @@ class BaseApi(object):
 
 	headers = {'Content-type': 'application/json'}
 
-	def __init__(self, subdomain, email, token):
+	def __init__(self, subdomain, email, token, password):
 		self.email = email
 		self.token = token
+		self.password = password
 		self.subdomain = subdomain
 		self.protocol = 'https'
 		self.version = 'v2'
@@ -133,6 +135,8 @@ class BaseApi(object):
 			response = self.object_manager.object_from_json('group', response_json['group'])
 		elif 'tags' in response_json:
 			return response_json['tags']
+		elif 'satisfaction_rating' in response_json:
+			return self.object_manager.object_from_json('satisfaction_rating', response_json['satisfaction_rating'])
 		else:
 			raise ZenpyException("Unknown Response: " + str(response_json))
 
@@ -162,7 +166,10 @@ class BaseApi(object):
 		return "%(protocol)s://%(subdomain)s.zendesk.com/api/%(version)s/" % self.__dict__ + endpoint
 
 	def _get_auth(self):
-		return self.email + '/token', self.token
+		if self.password:
+			return self.email, self.password
+		else:
+			return self.email + '/token', self.token
 
 
 class Api(BaseApi):
@@ -172,8 +179,8 @@ class Api(BaseApi):
 	well as some convenience methods.
 	"""
 
-	def __init__(self, subdomain, email, token, endpoint, object_type):
-		BaseApi.__init__(self, subdomain, email, token)
+	def __init__(self, subdomain, email, password, token, endpoint, object_type):
+		BaseApi.__init__(self, subdomain, email, token, password)
 		self.endpoint = endpoint
 		self.object_type = object_type
 
@@ -209,10 +216,10 @@ class ModifiableApi(Api):
 			first_obj = next((x for x in items))
 			# Object name needs to be plural when targeting many
 			object_type = "%ss" % first_obj.__class__.__name__.lower()
-			payload = {object_type: [vars(i) for i in items]}
+			payload = {object_type: [json.loads(json.dumps(i, cls=ApiObjectEncoder)) for i in items]}
 		else:
 			object_type = items.__class__.__name__.lower()
-			payload = {object_type: vars(items)}
+			payload = {object_type: json.loads(json.dumps(items, cls=ApiObjectEncoder))}
 		return object_type, payload
 
 	def _do(self, action, endpoint_kwargs, payload=None, endpoint=None):
@@ -257,8 +264,9 @@ class SuspendedTicketApi(ModifiableApi):
 	The SuspendedTicketApi adds some SuspendedTicket specific functionality
 	"""
 
-	def __init__(self, subdomain, email, token, endpoint):
-		Api.__init__(self, subdomain, email, token, endpoint=endpoint, object_type='suspended_ticket')
+	def __init__(self, subdomain, email, token, password, endpoint):
+		Api.__init__(self, subdomain, email, token=token, password=password, endpoint=endpoint,
+					 object_type='suspended_ticket')
 
 	def recover(self, items):
 		object_type, payload = self._get_type_and_payload(items)
@@ -310,6 +318,15 @@ class TaggableApi(Api):
 		return self._get_items(self.endpoint.tags, 'tag', kwargs)
 
 
+class RateableApi(Api):
+	def rate(self, id, rating):
+		return self._post(self._get_url(self.endpoint.satisfaction_ratings(
+			id=id,
+			sideload=False
+		)),
+			payload={'satisfaction_rating': vars(rating)})
+
+
 class IncrementalApi(Api):
 	"""
 	IncrementalApi supports the incremental endpoint.
@@ -324,8 +341,8 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
 	The UserApi adds some User specific functionality
 	"""
 
-	def __init__(self, subdomain, email, token, endpoint):
-		Api.__init__(self, subdomain, email, token, endpoint=endpoint, object_type='user')
+	def __init__(self, subdomain, email, token, password, endpoint):
+		Api.__init__(self, subdomain, email, token=token, password=password, endpoint=endpoint, object_type='user')
 
 	def groups(self, **kwargs):
 		return self._get_items(self.endpoint.groups, 'group', kwargs)
@@ -344,20 +361,21 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
 
 
 class OranizationApi(TaggableApi, IncrementalApi, CRUDApi):
-	def __init__(self, subdomain, email, token, endpoint):
-		Api.__init__(self, subdomain, email, token, endpoint=endpoint, object_type='organization')
+	def __init__(self, subdomain, email, token, password, endpoint):
+		Api.__init__(self, subdomain, email, token=token, password=password, endpoint=endpoint,
+					 object_type='organization')
 
 	def __call__(self, **kwargs):
 		return self._get_items(self.endpoint, self.object_type, kwargs)
 
 
-class TicketApi(TaggableApi, IncrementalApi, CRUDApi):
+class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
 	"""
 	The TicketApi adds some Ticket specific functionality
 	"""
 
-	def __init__(self, subdomain, email, token, endpoint):
-		Api.__init__(self, subdomain, email, token, endpoint=endpoint, object_type='ticket')
+	def __init__(self, subdomain, email, token, password, endpoint):
+		Api.__init__(self, subdomain, email, token=token, password=password, endpoint=endpoint, object_type='ticket')
 
 	def __call__(self, **kwargs):
 		return self._get_items(self.endpoint, self.object_type, kwargs)
