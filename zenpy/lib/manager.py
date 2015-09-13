@@ -1,4 +1,5 @@
 from json import JSONEncoder
+import json
 import logging
 
 from cachetools import LRUCache, TTLCache
@@ -18,7 +19,9 @@ from zenpy.lib.objects.events.satisfactionratingevent import SatisfactionRatingE
 from zenpy.lib.objects.events.ticket_event import TicketEvent
 from zenpy.lib.objects.events.ticketsharingevent import TicketSharingEvent
 from zenpy.lib.objects.events.tweetevent import TweetEvent
+from zenpy.lib.objects.suspendedticket import SuspendedTicket
 from zenpy.lib.objects.tag import Tag
+from zenpy.lib.objects.ticket_audit import TicketAudit
 from zenpy.lib.objects.via import Via
 from zenpy.lib.objects.brand import Brand
 from zenpy.lib.objects.group import Group
@@ -90,7 +93,9 @@ class ClassManager(object):
 		'job_status': JobStatus,
 		'audit': Audit,
 		'ticket_event': TicketEvent,
-		'tag': Tag
+		'tag': Tag,
+		'suspended_ticket' : SuspendedTicket,
+		'ticket_audit' : TicketAudit
 	}
 
 	def __init__(self, api):
@@ -129,12 +134,6 @@ class ObjectManager(object):
 	and also provides access to the ClassManager
 	"""
 
-	skip_cache = (
-		'job_status',
-		'attachment',
-		'ticket_audit',
-		'tag')
-
 	def __init__(self, api):
 		self.class_manager = ClassManager(api)
 
@@ -172,7 +171,7 @@ class ObjectManager(object):
 			log.debug("Cache RM: [%s %s]" % (object_type.capitalize(), obj.id))
 
 	def query_cache(self, object_type, _id):
-		if object_type in self.skip_cache:
+		if object_type not in self.cache_mapping.keys():
 			return None
 
 		cache = self.cache_mapping[object_type]
@@ -183,8 +182,6 @@ class ObjectManager(object):
 			log.debug('Cache MISS: [%s %s]' % (object_type.capitalize(), _id))
 
 	def update_caches(self, _json):
-		if 'tickets' in _json:
-			self._add_to_cache('ticket', _json)
 		if 'results' in _json:
 			self._cache_search_results(_json)
 		else:

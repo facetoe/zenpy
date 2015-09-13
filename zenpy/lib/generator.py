@@ -23,7 +23,8 @@ class ResultGenerator(object):
 		'comment': 'comments',
 		'ticket_event': 'ticket_events',
 		'ticket_audit': 'audits',
-		'tag' : 'tags'
+		'tag' : 'tags',
+		'suspended_ticket' : 'suspended_tickets'
 	}
 
 	def __init__(self, api, result_key, _json):

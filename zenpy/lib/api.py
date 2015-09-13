@@ -47,7 +47,6 @@ class BaseApi(object):
 		log.debug("PUT: " + url)
 		payload = json.loads(json.dumps(payload, cls=ApiObjectEncoder))
 		response = requests.put(url, auth=self._get_auth(), json=payload, headers=self.headers)
-		self._check_and_cache_response(response)
 		return self._check_and_cache_response(response)
 
 	def _delete(self, url, payload=None):
@@ -178,6 +177,9 @@ class Api(BaseApi):
 		self.endpoint = endpoint
 		self.object_type = object_type
 
+	def __call__(self, **kwargs):
+		return self._get_items(self.endpoint, self.object_type, kwargs)
+
 	def get_user(self, _id, endpoint=Endpoint().users, object_type='user'):
 		return self._get_item(_id, endpoint, object_type, sideload=True)
 
@@ -197,15 +199,6 @@ class Api(BaseApi):
 		return self._get_item(_id, endpoint, object_type, sideload=False, skip_cache=skip_cache)
 
 
-class SimpleApi(Api):
-	"""
-	A SimpleApi doesn't need any special syntax for the calls or additional methods.
-	"""
-
-	def __call__(self, **kwargs):
-		return self._get_items(self.endpoint, self.object_type, kwargs)
-
-
 class ModifiableApi(Api):
 	"""
 	ModifiableApi contains helper methods for modifying an API
@@ -222,9 +215,11 @@ class ModifiableApi(Api):
 			payload = {object_type: vars(items)}
 		return object_type, payload
 
-	def _do(self, action, endpoint_kwargs, payload=None):
+	def _do(self, action, endpoint_kwargs, payload=None, endpoint=None):
+		if not endpoint:
+			endpoint = self.endpoint
 		return action(self._get_url(
-			endpoint=self.endpoint(**endpoint_kwargs)),
+			endpoint=endpoint(**endpoint_kwargs)),
 			payload=payload)
 
 
@@ -232,6 +227,7 @@ class CRUDApi(ModifiableApi):
 	"""
 	CRUDApi support create/update/delete operations
 	"""
+
 	def create(self, items):
 		object_type, payload = self._get_type_and_payload(items)
 		if object_type.endswith('s'):
@@ -253,6 +249,34 @@ class CRUDApi(ModifiableApi):
 		else:
 			response = self._do(self._delete, dict(id=items.id, sideload=False))
 		self.object_manager.delete_from_cache(items)
+		return response
+
+
+class SuspendedTicketApi(ModifiableApi):
+	"""
+	The SuspendedTicketApi adds some SuspendedTicket specific functionality
+	"""
+
+	def __init__(self, subdomain, email, token, endpoint):
+		Api.__init__(self, subdomain, email, token, endpoint=endpoint, object_type='suspended_ticket')
+
+	def recover(self, items):
+		object_type, payload = self._get_type_and_payload(items)
+		if object_type.endswith('s'):
+			return self._do(self._put, dict(
+				recover_ids=[i.id for i in items], sideload=False),
+							endpoint=self.endpoint, payload=payload)
+		else:
+			return self._do(self._put, dict(id=items.id, sideload=False),
+							endpoint=self.endpoint.recover,
+							payload=payload)
+
+	def delete(self, items):
+		object_type, payload = self._get_type_and_payload(items)
+		if object_type.endswith('s'):
+			response = self._do(self._delete, dict(destroy_ids=[i.id for i in items], sideload=False))
+		else:
+			response = self._do(self._delete, dict(id=items.id, sideload=False))
 		return response
 
 
@@ -303,9 +327,6 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
 	def __init__(self, subdomain, email, token, endpoint):
 		Api.__init__(self, subdomain, email, token, endpoint=endpoint, object_type='user')
 
-	def __call__(self, **kwargs):
-		return self._get_items(self.endpoint, self.object_type, kwargs)
-
 	def groups(self, **kwargs):
 		return self._get_items(self.endpoint.groups, 'group', kwargs)
 
@@ -355,15 +376,3 @@ class TicketApi(TaggableApi, IncrementalApi, CRUDApi):
 
 	def audits(self, **kwargs):
 		return self._get_items(self.endpoint.audits, 'ticket_audit', kwargs)
-
-
-class SuspendedTicketApi(ModifiableApi):
-	"""
-	The SuspendedTicketApi adds some SuspendedTicket specific functionality
-	"""
-
-	def __init__(self, subdomain, email, token, endpoint):
-		Api.__init__(self, subdomain, email, token, endpoint=endpoint, object_type='suspended_ticket')
-
-	def recover(self, items):
-		pass

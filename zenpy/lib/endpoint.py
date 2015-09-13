@@ -18,11 +18,8 @@ class BaseEndpoint(object):
 	def _single(endpoint, user_id):
 		return "%s/%s%s" % (endpoint, user_id, '.json')
 
-	def _many(self, endpoint, user_ids):
-		return "%s/%s%s" % (endpoint, 'show_many.json?ids=', self._format_many(user_ids))
-
-	def _destroy_many(self, endpoint, ids):
-		return "%s/%s%s" % (endpoint, 'destroy_many.json?ids=', self._format_many(ids))
+	def _many(self, endpoint, user_ids, action='show_many.json?ids='):
+		return "%s/%s%s" % (endpoint, action, self._format_many(user_ids))
 
 	@staticmethod
 	def _format(*args, **kwargs):
@@ -53,9 +50,11 @@ class PrimaryEndpoint(BaseEndpoint):
 			elif key == 'ids':
 				query += self._many(self.endpoint, value)
 			elif key == 'destroy_ids':
-				query += self._destroy_many(self.endpoint, value)
+				query += self._many(self.endpoint, value, action='destroy_many.json?ids=')
 			elif key == 'create_many':
 				query = "".join([self.endpoint, '/create_many.json'])
+			elif key == 'recover_ids':
+				query = self._many(self.endpoint, value, action='recover_many.json?ids=')
 			elif key == 'update_many':
 				query = "".join([self.endpoint, '/update_many.json'])
 			elif key in ('sort_by', 'sort_order'):
@@ -203,6 +202,8 @@ class Endpoint(object):
 		self.tickets.events = IncrementalEndpoint('incremental/ticket_events.json?')
 		self.tickets.audits = SecondaryEndpoint('tickets/%(id)s/audits.json')
 		self.tickets.tags = SecondaryEndpoint('tickets/%(id)s/tags.json')
+		self.suspended_tickets = PrimaryEndpoint('suspended_tickets')
+		self.suspended_tickets.recover = SecondaryEndpoint('suspended_tickets/%(id)s/recover.json')
 		self.attachments = PrimaryEndpoint('attachments')
 		self.organizations = PrimaryEndpoint('organizations')
 		self.organizations.incremental = IncrementalEndpoint('incremental/organizations.json?')
