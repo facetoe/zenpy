@@ -208,9 +208,30 @@ class SimpleApi(Api):
 
 class ModifiableApi(Api):
 	"""
-	ModifiableApi supports create/update/delete operations
+	ModifiableApi contains helper methods for modifying an API
 	"""
 
+	def _get_type_and_payload(self, items):
+		if isinstance(items, list):
+			first_obj = next((x for x in items))
+			# Object name needs to be plural when targeting many
+			object_type = "%ss" % first_obj.__class__.__name__.lower()
+			payload = {object_type: [vars(i) for i in items]}
+		else:
+			object_type = items.__class__.__name__.lower()
+			payload = {object_type: vars(items)}
+		return object_type, payload
+
+	def _do(self, action, endpoint_kwargs, payload=None):
+		return action(self._get_url(
+			endpoint=self.endpoint(**endpoint_kwargs)),
+			payload=payload)
+
+
+class CRUDApi(ModifiableApi):
+	"""
+	CRUDApi support create/update/delete operations
+	"""
 	def create(self, items):
 		object_type, payload = self._get_type_and_payload(items)
 		if object_type.endswith('s'):
@@ -233,22 +254,6 @@ class ModifiableApi(Api):
 			response = self._do(self._delete, dict(id=items.id, sideload=False))
 		self.object_manager.delete_from_cache(items)
 		return response
-
-	def _get_type_and_payload(self, items):
-		if isinstance(items, list):
-			first_obj = next((x for x in items))
-			# Object name needs to be plural when creating many
-			object_type = "%ss" % first_obj.__class__.__name__.lower()
-			payload = {object_type: [vars(i) for i in items]}
-		else:
-			object_type = items.__class__.__name__.lower()
-			payload = {object_type: vars(items)}
-		return object_type, payload
-
-	def _do(self, action, endpoint_kwargs, payload=None):
-		return action(self._get_url(
-			endpoint=self.endpoint(**endpoint_kwargs)),
-			payload=payload)
 
 
 class TaggableApi(Api):
@@ -290,7 +295,7 @@ class IncrementalApi(Api):
 		return self._get_items(self.endpoint.incremental, self.object_type, kwargs)
 
 
-class UserApi(TaggableApi, IncrementalApi, ModifiableApi):
+class UserApi(TaggableApi, IncrementalApi, CRUDApi):
 	"""
 	The UserApi adds some User specific functionality
 	"""
@@ -317,7 +322,7 @@ class UserApi(TaggableApi, IncrementalApi, ModifiableApi):
 		return self._get_items(self.endpoint.assigned, 'ticket', kwargs)
 
 
-class OranizationApi(TaggableApi, IncrementalApi, ModifiableApi):
+class OranizationApi(TaggableApi, IncrementalApi, CRUDApi):
 	def __init__(self, subdomain, email, token, endpoint):
 		Api.__init__(self, subdomain, email, token, endpoint=endpoint, object_type='organization')
 
@@ -325,7 +330,7 @@ class OranizationApi(TaggableApi, IncrementalApi, ModifiableApi):
 		return self._get_items(self.endpoint, self.object_type, kwargs)
 
 
-class TicketApi(TaggableApi, IncrementalApi, ModifiableApi):
+class TicketApi(TaggableApi, IncrementalApi, CRUDApi):
 	"""
 	The TicketApi adds some Ticket specific functionality
 	"""
