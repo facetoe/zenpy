@@ -3,7 +3,7 @@ from time import sleep
 __author__ = 'facetoe'
 
 from zenpy.lib.manager import ObjectManager, ApiObjectEncoder
-from zenpy.lib.exception import ZenpyException, APIException
+from zenpy.lib.exception import ZenpyException, APIException, RecordNotFoundException
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.generator import ResultGenerator
 
@@ -144,10 +144,15 @@ class BaseApi(object):
 
 	def _check_and_cache_response(self, response):
 		if response.status_code > 299 or response.status_code < 200:
-			# Try and get a nice error message
+			# If it's just a RecordNotFound error raise the right exception,
+			# otherwise try and get a nice error message.
 			if 'application/json' in response.headers['content-type']:
 				try:
-					raise APIException(json.dumps(response.json()))
+					_json = response.json()
+					if 'error' in _json and _json['error'] == 'RecordNotFound':
+						raise RecordNotFoundException(json.dumps(_json))
+					else:
+						raise APIException(json.dumps(_json))
 				except ValueError:
 					pass
 			# No can do, just raise the correct Exception.

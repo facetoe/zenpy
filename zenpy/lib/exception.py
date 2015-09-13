@@ -5,11 +5,14 @@ class ZenpyException(Exception):
 	"""
 	A ZenpyException is raised for internal errors
 	"""
-	pass
 
 
 class APIException(Exception):
 	"""
 	An APIException is raised when the API rejects a query.
 	"""
-	pass
+
+class RecordNotFoundException(Exception):
+	"""
+	A RecordNotFoundException is raised when the API cannot find a record
+	"""
