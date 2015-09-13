@@ -24,7 +24,8 @@ class ResultGenerator(object):
 		'ticket_audit': 'audits',
 		'tag': 'tags',
 		'suspended_ticket': 'suspended_tickets',
-		'satisfaction_rating': 'satisfaction_ratings'
+		'satisfaction_rating': 'satisfaction_ratings',
+		'activity': 'activities'
 	}
 
 	def __init__(self, api, result_key, _json):
@@ -79,7 +80,8 @@ class ResultGenerator(object):
 		if 'result_type' in item_json:
 			object_type = item_json.pop('result_type')
 		else:
-			object_type = self.result_key[:-1]  # If many objects are returned the key is plural.
+			# Multiple results have a plural key, however the object_type is singular
+			object_type = self.get_singular(self.result_key)
 		return self.api.object_manager.object_from_json(object_type, item_json)
 
 	def update_attrs(self, _json):
@@ -92,3 +94,10 @@ class ResultGenerator(object):
 		log.debug("GENERATOR: " + url)
 		response = self.api._get(url)
 		return response.json()
+
+	def get_singular(self, result_key):
+		if result_key.endswith('ies'):
+			object_type = result_key.replace('ies', 'y')
+		else:
+			object_type = result_key[:-1]
+		return object_type

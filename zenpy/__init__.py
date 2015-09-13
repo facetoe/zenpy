@@ -121,3 +121,13 @@ class Zenpy(object):
 			endpoint=endpoint.satisfaction_ratings,
 			object_type='satisfaction_rating'
 		)
+
+		self.activities = Api(
+			subdomain,
+			email,
+			token=token,
+			password=password,
+			endpoint=endpoint.activities,
+			object_type='activity'
+		)
+

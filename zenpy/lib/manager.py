@@ -4,6 +4,7 @@ import logging
 from cachetools import LRUCache, TTLCache
 
 from zenpy.lib.exception import ZenpyException
+from zenpy.lib.objects.activity import Activity
 from zenpy.lib.objects.events.ccevent import CcEvent
 from zenpy.lib.objects.events.changeevent import ChangeEvent
 from zenpy.lib.objects.events.commentprivacychangeevent import CommentPrivacyChangeEvent
@@ -96,7 +97,8 @@ class ClassManager(object):
 		'tag': Tag,
 		'suspended_ticket': SuspendedTicket,
 		'ticket_audit': TicketAudit,
-		'satisfaction_rating': SatisfactionRating
+		'satisfaction_rating': SatisfactionRating,
+		'activity': Activity
 	}
 
 	def __init__(self, api):

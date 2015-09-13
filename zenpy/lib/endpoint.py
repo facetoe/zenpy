@@ -1,5 +1,5 @@
 from datetime import datetime
-
+import dateutil.parser
 from zenpy.lib.exception import ZenpyException
 
 __author__ = 'facetoe'
@@ -29,7 +29,7 @@ class BaseEndpoint(object):
 	def _format_many(items):
 		return ",".join([str(i) for i in items])
 
-	def _format_sideload(self, items, seperator='?'):
+	def _format_sideload(self, items, seperator='&'):
 		if isinstance(items, basestring):
 			items = [items]
 		return '%sinclude=%s' % (seperator, self._format_many(items))
@@ -40,6 +40,8 @@ class PrimaryEndpoint(BaseEndpoint):
 	A PrimaryEndpoint takes an id or list of ids and either returns the objects
 	associated with them or performs actions on them (eg, update/delete).
 	"""
+
+	ISO_8601_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
 	def __call__(self, **kwargs):
 		query = ""
@@ -59,12 +61,14 @@ class PrimaryEndpoint(BaseEndpoint):
 				query = "".join([self.endpoint, '/update_many.json'])
 			elif key in ('sort_by', 'sort_order'):
 				modifiers.append((key, value))
+			elif key == 'since':
+				modifiers.append((key, value.strftime(self.ISO_8601_FORMAT)))
 
 		if modifiers:
 			query += '&' + "&".join(["%s=%s" % (k, v) for k, v in modifiers])
 
 		if self.endpoint not in query:
-			query = self.endpoint + '.json' + query
+			query = self.endpoint + '.json?' + query
 
 		if 'sideload' in kwargs and not kwargs['sideload']:
 			return query
@@ -213,3 +217,4 @@ class Endpoint(object):
 		self.job_statuses = PrimaryEndpoint('job_statuses')
 		self.tags = PrimaryEndpoint('tags')
 		self.satisfaction_ratings = PrimaryEndpoint('satisfaction_ratings')
+		self.activities = PrimaryEndpoint('activities')
