@@ -3,14 +3,14 @@ import dateutil.parser
 from zenpy.lib.objects.base_object import BaseObject
 
 class Organization(BaseObject):
-	def __init__(self, api=None):
+	def __init__(self, api=None, name=None, tags=None):
 		self.api = api
-		self.name = None
+		self.name = name
+		self.tags = tags
 		self.shared_comments = None
 		self.url = None
 		self.organization_fields = None
 		self.created_at = None
-		self.tags = None
 		self.updated_at = None
 		self.domain_names = None
 		self.details = None

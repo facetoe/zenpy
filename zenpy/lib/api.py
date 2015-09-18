@@ -133,6 +133,8 @@ class BaseApi(object):
 			response = self.object_manager.object_from_json('job_status', response_json['job_status'])
 		elif 'group' in response_json:
 			response = self.object_manager.object_from_json('group', response_json['group'])
+		elif 'organization' in response_json:
+			response = self.object_manager.object_from_json('organization', response_json['organization'])
 		elif 'tags' in response_json:
 			return response_json['tags']
 		elif 'satisfaction_rating' in response_json:
