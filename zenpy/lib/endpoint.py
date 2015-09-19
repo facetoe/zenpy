@@ -83,6 +83,8 @@ class SecondaryEndpoint(BaseEndpoint):
 	"""
 
 	def __call__(self, **kwargs):
+		if 'id' not in kwargs:
+			raise ZenpyException("This endpoint requires an id!")
 		return self.endpoint % kwargs
 
 
