@@ -139,16 +139,15 @@ class ObjectManager(object):
 	and also provides access to the ClassManager
 	"""
 
+	user_cache = LRUCache(maxsize=200)
+	organization_cache = LRUCache(maxsize=100)
+	group_cache = LRUCache(maxsize=100)
+	brand_cache = LRUCache(maxsize=100)
+	ticket_cache = TTLCache(maxsize=100, ttl=30)
+	comment_cache = TTLCache(maxsize=100, ttl=30)
+
 	def __init__(self, api):
 		self.class_manager = ClassManager(api)
-
-		self.user_cache = LRUCache(maxsize=200)
-		self.organization_cache = LRUCache(maxsize=100)
-		self.group_cache = LRUCache(maxsize=100)
-		self.brand_cache = LRUCache(maxsize=100)
-		self.ticket_cache = TTLCache(maxsize=100, ttl=30)
-		self.comment_cache = TTLCache(maxsize=100, ttl=30)
-
 		self.cache_mapping = {
 			'user': self.user_cache,
 			'organization': self.organization_cache,
