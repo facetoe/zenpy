@@ -6,7 +6,7 @@ class User(BaseObject):
 	def __init__(self, api=None, **kwargs):
 		self.api = api
 		self.locale = None
-		self.photo = None
+		self._photo = None
 		self.updated_at = None
 		self._locale = None
 		self.locale_id = None
@@ -102,4 +102,9 @@ class User(BaseObject):
 	@external.setter
 	def external(self, value):
 		self._external = value
+
+	@property
+	def photo(self):
+		if self.api and self._photo:
+			return self.api.object_manager.object_from_json('photo', self._photo)
 		

@@ -222,3 +222,4 @@ class Endpoint(object):
 		self.satisfaction_ratings = PrimaryEndpoint('satisfaction_ratings')
 		self.activities = PrimaryEndpoint('activities')
 		self.group_memberships = PrimaryEndpoint('group_memberships')
+		self.end_user = SecondaryEndpoint('end_users/%(id)s.json')

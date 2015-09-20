@@ -1,7 +1,7 @@
 import logging
 import sys
 
-from zenpy.lib.api import UserApi, Api, TicketApi, OranizationApi, SuspendedTicketApi
+from zenpy.lib.api import UserApi, Api, TicketApi, OranizationApi, SuspendedTicketApi, EndUserApi
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import ZenpyException
 
@@ -137,4 +137,12 @@ class Zenpy(object):
 			password=password,
 			endpoint=endpoint.group_memberships,
 			object_type='group_membership'
+		)
+
+		self.end_user = EndUserApi(
+			subdomain,
+			email,
+			token=token,
+			password=password,
+			endpoint=endpoint.end_user
 		)

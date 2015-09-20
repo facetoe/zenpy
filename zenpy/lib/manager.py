@@ -20,6 +20,7 @@ from zenpy.lib.objects.events.ticket_event import TicketEvent
 from zenpy.lib.objects.events.ticketsharingevent import TicketSharingEvent
 from zenpy.lib.objects.events.tweetevent import TweetEvent
 from zenpy.lib.objects.groupmembership import GroupMembership
+from zenpy.lib.objects.photo import Photo
 from zenpy.lib.objects.satisfactionrating import SatisfactionRating
 from zenpy.lib.objects.suspendedticket import SuspendedTicket
 from zenpy.lib.objects.tag import Tag
@@ -100,7 +101,8 @@ class ClassManager(object):
 		'ticket_audit': TicketAudit,
 		'satisfaction_rating': SatisfactionRating,
 		'activity': Activity,
-		'group_membership': GroupMembership
+		'group_membership': GroupMembership,
+		'photo': Photo,
 	}
 
 	def __init__(self, api):
@@ -124,7 +126,7 @@ class ClassManager(object):
 
 		obj = object_type(api=self.api)
 		for key, value in object_json.iteritems():
-			if key in ('results', 'metadata', 'from', 'system'):
+			if key in ('results', 'metadata', 'from', 'system', 'photo', 'thumbnails'):
 				key = '_%s' % key
 
 			if key in self.class_mapping.keys():

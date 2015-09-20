@@ -49,7 +49,8 @@ class BaseApi(object):
 		log.debug("PUT: " + url)
 		payload = json.loads(json.dumps(payload, cls=ApiObjectEncoder))
 		response = requests.put(url, auth=self._get_auth(), json=payload, headers=self.headers)
-		return self._check_and_cache_response(response)
+		self._check_and_cache_response(response)
+		return self._build_response(response.json())
 
 	def _delete(self, url, payload=None):
 		log.debug("DELETE: " + url)
@@ -368,6 +369,21 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
 
 	def group_memberships(self, **kwargs):
 		return self._get_items(self.endpoint.group_memberships, 'group_membership', kwargs)
+
+
+class EndUserApi(CRUDApi):
+	"""
+	EndUsers can only update.
+	"""
+
+	def __init__(self, subdomain, email, token, password, endpoint):
+		Api.__init__(self, subdomain, email, token=token, password=password, endpoint=endpoint, object_type='user')
+
+	def delete(self, items):
+		raise ZenpyException("EndUsers cannot delete!")
+
+	def create(self, items):
+		raise ZenpyException("EndUsers cannot create!")
 
 
 class OranizationApi(TaggableApi, IncrementalApi, CRUDApi):
