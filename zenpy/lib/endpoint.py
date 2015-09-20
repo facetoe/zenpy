@@ -210,6 +210,8 @@ class Endpoint(object):
 		self.tickets.events = IncrementalEndpoint('incremental/ticket_events.json?')
 		self.tickets.audits = SecondaryEndpoint('tickets/%(id)s/audits.json')
 		self.tickets.tags = SecondaryEndpoint('tickets/%(id)s/tags.json')
+		self.tickets.metrics = SecondaryEndpoint('tickets/%(id)s/metrics.json')
+		self.ticket_metrics = PrimaryEndpoint('ticket_metrics')
 		self.suspended_tickets = PrimaryEndpoint('suspended_tickets')
 		self.suspended_tickets.recover = SecondaryEndpoint('suspended_tickets/%(id)s/recover.json')
 		self.attachments = PrimaryEndpoint('attachments')

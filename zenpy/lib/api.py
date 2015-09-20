@@ -420,3 +420,6 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
 
 	def audits(self, **kwargs):
 		return self._get_items(self.endpoint.audits, 'ticket_audit', kwargs)
+
+	def metrics(self, **kwargs):
+		return self._get_items(self.endpoint.metrics, 'ticket_metric', kwargs)

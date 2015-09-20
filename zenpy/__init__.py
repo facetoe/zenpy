@@ -146,3 +146,12 @@ class Zenpy(object):
 			password=password,
 			endpoint=endpoint.end_user
 		)
+
+		self.ticket_metrics = Api(
+			subdomain,
+			email,
+			token=token,
+			password=password,
+			endpoint=endpoint.ticket_metrics,
+			object_type='ticket_metric'
+		)

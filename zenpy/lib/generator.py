@@ -27,7 +27,8 @@ class ResultGenerator(object):
 		'suspended_ticket': 'suspended_tickets',
 		'satisfaction_rating': 'satisfaction_ratings',
 		'activity': 'activities',
-		'group_membership' : 'group_memberships'
+		'group_membership': 'group_memberships',
+		'ticket_metric': 'ticket_metrics'
 	}
 
 	def __init__(self, api, result_key, _json):
