@@ -1,6 +1,7 @@
-
 import dateutil.parser
+
 from zenpy.lib.objects.base_object import BaseObject
+
 
 class Ticket(BaseObject):
 	def __init__(self, api=None, **kwargs):
@@ -47,115 +48,110 @@ class Ticket(BaseObject):
 		for key, value in kwargs.iteritems():
 			setattr(self, key, value)
 
-
 	@property
 	def updated(self):
 		if self.updated_at:
 			return dateutil.parser.parse(self.updated_at)
-			
 
 	@updated.setter
 	def updated(self, value):
 		self._updated = value
-		
+
 	@property
 	def submitter(self):
 		if self.api and self.submitter_id:
 			return self.api.get_user(self.submitter_id)
 
 	@submitter.setter
-	def submitter(self, value):
-		self._submitter = value
-		
+	def submitter(self, user):
+		self.submitter_id = user.id
+
 	@property
 	def assignee(self):
 		if self.api and self.assignee_id:
 			return self.api.get_user(self.assignee_id)
 
 	@assignee.setter
-	def assignee(self, value):
-		self._assignee = value
-		
+	def assignee(self, user):
+		self.assignee_id = user.id
+
 	@property
 	def brand(self):
 		if self.api and self.brand_id:
 			return self.api.get_brand(self.brand_id)
 
 	@brand.setter
-	def brand(self, value):
-		self._brand = value
-		
+	def brand(self, brand):
+		self.brand_id = brand.id
+
 	@property
 	def forum_topic(self):
 		if self.api and self.forum_topic_id:
 			return self.api.get_topic(self.forum_topic_id)
 
 	@forum_topic.setter
-	def forum_topic(self, value):
-		self._forum_topic = value
-		
+	def forum_topic(self, forum_topic):
+		self.forum_topic_id = forum_topic.id
+
 	@property
 	def organization(self):
 		if self.api and self.organization_id:
 			return self.api.get_organization(self.organization_id)
 
 	@organization.setter
-	def organization(self, value):
-		self._organization = value
-		
+	def organization(self, organization):
+		self.organization_id = organization.id
+
 	@property
 	def due(self):
 		if self.due_at:
 			return dateutil.parser.parse(self.due_at)
-			
 
 	@due.setter
 	def due(self, value):
 		self._due = value
-		
+
 	@property
 	def requester(self):
 		if self.api and self.requester_id:
 			return self.api.get_user(self.requester_id)
 
 	@requester.setter
-	def requester(self, value):
-		self._requester = value
-		
+	def requester(self, user):
+		self.requester_id = user.id
+
 	@property
 	def problem(self):
 		if self.api and self.problem_id:
 			return self.api.get_problem(self.problem_id)
 
 	@problem.setter
-	def problem(self, value):
-		self._problem = value
-		
+	def problem(self, problem):
+		self.problem_id = problem.id
+
 	@property
 	def created(self):
 		if self.created_at:
 			return dateutil.parser.parse(self.created_at)
-			
 
 	@created.setter
 	def created(self, value):
 		self._created = value
-		
+
 	@property
 	def group(self):
 		if self.api and self.group_id:
 			return self.api.get_group(self.group_id)
 
 	@group.setter
-	def group(self, value):
-		self._group = value
-		
+	def group(self, group):
+		self.group_id = group.id
+
 	@property
 	def external(self):
 		if self.api and self.external_id:
 			return self.api.get_external(self.external_id)
 
 	@external.setter
-	def external(self, value):
-		self._external = value
-		
+	def external(self, external):
+		self.external_id = external.id

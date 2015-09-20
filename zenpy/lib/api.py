@@ -128,6 +128,8 @@ class BaseApi(object):
 		# We can figure out what we have by the keys in the returned JSON
 		if 'ticket' and 'audit' in response_json:
 			response = self.object_manager.object_from_json('ticket_audit', response_json)
+		elif 'ticket' in response_json:
+			response = self.object_manager.object_from_json('ticket', response_json['ticket'])
 		elif 'user' in response_json:
 			response = self.object_manager.object_from_json('user', response_json['user'])
 		elif 'job_status' in response_json:
@@ -423,3 +425,8 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
 
 	def metrics(self, **kwargs):
 		return self._get_items(self.endpoint.metrics, 'ticket_metric', kwargs)
+
+
+class TicketImportAPI(CRUDApi):
+	def __init__(self, subdomain, email, token, password, endpoint):
+		Api.__init__(self, subdomain, email, token=token, password=password, endpoint=endpoint, object_type='ticket')
