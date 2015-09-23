@@ -1,7 +1,8 @@
 import logging
 import sys
 
-from zenpy.lib.api import UserApi, Api, TicketApi, OranizationApi, SuspendedTicketApi, EndUserApi, TicketImportAPI
+from zenpy.lib.api import UserApi, Api, TicketApi, OranizationApi, SuspendedTicketApi, EndUserApi, TicketImportAPI, \
+	RequestAPI
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import ZenpyException
 
@@ -162,4 +163,12 @@ class Zenpy(object):
 			token=token,
 			password=password,
 			endpoint=endpoint.ticket_import
+		)
+
+		self.requests = RequestAPI(
+			subdomain,
+			email,
+			token=token,
+			password=password,
+			endpoint=endpoint.requests
 		)

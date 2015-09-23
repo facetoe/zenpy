@@ -226,3 +226,4 @@ class Endpoint(object):
 		self.activities = PrimaryEndpoint('activities')
 		self.group_memberships = PrimaryEndpoint('group_memberships')
 		self.end_user = SecondaryEndpoint('end_users/%(id)s.json')
+		self.requests = PrimaryEndpoint('requests')

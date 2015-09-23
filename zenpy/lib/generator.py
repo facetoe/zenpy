@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 
+from zenpy.lib.objects.request import Request
+
 __author__ = 'facetoe'
 
 import logging
@@ -28,7 +30,8 @@ class ResultGenerator(object):
 		'satisfaction_rating': 'satisfaction_ratings',
 		'activity': 'activities',
 		'group_membership': 'group_memberships',
-		'ticket_metric': 'ticket_metrics'
+		'ticket_metric': 'ticket_metrics',
+		'request': 'requests'
 	}
 
 	def __init__(self, api, result_key, _json):

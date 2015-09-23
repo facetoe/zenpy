@@ -242,7 +242,7 @@ class ModifiableApi(Api):
 
 class CRUDApi(ModifiableApi):
 	"""
-	CRUDApi support create/update/delete operations
+	CRUDApi supports create/update/delete operations
 	"""
 
 	def create(self, items):
@@ -430,3 +430,8 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
 class TicketImportAPI(CRUDApi):
 	def __init__(self, subdomain, email, token, password, endpoint):
 		Api.__init__(self, subdomain, email, token=token, password=password, endpoint=endpoint, object_type='ticket')
+
+
+class RequestAPI(CRUDApi):
+	def __init__(self, subdomain, email, token, password, endpoint):
+		Api.__init__(self, subdomain, email, token=token, password=password, endpoint=endpoint, object_type='request')
