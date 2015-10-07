@@ -6,6 +6,8 @@ Zenpy is a Python wrapper for the Zendesk API. The goal of the project is to mak
 
 The wrapper supports both reading and writing from the API.
 
+Zenpy is still in beta, so please report any bugs!
+
 * [Installation](#installation)
 * [Usage](#usage)
 *  [Searching the API](#searching-the-api)
