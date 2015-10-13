@@ -22,6 +22,7 @@ from zenpy.lib.objects.events.tweetevent import TweetEvent
 from zenpy.lib.objects.groupmembership import GroupMembership
 from zenpy.lib.objects.photo import Photo
 from zenpy.lib.objects.satisfactionrating import SatisfactionRating
+from zenpy.lib.objects.status import Status
 from zenpy.lib.objects.suspendedticket import SuspendedTicket
 from zenpy.lib.objects.tag import Tag
 from zenpy.lib.objects.ticket_audit import TicketAudit
@@ -104,7 +105,8 @@ class ClassManager(object):
 		'activity': Activity,
 		'group_membership': GroupMembership,
 		'photo': Photo,
-		'ticket_metric': TicketMetric
+		'ticket_metric': TicketMetric,
+		'status' : Status
 	}
 
 	def __init__(self, api):
