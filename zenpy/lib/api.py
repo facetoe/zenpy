@@ -225,6 +225,12 @@ class Api(BaseApi):
     def get_via(self, via):
         return self.object_manager.object_from_json('via', via)
 
+    def get_source(self, source):
+        return self.object_manager.object_from_json('source', source)
+
+    def get_photo(self, photo):
+        return self.object_manager.object_from_json('photo', photo)
+
 
 class ModifiableApi(Api):
     """
