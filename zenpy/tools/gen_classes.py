@@ -22,6 +22,7 @@ from zenpy.lib.objects.base_object import BaseObject
 class {{object.name}}(BaseObject):
         {{-object.init.render()-}}
         {{-object.properties.render()-}}
+
 """
 
     def __init__(self, name, _json):
@@ -33,13 +34,16 @@ class {{object.name}}(BaseObject):
 
 class Init(TemplateObject):
     OBJECT_TEMPLATE = """
-    def __init__(self, api=None):
+    def __init__(self, api=None, **kwargs):
         self.api = api
         {% for attr in object.attributes -%}
         {% if attr.attr_name -%}
         self.{{attr.attr_name}} = None
         {% endif -%}
         {% endfor %}
+        for key, value in kwargs.iteritems():
+            setattr(self, key, value)
+
     """
 
     def __init__(self, attributes):
