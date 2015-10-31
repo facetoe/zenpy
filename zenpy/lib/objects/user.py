@@ -3,7 +3,7 @@ import dateutil.parser
 from zenpy.lib.objects.base_object import BaseObject
 
 class User(BaseObject):
-    def __init__(self, api=None):
+    def __init__(self, api=None, **kwargs):
         self.api = api
         self._locale = None
         self._photo = None
@@ -39,6 +39,9 @@ class User(BaseObject):
         self.external_id = None
         self._notes = None
         
+        for key, value in kwargs.iteritems():
+            setattr(self, key, value)
+
     @property
     def photo(self):
         if self.api and self._photo:

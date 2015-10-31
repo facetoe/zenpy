@@ -3,7 +3,7 @@ import dateutil.parser
 from zenpy.lib.objects.base_object import BaseObject
 
 class Brand(BaseObject):
-    def __init__(self, api=None):
+    def __init__(self, api=None, **kwargs):
         self.api = api
         self.default = None
         self._name = None
@@ -19,6 +19,9 @@ class Brand(BaseObject):
         self.id = None
         self._host_mapping = None
         
+        for key, value in kwargs.iteritems():
+            setattr(self, key, value)
+
     @property
     def logo(self):
         if self.api and self._logo:

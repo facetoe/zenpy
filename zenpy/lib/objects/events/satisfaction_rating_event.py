@@ -3,7 +3,7 @@ import dateutil.parser
 from zenpy.lib.objects.base_object import BaseObject
 
 class SatisfactionRatingEvent(BaseObject):
-    def __init__(self, api=None):
+    def __init__(self, api=None, **kwargs):
         self.api = api
         self.assignee_id = None
         self._body = None
@@ -11,6 +11,9 @@ class SatisfactionRatingEvent(BaseObject):
         self._type = None
         self.id = None
         
+        for key, value in kwargs.iteritems():
+            setattr(self, key, value)
+
     @property
     def assignee(self):
         if self.api and self.assignee_id:

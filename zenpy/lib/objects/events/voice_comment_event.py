@@ -3,7 +3,7 @@ import dateutil.parser
 from zenpy.lib.objects.base_object import BaseObject
 
 class VoiceCommentEvent(BaseObject):
-    def __init__(self, api=None):
+    def __init__(self, api=None, **kwargs):
         self.api = api
         self._body = None
         self._formatted_to = None
@@ -18,6 +18,9 @@ class VoiceCommentEvent(BaseObject):
         self.trusted = None
         self._html_body = None
         
+        for key, value in kwargs.iteritems():
+            setattr(self, key, value)
+
     @property
     def author(self):
         if self.api and self.author_id:

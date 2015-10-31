@@ -3,7 +3,7 @@ import dateutil.parser
 from zenpy.lib.objects.base_object import BaseObject
 
 class Comment(BaseObject):
-    def __init__(self, api=None):
+    def __init__(self, api=None, **kwargs):
         self.api = api
         self._body = None
         self._via = None
@@ -15,6 +15,9 @@ class Comment(BaseObject):
         self.id = None
         self._metadata = None
         
+        for key, value in kwargs.iteritems():
+            setattr(self, key, value)
+
     @property
     def via(self):
         if self.api and self._via:

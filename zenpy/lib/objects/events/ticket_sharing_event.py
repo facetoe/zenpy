@@ -3,13 +3,16 @@ import dateutil.parser
 from zenpy.lib.objects.base_object import BaseObject
 
 class TicketSharingEvent(BaseObject):
-    def __init__(self, api=None):
+    def __init__(self, api=None, **kwargs):
         self.api = api
         self.agreement_id = None
         self._action = None
         self._type = None
         self.id = None
         
+        for key, value in kwargs.iteritems():
+            setattr(self, key, value)
+
     @property
     def agreement(self):
         if self.api and self.agreement_id:

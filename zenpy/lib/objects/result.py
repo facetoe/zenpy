@@ -3,7 +3,7 @@ import dateutil.parser
 from zenpy.lib.objects.base_object import BaseObject
 
 class Result(BaseObject):
-    def __init__(self, api=None):
+    def __init__(self, api=None, **kwargs):
         self.api = api
         self._count = None
         self._facets = None
@@ -11,6 +11,9 @@ class Result(BaseObject):
         self._results = None
         self._next_page = None
         
+        for key, value in kwargs.iteritems():
+            setattr(self, key, value)
+
     @property
     def facets(self):
         if self.api and self._facets:

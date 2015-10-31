@@ -3,7 +3,7 @@ import dateutil.parser
 from zenpy.lib.objects.base_object import BaseObject
 
 class JobStatus(BaseObject):
-    def __init__(self, api=None):
+    def __init__(self, api=None, **kwargs):
         self.api = api
         self._status = None
         self._url = None
@@ -13,6 +13,9 @@ class JobStatus(BaseObject):
         self._total = None
         self.id = None
         
+        for key, value in kwargs.iteritems():
+            setattr(self, key, value)
+
     @property
     def results(self):
         if self.api and self._results:

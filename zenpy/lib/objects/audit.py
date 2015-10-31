@@ -3,7 +3,7 @@ import dateutil.parser
 from zenpy.lib.objects.base_object import BaseObject
 
 class Audit(BaseObject):
-    def __init__(self, api=None):
+    def __init__(self, api=None, **kwargs):
         self.api = api
         self._via = None
         self.created_at = None
@@ -13,6 +13,9 @@ class Audit(BaseObject):
         self.id = None
         self._metadata = None
         
+        for key, value in kwargs.iteritems():
+            setattr(self, key, value)
+
     @property
     def via(self):
         if self.api and self._via:

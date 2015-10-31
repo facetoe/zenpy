@@ -3,7 +3,7 @@ import dateutil.parser
 from zenpy.lib.objects.base_object import BaseObject
 
 class Topic(BaseObject):
-    def __init__(self, api=None):
+    def __init__(self, api=None, **kwargs):
         self.api = api
         self._body = None
         self.locked = None
@@ -21,6 +21,9 @@ class Topic(BaseObject):
         self.id = None
         self.updater_id = None
         
+        for key, value in kwargs.iteritems():
+            setattr(self, key, value)
+
     @property
     def forum(self):
         if self.api and self.forum_id:

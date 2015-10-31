@@ -3,13 +3,16 @@ import dateutil.parser
 from zenpy.lib.objects.base_object import BaseObject
 
 class CommentPrivacyChangeEvent(BaseObject):
-    def __init__(self, api=None):
+    def __init__(self, api=None, **kwargs):
         self.api = api
         self.comment_id = None
         self._type = None
         self.id = None
         self.public = None
         
+        for key, value in kwargs.iteritems():
+            setattr(self, key, value)
+
     @property
     def comment(self):
         if self.api and self.comment_id:

@@ -3,7 +3,7 @@ import dateutil.parser
 from zenpy.lib.objects.base_object import BaseObject
 
 class Organization(BaseObject):
-    def __init__(self, api=None):
+    def __init__(self, api=None, **kwargs):
         self.api = api
         self._name = None
         self.shared_comments = None
@@ -20,6 +20,9 @@ class Organization(BaseObject):
         self.id = None
         self.shared_tickets = None
         
+        for key, value in kwargs.iteritems():
+            setattr(self, key, value)
+
     @property
     def organization_fields(self):
         if self.api and self._organization_fields:

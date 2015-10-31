@@ -3,7 +3,7 @@ import dateutil.parser
 from zenpy.lib.objects.base_object import BaseObject
 
 class System(BaseObject):
-    def __init__(self, api=None):
+    def __init__(self, api=None, **kwargs):
         self.api = api
         self._latitude = None
         self._client = None
@@ -11,6 +11,9 @@ class System(BaseObject):
         self._location = None
         self._longitude = None
         
+        for key, value in kwargs.iteritems():
+            setattr(self, key, value)
+
     @property
     def latitude(self):
         if self.api and self._latitude:

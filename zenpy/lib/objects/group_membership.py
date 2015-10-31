@@ -3,7 +3,7 @@ import dateutil.parser
 from zenpy.lib.objects.base_object import BaseObject
 
 class GroupMembership(BaseObject):
-    def __init__(self, api=None):
+    def __init__(self, api=None, **kwargs):
         self.api = api
         self.user_id = None
         self._url = None
@@ -13,6 +13,9 @@ class GroupMembership(BaseObject):
         self.group_id = None
         self.id = None
         
+        for key, value in kwargs.iteritems():
+            setattr(self, key, value)
+
     @property
     def user(self):
         if self.api and self.user_id:
