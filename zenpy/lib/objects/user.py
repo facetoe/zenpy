@@ -42,7 +42,7 @@ class User(BaseObject):
     @property
     def photo(self):
         if self.api and self._photo:
-            return self.api.get_photo(self._photo)
+            return self.api.get_attachment(self._photo)
     @photo.setter
     def photo(self, photo):
             if photo:
