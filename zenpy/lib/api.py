@@ -234,6 +234,14 @@ class Api(BaseApi):
     def get_ticket_metric_item(self, metric_item):
         return self.object_manager.object_from_json('ticket_metric_item', metric_item)
 
+    # Need to clean this up somehow.
+    def get_user_fields(self, user_fields, endpoint=Endpoint().users.user_fields, object_type='user_field', skip_cache=False):
+        if any([self.object_manager.query_cache(object_type, field) is None for field in user_fields]):
+            # Populate user_field cache
+            self._get(self._get_url(endpoint=endpoint()))
+        for field in user_fields:
+            return self.object_manager.query_cache(object_type, field)
+
 
 class ModifiableApi(Api):
     """
@@ -390,6 +398,9 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
 
     def group_memberships(self, **kwargs):
         return self._get_items(self.endpoint.group_memberships, 'group_membership', kwargs)
+
+    def user_fields(self, **kwargs):
+        return self._get_items(self.endpoint.user_fields, 'user_field', kwargs)
 
 
 class EndUserApi(CRUDApi):

@@ -27,6 +27,7 @@ from zenpy.lib.objects.tag import Tag
 from zenpy.lib.objects.ticket_audit import TicketAudit
 from zenpy.lib.objects.ticket_metric import TicketMetric
 from zenpy.lib.objects.ticket_metric_item import TicketMetricItem
+from zenpy.lib.objects.user_field import UserField
 from zenpy.lib.objects.via import Via
 from zenpy.lib.objects.brand import Brand
 from zenpy.lib.objects.group import Group
@@ -106,7 +107,8 @@ class ClassManager(object):
         'group_membership': GroupMembership,
         'ticket_metric': TicketMetric,
         'status': Status,
-        'ticket_metric_item': TicketMetricItem
+        'ticket_metric_item': TicketMetricItem,
+        'user_field': UserField
     }
 
     def __init__(self, api):
@@ -151,6 +153,7 @@ class ObjectManager(object):
     brand_cache = LRUCache(maxsize=100)
     ticket_cache = TTLCache(maxsize=100, ttl=30)
     comment_cache = TTLCache(maxsize=100, ttl=30)
+    user_field_cache = LRUCache(maxsize=100)
 
     def __init__(self, api):
         self.class_manager = ClassManager(api)
@@ -160,7 +163,8 @@ class ObjectManager(object):
             'group': self.group_cache,
             'brand': self.brand_cache,
             'ticket': self.ticket_cache,
-            'comment': self.comment_cache
+            'comment': self.comment_cache,
+            'user_field': self.user_field_cache
         }
 
     def object_from_json(self, object_type, object_json):
@@ -221,4 +225,12 @@ class ObjectManager(object):
             self._cache_item(cache, result, object_type)
 
     def _cache_item(self, cache, item_json, item_type):
-        cache[item_json['id']] = self.object_from_json(item_type, item_json)
+        key = self.get_key(item_type)
+        cache[item_json[key]] = self.object_from_json(item_type, item_json)
+
+    def get_key(self, item_type):
+        if item_type == 'user_field':
+            key = 'key'
+        else:
+            key = 'id'
+        return key

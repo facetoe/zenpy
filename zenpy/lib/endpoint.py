@@ -195,6 +195,7 @@ class Endpoint(object):
         self.users.assigned = SecondaryEndpoint('users/%(id)s/tickets/assigned.json')
         self.users.incremental = IncrementalEndpoint('incremental/users.json?')
         self.users.tags = SecondaryEndpoint('users/%(id)s/tags.json')
+        self.users.user_fields = PrimaryEndpoint('user_fields')
         self.users.group_memberships = SecondaryEndpoint('users/%(id)s/group_memberships.json')
         self.groups = PrimaryEndpoint('groups', ['users'])
         self.brands = PrimaryEndpoint('brands')

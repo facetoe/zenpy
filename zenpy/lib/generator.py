@@ -29,7 +29,8 @@ class ResultGenerator(object):
         'activity': 'activities',
         'group_membership': 'group_memberships',
         'ticket_metric': 'ticket_metrics',
-        'request': 'requests'
+        'request': 'requests',
+        'user_field': 'user_fields'
     }
 
     def __init__(self, api, result_key, _json):
