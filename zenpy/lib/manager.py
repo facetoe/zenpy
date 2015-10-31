@@ -5,28 +5,28 @@ from cachetools import LRUCache, TTLCache
 
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.objects.activity import Activity
-from zenpy.lib.objects.events.ccevent import CcEvent
-from zenpy.lib.objects.events.changeevent import ChangeEvent
-from zenpy.lib.objects.events.commentprivacychangeevent import CommentPrivacyChangeEvent
-from zenpy.lib.objects.events.errorevent import ErrorEvent
-from zenpy.lib.objects.events.externalevent import ExternalEvent
-from zenpy.lib.objects.events.facebookcommentevent import FacebookCommentEvent
-from zenpy.lib.objects.events.facebookevent import FacebookEvent
-from zenpy.lib.objects.events.logmeintranscriptevent import LogmeinTranscriptEvent
-from zenpy.lib.objects.events.organizationactivityevent import OrganizationActivityEvent
-from zenpy.lib.objects.events.pushevent import PushEvent
-from zenpy.lib.objects.events.satisfactionratingevent import SatisfactionRatingEvent
+from zenpy.lib.objects.events.cc_event import CcEvent
+from zenpy.lib.objects.events.change_event import ChangeEvent
+from zenpy.lib.objects.events.comment_privacy_change_event import CommentPrivacyChangeEvent
+from zenpy.lib.objects.events.error_event import ErrorEvent
+from zenpy.lib.objects.events.external_event import ExternalEvent
+from zenpy.lib.objects.events.facebook_comment_event import FacebookCommentEvent
+from zenpy.lib.objects.events.facebook_event import FacebookEvent
+from zenpy.lib.objects.events.logmein_transcript_event import LogmeinTranscriptEvent
+from zenpy.lib.objects.events.organization_activity_event import OrganizationActivityEvent
+from zenpy.lib.objects.events.push_event import PushEvent
+from zenpy.lib.objects.events.satisfaction_rating_event import SatisfactionRatingEvent
 from zenpy.lib.objects.events.ticket_event import TicketEvent
-from zenpy.lib.objects.events.ticketsharingevent import TicketSharingEvent
-from zenpy.lib.objects.events.tweetevent import TweetEvent
-from zenpy.lib.objects.groupmembership import GroupMembership
+from zenpy.lib.objects.events.ticket_sharing_event import TicketSharingEvent
+from zenpy.lib.objects.events.tweet_event import TweetEvent
+from zenpy.lib.objects.group_membership import GroupMembership
 from zenpy.lib.objects.photo import Photo
-from zenpy.lib.objects.satisfactionrating import SatisfactionRating
+from zenpy.lib.objects.satisfaction_rating import SatisfactionRating
 from zenpy.lib.objects.status import Status
-from zenpy.lib.objects.suspendedticket import SuspendedTicket
+from zenpy.lib.objects.suspended_ticket import SuspendedTicket
 from zenpy.lib.objects.tag import Tag
 from zenpy.lib.objects.ticket_audit import TicketAudit
-from zenpy.lib.objects.ticketmetric import TicketMetric
+from zenpy.lib.objects.ticket_metric import TicketMetric
 from zenpy.lib.objects.via import Via
 from zenpy.lib.objects.brand import Brand
 from zenpy.lib.objects.group import Group
@@ -38,8 +38,8 @@ from zenpy.lib.objects.attachment import Attachment
 from zenpy.lib.objects.comment import Comment
 from zenpy.lib.objects.thumbnail import Thumbnail
 from zenpy.lib.objects.audit import Audit
-from zenpy.lib.objects.events.create import CreateEvent
-from zenpy.lib.objects.events.notification import Notification
+from zenpy.lib.objects.events.create_event import CreateEvent
+from zenpy.lib.objects.events.notification_event import NotificationEvent
 from zenpy.lib.objects.job_status import JobStatus
 from zenpy.lib.objects.metadata import Metadata
 from zenpy.lib.objects.source import Source
@@ -79,7 +79,7 @@ class ClassManager(object):
         'system': System,
         'create': CreateEvent,
         'change': ChangeEvent,
-        'notification': Notification,
+        'notification': NotificationEvent,
         'voicecomment': VoiceCommentEvent,
         'commentprivacychange': CommentPrivacyChangeEvent,
         'satisfactionrating': SatisfactionRatingEvent,
