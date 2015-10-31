@@ -200,6 +200,9 @@ class Api(BaseApi):
     def get_user(self, _id, endpoint=Endpoint().users, object_type='user'):
         return self._get_item(_id, endpoint, object_type, sideload=True)
 
+    def get_users(self, _ids, endpoint=Endpoint().users, object_type='user'):
+        return self._get_items(endpoint, object_type, dict(ids=_ids))
+
     def get_comment(self, _id, endpoint=Endpoint().tickets.comments, object_type='comment'):
         return self._get_item(_id, endpoint, object_type, sideload=True)
 
@@ -214,6 +217,13 @@ class Api(BaseApi):
 
     def get_ticket(self, _id, endpoint=Endpoint().tickets, object_type='ticket', skip_cache=False):
         return self._get_item(_id, endpoint, object_type, sideload=False, skip_cache=skip_cache)
+
+    def get_events(self, events):
+        for event in events:
+            yield self.object_manager.object_from_json(event['type'].lower(), event)
+
+    def get_via(self, via):
+        return self.object_manager.object_from_json('via', via)
 
 
 class ModifiableApi(Api):
