@@ -31,7 +31,8 @@ class ResultGenerator(object):
         'ticket_metric': 'ticket_metrics',
         'request': 'requests',
         'user_field': 'user_fields',
-        'organization_field': 'organization_fields'
+        'organization_field': 'organization_fields',
+        'brand': 'brands'
     }
 
     def __init__(self, api, result_key, _json):

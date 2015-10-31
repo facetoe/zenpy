@@ -231,16 +231,19 @@ class Api(BaseApi):
     def get_attachment(self, attachment):
         return self.object_manager.object_from_json('attachment', attachment)
 
+    def get_satisfaction_rating(self, satisfaction_rating):
+        return self.object_manager.object_from_json('satisfaction_rating', satisfaction_rating)
+
     def get_ticket_metric_item(self, metric_item):
         return self.object_manager.object_from_json('ticket_metric_item', metric_item)
 
-    # Need to clean this up somehow.
     def get_user_fields(self, user_fields, endpoint=Endpoint().users.user_fields, object_type='user_field'):
         return self.get_fields(user_fields, endpoint, object_type)
 
     def get_organization_fields(self, organization_fields, endpoint=Endpoint().organizations.organization_fields, object_type='organization_field'):
         return self.get_fields(organization_fields, endpoint, object_type)
 
+    # Need to clean this up somehow.
     def get_fields(self, fields, endpoint, object_type):
         if any([self.object_manager.query_cache(object_type, field) is None for field in fields]):
             # Populate field cache

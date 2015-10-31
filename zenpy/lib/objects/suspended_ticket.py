@@ -31,16 +31,6 @@ class SuspendedTicket(BaseObject):
             self._via = via
 
     @property
-    def author(self):
-        if self.api and self._author:
-            return self.api.get_author(self._author)
-
-    @author.setter
-    def author(self, author):
-        if author:
-            self._author = author
-
-    @property
     def brand(self):
         if self.api and self.brand_id:
             return self.api.get_brand(self.brand_id)
