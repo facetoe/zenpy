@@ -127,7 +127,7 @@ class Attribute(object):
         self.object_name = self.get_object_name(attr_name, attr_value)
         self.attr_name = self.get_attr_name(self.object_name, attr_name, attr_value)
         self.attr_assignment = self.get_attr_assignment(self.object_name, self.object_type, attr_name)
-        self.is_property = self.get_is_property(attr_name, attr_value)
+        self.is_property = self.get_is_property(self.object_name, attr_name, attr_value)
 
     def get_object_type(self, attr_name):
         if attr_name in ('assignee_id', 'submitter_id', 'requester_id', 'author_id', 'updater_id'):
@@ -159,8 +159,6 @@ class Attribute(object):
             return attr_name
         elif attr_name.endswith('_at'):
             return "_%s" % attr_name.replace('_at', '')
-        elif object_name == attr_name:
-            return "_%s" % attr_name
         else:
             return attr_name
 
@@ -178,13 +176,14 @@ class Attribute(object):
                 return "%ss" % attr_name.replace('_ids', '')
         return attr_name
 
-    def get_is_property(self, attr_name, attr_value):
+    def get_is_property(self, object_name, attr_name, attr_value):
         if any([isinstance(attr_value, t) for t in (basestring, bool)]) \
                 or attr_name.endswith('_at') \
                 or attr_name == 'id' \
                 or (attr_name == 'locale' or attr_name == 'locale_id') \
                 or (not attr_name.endswith('_ids') and isinstance(attr_value, list)) \
-                or (not attr_name.endswith('_id') and isinstance(attr_value, int)):
+                or (not attr_name.endswith('_id') and isinstance(attr_value, int)) \
+                or object_name == attr_name:
             return False
         else:
             return True

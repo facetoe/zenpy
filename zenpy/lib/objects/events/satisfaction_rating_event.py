@@ -5,9 +5,9 @@ class SatisfactionRatingEvent(BaseObject):
     def __init__(self, api=None, **kwargs):
         self.api = api
         self.assignee_id = None
-        self._body = None
-        self._score = None
-        self._type = None
+        self.body = None
+        self.score = None
+        self.type = None
         self.id = None
 
         for key, value in kwargs.iteritems():

@@ -4,24 +4,24 @@ from zenpy.lib.objects.base_object import BaseObject
 class Request(BaseObject):
     def __init__(self, api=None, **kwargs):
         self.api = api
-        self._status = None
+        self.status = None
         self.organization_id = None
         self._via = None
-        self._description = None
-        self._url = None
-        self._fields = None
+        self.description = None
+        self.url = None
+        self.fields = None
         self.created_at = None
         self.can_be_solved_by_me = None
         self.updated_at = None
         self.collaborator_ids = None
-        self._priority = None
+        self.priority = None
         self.due_at = None
         self.assignee_id = None
         self.requester_id = None
-        self._type = None
+        self.type = None
         self.id = None
-        self._custom_fields = None
-        self._subject = None
+        self.custom_fields = None
+        self.subject = None
 
         for key, value in kwargs.iteritems():
             setattr(self, key, value)
@@ -37,16 +37,6 @@ class Request(BaseObject):
             self.organization_id = organization.id
 
     @property
-    def via(self):
-        if self.api and self._via:
-            return self.api.get_via(self._via)
-
-    @via.setter
-    def via(self, via):
-        if via:
-            self._via = via
-
-    @property
     def collaborators(self):
         if self.api and self.collaborator_ids:
             return self.api.get_users(self.collaborator_ids)
@@ -55,16 +45,6 @@ class Request(BaseObject):
     def collaborators(self, collaborators):
         if collaborators:
             self.collaborator_ids = [o.id for o in collaborators]
-
-    @property
-    def priority(self):
-        if self.api and self._priority:
-            return self.api.get_priority(self._priority)
-
-    @priority.setter
-    def priority(self, priority):
-        if priority:
-            self._priority = priority
 
     @property
     def assignee(self):
@@ -85,13 +65,3 @@ class Request(BaseObject):
     def requester(self, requester):
         if requester:
             self.requester_id = requester.id
-
-    @property
-    def type(self):
-        if self.api and self._type:
-            return self.api.get_type(self._type)
-
-    @type.setter
-    def type(self, type):
-        if type:
-            self._type = type

@@ -8,13 +8,3 @@ class Via(BaseObject):
 
         for key, value in kwargs.iteritems():
             setattr(self, key, value)
-
-    @property
-    def source(self):
-        if self.api and self._source:
-            return self.api.get_source(self._source)
-
-    @source.setter
-    def source(self, source):
-        if source:
-            self._source = source

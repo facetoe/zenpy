@@ -4,20 +4,20 @@ from zenpy.lib.objects.base_object import BaseObject
 class Forum(BaseObject):
     def __init__(self, api=None, **kwargs):
         self.api = api
-        self._access = None
+        self.access = None
         self.locked = None
-        self._description = None
+        self.description = None
         self.tags = None
-        self._url = None
+        self.url = None
         self.created_at = None
-        self._forum_type = None
+        self.forum_type = None
         self.updated_at = None
         self.locale_id = None
         self.organization_id = None
-        self._position = None
+        self.position = None
         self.category_id = None
         self.id = None
-        self._name = None
+        self.name = None
 
         for key, value in kwargs.iteritems():
             setattr(self, key, value)

@@ -5,7 +5,7 @@ class GroupMembership(BaseObject):
     def __init__(self, api=None, **kwargs):
         self.api = api
         self.user_id = None
-        self._url = None
+        self.url = None
         self.created_at = None
         self.updated_at = None
         self.default = None

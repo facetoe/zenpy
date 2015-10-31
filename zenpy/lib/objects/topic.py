@@ -4,19 +4,19 @@ from zenpy.lib.objects.base_object import BaseObject
 class Topic(BaseObject):
     def __init__(self, api=None, **kwargs):
         self.api = api
-        self._body = None
+        self.body = None
         self.locked = None
-        self._title = None
-        self._url = None
-        self._search_phrases = None
+        self.title = None
+        self.url = None
+        self.search_phrases = None
         self.created_at = None
         self.tags = None
         self.forum_id = None
         self.updated_at = None
         self.submitter_id = None
         self.pinned = None
-        self._topic_type = None
-        self._position = None
+        self.topic_type = None
+        self.position = None
         self.id = None
         self.updater_id = None
 

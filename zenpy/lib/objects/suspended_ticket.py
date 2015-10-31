@@ -6,39 +6,19 @@ class SuspendedTicket(BaseObject):
         self.api = api
         self._via = None
         self._author = None
-        self._url = None
-        self._recipient = None
+        self.url = None
+        self.recipient = None
         self.created_at = None
         self.updated_at = None
-        self._content = None
+        self.content = None
         self.brand_id = None
         self.ticket_id = None
-        self._cause = None
+        self.cause = None
         self.id = None
-        self._subject = None
+        self.subject = None
 
         for key, value in kwargs.iteritems():
             setattr(self, key, value)
-
-    @property
-    def via(self):
-        if self.api and self._via:
-            return self.api.get_via(self._via)
-
-    @via.setter
-    def via(self, via):
-        if via:
-            self._via = via
-
-    @property
-    def author(self):
-        if self.api and self._author:
-            return self.api.get_author(self._author)
-
-    @author.setter
-    def author(self, author):
-        if author:
-            self._author = author
 
     @property
     def brand(self):

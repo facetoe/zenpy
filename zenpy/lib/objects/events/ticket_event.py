@@ -4,9 +4,9 @@ from zenpy.lib.objects.base_object import BaseObject
 class TicketEvent(BaseObject):
     def __init__(self, api=None, **kwargs):
         self.api = api
-        self._via = None
-        self._child_events = None
-        self._timestamp = None
+        self.via = None
+        self.child_events = None
+        self.timestamp = None
         self.ticket_id = None
         self.id = None
         self.updater_id = None

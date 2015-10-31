@@ -1,5 +1,3 @@
-import dateutil.parser
-
 from zenpy.lib.objects.base_object import BaseObject
 
 
@@ -12,42 +10,32 @@ class Ticket(BaseObject):
         self.assignee_id = None
         self.brand_id = None
         self.id = None
-        self._custom_fields = None
-        self._subject = None
+        self.custom_fields = None
+        self.subject = None
         self.sharing_agreement_ids = None
         self.collaborator_ids = None
-        self._priority = None
+        self.priority = None
         self._satisfaction_rating = None
-        self._type = None
-        self._status = None
-        self._description = None
+        self.type = None
+        self.status = None
+        self.description = None
         self.tags = None
         self.forum_topic_id = None
         self.organization_id = None
         self.due_at = None
         self.requester_id = None
-        self._recipient = None
+        self.recipient = None
         self.problem_id = None
-        self._url = None
-        self._fields = None
+        self.url = None
+        self.fields = None
         self.created_at = None
-        self._raw_subject = None
+        self.raw_subject = None
         self.has_incidents = None
         self.group_id = None
         self.external_id = None
 
         for key, value in kwargs.iteritems():
             setattr(self, key, value)
-
-    @property
-    def via(self):
-        if self.api and self._via:
-            return self.api.get_via(self._via)
-
-    @via.setter
-    def via(self, via):
-        if via:
-            self._via = via
 
     @property
     def submitter(self):
@@ -98,16 +86,6 @@ class Ticket(BaseObject):
     def collaborators(self, collaborators):
         if collaborators:
             self.collaborator_ids = [o.id for o in collaborators]
-
-    @property
-    def satisfaction_rating(self):
-        if self.api and self._satisfaction_rating:
-            return self.api.get_satisfaction_rating(self._satisfaction_rating)
-
-    @satisfaction_rating.setter
-    def satisfaction_rating(self, satisfaction_rating):
-        if satisfaction_rating:
-            self._satisfaction_rating = satisfaction_rating
 
     @property
     def forum_topic(self):

@@ -5,7 +5,7 @@ class CommentPrivacyChangeEvent(BaseObject):
     def __init__(self, api=None, **kwargs):
         self.api = api
         self.comment_id = None
-        self._type = None
+        self.type = None
         self.id = None
         self.public = None
 

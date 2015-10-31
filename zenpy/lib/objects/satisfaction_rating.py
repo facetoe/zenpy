@@ -4,11 +4,11 @@ from zenpy.lib.objects.base_object import BaseObject
 class SatisfactionRating(BaseObject):
     def __init__(self, api=None, **kwargs):
         self.api = api
-        self._url = None
+        self.url = None
         self.created_at = None
         self.updated_at = None
         self.assignee_id = None
-        self._score = None
+        self.score = None
         self.ticket_id = None
         self.requester_id = None
         self.group_id = None
