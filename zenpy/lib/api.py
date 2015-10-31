@@ -228,8 +228,11 @@ class Api(BaseApi):
     def get_source(self, source):
         return self.object_manager.object_from_json('source', source)
 
-    def get_photo(self, photo):
-        return self.object_manager.object_from_json('photo', photo)
+    def get_attachment(self, attachment):
+        return self.object_manager.object_from_json('attachment', attachment)
+
+    def get_ticket_metric_item(self, metric_item):
+        return self.object_manager.object_from_json('ticket_metric_item', metric_item)
 
 
 class ModifiableApi(Api):
@@ -446,6 +449,15 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
 class TicketImportAPI(CRUDApi):
     def __init__(self, subdomain, email, token, password, endpoint):
         Api.__init__(self, subdomain, email, token=token, password=password, endpoint=endpoint, object_type='ticket')
+
+    def __call__(self, *args, **kwargs):
+        raise ZenpyException("You must pass ticket objects to this endpoint!")
+
+    def update(self, items):
+        raise ZenpyException("You cannot update objects using ticket_import endpoint!")
+
+    def delete(self, items):
+        raise ZenpyException("You cannot delete objets using the ticket_import endpoint!")
 
 
 class RequestAPI(CRUDApi):
