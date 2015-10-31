@@ -20,3 +20,13 @@ class Brand(BaseObject):
 
         for key, value in kwargs.iteritems():
             setattr(self, key, value)
+
+    @property
+    def logo(self):
+        if self.api and self._logo:
+            return self.api.get_logo(self._logo)
+
+    @logo.setter
+    def logo(self, logo):
+        if logo:
+            self._logo = logo

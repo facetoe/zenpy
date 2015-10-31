@@ -52,6 +52,16 @@ class User(BaseObject):
             self.custom_role_id = custom_role.id
 
     @property
+    def user_fields(self):
+        if self.api and self._user_fields:
+            return self.api.get_user_fields(self._user_fields)
+
+    @user_fields.setter
+    def user_fields(self, user_fields):
+        if user_fields:
+            self._user_fields = user_fields
+
+    @property
     def organization(self):
         if self.api and self.organization_id:
             return self.api.get_organization(self.organization_id)

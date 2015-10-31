@@ -183,7 +183,7 @@ class Attribute(object):
                 or (attr_name == 'locale' or attr_name == 'locale_id') \
                 or (not attr_name.endswith('_ids') and isinstance(attr_value, list)) \
                 or (not attr_name.endswith('_id') and isinstance(attr_value, int)) \
-                or object_name == attr_name:
+                or (object_name == attr_name and not isinstance(attr_value, dict)):
             return False
         else:
             return True

@@ -16,6 +16,16 @@ class Audit(BaseObject):
             setattr(self, key, value)
 
     @property
+    def via(self):
+        if self.api and self._via:
+            return self.api.get_via(self._via)
+
+    @via.setter
+    def via(self, via):
+        if via:
+            self._via = via
+
+    @property
     def ticket(self):
         if self.api and self.ticket_id:
             return self.api.get_ticket(self.ticket_id)
@@ -34,3 +44,13 @@ class Audit(BaseObject):
     def author(self, author):
         if author:
             self.author_id = author.id
+
+    @property
+    def metadata(self):
+        if self.api and self._metadata:
+            return self.api.get_metadata(self._metadata)
+
+    @metadata.setter
+    def metadata(self, metadata):
+        if metadata:
+            self._metadata = metadata

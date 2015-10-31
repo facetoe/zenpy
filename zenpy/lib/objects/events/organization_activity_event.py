@@ -13,3 +13,13 @@ class OrganizationActivityEvent(BaseObject):
 
         for key, value in kwargs.iteritems():
             setattr(self, key, value)
+
+    @property
+    def via(self):
+        if self.api and self._via:
+            return self.api.get_via(self._via)
+
+    @via.setter
+    def via(self, via):
+        if via:
+            self._via = via

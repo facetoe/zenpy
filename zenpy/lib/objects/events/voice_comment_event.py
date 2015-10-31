@@ -29,3 +29,13 @@ class VoiceCommentEvent(BaseObject):
     def author(self, author):
         if author:
             self.author_id = author.id
+
+    @property
+    def data(self):
+        if self.api and self._data:
+            return self.api.get_data(self._data)
+
+    @data.setter
+    def data(self, data):
+        if data:
+            self._data = data

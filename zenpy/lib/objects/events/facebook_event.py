@@ -13,3 +13,13 @@ class FacebookEvent(BaseObject):
 
         for key, value in kwargs.iteritems():
             setattr(self, key, value)
+
+    @property
+    def page(self):
+        if self.api and self._page:
+            return self.api.get_page(self._page)
+
+    @page.setter
+    def page(self, page):
+        if page:
+            self._page = page

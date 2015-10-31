@@ -23,6 +23,16 @@ class Organization(BaseObject):
             setattr(self, key, value)
 
     @property
+    def organization_fields(self):
+        if self.api and self._organization_fields:
+            return self.api.get_organization_fields(self._organization_fields)
+
+    @organization_fields.setter
+    def organization_fields(self, organization_fields):
+        if organization_fields:
+            self._organization_fields = organization_fields
+
+    @property
     def group(self):
         if self.api and self.group_id:
             return self.api.get_group(self.group_id)

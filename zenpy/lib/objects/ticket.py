@@ -1,3 +1,5 @@
+import dateutil.parser
+
 from zenpy.lib.objects.base_object import BaseObject
 
 
@@ -36,6 +38,16 @@ class Ticket(BaseObject):
 
         for key, value in kwargs.iteritems():
             setattr(self, key, value)
+
+    @property
+    def via(self):
+        if self.api and self._via:
+            return self.api.get_via(self._via)
+
+    @via.setter
+    def via(self, via):
+        if via:
+            self._via = via
 
     @property
     def submitter(self):
@@ -86,6 +98,16 @@ class Ticket(BaseObject):
     def collaborators(self, collaborators):
         if collaborators:
             self.collaborator_ids = [o.id for o in collaborators]
+
+    @property
+    def satisfaction_rating(self):
+        if self.api and self._satisfaction_rating:
+            return self.api.get_satisfaction_rating(self._satisfaction_rating)
+
+    @satisfaction_rating.setter
+    def satisfaction_rating(self, satisfaction_rating):
+        if satisfaction_rating:
+            self._satisfaction_rating = satisfaction_rating
 
     @property
     def forum_topic(self):
