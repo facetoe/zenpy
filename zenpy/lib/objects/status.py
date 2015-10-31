@@ -1,6 +1,5 @@
-
-import dateutil.parser
 from zenpy.lib.objects.base_object import BaseObject
+
 
 class Status(BaseObject):
     def __init__(self, api=None, **kwargs):
@@ -11,9 +10,6 @@ class Status(BaseObject):
         self._title = None
         self._action = None
         self.id = None
-        
+
         for key, value in kwargs.iteritems():
             setattr(self, key, value)
-
-    
-    

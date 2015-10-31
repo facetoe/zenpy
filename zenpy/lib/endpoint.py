@@ -1,7 +1,5 @@
 from datetime import datetime
 
-import dateutil.parser
-
 from zenpy.lib.exception import ZenpyException
 
 __author__ = 'facetoe'

@@ -1,6 +1,5 @@
-
-import dateutil.parser
 from zenpy.lib.objects.base_object import BaseObject
+
 
 class PushEvent(BaseObject):
     def __init__(self, api=None, **kwargs):
@@ -9,9 +8,6 @@ class PushEvent(BaseObject):
         self._type = None
         self.id = None
         self._value = None
-        
+
         for key, value in kwargs.iteritems():
             setattr(self, key, value)
-
-    
-    

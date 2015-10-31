@@ -1,6 +1,5 @@
-
-import dateutil.parser
 from zenpy.lib.objects.base_object import BaseObject
+
 
 class TicketEvent(BaseObject):
     def __init__(self, api=None, **kwargs):
@@ -11,7 +10,7 @@ class TicketEvent(BaseObject):
         self.ticket_id = None
         self.id = None
         self.updater_id = None
-        
+
         for key, value in kwargs.iteritems():
             setattr(self, key, value)
 
@@ -19,17 +18,18 @@ class TicketEvent(BaseObject):
     def ticket(self):
         if self.api and self.ticket_id:
             return self.api.get_ticket(self.ticket_id)
+
     @ticket.setter
     def ticket(self, ticket):
-            if ticket:
-                self.ticket_id = ticket.id
+        if ticket:
+            self.ticket_id = ticket.id
+
     @property
     def updater(self):
         if self.api and self.updater_id:
             return self.api.get_user(self.updater_id)
+
     @updater.setter
     def updater(self, updater):
-            if updater:
-                self.updater_id = updater.id
-    
-    
+        if updater:
+            self.updater_id = updater.id

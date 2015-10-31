@@ -1,6 +1,5 @@
-
-import dateutil.parser
 from zenpy.lib.objects.base_object import BaseObject
+
 
 class Activity(BaseObject):
     def __init__(self, api=None, **kwargs):
@@ -13,7 +12,7 @@ class Activity(BaseObject):
         self._verb = None
         self._user = None
         self.id = None
-        
+
         for key, value in kwargs.iteritems():
             setattr(self, key, value)
 
@@ -21,17 +20,18 @@ class Activity(BaseObject):
     def actor(self):
         if self.api and self._actor:
             return self.api.get_actor(self._actor)
+
     @actor.setter
     def actor(self, actor):
-            if actor:
-                self._actor = actor
+        if actor:
+            self._actor = actor
+
     @property
     def user(self):
         if self.api and self._user:
             return self.api.get_user(self._user)
+
     @user.setter
     def user(self, user):
-            if user:
-                self._user = user
-    
-    
+        if user:
+            self._user = user

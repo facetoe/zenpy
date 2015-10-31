@@ -1,6 +1,5 @@
-
-import dateutil.parser
 from zenpy.lib.objects.base_object import BaseObject
+
 
 class Attachment(BaseObject):
     def __init__(self, api=None, **kwargs):
@@ -11,9 +10,6 @@ class Attachment(BaseObject):
         self._content_type = None
         self.id = None
         self._size = None
-        
+
         for key, value in kwargs.iteritems():
             setattr(self, key, value)
-
-    
-    

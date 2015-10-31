@@ -1,6 +1,5 @@
-
-import dateutil.parser
 from zenpy.lib.objects.base_object import BaseObject
+
 
 class Group(BaseObject):
     def __init__(self, api=None, **kwargs):
@@ -11,9 +10,6 @@ class Group(BaseObject):
         self.updated_at = None
         self.deleted = None
         self.id = None
-        
+
         for key, value in kwargs.iteritems():
             setattr(self, key, value)
-
-    
-    

@@ -1,7 +1,5 @@
 from datetime import datetime, timedelta
 
-from zenpy.lib.objects.request import Request
-
 __author__ = 'facetoe'
 
 import logging

@@ -1,6 +1,5 @@
-
-import dateutil.parser
 from zenpy.lib.objects.base_object import BaseObject
+
 
 class GroupMembership(BaseObject):
     def __init__(self, api=None, **kwargs):
@@ -12,7 +11,7 @@ class GroupMembership(BaseObject):
         self.default = None
         self.group_id = None
         self.id = None
-        
+
         for key, value in kwargs.iteritems():
             setattr(self, key, value)
 
@@ -20,17 +19,18 @@ class GroupMembership(BaseObject):
     def user(self):
         if self.api and self.user_id:
             return self.api.get_user(self.user_id)
+
     @user.setter
     def user(self, user):
-            if user:
-                self.user_id = user.id
+        if user:
+            self.user_id = user.id
+
     @property
     def group(self):
         if self.api and self.group_id:
             return self.api.get_group(self.group_id)
+
     @group.setter
     def group(self, group):
-            if group:
-                self.group_id = group.id
-    
-    
+        if group:
+            self.group_id = group.id
