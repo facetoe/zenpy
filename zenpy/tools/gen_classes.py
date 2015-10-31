@@ -128,6 +128,10 @@ class Attribute(object):
     def get_object_type(self, attr_name):
         if attr_name in ('assignee_id', 'submitter_id', 'requester_id', 'author_id', 'updater_id'):
             object_type = 'user'
+        elif attr_name in ('photo',):
+            object_type = 'attachment'
+        elif attr_name.endswith('time_in_minutes'):
+            object_type = 'ticket_metric_item'
         elif attr_name in ('recipients', 'collaborator_ids'):
             object_type = 'users'
         elif attr_name in ('forum_topic_id',):

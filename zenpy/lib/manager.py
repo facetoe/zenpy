@@ -20,13 +20,13 @@ from zenpy.lib.objects.events.ticket_event import TicketEvent
 from zenpy.lib.objects.events.ticket_sharing_event import TicketSharingEvent
 from zenpy.lib.objects.events.tweet_event import TweetEvent
 from zenpy.lib.objects.group_membership import GroupMembership
-from zenpy.lib.objects.photo import Photo
 from zenpy.lib.objects.satisfaction_rating import SatisfactionRating
 from zenpy.lib.objects.status import Status
 from zenpy.lib.objects.suspended_ticket import SuspendedTicket
 from zenpy.lib.objects.tag import Tag
 from zenpy.lib.objects.ticket_audit import TicketAudit
 from zenpy.lib.objects.ticket_metric import TicketMetric
+from zenpy.lib.objects.ticket_metric_item import TicketMetricItem
 from zenpy.lib.objects.via import Via
 from zenpy.lib.objects.brand import Brand
 from zenpy.lib.objects.group import Group
@@ -104,9 +104,9 @@ class ClassManager(object):
         'satisfaction_rating': SatisfactionRating,
         'activity': Activity,
         'group_membership': GroupMembership,
-        'photo': Photo,
         'ticket_metric': TicketMetric,
-        'status': Status
+        'status': Status,
+        'ticket_metric_item': TicketMetricItem
     }
 
     def __init__(self, api):
