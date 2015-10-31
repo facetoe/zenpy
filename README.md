@@ -115,7 +115,7 @@ Next, let's assign all new tickets to this user:
 
 ```python
 for new_ticket in zenpy.search(type='ticket', status='new'):
-	new_ticket.assignee_id = modified_user.id
+	new_ticket.assignee = modified_user
 	ticket_audit = zenpy.tickets.update(new_ticket)
 ```
 
@@ -128,7 +128,7 @@ for ticket in zenpy.search(type='ticket', assignee='John Doe'):
 	zenpy.tickets.delete(ticket)
 ```
 
-Deleting  ticket returns nothing on success and raises an `Exception` on failure. 
+Deleting  ticket returns nothing on success and raises an `ApiException` on failure. 
 
 ### Bulk Operations
 
@@ -192,4 +192,5 @@ Cover all parts of the API properly.
 
 ### Contributions
 Contributions are very welcome. 
+
 
