@@ -220,6 +220,7 @@ class Endpoint(object):
         self.organizations = PrimaryEndpoint('organizations')
         self.organizations.incremental = IncrementalEndpoint('incremental/organizations.json?')
         self.organizations.tags = SecondaryEndpoint('organizations/%(id)s/tags.json')
+        self.organizations.organization_fields = PrimaryEndpoint('organization_fields')
         self.search = SearchEndpoint('search.json?')
         self.job_statuses = PrimaryEndpoint('job_statuses')
         self.tags = PrimaryEndpoint('tags')

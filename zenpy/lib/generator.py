@@ -30,7 +30,8 @@ class ResultGenerator(object):
         'group_membership': 'group_memberships',
         'ticket_metric': 'ticket_metrics',
         'request': 'requests',
-        'user_field': 'user_fields'
+        'user_field': 'user_fields',
+        'organization_field': 'organization_fields'
     }
 
     def __init__(self, api, result_key, _json):

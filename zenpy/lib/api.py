@@ -235,13 +235,18 @@ class Api(BaseApi):
         return self.object_manager.object_from_json('ticket_metric_item', metric_item)
 
     # Need to clean this up somehow.
-    def get_user_fields(self, user_fields, endpoint=Endpoint().users.user_fields, object_type='user_field', skip_cache=False):
-        if any([self.object_manager.query_cache(object_type, field) is None for field in user_fields]):
-            # Populate user_field cache
-            self._get(self._get_url(endpoint=endpoint()))
-        for field in user_fields:
-            return self.object_manager.query_cache(object_type, field)
+    def get_user_fields(self, user_fields, endpoint=Endpoint().users.user_fields, object_type='user_field'):
+        return self.get_fields(user_fields, endpoint, object_type)
 
+    def get_organization_fields(self, organization_fields, endpoint=Endpoint().organizations.organization_fields, object_type='organization_field'):
+        return self.get_fields(organization_fields, endpoint, object_type)
+
+    def get_fields(self, fields, endpoint, object_type):
+        if any([self.object_manager.query_cache(object_type, field) is None for field in fields]):
+            # Populate field cache
+            self._get(self._get_url(endpoint=endpoint()))
+        for field in fields:
+            yield self.object_manager.query_cache(object_type, field)
 
 class ModifiableApi(Api):
     """
@@ -425,6 +430,9 @@ class OranizationApi(TaggableApi, IncrementalApi, CRUDApi):
 
     def __call__(self, **kwargs):
         return self._get_items(self.endpoint, self.object_type, kwargs)
+
+    def organization_fields(self, **kwargs):
+        return self._get_items(self.endpoint.organization_fields, 'organization_field', kwargs)
 
 
 class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
