@@ -82,11 +82,13 @@ class Property(TemplateObject):
     """
 
     SETTER_TEMPLATE_ASSIGN = """
-            self.{{object.attribute.key}} = {{object.attribute.attr_assignment}}
+            if {{object.attribute.object_name}}:
+                self.{{object.attribute.attr_name}} = {{object.attribute.attr_assignment}}
     """
 
     SETTER_TEMPLATE_DEFAULT = """
-            self.{{object.attribute.attr_name}} = {{object.attribute.key}}
+            if {{object.attribute.object_name}}:
+                self.{{object.attribute.attr_name}} = {{object.attribute.key}}
     """
 
     def __init__(self, attribute):
@@ -119,7 +121,7 @@ class Attribute(object):
         self.key = attr_name
         self.object_type = self.get_object_type(attr_name)
         self.object_name = self.get_object_name(attr_name, attr_value)
-        self.attr_name = self.get_attr_name(attr_name, attr_value)
+        self.attr_name = self.get_attr_name(self.object_name, attr_name, attr_value)
         self.attr_assignment = self.get_attr_assignment(self.object_name, self.object_type, attr_name)
         self.is_property = self.get_is_property(attr_name, attr_value)
 
@@ -138,7 +140,7 @@ class Attribute(object):
             object_type = attr_name.replace('_id', '')
         return object_type
 
-    def get_attr_name(self, attr_name, attr_value):
+    def get_attr_name(self, object_name, attr_name, attr_value):
         if isinstance(attr_value, bool):
             return attr_name
         elif isinstance(attr_value, dict):
@@ -149,6 +151,8 @@ class Attribute(object):
             return attr_name
         elif attr_name.endswith('_at'):
             return "_%s" % attr_name.replace('_at', '')
+        elif object_name == attr_name:
+            return "_%s" % attr_name
         else:
             return attr_name
 
@@ -167,11 +171,12 @@ class Attribute(object):
         return attr_name
 
     def get_is_property(self, attr_name, attr_value):
-        if any([isinstance(attr_value, t)
-                or attr_name.endswith('_at')
-                or attr_name == 'id'
-                or (not attr_name.endswith('ids') and isinstance(attr_value, list))
-                for t in (basestring, bool)]):
+        if any([isinstance(attr_value, t) for t in (basestring, bool)]) \
+                or attr_name.endswith('_at') \
+                or attr_name == 'id' \
+                or (attr_name == 'locale' or attr_name == 'locale_id') \
+                or (not attr_name.endswith('_ids') and isinstance(attr_value, list)) \
+                or (not attr_name.endswith('_id') and isinstance(attr_value, int)):
             return False
         else:
             return True
@@ -215,5 +220,13 @@ for file_path in glob.glob(os.path.join(options.spec_path, '*.json')):
     class_name = os.path.basename(os.path.splitext(file_path)[0]).capitalize()
     class_name = "".join([w.capitalize() for w in class_name.split('_')])
     class_code = Class(class_name, json.load(open(file_path))).render()
-    with open(os.path.join(options.out_path, "%s.py" % to_snake_case(class_name)), 'w+') as out_file:
+    out_file_name = "%s.py" % to_snake_case(class_name)
+
+    out_path = options.out_path
+    if out_file_name.endswith('event.py'):
+        out_path = os.path.join(options.out_path, 'events')
+        if not os.path.isdir(out_path):
+            os.makedirs(out_path)
+
+    with open(os.path.join(out_path, out_file_name), 'w+') as out_file:
         out_file.write(class_code)
