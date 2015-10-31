@@ -1,19 +1,31 @@
-from zenpy.lib.objects.base_object import BaseObject
 
+import dateutil.parser
+from zenpy.lib.objects.base_object import BaseObject
 
 class Result(BaseObject):
     def __init__(self, api=None):
         self.api = api
-        self.count = None
-        self.facets = None
-        self.prev_page = None
+        self._count = None
+        self._facets = None
+        self._prev_page = None
         self._results = None
-        self.next_page = None
-
+        self._next_page = None
+        
     @property
-    def results(self):
-        return self.api.result_generator(vars(self))
-
-    def __iter__(self):
-        if self.api:
-            return self.results
+    def facets(self):
+        if self.api and self._facets:
+            return self.api.get_facets(self._facets)
+    @facets.setter
+    def facets(self, facets):
+            if facets:
+                self._facets = facets
+    @property
+    def prev_page(self):
+        if self.api and self._prev_page:
+            return self.api.get_prev_page(self._prev_page)
+    @prev_page.setter
+    def prev_page(self, prev_page):
+            if prev_page:
+                self._prev_page = prev_page
+    
+    

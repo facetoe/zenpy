@@ -1,0 +1,22 @@
+
+import dateutil.parser
+from zenpy.lib.objects.base_object import BaseObject
+
+class TicketSharingEvent(BaseObject):
+    def __init__(self, api=None):
+        self.api = api
+        self.agreement_id = None
+        self._action = None
+        self._type = None
+        self.id = None
+        
+    @property
+    def agreement(self):
+        if self.api and self.agreement_id:
+            return self.api.get_agreement(self.agreement_id)
+    @agreement.setter
+    def agreement(self, agreement):
+            if agreement:
+                self.agreement_id = agreement.id
+    
+    

@@ -2,16 +2,14 @@
 import dateutil.parser
 from zenpy.lib.objects.base_object import BaseObject
 
-class VoiceCommentEvent(BaseObject):
+class FacebookCommentEvent(BaseObject):
     def __init__(self, api=None):
         self.api = api
         self._body = None
-        self._formatted_to = None
-        self._formatted_from = None
+        self._attachments = None
         self._type = None
         self.public = None
-        self._attachments = None
-        self.transcription_visible = None
+        self.graph_object_id = None
         self.author_id = None
         self._data = None
         self.id = None
