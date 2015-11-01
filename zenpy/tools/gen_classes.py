@@ -127,7 +127,7 @@ class Attribute(object):
         self.object_name = self.get_object_name(attr_name, attr_value)
         self.attr_name = self.get_attr_name(self.object_name, attr_name, attr_value)
         self.attr_assignment = self.get_attr_assignment(self.object_name, self.object_type, attr_name)
-        self.is_property = self.get_is_property(self.object_name, attr_name, attr_value)
+        self.is_property = self.get_is_property(attr_name, attr_value)
 
     def get_object_type(self, attr_name):
         if attr_name in ('assignee_id', 'submitter_id', 'requester_id', 'author_id', 'updater_id'):
@@ -176,7 +176,7 @@ class Attribute(object):
                 return "%ss" % attr_name.replace('_ids', '')
         return attr_name
 
-    def get_is_property(self, object_name, attr_name, attr_value):
+    def get_is_property(self, attr_name, attr_value):
         if attr_name in ('author', 'to', 'from', 'locale', 'locale_id', 'tags', 'domain_names'):
             return False
         elif any([isinstance(attr_value, t) for t in (dict, list)]):
@@ -187,30 +187,6 @@ class Attribute(object):
             return True
         else:
             return False
-
-            # if any([isinstance(attr_value, t) for t in (basestring, bool)]):
-            #     return False
-            # elif attr_name.endswith('_at'):
-            #     return False
-            # elif attr_name == 'id':
-            #     return False
-            # elif (attr_name == 'locale' or attr_name == 'locale_id'):
-            #     return False
-            # elif isinstance(attr_value, list):
-            #     if not attr_name.endswith('_ids'):
-            #         return False
-            #     elif not attr_name == object_name:
-            #         return False
-            # elif isinstance(attr_value, int):
-            #     if not attr_name.endswith('_id'):
-            #         return False
-            # elif isinstance(attr_value, dict):
-            #     if object_name == attr_name:
-            #         return True
-            # elif attr_name in ('author', 'to'):
-            #     return False
-            # else:
-            #     return True
 
     def __str__(self):
         return "[is_prop=%(is_property)s, " \
