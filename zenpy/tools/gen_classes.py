@@ -183,7 +183,7 @@ class Attribute(object):
                 or (attr_name == 'locale' or attr_name == 'locale_id') \
                 or (not attr_name.endswith('_ids') and isinstance(attr_value, list)) \
                 or (not attr_name.endswith('_id') and isinstance(attr_value, int)) \
-                or (object_name == attr_name and not isinstance(attr_value, dict)) \
+                or (object_name == attr_name and (not isinstance(attr_value, dict) and not isinstance(attr_value, list))) \
                 or attr_name in ('author', 'to'):
             return False
         else:
@@ -214,6 +214,10 @@ parser.add_option("--out-path", "-o", dest="out_path",
                   help="Where to put generated classes",
                   metavar="OUT_PATH",
                   default=os.getcwd())
+parser.add_option("--target-file", "-t", dest="target_file",
+                  help="Target JSON file. If not set all files will be generated",
+                  metavar="TARGET")
+
 
 (options, args) = parser.parse_args()
 
@@ -224,17 +228,26 @@ elif not os.path.isdir(options.spec_path):
     print "--spec-path must be a directory!"
     sys.exit()
 
-for file_path in glob.glob(os.path.join(options.spec_path, '*.json')):
-    class_name = os.path.basename(os.path.splitext(file_path)[0]).capitalize()
-    class_name = "".join([w.capitalize() for w in class_name.split('_')])
-    class_code = Class(class_name, json.load(open(file_path))).render()
-    out_file_name = "%s.py" % to_snake_case(class_name)
 
+def process_file(path):
+    class_name = os.path.basename(os.path.splitext(path)[0]).capitalize()
+    class_name = "".join([w.capitalize() for w in class_name.split('_')])
+    class_code = Class(class_name, json.load(open(path))).render()
+    out_file_name = "%s.py" % to_snake_case(class_name)
     out_path = options.out_path
     if out_file_name.endswith('event.py'):
         out_path = os.path.join(options.out_path, 'events')
         if not os.path.isdir(out_path):
             os.makedirs(out_path)
 
+    print "Processing: %s -> %s -> %s" % (os.path.basename(path), class_name, out_file_name)
     with open(os.path.join(out_path, out_file_name), 'w+') as out_file:
         out_file.write(class_code)
+
+
+for file_path in glob.glob(os.path.join(options.spec_path, '*.json')):
+    if options.target_file is not None:
+        if os.path.basename(file_path) == options.target_file:
+            process_file(file_path)
+    else:
+        process_file(file_path)
