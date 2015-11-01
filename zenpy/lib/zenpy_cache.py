@@ -32,7 +32,7 @@ class ZenpyCache(object):
         return self.cache.items()
 
     @property
-    def cache_name(self):
+    def impl_name(self):
         """
         Name of current cache implementation
         """
@@ -50,7 +50,7 @@ class ZenpyCache(object):
         """
         Set maxsize. This involves creating a new cache and transferring the items.
         """
-        new_cache = self._get_cache_impl(self.cache_name, maxsize)
+        new_cache = self._get_cache_impl(self.impl_name, maxsize)
         self._populate_new_cache(new_cache)
         self.cache = new_cache
 

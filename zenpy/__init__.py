@@ -206,7 +206,7 @@ class Zenpy(object):
         """
         Returns the name of the cache implementation for the named cache
         """
-        return self._get_cache(cache_name).cache_name
+        return self._get_cache(cache_name).impl_name
 
     def set_cache_implementation(self, cache_name, impl_name, maxsize, **kwargs):
         """
