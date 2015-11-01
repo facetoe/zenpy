@@ -239,14 +239,19 @@ class Api(BaseApi):
         return self.object_manager.object_from_json('ticket_metric_item', metric_item)
 
     def get_user_fields(self, user_fields, endpoint=Endpoint().users.user_fields, object_type='user_field'):
-        return self.get_fields(user_fields, endpoint, object_type)
+        return self._get_fields(user_fields, endpoint, object_type)
 
     def get_organization_fields(self, organization_fields, endpoint=Endpoint().organizations.organization_fields,
                                 object_type='organization_field'):
-        return self.get_fields(organization_fields, endpoint, object_type)
+        return self._get_fields(organization_fields, endpoint, object_type)
 
+    ## TODO implement this with Enterprise
     def get_custom_fields(self, custom_fields):
-        print custom_fields
+        return custom_fields
+
+    # This is ticket fields, hopefully it doesn't conflict with another field type
+    def get_fields(self, fields, object_type='ticket_field', endpoint=Endpoint().ticket_fields):
+        return self._get_fields([f['id'] for f in fields], endpoint, object_type)
 
     def get_metadata(self, metadata):
         return self.object_manager.object_from_json('metadata', metadata)
@@ -255,7 +260,7 @@ class Api(BaseApi):
         return self.object_manager.object_from_json('system', system)
 
     # Need to clean this up somehow.
-    def get_fields(self, fields, endpoint, object_type):
+    def _get_fields(self, fields, endpoint, object_type):
         if any([self.object_manager.query_cache(object_type, field) is None for field in fields]):
             # Populate field cache
             self._get(self._get_url(endpoint=endpoint()))

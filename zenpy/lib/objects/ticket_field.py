@@ -1,6 +1,7 @@
-
 import dateutil.parser
+
 from zenpy.lib.objects.base_object import BaseObject
+
 
 class TicketField(BaseObject):
     def __init__(self, api=None, **kwargs):
@@ -25,7 +26,7 @@ class TicketField(BaseObject):
         self.type = None
         self.id = None
         self.editable_in_portal = None
-        
+
         for key, value in kwargs.iteritems():
             setattr(self, key, value)
 
@@ -33,17 +34,18 @@ class TicketField(BaseObject):
     def created(self):
         if self.created_at:
             return dateutil.parser.parse(self.created_at)
+
     @created.setter
     def created(self, created):
-            if created:
-                self.created_at = created
+        if created:
+            self.created_at = created
+
     @property
     def updated(self):
         if self.updated_at:
             return dateutil.parser.parse(self.updated_at)
+
     @updated.setter
     def updated(self, updated):
-            if updated:
-                self.updated_at = updated
-    
-    
+        if updated:
+            self.updated_at = updated
