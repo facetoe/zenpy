@@ -150,29 +150,20 @@ class ObjectManager(object):
     and also provides access to the ClassManager
     """
 
-    user_cache = ZenpyCache('LRUCache', maxsize=200)
-    organization_cache = ZenpyCache('LRUCache', maxsize=200)
-    group_cache = ZenpyCache('LRUCache', maxsize=200)
-    brand_cache = ZenpyCache('LRUCache', maxsize=200)
-    ticket_cache = ZenpyCache('TTLCache', maxsize=500, ttl=30)
-    ticket_field_cache = ZenpyCache('LRUCache', maxsize=200)
-    comment_cache = ZenpyCache('TTLCache', maxsize=500, ttl=30)
-    user_field_cache = ZenpyCache('LRUCache', maxsize=200)
-    organization_field_cache = ZenpyCache('LRUCache', maxsize=200)
+    cache_mapping = {
+        'user': ZenpyCache('LRUCache', maxsize=200),
+        'organization': ZenpyCache('LRUCache', maxsize=200),
+        'group': ZenpyCache('LRUCache', maxsize=200),
+        'brand': ZenpyCache('LRUCache', maxsize=200),
+        'ticket': ZenpyCache('TTLCache', maxsize=500, ttl=30),
+        'comment': ZenpyCache('LRUCache', maxsize=200),
+        'user_field': ZenpyCache('TTLCache', maxsize=500, ttl=30),
+        'organization_field': ZenpyCache('LRUCache', maxsize=200),
+        'ticket_field': ZenpyCache('LRUCache', maxsize=200)
+    }
 
     def __init__(self, api):
         self.class_manager = ClassManager(api)
-        self.cache_mapping = {
-            'user': self.user_cache,
-            'organization': self.organization_cache,
-            'group': self.group_cache,
-            'brand': self.brand_cache,
-            'ticket': self.ticket_cache,
-            'comment': self.comment_cache,
-            'user_field': self.user_field_cache,
-            'organization_field': self.organization_field_cache,
-            'ticket_field': self.ticket_field_cache
-        }
 
     def object_from_json(self, object_type, object_json):
         return self.class_manager.object_from_json(object_type, object_json)

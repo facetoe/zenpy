@@ -230,12 +230,14 @@ class Zenpy(object):
         cache_mapping = self._get_cache_mapping()
         del cache_mapping[cache_name]
 
-    def _get_cache_mapping(self):
-        return self.users.object_manager.cache_mapping
-
     def _get_cache(self, cache_name):
         cache_mapping = self._get_cache_mapping()
         if cache_name not in cache_mapping:
             raise ZenpyException("No such cache - %s" % cache_name)
         else:
             return cache_mapping[cache_name]
+
+    def _get_cache_mapping(self):
+        # Even though we access the users API object the cache_mapping that
+        # we receive applies to all API's as it is a class attribute of ObjectManager.
+        return self.users.object_manager.cache_mapping
