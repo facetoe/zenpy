@@ -46,16 +46,6 @@ class Topic(BaseObject):
             self.created_at = created_at
 
     @property
-    def tags(self):
-        if self.api and self.tags:
-            return self.api.get_tags(self.tags)
-
-    @tags.setter
-    def tags(self, tags):
-        if tags:
-            self.tags = tags
-
-    @property
     def forum(self):
         if self.api and self.forum_id:
             return self.api.get_forum(self.forum_id)

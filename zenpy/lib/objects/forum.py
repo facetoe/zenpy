@@ -25,16 +25,6 @@ class Forum(BaseObject):
             setattr(self, key, value)
 
     @property
-    def tags(self):
-        if self.api and self.tags:
-            return self.api.get_tags(self.tags)
-
-    @tags.setter
-    def tags(self, tags):
-        if tags:
-            self.tags = tags
-
-    @property
     def created(self):
         if self.created_at:
             return dateutil.parser.parse(self.created_at)
@@ -53,16 +43,6 @@ class Forum(BaseObject):
     def updated(self, updated):
         if updated:
             self.updated_at = updated_at
-
-    @property
-    def locale(self):
-        if self.api and self.locale_id:
-            return self.api.get_locale(self.locale_id)
-
-    @locale.setter
-    def locale(self, locale):
-        if locale:
-            self.locale_id = locale.id
 
     @property
     def organization(self):

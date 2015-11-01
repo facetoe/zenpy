@@ -92,7 +92,7 @@ class Property(TemplateObject):
 
     SETTER_TEMPLATE_DEFAULT = """
             if {{object.attribute.object_name}}:
-                self.{{object.attribute.attr_name}} = {{object.attribute.key}}
+                self.{{object.attribute.attr_name}} = {{object.attribute.object_name}}
     """
 
     def __init__(self, attribute):
@@ -177,7 +177,7 @@ class Attribute(object):
         return attr_name
 
     def get_is_property(self, object_name, attr_name, attr_value):
-        if attr_name in ('author', 'to', 'from'):
+        if attr_name in ('author', 'to', 'from', 'locale', 'locale_id', 'tags', 'domain_names'):
             return False
         elif any([isinstance(attr_value, t) for t in (dict, list)]):
             return True
