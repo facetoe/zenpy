@@ -1,3 +1,5 @@
+import dateutil.parser
+
 from zenpy.lib.objects.base_object import BaseObject
 
 
@@ -21,6 +23,46 @@ class Forum(BaseObject):
 
         for key, value in kwargs.iteritems():
             setattr(self, key, value)
+
+    @property
+    def tags(self):
+        if self.api and self.tags:
+            return self.api.get_tags(self.tags)
+
+    @tags.setter
+    def tags(self, tags):
+        if tags:
+            self.tags = tags
+
+    @property
+    def created(self):
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
+
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created_at
+
+    @property
+    def updated(self):
+        if self.updated_at:
+            return dateutil.parser.parse(self.updated_at)
+
+    @updated.setter
+    def updated(self, updated):
+        if updated:
+            self.updated_at = updated_at
+
+    @property
+    def locale(self):
+        if self.api and self.locale_id:
+            return self.api.get_locale(self.locale_id)
+
+    @locale.setter
+    def locale(self, locale):
+        if locale:
+            self.locale_id = locale.id
 
     @property
     def organization(self):

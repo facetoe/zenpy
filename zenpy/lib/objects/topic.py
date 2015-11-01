@@ -1,3 +1,5 @@
+import dateutil.parser
+
 from zenpy.lib.objects.base_object import BaseObject
 
 
@@ -8,7 +10,7 @@ class Topic(BaseObject):
         self.locked = None
         self.title = None
         self.url = None
-        self.search_phrases = None
+        self._search_phrases = None
         self.created_at = None
         self.tags = None
         self.forum_id = None
@@ -24,6 +26,36 @@ class Topic(BaseObject):
             setattr(self, key, value)
 
     @property
+    def search_phrases(self):
+        if self.api and self._search_phrases:
+            return self.api.get_search_phrases(self._search_phrases)
+
+    @search_phrases.setter
+    def search_phrases(self, search_phrases):
+        if search_phrases:
+            self._search_phrases = search_phrases
+
+    @property
+    def created(self):
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
+
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created_at
+
+    @property
+    def tags(self):
+        if self.api and self.tags:
+            return self.api.get_tags(self.tags)
+
+    @tags.setter
+    def tags(self, tags):
+        if tags:
+            self.tags = tags
+
+    @property
     def forum(self):
         if self.api and self.forum_id:
             return self.api.get_forum(self.forum_id)
@@ -32,6 +64,16 @@ class Topic(BaseObject):
     def forum(self, forum):
         if forum:
             self.forum_id = forum.id
+
+    @property
+    def updated(self):
+        if self.updated_at:
+            return dateutil.parser.parse(self.updated_at)
+
+    @updated.setter
+    def updated(self, updated):
+        if updated:
+            self.updated_at = updated_at
 
     @property
     def submitter(self):

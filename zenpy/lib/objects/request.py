@@ -1,3 +1,5 @@
+import dateutil.parser
+
 from zenpy.lib.objects.base_object import BaseObject
 
 
@@ -9,7 +11,7 @@ class Request(BaseObject):
         self._via = None
         self.description = None
         self.url = None
-        self.fields = None
+        self._fields = None
         self.created_at = None
         self.can_be_solved_by_me = None
         self.updated_at = None
@@ -20,7 +22,7 @@ class Request(BaseObject):
         self.requester_id = None
         self.type = None
         self.id = None
-        self.custom_fields = None
+        self._custom_fields = None
         self.subject = None
 
         for key, value in kwargs.iteritems():
@@ -47,6 +49,36 @@ class Request(BaseObject):
             self._via = via
 
     @property
+    def fields(self):
+        if self.api and self._fields:
+            return self.api.get_fields(self._fields)
+
+    @fields.setter
+    def fields(self, fields):
+        if fields:
+            self._fields = fields
+
+    @property
+    def created(self):
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
+
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created_at
+
+    @property
+    def updated(self):
+        if self.updated_at:
+            return dateutil.parser.parse(self.updated_at)
+
+    @updated.setter
+    def updated(self, updated):
+        if updated:
+            self.updated_at = updated_at
+
+    @property
     def collaborators(self):
         if self.api and self.collaborator_ids:
             return self.api.get_users(self.collaborator_ids)
@@ -55,6 +87,16 @@ class Request(BaseObject):
     def collaborators(self, collaborators):
         if collaborators:
             self.collaborator_ids = [o.id for o in collaborators]
+
+    @property
+    def due(self):
+        if self.due_at:
+            return dateutil.parser.parse(self.due_at)
+
+    @due.setter
+    def due(self, due):
+        if due:
+            self.due_at = due_at
 
     @property
     def assignee(self):
@@ -75,3 +117,13 @@ class Request(BaseObject):
     def requester(self, requester):
         if requester:
             self.requester_id = requester.id
+
+    @property
+    def custom_fields(self):
+        if self.api and self._custom_fields:
+            return self.api.get_custom_fields(self._custom_fields)
+
+    @custom_fields.setter
+    def custom_fields(self, custom_fields):
+        if custom_fields:
+            self._custom_fields = custom_fields

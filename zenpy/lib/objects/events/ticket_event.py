@@ -5,7 +5,7 @@ class TicketEvent(BaseObject):
     def __init__(self, api=None, **kwargs):
         self.api = api
         self.via = None
-        self.child_events = None
+        self._child_events = None
         self.timestamp = None
         self.ticket_id = None
         self.id = None
@@ -13,6 +13,16 @@ class TicketEvent(BaseObject):
 
         for key, value in kwargs.iteritems():
             setattr(self, key, value)
+
+    @property
+    def child_events(self):
+        if self.api and self._child_events:
+            return self.api.get_child_events(self._child_events)
+
+    @child_events.setter
+    def child_events(self, child_events):
+        if child_events:
+            self._child_events = child_events
 
     @property
     def ticket(self):

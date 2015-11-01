@@ -1,3 +1,5 @@
+import dateutil.parser
+
 from zenpy.lib.objects.base_object import BaseObject
 
 
@@ -6,7 +8,7 @@ class Audit(BaseObject):
         self.api = api
         self._via = None
         self.created_at = None
-        self.events = None
+        self._events = None
         self.ticket_id = None
         self.author_id = None
         self.id = None
@@ -24,6 +26,26 @@ class Audit(BaseObject):
     def via(self, via):
         if via:
             self._via = via
+
+    @property
+    def created(self):
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
+
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created_at
+
+    @property
+    def events(self):
+        if self.api and self._events:
+            return self.api.get_events(self._events)
+
+    @events.setter
+    def events(self, events):
+        if events:
+            self._events = events
 
     @property
     def ticket(self):

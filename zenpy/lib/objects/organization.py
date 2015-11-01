@@ -1,3 +1,5 @@
+import dateutil.parser
+
 from zenpy.lib.objects.base_object import BaseObject
 
 
@@ -11,7 +13,7 @@ class Organization(BaseObject):
         self.created_at = None
         self.tags = None
         self.updated_at = None
-        self.domain_names = None
+        self._domain_names = None
         self.details = None
         self.notes = None
         self.group_id = None
@@ -33,21 +35,41 @@ class Organization(BaseObject):
             self._organization_fields = organization_fields
 
     @property
-    def group(self):
-        if self.api and self.group_id:
-            return self.api.get_group(self.group_id)
+    def created(self):
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
 
-    @group.setter
-    def group(self, group):
-        if group:
-            self.group_id = group.id
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created_at
 
     @property
-    def external(self):
-        if self.api and self.external_id:
-            return self.api.get_external(self.external_id)
+    def tags(self):
+        if self.api and self.tags:
+            return self.api.get_tags(self.tags)
 
-    @external.setter
-    def external(self, external):
-        if external:
-            self.external_id = external.id
+    @tags.setter
+    def tags(self, tags):
+        if tags:
+            self.tags = tags
+
+    @property
+    def updated(self):
+        if self.updated_at:
+            return dateutil.parser.parse(self.updated_at)
+
+    @updated.setter
+    def updated(self, updated):
+        if updated:
+            self.updated_at = updated_at
+
+    @property
+    def domain_names(self):
+        if self.api and self._domain_names:
+            return self.api.get_domain_names(self._domain_names)
+
+    @domain_names.setter
+    def domain_names(self, domain_names):
+        if domain_names:
+            self._domain_names = domain_names

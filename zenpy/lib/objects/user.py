@@ -1,3 +1,5 @@
+import dateutil.parser
+
 from zenpy.lib.objects.base_object import BaseObject
 
 
@@ -42,14 +44,24 @@ class User(BaseObject):
             setattr(self, key, value)
 
     @property
-    def custom_role(self):
-        if self.api and self.custom_role_id:
-            return self.api.get_custom_role(self.custom_role_id)
+    def updated(self):
+        if self.updated_at:
+            return dateutil.parser.parse(self.updated_at)
 
-    @custom_role.setter
-    def custom_role(self, custom_role):
-        if custom_role:
-            self.custom_role_id = custom_role.id
+    @updated.setter
+    def updated(self, updated):
+        if updated:
+            self.updated_at = updated_at
+
+    @property
+    def locale(self):
+        if self.api and self.locale_id:
+            return self.api.get_locale(self.locale_id)
+
+    @locale.setter
+    def locale(self, locale):
+        if locale:
+            self.locale_id = locale.id
 
     @property
     def user_fields(self):
@@ -62,6 +74,16 @@ class User(BaseObject):
             self._user_fields = user_fields
 
     @property
+    def tags(self):
+        if self.api and self.tags:
+            return self.api.get_tags(self.tags)
+
+    @tags.setter
+    def tags(self, tags):
+        if tags:
+            self.tags = tags
+
+    @property
     def organization(self):
         if self.api and self.organization_id:
             return self.api.get_organization(self.organization_id)
@@ -72,11 +94,21 @@ class User(BaseObject):
             self.organization_id = organization.id
 
     @property
-    def external(self):
-        if self.api and self.external_id:
-            return self.api.get_external(self.external_id)
+    def last_login(self):
+        if self.last_login_at:
+            return dateutil.parser.parse(self.last_login_at)
 
-    @external.setter
-    def external(self, external):
-        if external:
-            self.external_id = external.id
+    @last_login.setter
+    def last_login(self, last_login):
+        if last_login:
+            self.last_login_at = last_login_at
+
+    @property
+    def created(self):
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
+
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created_at

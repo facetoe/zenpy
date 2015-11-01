@@ -1,3 +1,5 @@
+import dateutil.parser
+
 from zenpy.lib.objects.base_object import BaseObject
 
 
@@ -30,6 +32,16 @@ class TicketMetric(BaseObject):
             setattr(self, key, value)
 
     @property
+    def solved(self):
+        if self.solved_at:
+            return dateutil.parser.parse(self.solved_at)
+
+    @solved.setter
+    def solved(self, solved):
+        if solved:
+            self.solved_at = solved_at
+
+    @property
     def on_hold_time_in_minutes(self):
         if self.api and self._on_hold_time_in_minutes:
             return self.api.get_ticket_metric_item(self._on_hold_time_in_minutes)
@@ -60,6 +72,46 @@ class TicketMetric(BaseObject):
             self._full_resolution_time_in_minutes = full_resolution_time_in_minutes
 
     @property
+    def created(self):
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
+
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created_at
+
+    @property
+    def status_updated(self):
+        if self.status_updated_at:
+            return dateutil.parser.parse(self.status_updated_at)
+
+    @status_updated.setter
+    def status_updated(self, status_updated):
+        if status_updated:
+            self.status_updated_at = status_updated_at
+
+    @property
+    def updated(self):
+        if self.updated_at:
+            return dateutil.parser.parse(self.updated_at)
+
+    @updated.setter
+    def updated(self, updated):
+        if updated:
+            self.updated_at = updated_at
+
+    @property
+    def latest_comment_added(self):
+        if self.latest_comment_added_at:
+            return dateutil.parser.parse(self.latest_comment_added_at)
+
+    @latest_comment_added.setter
+    def latest_comment_added(self, latest_comment_added):
+        if latest_comment_added:
+            self.latest_comment_added_at = latest_comment_added_at
+
+    @property
     def reply_time_in_minutes(self):
         if self.api and self._reply_time_in_minutes:
             return self.api.get_ticket_metric_item(self._reply_time_in_minutes)
@@ -70,6 +122,36 @@ class TicketMetric(BaseObject):
             self._reply_time_in_minutes = reply_time_in_minutes
 
     @property
+    def assignee_updated(self):
+        if self.assignee_updated_at:
+            return dateutil.parser.parse(self.assignee_updated_at)
+
+    @assignee_updated.setter
+    def assignee_updated(self, assignee_updated):
+        if assignee_updated:
+            self.assignee_updated_at = assignee_updated_at
+
+    @property
+    def assigned(self):
+        if self.assigned_at:
+            return dateutil.parser.parse(self.assigned_at)
+
+    @assigned.setter
+    def assigned(self, assigned):
+        if assigned:
+            self.assigned_at = assigned_at
+
+    @property
+    def requester_updated(self):
+        if self.requester_updated_at:
+            return dateutil.parser.parse(self.requester_updated_at)
+
+    @requester_updated.setter
+    def requester_updated(self, requester_updated):
+        if requester_updated:
+            self.requester_updated_at = requester_updated_at
+
+    @property
     def requester_wait_time_in_minutes(self):
         if self.api and self._requester_wait_time_in_minutes:
             return self.api.get_ticket_metric_item(self._requester_wait_time_in_minutes)
@@ -78,6 +160,16 @@ class TicketMetric(BaseObject):
     def requester_wait_time_in_minutes(self, requester_wait_time_in_minutes):
         if requester_wait_time_in_minutes:
             self._requester_wait_time_in_minutes = requester_wait_time_in_minutes
+
+    @property
+    def initially_assigned(self):
+        if self.initially_assigned_at:
+            return dateutil.parser.parse(self.initially_assigned_at)
+
+    @initially_assigned.setter
+    def initially_assigned(self, initially_assigned):
+        if initially_assigned:
+            self.initially_assigned_at = initially_assigned_at
 
     @property
     def first_resolution_time_in_minutes(self):

@@ -12,7 +12,7 @@ class Ticket(BaseObject):
         self.assignee_id = None
         self.brand_id = None
         self.id = None
-        self.custom_fields = None
+        self._custom_fields = None
         self.subject = None
         self.sharing_agreement_ids = None
         self.collaborator_ids = None
@@ -29,7 +29,7 @@ class Ticket(BaseObject):
         self.recipient = None
         self.problem_id = None
         self.url = None
-        self.fields = None
+        self._fields = None
         self.created_at = None
         self.raw_subject = None
         self.has_incidents = None
@@ -48,6 +48,16 @@ class Ticket(BaseObject):
     def via(self, via):
         if via:
             self._via = via
+
+    @property
+    def updated(self):
+        if self.updated_at:
+            return dateutil.parser.parse(self.updated_at)
+
+    @updated.setter
+    def updated(self, updated):
+        if updated:
+            self.updated_at = updated_at
 
     @property
     def submitter(self):
@@ -80,6 +90,16 @@ class Ticket(BaseObject):
             self.brand_id = brand.id
 
     @property
+    def custom_fields(self):
+        if self.api and self._custom_fields:
+            return self.api.get_custom_fields(self._custom_fields)
+
+    @custom_fields.setter
+    def custom_fields(self, custom_fields):
+        if custom_fields:
+            self._custom_fields = custom_fields
+
+    @property
     def sharing_agreements(self):
         if self.api and self.sharing_agreement_ids:
             return self.api.get_sharing_agreements(self.sharing_agreement_ids)
@@ -110,6 +130,16 @@ class Ticket(BaseObject):
             self._satisfaction_rating = satisfaction_rating
 
     @property
+    def tags(self):
+        if self.api and self.tags:
+            return self.api.get_tags(self.tags)
+
+    @tags.setter
+    def tags(self, tags):
+        if tags:
+            self.tags = tags
+
+    @property
     def forum_topic(self):
         if self.api and self.forum_topic_id:
             return self.api.get_topic(self.forum_topic_id)
@@ -128,6 +158,16 @@ class Ticket(BaseObject):
     def organization(self, organization):
         if organization:
             self.organization_id = organization.id
+
+    @property
+    def due(self):
+        if self.due_at:
+            return dateutil.parser.parse(self.due_at)
+
+    @due.setter
+    def due(self, due):
+        if due:
+            self.due_at = due_at
 
     @property
     def requester(self):
@@ -150,6 +190,26 @@ class Ticket(BaseObject):
             self.problem_id = problem.id
 
     @property
+    def fields(self):
+        if self.api and self._fields:
+            return self.api.get_fields(self._fields)
+
+    @fields.setter
+    def fields(self, fields):
+        if fields:
+            self._fields = fields
+
+    @property
+    def created(self):
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
+
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created_at
+
+    @property
     def group(self):
         if self.api and self.group_id:
             return self.api.get_group(self.group_id)
@@ -158,13 +218,3 @@ class Ticket(BaseObject):
     def group(self, group):
         if group:
             self.group_id = group.id
-
-    @property
-    def external(self):
-        if self.api and self.external_id:
-            return self.api.get_external(self.external_id)
-
-    @external.setter
-    def external(self, external):
-        if external:
-            self.external_id = external.id

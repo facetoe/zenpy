@@ -5,7 +5,7 @@ class FacebookCommentEvent(BaseObject):
     def __init__(self, api=None, **kwargs):
         self.api = api
         self.body = None
-        self.attachments = None
+        self._attachments = None
         self.type = None
         self.public = None
         self.graph_object_id = None
@@ -17,6 +17,16 @@ class FacebookCommentEvent(BaseObject):
 
         for key, value in kwargs.iteritems():
             setattr(self, key, value)
+
+    @property
+    def attachments(self):
+        if self.api and self._attachments:
+            return self.api.get_attachments(self._attachments)
+
+    @attachments.setter
+    def attachments(self, attachments):
+        if attachments:
+            self._attachments = attachments
 
     @property
     def author(self):

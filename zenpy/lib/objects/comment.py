@@ -1,3 +1,5 @@
+import dateutil.parser
+
 from zenpy.lib.objects.base_object import BaseObject
 
 
@@ -6,7 +8,7 @@ class Comment(BaseObject):
         self.api = api
         self.body = None
         self._via = None
-        self.attachments = None
+        self._attachments = None
         self.created_at = None
         self.public = None
         self.author_id = None
@@ -26,6 +28,26 @@ class Comment(BaseObject):
     def via(self, via):
         if via:
             self._via = via
+
+    @property
+    def attachments(self):
+        if self.api and self._attachments:
+            return self.api.get_attachments(self._attachments)
+
+    @attachments.setter
+    def attachments(self, attachments):
+        if attachments:
+            self._attachments = attachments
+
+    @property
+    def created(self):
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
+
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created_at
 
     @property
     def author(self):

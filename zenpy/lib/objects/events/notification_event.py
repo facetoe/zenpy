@@ -6,7 +6,7 @@ class NotificationEvent(BaseObject):
         self.api = api
         self.body = None
         self._via = None
-        self.recipients = None
+        self._recipients = None
         self.type = None
         self.id = None
         self.subject = None
@@ -23,3 +23,13 @@ class NotificationEvent(BaseObject):
     def via(self, via):
         if via:
             self._via = via
+
+    @property
+    def recipients(self):
+        if self.api and self._recipients:
+            return self.api.get_users(self._recipients)
+
+    @recipients.setter
+    def recipients(self, recipients):
+        if recipients:
+            self._recipients = recipients

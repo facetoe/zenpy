@@ -7,8 +7,18 @@ class Result(BaseObject):
         self.count = None
         self.facets = None
         self.prev_page = None
-        self.results = None
+        self._results = None
         self.next_page = None
 
         for key, value in kwargs.iteritems():
             setattr(self, key, value)
+
+    @property
+    def results(self):
+        if self.api and self._results:
+            return self.api.get_results(self._results)
+
+    @results.setter
+    def results(self, results):
+        if results:
+            self._results = results

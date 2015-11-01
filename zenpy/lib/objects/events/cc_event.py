@@ -7,7 +7,7 @@ class CcEvent(BaseObject):
         self._via = None
         self.type = None
         self.id = None
-        self.recipients = None
+        self._recipients = None
 
         for key, value in kwargs.iteritems():
             setattr(self, key, value)
@@ -21,3 +21,13 @@ class CcEvent(BaseObject):
     def via(self, via):
         if via:
             self._via = via
+
+    @property
+    def recipients(self):
+        if self.api and self._recipients:
+            return self.api.get_users(self._recipients)
+
+    @recipients.setter
+    def recipients(self, recipients):
+        if recipients:
+            self._recipients = recipients

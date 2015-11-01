@@ -9,7 +9,7 @@ class VoiceCommentEvent(BaseObject):
         self.formatted_from = None
         self.type = None
         self.public = None
-        self.attachments = None
+        self._attachments = None
         self.transcription_visible = None
         self.author_id = None
         self._data = None
@@ -19,6 +19,16 @@ class VoiceCommentEvent(BaseObject):
 
         for key, value in kwargs.iteritems():
             setattr(self, key, value)
+
+    @property
+    def attachments(self):
+        if self.api and self._attachments:
+            return self.api.get_attachments(self._attachments)
+
+    @attachments.setter
+    def attachments(self, attachments):
+        if attachments:
+            self._attachments = attachments
 
     @property
     def author(self):

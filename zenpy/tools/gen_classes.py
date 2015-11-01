@@ -157,8 +157,8 @@ class Attribute(object):
             return attr_name
         elif attr_name.endswith('_id') or attr_name.endswith('_at'):
             return attr_name
-        elif attr_name.endswith('_at'):
-            return "_%s" % attr_name.replace('_at', '')
+        elif object_name == attr_name and isinstance(attr_value, list):
+            return "_%s" % attr_name
         else:
             return attr_name
 
@@ -177,17 +177,40 @@ class Attribute(object):
         return attr_name
 
     def get_is_property(self, object_name, attr_name, attr_value):
-        if any([isinstance(attr_value, t) for t in (basestring, bool)]) \
-                or attr_name.endswith('_at') \
-                or attr_name == 'id' \
-                or (attr_name == 'locale' or attr_name == 'locale_id') \
-                or (not attr_name.endswith('_ids') and isinstance(attr_value, list)) \
-                or (not attr_name.endswith('_id') and isinstance(attr_value, int)) \
-                or (object_name == attr_name and (not isinstance(attr_value, dict) and not isinstance(attr_value, list))) \
-                or attr_name in ('author', 'to'):
+        if attr_name in ('author', 'to', 'from'):
             return False
-        else:
+        elif any([isinstance(attr_value, t) for t in (dict, list)]):
             return True
+        elif attr_name.endswith('_at'):
+            return True
+        elif attr_name.endswith('_id') and isinstance(attr_value, int):
+            return True
+        else:
+            return False
+
+            # if any([isinstance(attr_value, t) for t in (basestring, bool)]):
+            #     return False
+            # elif attr_name.endswith('_at'):
+            #     return False
+            # elif attr_name == 'id':
+            #     return False
+            # elif (attr_name == 'locale' or attr_name == 'locale_id'):
+            #     return False
+            # elif isinstance(attr_value, list):
+            #     if not attr_name.endswith('_ids'):
+            #         return False
+            #     elif not attr_name == object_name:
+            #         return False
+            # elif isinstance(attr_value, int):
+            #     if not attr_name.endswith('_id'):
+            #         return False
+            # elif isinstance(attr_value, dict):
+            #     if object_name == attr_name:
+            #         return True
+            # elif attr_name in ('author', 'to'):
+            #     return False
+            # else:
+            #     return True
 
     def __str__(self):
         return "[is_prop=%(is_property)s, " \
@@ -217,7 +240,6 @@ parser.add_option("--out-path", "-o", dest="out_path",
 parser.add_option("--target-file", "-t", dest="target_file",
                   help="Target JSON file. If not set all files will be generated",
                   metavar="TARGET")
-
 
 (options, args) = parser.parse_args()
 
