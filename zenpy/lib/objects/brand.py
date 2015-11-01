@@ -31,7 +31,7 @@ class Brand(BaseObject):
     @created.setter
     def created(self, created):
         if created:
-            self.created_at = created_at
+            self.created_at = created
 
     @property
     def updated(self):
@@ -41,7 +41,7 @@ class Brand(BaseObject):
     @updated.setter
     def updated(self, updated):
         if updated:
-            self.updated_at = updated_at
+            self.updated_at = updated
 
     @property
     def logo(self):

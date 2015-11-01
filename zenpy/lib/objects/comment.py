@@ -47,7 +47,7 @@ class Comment(BaseObject):
     @created.setter
     def created(self, created):
         if created:
-            self.created_at = created_at
+            self.created_at = created
 
     @property
     def author(self):

@@ -39,7 +39,7 @@ class TicketMetric(BaseObject):
     @solved.setter
     def solved(self, solved):
         if solved:
-            self.solved_at = solved_at
+            self.solved_at = solved
 
     @property
     def on_hold_time_in_minutes(self):
@@ -79,7 +79,7 @@ class TicketMetric(BaseObject):
     @created.setter
     def created(self, created):
         if created:
-            self.created_at = created_at
+            self.created_at = created
 
     @property
     def status_updated(self):
@@ -89,7 +89,7 @@ class TicketMetric(BaseObject):
     @status_updated.setter
     def status_updated(self, status_updated):
         if status_updated:
-            self.status_updated_at = status_updated_at
+            self.status_updated_at = status_updated
 
     @property
     def updated(self):
@@ -99,7 +99,7 @@ class TicketMetric(BaseObject):
     @updated.setter
     def updated(self, updated):
         if updated:
-            self.updated_at = updated_at
+            self.updated_at = updated
 
     @property
     def latest_comment_added(self):
@@ -109,7 +109,7 @@ class TicketMetric(BaseObject):
     @latest_comment_added.setter
     def latest_comment_added(self, latest_comment_added):
         if latest_comment_added:
-            self.latest_comment_added_at = latest_comment_added_at
+            self.latest_comment_added_at = latest_comment_added
 
     @property
     def reply_time_in_minutes(self):
@@ -129,7 +129,7 @@ class TicketMetric(BaseObject):
     @assignee_updated.setter
     def assignee_updated(self, assignee_updated):
         if assignee_updated:
-            self.assignee_updated_at = assignee_updated_at
+            self.assignee_updated_at = assignee_updated
 
     @property
     def assigned(self):
@@ -139,7 +139,7 @@ class TicketMetric(BaseObject):
     @assigned.setter
     def assigned(self, assigned):
         if assigned:
-            self.assigned_at = assigned_at
+            self.assigned_at = assigned
 
     @property
     def requester_updated(self):
@@ -149,7 +149,7 @@ class TicketMetric(BaseObject):
     @requester_updated.setter
     def requester_updated(self, requester_updated):
         if requester_updated:
-            self.requester_updated_at = requester_updated_at
+            self.requester_updated_at = requester_updated
 
     @property
     def requester_wait_time_in_minutes(self):
@@ -169,7 +169,7 @@ class TicketMetric(BaseObject):
     @initially_assigned.setter
     def initially_assigned(self, initially_assigned):
         if initially_assigned:
-            self.initially_assigned_at = initially_assigned_at
+            self.initially_assigned_at = initially_assigned
 
     @property
     def first_resolution_time_in_minutes(self):
