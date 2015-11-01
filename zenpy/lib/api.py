@@ -26,7 +26,8 @@ class BaseApi(object):
     version = None
     base_url = None
 
-    headers = {'Content-type': 'application/json'}
+    headers = {'Content-type': 'application/json',
+               'User-Agent': 'Zenpy/0.0.20'}
 
     def __init__(self, subdomain, email, token, password):
         self.email = email
@@ -242,6 +243,12 @@ class Api(BaseApi):
 
     def get_organization_fields(self, organization_fields, endpoint=Endpoint().organizations.organization_fields, object_type='organization_field'):
         return self.get_fields(organization_fields, endpoint, object_type)
+
+    def get_metadata(self, metadata):
+        return self.object_manager.object_from_json('metadata', metadata)
+
+    def get_system(self, system):
+        return self.object_manager.object_from_json('system', system)
 
     # Need to clean this up somehow.
     def get_fields(self, fields, endpoint, object_type):
