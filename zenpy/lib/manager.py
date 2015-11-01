@@ -1,8 +1,6 @@
 from json import JSONEncoder
 import logging
 
-from cachetools import LRUCache, TTLCache
-
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.objects.activity import Activity
 from zenpy.lib.objects.events.cc_event import CcEvent
@@ -48,6 +46,7 @@ from zenpy.lib.objects.metadata import Metadata
 from zenpy.lib.objects.source import Source
 from zenpy.lib.objects.system import System
 from zenpy.lib.objects.events.voice_comment_event import VoiceCommentEvent
+from zenpy.lib.zenpy_cache import ZenpyCache
 
 log = logging.getLogger(__name__)
 
@@ -151,15 +150,15 @@ class ObjectManager(object):
     and also provides access to the ClassManager
     """
 
-    user_cache = LRUCache(maxsize=200)
-    organization_cache = LRUCache(maxsize=100)
-    group_cache = LRUCache(maxsize=100)
-    brand_cache = LRUCache(maxsize=100)
-    ticket_cache = TTLCache(maxsize=100, ttl=30)
-    ticket_field_cache = LRUCache(maxsize=100)
-    comment_cache = TTLCache(maxsize=100, ttl=30)
-    user_field_cache = LRUCache(maxsize=100)
-    organization_field_cache = LRUCache(maxsize=100)
+    user_cache = ZenpyCache('LRUCache', maxsize=200)
+    organization_cache = ZenpyCache('LRUCache', maxsize=200)
+    group_cache = ZenpyCache('LRUCache', maxsize=200)
+    brand_cache = ZenpyCache('LRUCache', maxsize=200)
+    ticket_cache = ZenpyCache('TTLCache', maxsize=500, ttl=30)
+    ticket_field_cache = ZenpyCache('LRUCache', maxsize=200)
+    comment_cache = ZenpyCache('TTLCache', maxsize=500, ttl=30)
+    user_field_cache = ZenpyCache('LRUCache', maxsize=200)
+    organization_field_cache = ZenpyCache('LRUCache', maxsize=200)
 
     def __init__(self, api):
         self.class_manager = ClassManager(api)
