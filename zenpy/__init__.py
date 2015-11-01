@@ -195,12 +195,12 @@ class Zenpy(object):
         """
         return self._get_cache(cache_name).maxsize
 
-    def set_cache_max(self, cache_name, maxsize):
+    def set_cache_max(self, cache_name, maxsize, **kwargs):
         """
         Sets the maxsize attribute of the named cache
         """
         cache = self._get_cache(cache_name)
-        cache.maxsize = maxsize
+        cache.set_maxsize(maxsize, **kwargs)
 
     def get_cache_impl_name(self, cache_name):
         """

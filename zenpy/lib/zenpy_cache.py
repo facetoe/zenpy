@@ -45,12 +45,11 @@ class ZenpyCache(object):
         """
         return self.cache.maxsize
 
-    @maxsize.setter
-    def maxsize(self, maxsize):
+    def set_maxsize(self, maxsize, **kwargs):
         """
         Set maxsize. This involves creating a new cache and transferring the items.
         """
-        new_cache = self._get_cache_impl(self.impl_name, maxsize)
+        new_cache = self._get_cache_impl(self.impl_name, maxsize, **kwargs)
         self._populate_new_cache(new_cache)
         self.cache = new_cache
 
