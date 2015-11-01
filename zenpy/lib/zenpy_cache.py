@@ -10,7 +10,6 @@ class ZenpyCache(object):
     Wrapper class for the various cachetools caches. Adds ability to change cache implementations
     on the fly and change the maxsize setting.
     """
-
     AVAILABLE_CACHES = [c for c in dir(cachetools) if c.endswith('Cache') and c != 'Cache']
 
     def __init__(self, cache_impl, maxsize, **kwargs):

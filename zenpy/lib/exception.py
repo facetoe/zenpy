@@ -21,5 +21,5 @@ class RecordNotFoundException(Exception):
 
 class ZenpyCacheException(Exception):
     """
-    A ZenpyCacheException is raised when a caching error occurs
+    A ZenpyCacheException is raised for errors relating the the ZenpyCache
     """

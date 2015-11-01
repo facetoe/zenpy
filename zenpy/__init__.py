@@ -5,6 +5,7 @@ from zenpy.lib.api import UserApi, Api, TicketApi, OranizationApi, SuspendedTick
     RequestAPI
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import ZenpyException
+from zenpy.lib.zenpy_cache import ZenpyCache
 
 log = logging.getLogger()
 log.setLevel(logging.INFO)
@@ -181,3 +182,60 @@ class Zenpy(object):
             password=password,
             endpoint=endpoint.requests
         )
+
+    def get_cache_names(self):
+        """
+        Returns a list of current caches
+        """
+        return self._get_cache_mapping().keys()
+
+    def get_cache_max(self, cache_name):
+        """
+        Returns the maxsize attribute of the named cache
+        """
+        return self._get_cache(cache_name).maxsize
+
+    def set_cache_max(self, cache_name, maxsize):
+        """
+        Sets the maxsize attribute of the named cache
+        """
+        cache = self._get_cache(cache_name)
+        cache.maxsize = maxsize
+
+    def get_cache_impl_name(self, cache_name):
+        """
+        Returns the name of the cache implementation for the named cache
+        """
+        return self._get_cache(cache_name).cache_name
+
+    def set_cache_implementation(self, cache_name, impl_name, maxsize, **kwargs):
+        """
+        Changes the cache implementation for the named cache
+        """
+        self._get_cache(cache_name).set_cache_impl(impl_name, maxsize, **kwargs)
+
+    def add_cache(self, object_type, cache_impl_name, maxsize, **kwargs):
+        """
+        Add a new cache for the named object type and cache implementation
+        """
+        if object_type not in self.users.object_manager.class_manager.class_mapping:
+            raise ZenpyException("No such object type: %s" % object_type)
+        cache_mapping = self._get_cache_mapping()
+        cache_mapping[object_type] = ZenpyCache(cache_impl_name, maxsize, **kwargs)
+
+    def delete_cache(self, cache_name):
+        """
+        Deletes the named cache
+        """
+        cache_mapping = self._get_cache_mapping()
+        del cache_mapping[cache_name]
+
+    def _get_cache_mapping(self):
+        return self.users.object_manager.cache_mapping
+
+    def _get_cache(self, cache_name):
+        cache_mapping = self._get_cache_mapping()
+        if cache_name not in cache_mapping:
+            raise ZenpyException("No such cache - %s" % cache_name)
+        else:
+            return cache_mapping[cache_name]
