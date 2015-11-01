@@ -26,6 +26,7 @@ from zenpy.lib.objects.status import Status
 from zenpy.lib.objects.suspended_ticket import SuspendedTicket
 from zenpy.lib.objects.tag import Tag
 from zenpy.lib.objects.ticket_audit import TicketAudit
+from zenpy.lib.objects.ticket_field import TicketField
 from zenpy.lib.objects.ticket_metric import TicketMetric
 from zenpy.lib.objects.ticket_metric_item import TicketMetricItem
 from zenpy.lib.objects.user_field import UserField
@@ -110,7 +111,8 @@ class ClassManager(object):
         'status': Status,
         'ticket_metric_item': TicketMetricItem,
         'user_field': UserField,
-        'organization_field': OrganizationField
+        'organization_field': OrganizationField,
+        'ticket_field': TicketField
     }
 
     def __init__(self, api):
@@ -154,6 +156,7 @@ class ObjectManager(object):
     group_cache = LRUCache(maxsize=100)
     brand_cache = LRUCache(maxsize=100)
     ticket_cache = TTLCache(maxsize=100, ttl=30)
+    ticket_field_cache = LRUCache(maxsize=100)
     comment_cache = TTLCache(maxsize=100, ttl=30)
     user_field_cache = LRUCache(maxsize=100)
     organization_field_cache = LRUCache(maxsize=100)
@@ -168,7 +171,8 @@ class ObjectManager(object):
             'ticket': self.ticket_cache,
             'comment': self.comment_cache,
             'user_field': self.user_field_cache,
-            'organization_field': self.organization_field_cache
+            'organization_field': self.organization_field_cache,
+            'ticket_field': self.ticket_field_cache
         }
 
     def object_from_json(self, object_type, object_json):

@@ -32,7 +32,8 @@ class ResultGenerator(object):
         'request': 'requests',
         'user_field': 'user_fields',
         'organization_field': 'organization_fields',
-        'brand': 'brands'
+        'brand': 'brands',
+        'ticket_field': 'ticket_fields'
     }
 
     def __init__(self, api, result_key, _json):

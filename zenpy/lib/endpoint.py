@@ -83,8 +83,8 @@ class SecondaryEndpoint(BaseEndpoint):
     """
 
     def __call__(self, **kwargs):
-        if 'id' not in kwargs:
-            raise ZenpyException("This endpoint requires an id!")
+        if not kwargs:
+            raise ZenpyException("This endpoint requires arguments!")
         return self.endpoint % kwargs
 
 
@@ -214,6 +214,7 @@ class Endpoint(object):
         self.tickets.metrics = SecondaryEndpoint('tickets/%(id)s/metrics.json')
         self.ticket_metrics = PrimaryEndpoint('ticket_metrics')
         self.ticket_import = PrimaryEndpoint('imports/tickets')
+        self.ticket_fields = PrimaryEndpoint('ticket_fields')
         self.suspended_tickets = PrimaryEndpoint('suspended_tickets')
         self.suspended_tickets.recover = SecondaryEndpoint('suspended_tickets/%(id)s/recover.json')
         self.attachments = PrimaryEndpoint('attachments')

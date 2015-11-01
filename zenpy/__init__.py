@@ -157,6 +157,15 @@ class Zenpy(object):
             object_type='ticket_metric'
         )
 
+        self.ticket_fields = Api(
+            subdomain,
+            email,
+            token=token,
+            password=password,
+            endpoint=endpoint.ticket_fields,
+            object_type='ticket_field'
+        )
+
         self.ticket_import = TicketImportAPI(
             subdomain,
             email,

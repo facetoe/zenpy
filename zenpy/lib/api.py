@@ -241,8 +241,12 @@ class Api(BaseApi):
     def get_user_fields(self, user_fields, endpoint=Endpoint().users.user_fields, object_type='user_field'):
         return self.get_fields(user_fields, endpoint, object_type)
 
-    def get_organization_fields(self, organization_fields, endpoint=Endpoint().organizations.organization_fields, object_type='organization_field'):
+    def get_organization_fields(self, organization_fields, endpoint=Endpoint().organizations.organization_fields,
+                                object_type='organization_field'):
         return self.get_fields(organization_fields, endpoint, object_type)
+
+    def get_custom_fields(self, custom_fields):
+        print custom_fields
 
     def get_metadata(self, metadata):
         return self.object_manager.object_from_json('metadata', metadata)
@@ -257,6 +261,7 @@ class Api(BaseApi):
             self._get(self._get_url(endpoint=endpoint()))
         for field in fields:
             yield self.object_manager.query_cache(object_type, field)
+
 
 class ModifiableApi(Api):
     """
