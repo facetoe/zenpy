@@ -61,7 +61,7 @@ Would generate the following API call:
 
 
 ### Querying the API
-The Zenpy object contains methods for accessing the following top level API endpoints: `search`, `groups`, `users`, `organizations` and `tickets`. The `groups`, `users`, `organizations` and `tickets` top level endpoints are pretty simple, and they can be called in one of two ways - no arguments returns all results (as a generator):
+The Zenpy object contains methods for accessing many top level endpoints, and they can be called in one of two ways - no arguments returns all results (as a generator):
 
 ```python
 for user in zenpy.users():
@@ -89,6 +89,10 @@ for organization in zenpy.users.organizations(id=1276936927):
 ```
 
 You could do so with these second level endpoints. 
+
+The vast majority of endpoints are supported, however I've chosen not to implement some that seemed unlikely to be used. If there is an endpoint that you would like to see implemented, just create a issue and I'll look into it. 
+
+I do plan on documenting all this, however for now the best way to see what is available is to look at the `Zenpy` and `Endpoint` objects. 
 
 ### Creating, Updating and Deleting API Objects
 
@@ -163,7 +167,7 @@ print result_generator.end_time
 
 Passing this value to a new call as the `start_time` will return items created or modified since that point in time. 
 
-### Caching
+## Caching
 
 Zenpy maintains several caches to prevent unecessary API calls. 
 
@@ -187,10 +191,31 @@ Face Toe
 ```
 There a few things to note here. We can see when the user was first requested it was not in the cache, which led to an API call. The GET request which was generated requests the user, but it also adds an `include` directive to pull related objects which led to a Group and Organization object being cached as well. This is called Sideloading by Zendesk, and Zenpy takes advantage of it wherever it can. We can see that the next time the user was requested it was found in the cache and no API call was generated. 
 
+
+### Controlling Caching
+
+The `Zenpy` object contains methods for adding, removing and modifying caches. Each object type can have a different cache implementation and settings. For example, you might use a [TTLCache](https://pythonhosted.org/cachetools/#cachetools.TTLCache) for `Ticket` objects with a timeout of one minute, and a [LFUCache](https://pythonhosted.org/cachetools/#cachetools.LFUCache) for `Organization` objects. It's even possible to change cache implementations on the fly. 
+
+By default `Zenpy` caches for following objects:
+
+```
+comment
+user_field
+group
+user
+organization_field
+organization
+brand
+ticket
+ticket_field
+```
+
+
 ### TO DO
 Cover all parts of the API properly.
 
 ### Contributions
 Contributions are very welcome. 
+
 
 
