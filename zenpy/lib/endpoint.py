@@ -178,9 +178,7 @@ class SearchEndpoint(BaseEndpoint):
                 renamed_kwargs.update({key + ':': '"%s"' % value})
 
         query = self.endpoint + 'query='
-        if 'query' in kwargs:
-            query += kwargs['query'] + "+"
-        elif args:
+        if args:
             query += ' '.join(args) + '+'
 
 

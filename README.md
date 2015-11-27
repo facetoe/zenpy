@@ -1,10 +1,12 @@
 # Zenpy
-n wrapper for the Zendesk API
+Python wrapper for the Zendesk API
 
 ### About
 Zenpy is a Python wrapper for the Zendesk API. The goal of the project is to make it possible to write clean, fast, Pythonic code when interacting with Zendesk progmatically. The wrapper tries to keep API calls to a minimum. Wherever it makes sense objects are cached, and attributes of objects that would trigger an API call are evaluated lazily. 
 
 The wrapper supports both reading and writing from the API.
+
+Zenpy supports both Python2 and Python3. 
 
 Zenpy is still in beta, so please report any bugs!
 
@@ -58,7 +60,7 @@ Would generate the following API call:
 /api/v2/search.json?query=zenpy+created>2015-08-29 created<2015-08-30+type:ticket+-negated
 ```
 
-The ordering can be controlled by passing `sort_by` and/or `sort_order` parameters as keyword arguments, eg:
+The ordering can be controlled by passing the `sort_by` and/or `sort_order` parameters as keyword arguments, eg:
 
 ```python
 zenpy.search("some query", type='ticket', sort_by='created_at', sort_order='desc')
