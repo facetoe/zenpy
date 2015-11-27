@@ -11,7 +11,7 @@ class FacebookEvent(BaseObject):
         self.id = None
         self._page = None
 
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             setattr(self, key, value)
 
     @property

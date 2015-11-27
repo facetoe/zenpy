@@ -7,5 +7,5 @@ class TicketMetricItem(BaseObject):
         self.calendar = None
         self.business = None
 
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             setattr(self, key, value)

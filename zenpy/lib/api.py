@@ -164,7 +164,7 @@ class BaseApi(object):
             # No can do, just raise the correct Exception.
             try:
                 response.raise_for_status()
-            except requests.exceptions.HTTPError, e:
+            except requests.exceptions.HTTPError as e:
                 raise APIException(e.message)
         else:
             try:

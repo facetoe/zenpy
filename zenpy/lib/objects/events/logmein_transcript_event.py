@@ -8,5 +8,5 @@ class LogmeinTranscriptEvent(BaseObject):
         self.type = None
         self.id = None
 
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             setattr(self, key, value)

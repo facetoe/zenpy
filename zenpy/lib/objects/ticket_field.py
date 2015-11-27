@@ -27,7 +27,7 @@ class TicketField(BaseObject):
         self.id = None
         self.editable_in_portal = None
 
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             setattr(self, key, value)
 
     @property

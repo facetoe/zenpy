@@ -22,7 +22,7 @@ class Topic(BaseObject):
         self.id = None
         self.updater_id = None
 
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             setattr(self, key, value)
 
     @property

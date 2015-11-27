@@ -14,7 +14,7 @@ class Audit(BaseObject):
         self.id = None
         self._metadata = None
 
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             setattr(self, key, value)
 
     @property

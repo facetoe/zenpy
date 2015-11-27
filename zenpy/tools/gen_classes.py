@@ -27,7 +27,7 @@ class {{object.name}}(BaseObject):
 
     def __init__(self, name, _json):
         self.name = name
-        attributes = [Attribute(attr_name=a, attr_value=v) for a, v in _json.iteritems()]
+        attributes = [Attribute(attr_name=a, attr_value=v) for a, v in _json.items()]
         self.init = Init(attributes)
         self.properties = Properties(attributes)
 
@@ -41,7 +41,7 @@ class Init(TemplateObject):
         self.{{attr.attr_name}} = None
         {% endif -%}
         {% endfor %}
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             setattr(self, key, value)
 
     """

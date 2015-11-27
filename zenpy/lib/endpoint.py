@@ -4,6 +4,20 @@ from zenpy.lib.exception import ZenpyException
 
 __author__ = 'facetoe'
 
+try:
+    unicode = unicode
+except NameError:
+    # 'unicode' is undefined, must be Python 3
+    str = str
+    unicode = str
+    bytes = bytes
+    basestring = (str,bytes)
+else:
+    # 'unicode' exists, must be Python 2
+    str = str
+    unicode = unicode
+    bytes = str
+    basestring = basestring
 
 class BaseEndpoint(object):
     """
@@ -46,7 +60,7 @@ class PrimaryEndpoint(BaseEndpoint):
     def __call__(self, **kwargs):
         query = ""
         modifiers = []
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             if key == 'id':
                 query += self._single(self.endpoint, value)
             elif key == 'ids':
@@ -127,7 +141,7 @@ class SearchEndpoint(BaseEndpoint):
 
         renamed_kwargs = dict()
         args = list()
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             if key.endswith('_between'):
                 args.append(self.format_between(key, value))
                 continue

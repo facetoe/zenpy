@@ -10,5 +10,5 @@ class Thumbnail(BaseObject):
         self.content_url = None
         self.size = None
 
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             setattr(self, key, value)

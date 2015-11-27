@@ -134,7 +134,7 @@ class ClassManager(object):
             return object_json
 
         obj = object_type(api=self.api)
-        for key, value in object_json.iteritems():
+        for key, value in object_json.items():
             if key in ('results', 'metadata', 'from', 'system', 'photo', 'thumbnails'):
                 key = '_%s' % key
 

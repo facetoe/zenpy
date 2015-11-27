@@ -14,7 +14,7 @@ class GroupMembership(BaseObject):
         self.group_id = None
         self.id = None
 
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             setattr(self, key, value)
 
     @property

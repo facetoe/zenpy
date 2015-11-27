@@ -58,7 +58,7 @@ class ZenpyCache(object):
         return len(self.cache)
 
     def _populate_new_cache(self, new_cache):
-        for key, value in self.cache.iteritems():
+        for key, value in self.cache.items():
             new_cache[key] = value
 
     def _get_cache_impl(self, cache_impl, maxsize, **kwargs):

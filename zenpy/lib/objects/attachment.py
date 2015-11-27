@@ -11,7 +11,7 @@ class Attachment(BaseObject):
         self.id = None
         self.size = None
 
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             setattr(self, key, value)
 
     @property

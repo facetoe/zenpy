@@ -25,7 +25,7 @@ class Request(BaseObject):
         self._custom_fields = None
         self.subject = None
 
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             setattr(self, key, value)
 
     @property

@@ -21,7 +21,7 @@ class Forum(BaseObject):
         self.id = None
         self.name = None
 
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             setattr(self, key, value)
 
     @property

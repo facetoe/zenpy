@@ -7,7 +7,7 @@ class TicketAudit(BaseObject):
         self._audit = None
         self._ticket = None
 
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             setattr(self, key, value)
 
     @property

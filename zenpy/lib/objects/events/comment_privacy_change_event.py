@@ -9,7 +9,7 @@ class CommentPrivacyChangeEvent(BaseObject):
         self.id = None
         self.public = None
 
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             setattr(self, key, value)
 
     @property

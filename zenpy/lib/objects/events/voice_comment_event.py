@@ -17,7 +17,7 @@ class VoiceCommentEvent(BaseObject):
         self.trusted = None
         self.html_body = None
 
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             setattr(self, key, value)
 
     @property

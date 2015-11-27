@@ -50,6 +50,9 @@ class ResultGenerator(object):
     def __len__(self):
         return len(self.values)
 
+    def __next__(self):
+        return self.next()
+
     def next(self):
         # Pagination
         if self.position >= len(self.values):
@@ -94,7 +97,7 @@ class ResultGenerator(object):
 
     def update_attrs(self, _json):
         # Add attributes such as count/end_time that can be present
-        for key, value in _json.iteritems():
+        for key, value in _json.items():
             if key != self.result_key:
                 setattr(self, key, value)
 

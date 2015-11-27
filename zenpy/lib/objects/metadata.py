@@ -7,7 +7,7 @@ class Metadata(BaseObject):
         self._system = None
         self._custom = None
 
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             setattr(self, key, value)
 
     @property

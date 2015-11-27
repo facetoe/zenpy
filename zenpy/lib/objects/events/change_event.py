@@ -10,5 +10,5 @@ class ChangeEvent(BaseObject):
         self.id = None
         self.value = None
 
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             setattr(self, key, value)

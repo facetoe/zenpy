@@ -10,5 +10,5 @@ class System(BaseObject):
         self.location = None
         self.longitude = None
 
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             setattr(self, key, value)

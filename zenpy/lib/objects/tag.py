@@ -7,5 +7,5 @@ class Tag(BaseObject):
         self.count = None
         self.name = None
 
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             setattr(self, key, value)
