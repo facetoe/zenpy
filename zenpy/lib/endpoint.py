@@ -141,6 +141,7 @@ class SearchEndpoint(BaseEndpoint):
 
         renamed_kwargs = dict()
         modifiers = list()
+        sort_order = list()
         for key, value in kwargs.items():
             if key.endswith('_between'):
                 modifiers.append(self.format_between(key, value))
@@ -155,6 +156,9 @@ class SearchEndpoint(BaseEndpoint):
                 continue
             elif isinstance(value, list):
                 modifiers.append(self.format_or(key, value))
+                continue
+            elif key in ('sort_by', 'sort_order'):
+                sort_order.append("%s=%s" % (key, value))
                 continue
 
             if isinstance(value, datetime):
@@ -173,15 +177,20 @@ class SearchEndpoint(BaseEndpoint):
             else:
                 renamed_kwargs.update({key + ':': '"%s"' % value})
 
-        query = 'query='
+        query = self.endpoint + 'query='
         if 'query' in kwargs:
-            query += kwargs['query']
-        if args:
-            query += " ".join(args)
+            query += kwargs['query'] + "+"
+        elif args:
+            query += ' '.join(args) + '+'
 
-        endpoint = self.endpoint + query
 
-        return endpoint + self._format(*modifiers, **renamed_kwargs)
+        sort_section = ""
+        if sort_order:
+            sort_section += '&' + "&".join(sort_order)
+
+        search_paramaters = self._format(*modifiers, **renamed_kwargs)
+
+        return "%(query)s%(search_paramaters)s%(sort_section)s" % locals()
 
     def format_between(self, key, values):
         if not isinstance(values, list):
