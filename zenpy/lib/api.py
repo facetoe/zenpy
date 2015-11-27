@@ -77,7 +77,7 @@ class BaseApi(object):
             response = requests.get(url, auth=self._get_auth(), stream=stream)
         return self._check_and_cache_response(response)
 
-    def _get_items(self, endpoint, object_type, kwargs):
+    def _get_items(self, endpoint, object_type, *args, **kwargs):
         sideload = 'sideload' not in kwargs or ('sideload' in kwargs and kwargs['sideload'])
 
         # If an ID is present a single object has been requested
@@ -93,10 +93,10 @@ class BaseApi(object):
                 if obj:
                     cached_objects.append(obj)
                 else:
-                    return self._get_paginated(endpoint, kwargs, object_type)
+                    return self._get_paginated(endpoint, object_type, *args, **kwargs)
             return cached_objects
 
-        return self._get_paginated(endpoint, kwargs, object_type)
+        return self._get_paginated(endpoint, object_type, *args, **kwargs)
 
     def _get_item(self, _id, endpoint, object_type, sideload=True, skip_cache=False):
         if not skip_cache:
@@ -116,8 +116,8 @@ class BaseApi(object):
         else:
             return self.object_manager.object_from_json(object_type, _json[object_type])
 
-    def _get_paginated(self, endpoint, kwargs, object_type):
-        _json = self._query(endpoint=endpoint(**kwargs))
+    def _get_paginated(self, endpoint, object_type, *args, **kwargs):
+        _json = self._query(endpoint=endpoint(*args, **kwargs))
         return ResultGenerator(self, object_type, _json)
 
     def _query(self, endpoint):
@@ -199,8 +199,8 @@ class Api(BaseApi):
         self.endpoint = endpoint
         self.object_type = object_type
 
-    def __call__(self, **kwargs):
-        return self._get_items(self.endpoint, self.object_type, kwargs)
+    def __call__(self, *args, **kwargs):
+        return self._get_items(self.endpoint, self.object_type, *args, **kwargs)
 
     def get_user(self, _id, endpoint=Endpoint().users, object_type='user'):
         return self._get_item(_id, endpoint, object_type, sideload=True)

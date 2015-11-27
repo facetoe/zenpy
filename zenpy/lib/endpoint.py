@@ -137,24 +137,24 @@ class SearchEndpoint(BaseEndpoint):
 
     ZENDESK_DATE_FORMAT = "%Y-%m-%d"
 
-    def __call__(self, **kwargs):
+    def __call__(self, *args, **kwargs):
 
         renamed_kwargs = dict()
-        args = list()
+        modifiers = list()
         for key, value in kwargs.items():
             if key.endswith('_between'):
-                args.append(self.format_between(key, value))
+                modifiers.append(self.format_between(key, value))
                 continue
             elif key == 'query':
                 continue
             elif key == 'minus':
                 if isinstance(value, list):
-                    [args.append("-%s" % v) for v in value]
+                    [modifiers.append("-%s" % v) for v in value]
                 else:
-                    args.append("-%s" % value)
+                    modifiers.append("-%s" % value)
                 continue
             elif isinstance(value, list):
-                args.append(self.format_or(key, value))
+                modifiers.append(self.format_or(key, value))
                 continue
 
             if isinstance(value, datetime):
@@ -173,12 +173,15 @@ class SearchEndpoint(BaseEndpoint):
             else:
                 renamed_kwargs.update({key + ':': '"%s"' % value})
 
+        query = 'query='
         if 'query' in kwargs:
-            endpoint = self.endpoint + 'query=' + kwargs['query'] + '+'
-        else:
-            endpoint = self.endpoint + 'query='
+            query += kwargs['query']
+        if args:
+            query += " ".join(args)
 
-        return endpoint + self._format(*args, **renamed_kwargs)
+        endpoint = self.endpoint + query
+
+        return endpoint + self._format(*modifiers, **renamed_kwargs)
 
     def format_between(self, key, values):
         if not isinstance(values, list):
