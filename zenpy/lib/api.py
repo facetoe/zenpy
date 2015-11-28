@@ -95,7 +95,7 @@ class BaseApi(object):
                 if obj:
                     cached_objects.append(obj)
                 else:
-                    return self._get_paginated(endpoint, kwargs, object_type)
+                    return self._get_paginated(endpoint, object_type, *args, **kwargs)
             return cached_objects
 
         return self._get_paginated(endpoint, object_type, *args, **kwargs)
@@ -212,7 +212,7 @@ class Api(BaseApi):
         return self._get_item(_id, endpoint, object_type, sideload=True)
 
     def get_users(self, _ids, endpoint=Endpoint.users, object_type='user'):
-        return self._get_items(endpoint, object_type, dict(ids=_ids))
+        return self._get_items(endpoint, object_type, ids=_ids)
 
     def get_comment(self, _id, endpoint=Endpoint.tickets.comments, object_type='comment'):
         return self._get_item(_id, endpoint, object_type, sideload=True)
