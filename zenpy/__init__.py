@@ -28,21 +28,21 @@ class Zenpy(object):
         if debug:
             log.setLevel(logging.DEBUG)
 
-        endpoint = Endpoint()
+        self.endpoint = Endpoint()
 
         self.users = UserApi(
             subdomain,
             email,
             token=token,
             password=password,
-            endpoint=endpoint.users)
+            endpoint=self.endpoint.users)
 
         self.groups = Api(
             subdomain,
             email,
             token=token,
             password=password,
-            endpoint=endpoint.groups,
+            endpoint=self.endpoint.groups,
             object_type='group')
 
         self.organizations = OranizationApi(
@@ -50,28 +50,28 @@ class Zenpy(object):
             email,
             token=token,
             password=password,
-            endpoint=endpoint.organizations)
+            endpoint=self.endpoint.organizations)
 
         self.tickets = TicketApi(
             subdomain,
             email,
             token=token,
             password=password,
-            endpoint=endpoint.tickets)
+            endpoint=self.endpoint.tickets)
 
         self.suspended_tickets = SuspendedTicketApi(
             subdomain,
             email,
             token=token,
             password=password,
-            endpoint=endpoint.suspended_tickets)
+            endpoint=self.endpoint.suspended_tickets)
 
         self.search = Api(
             subdomain,
             email,
             token=token,
             password=password,
-            endpoint=endpoint.search,
+            endpoint=self.endpoint.search,
             object_type='results')
 
         self.topics = Api(
@@ -79,7 +79,7 @@ class Zenpy(object):
             email,
             token=token,
             password=password,
-            endpoint=endpoint.topics,
+            endpoint=self.endpoint.topics,
             object_type='topic')
 
         self.attachments = Api(
@@ -87,7 +87,7 @@ class Zenpy(object):
             email,
             token=token,
             password=password,
-            endpoint=endpoint.attachments,
+            endpoint=self.endpoint.attachments,
             object_type='attachment')
 
         self.brands = Api(
@@ -95,7 +95,7 @@ class Zenpy(object):
             email,
             token=token,
             password=password,
-            endpoint=endpoint.brands,
+            endpoint=self.endpoint.brands,
             object_type='brand')
 
         self.job_status = Api(
@@ -103,7 +103,7 @@ class Zenpy(object):
             email,
             token=token,
             password=password,
-            endpoint=endpoint.job_statuses,
+            endpoint=self.endpoint.job_statuses,
             object_type='job_status')
 
         self.tags = Api(
@@ -111,7 +111,7 @@ class Zenpy(object):
             email,
             token=token,
             password=password,
-            endpoint=endpoint.tags,
+            endpoint=self.endpoint.tags,
             object_type='tag')
 
         self.satisfaction_ratings = Api(
@@ -119,7 +119,7 @@ class Zenpy(object):
             email,
             token=token,
             password=password,
-            endpoint=endpoint.satisfaction_ratings,
+            endpoint=self.endpoint.satisfaction_ratings,
             object_type='satisfaction_rating'
         )
 
@@ -128,7 +128,7 @@ class Zenpy(object):
             email,
             token=token,
             password=password,
-            endpoint=endpoint.activities,
+            endpoint=self.endpoint.activities,
             object_type='activity'
         )
 
@@ -137,7 +137,7 @@ class Zenpy(object):
             email,
             token=token,
             password=password,
-            endpoint=endpoint.group_memberships,
+            endpoint=self.endpoint.group_memberships,
             object_type='group_membership'
         )
 
@@ -146,7 +146,7 @@ class Zenpy(object):
             email,
             token=token,
             password=password,
-            endpoint=endpoint.end_user
+            endpoint=self.endpoint.end_user
         )
 
         self.ticket_metrics = Api(
@@ -154,7 +154,7 @@ class Zenpy(object):
             email,
             token=token,
             password=password,
-            endpoint=endpoint.ticket_metrics,
+            endpoint=self.endpoint.ticket_metrics,
             object_type='ticket_metric'
         )
 
@@ -163,7 +163,7 @@ class Zenpy(object):
             email,
             token=token,
             password=password,
-            endpoint=endpoint.ticket_fields,
+            endpoint=self.endpoint.ticket_fields,
             object_type='ticket_field'
         )
 
@@ -172,7 +172,7 @@ class Zenpy(object):
             email,
             token=token,
             password=password,
-            endpoint=endpoint.ticket_import
+            endpoint=self.endpoint.ticket_import
         )
 
         self.requests = RequestAPI(
@@ -180,7 +180,7 @@ class Zenpy(object):
             email,
             token=token,
             password=password,
-            endpoint=endpoint.requests
+            endpoint=self.endpoint.requests
         )
 
     def get_cache_names(self):
