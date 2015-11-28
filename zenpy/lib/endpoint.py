@@ -132,7 +132,6 @@ class SearchEndpoint(BaseEndpoint):
         *_before 		= <
         minus			= - (negation)
         *_between		= > < (only works with dates)
-        query			= literal string, eg "product"
     """
 
     ZENDESK_DATE_FORMAT = "%Y-%m-%d"
@@ -145,28 +144,15 @@ class SearchEndpoint(BaseEndpoint):
         for key, value in kwargs.items():
             if key.endswith('_between'):
                 modifiers.append(self.format_between(key, value))
-                continue
-            elif key == 'query':
-                continue
-            elif key == 'minus':
-                if isinstance(value, list):
-                    [modifiers.append("-%s" % v) for v in value]
-                else:
-                    modifiers.append("-%s" % value)
-                continue
             elif isinstance(value, list):
                 modifiers.append(self.format_or(key, value))
-                continue
             elif key in ('sort_by', 'sort_order'):
                 sort_order.append("%s=%s" % (key, value))
-                continue
-
-            if isinstance(value, datetime):
+            elif isinstance(value, datetime):
                 kwargs[key] = value.strftime(self.ZENDESK_DATE_FORMAT)
             elif isinstance(value, list) and key == 'ids':
                 value = self._format_many(value)
-
-            if key.endswith('_after'):
+            elif key.endswith('_after'):
                 renamed_kwargs[key.replace('_after', '>')] = kwargs[key]
             elif key.endswith('_before'):
                 renamed_kwargs[key.replace('_before', '<')] = kwargs[key]
@@ -174,6 +160,11 @@ class SearchEndpoint(BaseEndpoint):
                 renamed_kwargs[key.replace('_greater_than', '>')] = kwargs[key]
             elif key.endswith('_less_than'):
                 renamed_kwargs[key.replace('_less_than', '<')] = kwargs[key]
+            elif key == 'minus':
+                if isinstance(value, list):
+                    [modifiers.append("-%s" % v) for v in value]
+                else:
+                    modifiers.append("-%s" % value)
             else:
                 renamed_kwargs.update({key + ':': '"%s"' % value})
 
@@ -181,14 +172,13 @@ class SearchEndpoint(BaseEndpoint):
         if args:
             query += ' '.join(args) + '+'
 
-
         sort_section = ""
         if sort_order:
             sort_section += '&' + "&".join(sort_order)
 
-        search_paramaters = self._format(*modifiers, **renamed_kwargs)
+        search_parameters = self._format(*modifiers, **renamed_kwargs)
 
-        return "%(query)s%(search_paramaters)s%(sort_section)s" % locals()
+        return "%(query)s%(search_parameters)s%(sort_section)s" % locals()
 
     def format_between(self, key, values):
         if not isinstance(values, list):
