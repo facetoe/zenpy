@@ -1,14 +1,16 @@
+import json
 from time import sleep
+
+import requests
+
+from zenpy.lib.endpoint import Endpoint
+from zenpy.lib.exception import APIException, RecordNotFoundException
+from zenpy.lib.generator import ResultGenerator
+from zenpy.lib.manager import ApiObjectEncoder, ObjectManager
 
 __author__ = 'facetoe'
 
-from zenpy.lib.manager import ObjectManager, ApiObjectEncoder
-from zenpy.lib.exception import ZenpyException, APIException, RecordNotFoundException
-from zenpy.lib.endpoint import Endpoint
-from zenpy.lib.generator import ResultGenerator
-
-import json
-import requests
+from zenpy.lib.exception import ZenpyException
 import logging
 
 log = logging.getLogger(__name__)
@@ -93,7 +95,7 @@ class BaseApi(object):
                 if obj:
                     cached_objects.append(obj)
                 else:
-                    return self._get_paginated(endpoint, object_type, *args, **kwargs)
+                    return self._get_paginated(endpoint, kwargs, object_type)
             return cached_objects
 
         return self._get_paginated(endpoint, object_type, *args, **kwargs)
@@ -200,27 +202,31 @@ class Api(BaseApi):
         self.object_type = object_type
 
     def __call__(self, *args, **kwargs):
+        """
+        Retrieve API objects. If called with no arguments returns a ResultGenerator of
+        all retrievable items. Alternatively, can be called with an id to only return that item.
+        """
         return self._get_items(self.endpoint, self.object_type, *args, **kwargs)
 
-    def get_user(self, _id, endpoint=Endpoint().users, object_type='user'):
+    def get_user(self, _id, endpoint=Endpoint.users, object_type='user'):
         return self._get_item(_id, endpoint, object_type, sideload=True)
 
-    def get_users(self, _ids, endpoint=Endpoint().users, object_type='user'):
+    def get_users(self, _ids, endpoint=Endpoint.users, object_type='user'):
         return self._get_items(endpoint, object_type, dict(ids=_ids))
 
-    def get_comment(self, _id, endpoint=Endpoint().tickets.comments, object_type='comment'):
+    def get_comment(self, _id, endpoint=Endpoint.tickets.comments, object_type='comment'):
         return self._get_item(_id, endpoint, object_type, sideload=True)
 
-    def get_organization(self, _id, endpoint=Endpoint().organizations, object_type='organization'):
+    def get_organization(self, _id, endpoint=Endpoint.organizations, object_type='organization'):
         return self._get_item(_id, endpoint, object_type, sideload=True)
 
-    def get_group(self, _id, endpoint=Endpoint().groups, object_type='group'):
+    def get_group(self, _id, endpoint=Endpoint.groups, object_type='group'):
         return self._get_item(_id, endpoint, object_type, sideload=True)
 
-    def get_brand(self, _id, endpoint=Endpoint().brands, object_type='brand'):
+    def get_brand(self, _id, endpoint=Endpoint.brands, object_type='brand'):
         return self._get_item(_id, endpoint, object_type, sideload=True)
 
-    def get_ticket(self, _id, endpoint=Endpoint().tickets, object_type='ticket', skip_cache=False):
+    def get_ticket(self, _id, endpoint=Endpoint.tickets, object_type='ticket', skip_cache=False):
         return self._get_item(_id, endpoint, object_type, sideload=False, skip_cache=skip_cache)
 
     def get_events(self, events):
@@ -305,14 +311,26 @@ class CRUDApi(ModifiableApi):
     CRUDApi supports create/update/delete operations
     """
 
-    def create(self, items):
-        object_type, payload = self._get_type_and_payload(items)
+    def create(self, api_objects):
+        """
+        Create (POST) one or more API objects. Before being submitted to Zendesk the object or objects
+        will be serialized to JSON.
+
+        :param api_objects: object or objects to create
+        """
+        object_type, payload = self._get_type_and_payload(api_objects)
         if object_type.endswith('s'):
             return self._do(self._post, dict(create_many=True, sideload=False), payload=payload)
         else:
             return self._do(self._post, dict(sideload=False), payload=payload)
 
     def update(self, items):
+        """
+        Update (PUT) one or more API objects. Before being submitted to Zendesk the object or objects
+        will be serialized to JSON.
+
+        :param api_objects: object or objects to update
+        """
         object_type, payload = self._get_type_and_payload(items)
         if object_type.endswith('s'):
             return self._do(self._put, dict(update_many=True, sideload=False), payload=payload)
@@ -320,6 +338,12 @@ class CRUDApi(ModifiableApi):
             return self._do(self._put, dict(id=items.id, sideload=False), payload=payload)
 
     def delete(self, items):
+        """
+        Delete (DELETE) one or more API objects. After successfully deleting the objects from the API
+        they will also be removed from the relevant Zenpy caches.
+
+        :param api_objects: object or objects to delete
+        """
         object_type, payload = self._get_type_and_payload(items)
         if object_type.endswith('s'):
             response = self._do(self._delete, dict(destroy_ids=[i.id for i in items], sideload=False))
@@ -338,23 +362,33 @@ class SuspendedTicketApi(ModifiableApi):
         Api.__init__(self, subdomain, email, token=token, password=password, endpoint=endpoint,
                      object_type='suspended_ticket')
 
-    def recover(self, items):
-        object_type, payload = self._get_type_and_payload(items)
+    def recover(self, tickets):
+        """
+        Recover (PUT) one or more SuspendedTickets.
+
+        :param tickets: one or more SuspendedTickets to recover
+        """
+        object_type, payload = self._get_type_and_payload(tickets)
         if object_type.endswith('s'):
             return self._do(self._put, dict(
-                recover_ids=[i.id for i in items], sideload=False),
+                recover_ids=[i.id for i in tickets], sideload=False),
                             endpoint=self.endpoint, payload=payload)
         else:
-            return self._do(self._put, dict(id=items.id, sideload=False),
+            return self._do(self._put, dict(id=tickets.id, sideload=False),
                             endpoint=self.endpoint.recover,
                             payload=payload)
 
-    def delete(self, items):
-        object_type, payload = self._get_type_and_payload(items)
+    def delete(self, tickets):
+        """
+        Delete (DELETE) one or more SuspendedTickets.
+
+        :param tickets: one or more SuspendedTickets to delete
+        """
+        object_type, payload = self._get_type_and_payload(tickets)
         if object_type.endswith('s'):
-            response = self._do(self._delete, dict(destroy_ids=[i.id for i in items], sideload=False))
+            response = self._do(self._delete, dict(destroy_ids=[i.id for i in tickets], sideload=False))
         else:
-            response = self._do(self._delete, dict(id=items.id, sideload=False))
+            response = self._do(self._delete, dict(id=tickets.id, sideload=False))
         return response
 
 
@@ -364,6 +398,12 @@ class TaggableApi(Api):
     """
 
     def add_tags(self, id, tags):
+        """
+        Add (PUT) one or more tags.
+
+        :param id: the id of the object to tag
+        :param tags: array of tags to apply to object
+        """
         return self._put(self._get_url(
             endpoint=self.endpoint.tags(
                 id=id,
@@ -371,6 +411,12 @@ class TaggableApi(Api):
             payload={'tags': tags})
 
     def set_tags(self, id, tags):
+        """
+        Set (POST) one or more tags.
+
+        :param id: the id of the object to tag
+        :param tags: array of tags to apply to object
+        """
         return self._post(self._get_url(
             endpoint=self.endpoint.tags(
                 id=id,
@@ -378,6 +424,12 @@ class TaggableApi(Api):
             payload={'tags': tags})
 
     def delete_tags(self, id, tags):
+        """
+        Delete (DELETE) one or more tags.
+
+        :param id: the id of the object to delete tag from
+        :param tags: array of tags to delete from object
+        """
         return self._delete(self._get_url(
             endpoint=self.endpoint.tags(
                 id=id,
@@ -385,11 +437,24 @@ class TaggableApi(Api):
             payload={'tags': tags})
 
     def tags(self, **kwargs):
+        """
+        Lists the most popular recent tags in decreasing popularity
+        """
         return self._get_items(self.endpoint.tags, 'tag', kwargs)
 
 
 class RateableApi(Api):
+    """
+    Supports rating with a SatisfactionRating
+    """
+
     def rate(self, id, rating):
+        """
+        Add (POST) a satisfaction rating.
+
+        :param id: id of object to rate
+        :param rating: SatisfactionRating
+        """
         return self._post(self._get_url(self.endpoint.satisfaction_ratings(
             id=id,
             sideload=False
@@ -403,6 +468,10 @@ class IncrementalApi(Api):
     """
 
     def incremental(self, **kwargs):
+        """
+        Retrieve bulk data from the incremental API.
+        :param start_time: The time of the oldest object you are interested in.
+        """
         return self._get_items(self.endpoint.incremental, self.object_type, kwargs)
 
 
@@ -415,24 +484,59 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
         Api.__init__(self, subdomain, email, token=token, password=password, endpoint=endpoint, object_type='user')
 
     def groups(self, **kwargs):
+        """
+        Retrieve the groups for this user.
+
+        :param id: user id
+        """
         return self._get_items(self.endpoint.groups, 'group', kwargs)
 
     def organizations(self, **kwargs):
+        """
+        Retrieve the organizations for this user.
+
+        :param id: user id
+        """
         return self._get_items(self.endpoint.organizations, 'organization', kwargs)
 
     def requested(self, **kwargs):
+        """
+        Retrieve the requested tickets for this user.
+
+        :param id: user id
+        """
         return self._get_items(self.endpoint.requested, 'ticket', kwargs)
 
     def cced(self, **kwargs):
+        """
+        Retrieve the tickets this user is cc'd into.
+
+        :param id: user id
+        """
         return self._get_items(self.endpoint.cced, 'ticket', kwargs)
 
     def assigned(self, **kwargs):
+        """
+        Retrieve the assigned tickets for this user.
+
+        :param id: user id
+        """
         return self._get_items(self.endpoint.assigned, 'ticket', kwargs)
 
     def group_memberships(self, **kwargs):
+        """
+        Retrieve the group memberships for this user.
+
+        :param id: user id
+        """
         return self._get_items(self.endpoint.group_memberships, 'group_membership', kwargs)
 
     def user_fields(self, **kwargs):
+        """
+        Retrieve the user fields for this user.
+
+        :param id: user id
+        """
         return self._get_items(self.endpoint.user_fields, 'user_field', kwargs)
 
 
@@ -447,7 +551,7 @@ class EndUserApi(CRUDApi):
     def delete(self, items):
         raise ZenpyException("EndUsers cannot delete!")
 
-    def create(self, items):
+    def create(self, api_objects):
         raise ZenpyException("EndUsers cannot create!")
 
 
@@ -456,10 +560,12 @@ class OranizationApi(TaggableApi, IncrementalApi, CRUDApi):
         Api.__init__(self, subdomain, email, token=token, password=password, endpoint=endpoint,
                      object_type='organization')
 
-    def __call__(self, **kwargs):
-        return self._get_items(self.endpoint, self.object_type, kwargs)
-
     def organization_fields(self, **kwargs):
+        """
+        Retrieve the organization fields for this organization.
+
+        :param id: organization id
+        """
         return self._get_items(self.endpoint.organization_fields, 'organization_field', kwargs)
 
 
@@ -471,25 +577,47 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
     def __init__(self, subdomain, email, token, password, endpoint):
         Api.__init__(self, subdomain, email, token=token, password=password, endpoint=endpoint, object_type='ticket')
 
-    def __call__(self, **kwargs):
-        return self._get_items(self.endpoint, self.object_type, kwargs)
-
     def organizations(self, **kwargs):
+        """
+        Retrieve the tickets for this organization.
+
+        :param id: organization id
+        """
         return self._get_items(self.endpoint.organizations, 'ticket', kwargs)
 
     def recent(self, **kwargs):
+        """
+        Retrieve the most recent tickets
+        """
         return self._get_items(self.endpoint.recent, 'ticket', kwargs)
 
     def comments(self, **kwargs):
+        """
+        Retrieve the comments for a ticket.
+
+        :param id: ticket id
+        """
         return self._get_items(self.endpoint.comments, 'comment', kwargs)
 
     def events(self, **kwargs):
+        """
+        Retrieve TicketEvents
+        :param start_time: time to retrieve events from.
+        """
         return self._get_items(self.endpoint.events, 'ticket_event', kwargs)
 
     def audits(self, **kwargs):
+        """
+        Retrieve TicketAudits.
+        :param id: ticket id
+        """
         return self._get_items(self.endpoint.audits, 'ticket_audit', kwargs)
 
     def metrics(self, **kwargs):
+        """
+        Retrieve TicketMetric.
+        :param id: ticket id
+        """
         return self._get_items(self.endpoint.metrics, 'ticket_metric', kwargs)
 
 
