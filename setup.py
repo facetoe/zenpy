@@ -4,13 +4,13 @@ import setuptools
 setup(
     name='zenpy',
     packages=setuptools.find_packages(),
-    version='0.0.22',
+    version='0.0.24',
     description='Python wrapper for the Zendesk API',
     license='GPLv3',
     author='Face Toe',
     author_email='facetoe@facetoe.com.au',
     url='https://github.com/facetoe/zenpy',
-    download_url='https://github.com/facetoe/zenpy/releases/tag/0.0.22',
+    download_url='https://github.com/facetoe/zenpy/releases/tag/0.0.24',
     install_requires=[
         'requests>=2.7.0',
         'python-dateutil>=2.4.0',
@@ -21,7 +21,7 @@ setup(
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 3'
+        'Programming Language :: Python :: 3',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)'
     ],
 )

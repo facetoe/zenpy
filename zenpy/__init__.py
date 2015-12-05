@@ -22,7 +22,7 @@ __author__ = 'facetoe'
 
 class Zenpy(object):
     headers = {'Content-type': 'application/json',
-               'User-Agent': 'Zenpy/0.0.22'}
+               'User-Agent': 'Zenpy/0.0.24'}
 
     def __init__(self, subdomain, email=None, token=None, password=None, debug=False, session=None):
 
