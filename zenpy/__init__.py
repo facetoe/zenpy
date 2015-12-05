@@ -1,11 +1,12 @@
 import logging
 import sys
 
+import requests
+
 from zenpy.lib.api import UserApi, Api, TicketApi, OranizationApi, SuspendedTicketApi, EndUserApi, TicketImportAPI, \
     RequestAPI
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import ZenpyException
-from zenpy.lib.session import SessionWrapper
 from zenpy.lib.cache import ZenpyCache
 
 log = logging.getLogger()
@@ -20,16 +21,27 @@ __author__ = 'facetoe'
 
 
 class Zenpy(object):
-    def __init__(self, subdomain, email=None, token=None, password=None, debug=False, session=None):
+
+    headers = {'Content-type': 'application/json',
+               'User-Agent': 'Zenpy/0.0.22'}
+
+    def _init_session(self, email, token, password, session):
         if not password and not token:
             raise ZenpyException("password or token are required!")
         elif password and token:
             raise ZenpyException("password and token are mutually exclusive!")
 
+        session = session if session else requests.Session()
+        session.auth = (email, password) if password else (email + '/token', token)
+        session.headers.update(self.headers)
+        return session
+
+    def __init__(self, subdomain, email=None, token=None, password=None, debug=False, session=None):
+
         if debug:
             log.setLevel(logging.DEBUG)
 
-        session = SessionWrapper(email, password, token, session=session)
+        session = self._init_session(email, token, password, session)
         endpoint = Endpoint()
 
         self.users = UserApi(
