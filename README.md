@@ -29,18 +29,26 @@ Zenpy can be installed with pip:
 ### Usage
 First, create a Zenpy object:
 ```python
+# Zenpy accepts a token
+creds = {
+    'email' : 'youremail',
+    'token' : 'yourtoken'
+}
 
-## With token
-zenpy = Zenpy('yourdomain', email='youremail', token='yourtoken')
+# Or password
+creds = {
+    'email' : 'youremail',
+    'password' : 'yourpassword'
+}
 
-## Or password
-zenpy = Zenpy('yourdomain', email='youremail', password='yourpassword')
+# Default
+zenpy = Zenpy('yourdomain', **creds)
 
-## Debugging info
-zenpy = Zenpy('yourdomain', email='youremail', password='yourpassword', debug=True)
+## With debugging information
+zenpy = Zenpy('yourdomain', **creds, debug=True)
 
-## Existing requests session object
-zenpy = Zenpy('yourdomain', email='youremail', password='yourpassword', session=some_session)
+## Or with an existing requests.Session object
+zenpy = Zenpy('yourdomain', **creds, session=some_session)
 ```
 
 
