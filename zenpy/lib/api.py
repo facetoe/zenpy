@@ -28,9 +28,6 @@ class BaseApi(object):
     version = None
     base_url = None
 
-    headers = {'Content-type': 'application/json',
-               'User-Agent': 'Zenpy/0.0.20'}
-
     def __init__(self, subdomain, email, token, password):
         self.email = email
         self.token = token
@@ -40,32 +37,41 @@ class BaseApi(object):
         self.version = 'v2'
         self.base_url = self._get_url()
         self.object_manager = ObjectManager(self)
+        self.session = self.init_session()
+
+    def init_session(self):
+        headers = {'Content-type': 'application/json',
+                   'User-Agent': 'Zenpy/0.0.22'}
+        session = requests.Session()
+        session.auth = self._get_auth()
+        session.headers.update(headers)
+        return session
 
     def _post(self, url, payload):
         log.debug("POST: " + url)
         payload = json.loads(json.dumps(payload, cls=ApiObjectEncoder))
-        response = requests.post(url, auth=self._get_auth(), json=payload, headers=self.headers)
+        response = self.session.post(url, json=payload)
         self._check_and_cache_response(response)
         return self._build_response(response.json())
 
     def _put(self, url, payload):
         log.debug("PUT: " + url)
         payload = json.loads(json.dumps(payload, cls=ApiObjectEncoder))
-        response = requests.put(url, auth=self._get_auth(), json=payload, headers=self.headers)
+        response = self.session.put(url, json=payload)
         self._check_and_cache_response(response)
         return self._build_response(response.json())
 
     def _delete(self, url, payload=None):
         log.debug("DELETE: " + url)
         if payload:
-            response = requests.delete(url, auth=self._get_auth(), json=payload, headers=self.headers)
+            response = self.session.delete(url, json=payload)
         else:
-            response = requests.delete(url, auth=self._get_auth())
+            response = self.session.delete(url)
         return self._check_and_cache_response(response)
 
     def _get(self, url, stream=False):
         log.debug("GET: " + url)
-        response = requests.get(url, auth=self._get_auth(), stream=stream)
+        response = self.session.get(url, stream=stream)
 
         # If we are being rate-limited, wait the required period before trying again.
         while 'retry-after' in response.headers and int(response.headers['retry-after']) > 0:
@@ -76,7 +82,7 @@ class BaseApi(object):
                 retry_after_seconds -= 1
                 log.debug("APIRateLimitExceeded - sleeping: %s more seconds" % retry_after_seconds)
                 sleep(1)
-            response = requests.get(url, auth=self._get_auth(), stream=stream)
+            response = self.session.get(url, stream=stream)
         return self._check_and_cache_response(response)
 
     def _get_items(self, endpoint, object_type, *args, **kwargs):
