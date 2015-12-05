@@ -118,25 +118,15 @@ class BaseApi(object):
         # When updating and deleting API objects various responses can be returned
         # We can figure out what we have by the keys in the returned JSON
         if 'ticket' and 'audit' in response_json:
-            response = self.object_manager.object_from_json('ticket_audit', response_json)
-        elif 'ticket' in response_json:
-            response = self.object_manager.object_from_json('ticket', response_json['ticket'])
-        elif 'user' in response_json:
-            response = self.object_manager.object_from_json('user', response_json['user'])
-        elif 'job_status' in response_json:
-            response = self.object_manager.object_from_json('job_status', response_json['job_status'])
-        elif 'group' in response_json:
-            response = self.object_manager.object_from_json('group', response_json['group'])
-        elif 'organization' in response_json:
-            response = self.object_manager.object_from_json('organization', response_json['organization'])
+            return self.object_manager.object_from_json('ticket_audit', response_json)
         elif 'tags' in response_json:
             return response_json['tags']
-        elif 'satisfaction_rating' in response_json:
-            return self.object_manager.object_from_json('satisfaction_rating', response_json['satisfaction_rating'])
-        else:
-            raise ZenpyException("Unknown Response: " + str(response_json))
 
-        return response
+        for object_type in ('ticket', 'user', 'job_status', 'group', 'satisfaction_rating'):
+            if object_type in response_json:
+                return self.object_manager.object_from_json(object_type, response_json[object_type])
+
+        raise ZenpyException("Unknown Response: " + str(response_json))
 
     def _check_and_cache_response(self, response):
         if response.status_code > 299 or response.status_code < 200:
