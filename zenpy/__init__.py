@@ -5,7 +5,8 @@ from zenpy.lib.api import UserApi, Api, TicketApi, OranizationApi, SuspendedTick
     RequestAPI
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import ZenpyException
-from zenpy.lib.zenpy_cache import ZenpyCache
+from zenpy.lib.session import SessionWrapper
+from zenpy.lib.cache import ZenpyCache
 
 log = logging.getLogger()
 log.setLevel(logging.INFO)
@@ -19,7 +20,7 @@ __author__ = 'facetoe'
 
 
 class Zenpy(object):
-    def __init__(self, subdomain, email, token=None, password=None, debug=False):
+    def __init__(self, subdomain, email=None, token=None, password=None, debug=False, session=None):
         if not password and not token:
             raise ZenpyException("password or token are required!")
         elif password and token:
@@ -28,159 +29,123 @@ class Zenpy(object):
         if debug:
             log.setLevel(logging.DEBUG)
 
-        self.endpoint = Endpoint()
+        session = SessionWrapper(email, password, token, session=session)
+        endpoint = Endpoint()
 
         self.users = UserApi(
             subdomain,
-            email,
-            token=token,
-            password=password,
-            endpoint=self.endpoint.users)
+            session=session,
+            endpoint=endpoint.users)
 
         self.groups = Api(
             subdomain,
-            email,
-            token=token,
-            password=password,
-            endpoint=self.endpoint.groups,
+            session=session,
+            endpoint=endpoint.groups,
             object_type='group')
 
         self.organizations = OranizationApi(
             subdomain,
-            email,
-            token=token,
-            password=password,
-            endpoint=self.endpoint.organizations)
+            session=session,
+            endpoint=endpoint.organizations)
 
         self.tickets = TicketApi(
             subdomain,
-            email,
-            token=token,
-            password=password,
-            endpoint=self.endpoint.tickets)
+            session=session,
+            endpoint=endpoint.tickets)
 
         self.suspended_tickets = SuspendedTicketApi(
             subdomain,
-            email,
-            token=token,
-            password=password,
-            endpoint=self.endpoint.suspended_tickets)
+            session=session,
+            endpoint=endpoint.suspended_tickets)
 
         self.search = Api(
             subdomain,
-            email,
-            token=token,
-            password=password,
-            endpoint=self.endpoint.search,
+            session=session,
+            endpoint=endpoint.search,
             object_type='results')
 
         self.topics = Api(
             subdomain,
-            email,
-            token=token,
-            password=password,
-            endpoint=self.endpoint.topics,
+            session=session,
+            endpoint=endpoint.topics,
             object_type='topic')
 
         self.attachments = Api(
             subdomain,
-            email,
-            token=token,
-            password=password,
-            endpoint=self.endpoint.attachments,
+            session=session,
+            endpoint=endpoint.attachments,
             object_type='attachment')
 
         self.brands = Api(
             subdomain,
-            email,
-            token=token,
-            password=password,
-            endpoint=self.endpoint.brands,
+            session=session,
+            endpoint=endpoint.brands,
             object_type='brand')
 
         self.job_status = Api(
             subdomain,
-            email,
-            token=token,
-            password=password,
-            endpoint=self.endpoint.job_statuses,
+            session=session,
+            endpoint=endpoint.job_statuses,
             object_type='job_status')
 
         self.tags = Api(
             subdomain,
-            email,
-            token=token,
-            password=password,
-            endpoint=self.endpoint.tags,
+            session=session,
+            endpoint=endpoint.tags,
             object_type='tag')
 
         self.satisfaction_ratings = Api(
             subdomain,
-            email,
-            token=token,
-            password=password,
-            endpoint=self.endpoint.satisfaction_ratings,
+            session=session,
+            endpoint=endpoint.satisfaction_ratings,
             object_type='satisfaction_rating'
         )
 
         self.activities = Api(
             subdomain,
-            email,
-            token=token,
-            password=password,
-            endpoint=self.endpoint.activities,
+            session=session,
+
+            endpoint=endpoint.activities,
             object_type='activity'
         )
 
         self.group_memberships = Api(
             subdomain,
-            email,
-            token=token,
-            password=password,
-            endpoint=self.endpoint.group_memberships,
+            session=session,
+            endpoint=endpoint.group_memberships,
             object_type='group_membership'
         )
 
         self.end_user = EndUserApi(
             subdomain,
-            email,
-            token=token,
-            password=password,
-            endpoint=self.endpoint.end_user
+            session=session,
+            endpoint=endpoint.end_user
         )
 
         self.ticket_metrics = Api(
             subdomain,
-            email,
-            token=token,
-            password=password,
-            endpoint=self.endpoint.ticket_metrics,
+            session=session,
+            endpoint=endpoint.ticket_metrics,
             object_type='ticket_metric'
         )
 
         self.ticket_fields = Api(
             subdomain,
-            email,
-            token=token,
-            password=password,
-            endpoint=self.endpoint.ticket_fields,
+            session=session,
+            endpoint=endpoint.ticket_fields,
             object_type='ticket_field'
         )
 
         self.ticket_import = TicketImportAPI(
             subdomain,
-            email,
-            token=token,
-            password=password,
-            endpoint=self.endpoint.ticket_import
+            session=session,
+            endpoint=endpoint.ticket_import
         )
 
         self.requests = RequestAPI(
             subdomain,
-            email,
-            token=token,
-            password=password,
-            endpoint=self.endpoint.requests
+            session=session,
+            endpoint=endpoint.requests
         )
 
     def get_cache_names(self):

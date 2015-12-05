@@ -46,7 +46,7 @@ from zenpy.lib.api_objects import Metadata
 from zenpy.lib.api_objects import Source
 from zenpy.lib.api_objects import System
 from zenpy.lib.api_objects import VoiceCommentEvent
-from zenpy.lib.zenpy_cache import ZenpyCache
+from zenpy.lib.cache import ZenpyCache
 
 log = logging.getLogger(__name__)
 

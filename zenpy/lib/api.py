@@ -20,32 +20,14 @@ class BaseApi(object):
     """
     Base class for API.
     """
-    email = None
-    token = None
-    password = None
     subdomain = None
-    protocol = None
-    version = None
-    base_url = None
 
-    def __init__(self, subdomain, email, token, password):
-        self.email = email
-        self.token = token
-        self.password = password
+    def __init__(self, subdomain, session):
         self.subdomain = subdomain
         self.protocol = 'https'
         self.version = 'v2'
-        self.base_url = self._get_url()
         self.object_manager = ObjectManager(self)
-        self.session = self.init_session()
-
-    def init_session(self):
-        headers = {'Content-type': 'application/json',
-                   'User-Agent': 'Zenpy/0.0.22'}
-        session = requests.Session()
-        session.auth = self._get_auth()
-        session.headers.update(headers)
-        return session
+        self.session = session
 
     def _post(self, url, payload):
         log.debug("POST: " + url)
@@ -184,12 +166,6 @@ class BaseApi(object):
     def _get_url(self, endpoint=''):
         return "%(protocol)s://%(subdomain)s.zendesk.com/api/%(version)s/" % self.__dict__ + endpoint
 
-    def _get_auth(self):
-        if self.password:
-            return self.email, self.password
-        else:
-            return self.email + '/token', self.token
-
 
 class Api(BaseApi):
     """
@@ -202,8 +178,8 @@ class Api(BaseApi):
     I haven't had a chance to implement it yet.
     """
 
-    def __init__(self, subdomain, email, password, token, endpoint, object_type):
-        BaseApi.__init__(self, subdomain, email, token, password)
+    def __init__(self, subdomain, session, endpoint, object_type):
+        BaseApi.__init__(self, subdomain, session)
         self.endpoint = endpoint
         self.object_type = object_type
 
@@ -364,8 +340,8 @@ class SuspendedTicketApi(ModifiableApi):
     The SuspendedTicketApi adds some SuspendedTicket specific functionality
     """
 
-    def __init__(self, subdomain, email, token, password, endpoint):
-        Api.__init__(self, subdomain, email, token=token, password=password, endpoint=endpoint,
+    def __init__(self, subdomain, session, endpoint):
+        Api.__init__(self, subdomain, session, endpoint=endpoint,
                      object_type='suspended_ticket')
 
     def recover(self, tickets):
@@ -486,8 +462,8 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
     The UserApi adds some User specific functionality
     """
 
-    def __init__(self, subdomain, email, token, password, endpoint):
-        Api.__init__(self, subdomain, email, token=token, password=password, endpoint=endpoint, object_type='user')
+    def __init__(self, subdomain, session, endpoint):
+        Api.__init__(self, subdomain, session, endpoint=endpoint, object_type='user')
 
     def groups(self, **kwargs):
         """
@@ -551,8 +527,8 @@ class EndUserApi(CRUDApi):
     EndUsers can only update.
     """
 
-    def __init__(self, subdomain, email, token, password, endpoint):
-        Api.__init__(self, subdomain, email, token=token, password=password, endpoint=endpoint, object_type='user')
+    def __init__(self, subdomain, session, endpoint):
+        Api.__init__(self, subdomain, session, endpoint=endpoint, object_type='user')
 
     def delete(self, items):
         raise ZenpyException("EndUsers cannot delete!")
@@ -562,8 +538,8 @@ class EndUserApi(CRUDApi):
 
 
 class OranizationApi(TaggableApi, IncrementalApi, CRUDApi):
-    def __init__(self, subdomain, email, token, password, endpoint):
-        Api.__init__(self, subdomain, email, token=token, password=password, endpoint=endpoint,
+    def __init__(self, subdomain, session, endpoint):
+        Api.__init__(self, subdomain, session, endpoint=endpoint,
                      object_type='organization')
 
     def organization_fields(self, **kwargs):
@@ -580,8 +556,8 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
     The TicketApi adds some Ticket specific functionality
     """
 
-    def __init__(self, subdomain, email, token, password, endpoint):
-        Api.__init__(self, subdomain, email, token=token, password=password, endpoint=endpoint, object_type='ticket')
+    def __init__(self, subdomain, session, endpoint):
+        Api.__init__(self, subdomain, session, endpoint=endpoint, object_type='ticket')
 
     def organizations(self, **kwargs):
         """
@@ -628,8 +604,8 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
 
 
 class TicketImportAPI(CRUDApi):
-    def __init__(self, subdomain, email, token, password, endpoint):
-        Api.__init__(self, subdomain, email, token=token, password=password, endpoint=endpoint, object_type='ticket')
+    def __init__(self, subdomain, session, endpoint):
+        Api.__init__(self, subdomain, session, endpoint=endpoint, object_type='ticket')
 
     def __call__(self, *args, **kwargs):
         raise ZenpyException("You must pass ticket objects to this endpoint!")
@@ -642,5 +618,5 @@ class TicketImportAPI(CRUDApi):
 
 
 class RequestAPI(CRUDApi):
-    def __init__(self, subdomain, email, token, password, endpoint):
-        Api.__init__(self, subdomain, email, token=token, password=password, endpoint=endpoint, object_type='request')
+    def __init__(self, subdomain, session, endpoint):
+        Api.__init__(self, subdomain, session, endpoint=endpoint, object_type='request')
