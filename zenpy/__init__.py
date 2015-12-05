@@ -5,9 +5,9 @@ import requests
 
 from zenpy.lib.api import UserApi, Api, TicketApi, OranizationApi, SuspendedTicketApi, EndUserApi, TicketImportAPI, \
     RequestAPI
+from zenpy.lib.cache import ZenpyCache
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import ZenpyException
-from zenpy.lib.cache import ZenpyCache
 
 log = logging.getLogger()
 log.setLevel(logging.INFO)
@@ -21,20 +21,8 @@ __author__ = 'facetoe'
 
 
 class Zenpy(object):
-
     headers = {'Content-type': 'application/json',
                'User-Agent': 'Zenpy/0.0.22'}
-
-    def _init_session(self, email, token, password, session):
-        if not password and not token:
-            raise ZenpyException("password or token are required!")
-        elif password and token:
-            raise ZenpyException("password and token are mutually exclusive!")
-
-        session = session if session else requests.Session()
-        session.auth = (email, password) if password else (email + '/token', token)
-        session.headers.update(self.headers)
-        return session
 
     def __init__(self, subdomain, email=None, token=None, password=None, debug=False, session=None):
 
@@ -218,3 +206,14 @@ class Zenpy(object):
         # Even though we access the users API object the cache_mapping that
         # we receive applies to all API's as it is a class attribute of ObjectManager.
         return self.users.object_manager.cache_mapping
+
+    def _init_session(self, email, token, password, session):
+        if not password and not token:
+            raise ZenpyException("password or token are required!")
+        elif password and token:
+            raise ZenpyException("password and token are mutually exclusive!")
+
+        session = session if session else requests.Session()
+        session.auth = (email, password) if password else (email + '/token', token)
+        session.headers.update(self.headers)
+        return session

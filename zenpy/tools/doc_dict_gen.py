@@ -1,11 +1,13 @@
-from collections import defaultdict
 import json
 import os
-from bs4 import BeautifulSoup, SoupStrainer
-import requests
+from collections import defaultdict
 
+import requests
+from bs4 import BeautifulSoup, SoupStrainer
 
 base_url = "https://developer.zendesk.com"
+
+
 def get_links():
     skippages = (
         '/rest_api/docs/core/introduction',
@@ -26,7 +28,7 @@ def get_links():
     print("Retrieving links")
     response = requests.get('https://developer.zendesk.com/rest_api/docs/core/introduction')
     soup = BeautifulSoup(response.content, "lxml")
-    nav_section = soup.find("ul", { "class" : "docs-sidenav" })
+    nav_section = soup.find("ul", {"class": "docs-sidenav"})
 
     api_doc_links = []
     for link in [l['href'] for l in nav_section.findAll('a')]:
@@ -63,6 +65,7 @@ def parse_link(link):
 
 
 from multiprocessing.pool import ThreadPool
+
 pool = ThreadPool(processes=2)
 
 results = pool.map_async(parse_link, get_links())

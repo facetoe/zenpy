@@ -11,13 +11,14 @@ except NameError:
     str = str
     unicode = str
     bytes = bytes
-    basestring = (str,bytes)
+    basestring = (str, bytes)
 else:
     # 'unicode' exists, must be Python 2
     str = str
     unicode = unicode
     bytes = str
     basestring = basestring
+
 
 class BaseEndpoint(object):
     """
@@ -219,7 +220,7 @@ class Endpoint(object):
     tickets.comments = SecondaryEndpoint('tickets/%(id)s/comments.json')
     tickets.recent = SecondaryEndpoint('tickets/recent.json')
     tickets.incremental = IncrementalEndpoint('incremental/tickets.json?',
-                                                   sideload=['users', 'groups', 'organizations'])
+                                              sideload=['users', 'groups', 'organizations'])
     tickets.satisfaction_ratings = SecondaryEndpoint('tickets/%(id)s/satisfaction_rating.json')
     tickets.events = IncrementalEndpoint('incremental/ticket_events.json?')
     tickets.audits = SecondaryEndpoint('tickets/%(id)s/audits.json')
