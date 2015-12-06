@@ -151,15 +151,15 @@ class ObjectManager(object):
     """
 
     cache_mapping = {
-        'user': ZenpyCache('LRUCache', maxsize=2000),
-        'organization': ZenpyCache('LRUCache', maxsize=2000),
-        'group': ZenpyCache('LRUCache', maxsize=2000),
-        'brand': ZenpyCache('LRUCache', maxsize=2000),
-        'ticket': ZenpyCache('TTLCache', maxsize=5000, ttl=30),
-        'comment': ZenpyCache('LRUCache', maxsize=2000),
-        'user_field': ZenpyCache('TTLCache', maxsize=500, ttl=30),
-        'organization_field': ZenpyCache('LRUCache', maxsize=200),
-        'ticket_field': ZenpyCache('LRUCache', maxsize=200)
+        'user': ZenpyCache('LRUCache', maxsize=10000),
+        'organization': ZenpyCache('LRUCache', maxsize=10000),
+        'group': ZenpyCache('LRUCache', maxsize=10000),
+        'brand': ZenpyCache('LRUCache', maxsize=10000),
+        'ticket': ZenpyCache('TTLCache', maxsize=10000, ttl=30),
+        'comment': ZenpyCache('LRUCache', maxsize=10000),
+        'user_field': ZenpyCache('TTLCache', maxsize=10000, ttl=30),
+        'organization_field': ZenpyCache('LRUCache', maxsize=10000),
+        'ticket_field': ZenpyCache('LRUCache', maxsize=10000)
     }
 
     def __init__(self, api):
