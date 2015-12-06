@@ -125,16 +125,38 @@ class IncrementalEndpoint(BaseEndpoint):
 
 class SearchEndpoint(BaseEndpoint):
     """
-    The SearchEndpoint is special as it takes a great variety of parameters.
-    The various comparisons map to the Zendesk Search documentation as follows:
+    The search endpoint accepts all the parameters defined in the Zendesk `Search Documentation <https://developer.zendesk.com/rest_api/docs/core/search>`_.
+    Zenpy defines several keywords that are mapped to the Zendesk comparison operators:
 
-        keyword			= : (equality)
-        *_greater_than 	= >
-        *_less_than 	= <
-        *_after 		= >
-        *_before 		= <
-        minus			= - (negation)
-        *_between		= > < (only works with dates)
+    +-----------------+------------------+
+    | **Keyword**     | **Operator**     |
+    +-----------------+------------------+
+    | keyword         | : (equality)     |
+    +-----------------+------------------+
+    | \*_greater_than | >                |
+    +-----------------+------------------+
+    | \*_less_than    | <                |
+    +-----------------+------------------+
+    | \*_after        | <                |
+    +-----------------+------------------+
+    | \*_before       | <                |
+    +-----------------+------------------+
+    | minus           | \- (negation)    |
+    +-----------------+------------------+
+    | \*_between      | > < (dates only) |
+    +-----------------+------------------+
+
+    For example the call:
+
+    .. code:: python
+
+      zenpy.search("zenpy", created_between=[yesterday, today], type='ticket', minus='negated')
+
+    Would generate the following API call:
+    ::
+        /api/v2/search.json?query=zenpy+created>2015-08-29 created<2015-08-30+type:ticket+-negated
+
+
     """
 
     ZENDESK_DATE_FORMAT = "%Y-%m-%d"
