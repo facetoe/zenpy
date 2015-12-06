@@ -447,7 +447,7 @@ class IncrementalApi(Api):
         Retrieve bulk data from the incremental API.
         :param start_time: The time of the oldest object you are interested in.
         """
-        return self._get_items(self.endpoint.incremental, self.object_type, kwargs)
+        return self._get_items(self.endpoint.incremental, self.object_type, **kwargs)
 
 
 class UserApi(TaggableApi, IncrementalApi, CRUDApi):

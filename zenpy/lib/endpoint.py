@@ -111,14 +111,16 @@ class IncrementalEndpoint(BaseEndpoint):
 
     UNIX_TIME = "%s"
 
-    def __call__(self, start_time=None):
+    def __call__(self, **kwargs):
         query = "start_time="
-        if isinstance(start_time, datetime):
-            query += start_time.strftime(self.UNIX_TIME)
-        else:
-            query += str(start_time)
+        if 'start_time' in kwargs:
+            if isinstance(kwargs['start_time'], datetime):
+                query += kwargs['start_time'].strftime(self.UNIX_TIME)
+            else:
+                query += str(kwargs['start_time'])
+            return self.endpoint + query + self._format_sideload(self.sideload, seperator='&')
 
-        return self.endpoint + query + self._format_sideload(self.sideload, seperator='&')
+        raise ZenpyException("Incremental Endoint requires a start_time parameter!")
 
 
 class SearchEndpoint(BaseEndpoint):
