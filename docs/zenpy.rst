@@ -41,13 +41,15 @@ First, create a :class:`Zenpy` object:
     # Zenpy accepts a token
     creds = {
         'email' : 'youremail',
-        'token' : 'yourtoken'
+        'token' : 'yourtoken',
+        'subdomain': 'yoursubdomain'
     }
 
     # Or password
     creds = {
         'email' : 'youremail',
-        'password' : 'yourpassword'
+        'password' : 'yourpassword',
+        'subdomain': 'yoursubdomain'
     }
 
     # Default
