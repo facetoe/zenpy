@@ -22,8 +22,6 @@ __author__ = 'facetoe'
 
 class Zenpy(object):
     """
-
-
     """
 
     headers = {'Content-type': 'application/json',

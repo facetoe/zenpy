@@ -70,7 +70,6 @@ class CacheDoc(Directive):
         return cache_sections
 
 
-
 class ApiDoc(Directive):
     required_arguments = 0
     has_content = True

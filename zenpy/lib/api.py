@@ -621,19 +621,34 @@ class RequestAPI(CRUDApi):
         Api.__init__(self, subdomain, session, endpoint=endpoint, object_type='request')
 
     def open(self, **kwargs):
+        """
+        Return all open requests
+        """
         return self._get_items(self.endpoint.open, 'request', **kwargs, sideload=False)
 
     def solved(self, **kwargs):
+        """
+        Return all solved requests
+        """
         return self._get_items(self.endpoint.solved, 'request', **kwargs, sideload=False)
 
     def ccd(self, **kwargs):
+        """
+        Return all ccd requests
+        """
         return self._get_items(self.endpoint.ccd, 'request', **kwargs, sideload=False)
 
     def comments(self, **kwargs):
+        """
+        Return comments for request
+        """
         return self._get_items(self.endpoint.comments, 'comment', **kwargs, sideload=False)
 
     def delete(self, items):
         raise ZenpyException("You cannot delete requests!")
 
     def search(self, *args, **kwargs):
+        """
+        Search for requests. See the Zendesk docs for more information on the syntax - https://developer.zendesk.com/rest_api/docs/core/requests#searching-requests
+        """
         return self._get_items(self.endpoint.search, 'request', *args, **kwargs)
