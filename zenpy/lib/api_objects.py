@@ -8,7 +8,7 @@ import dateutil.parser
 class BaseObject(object):
     def to_dict(self):
         copy_dict = self.__dict__.copy()
-        for key in copy_dict.keys():
+        for key in list(copy_dict.keys()):
             if copy_dict[key] is None or key == 'api':
                 del copy_dict[key]
                 continue
