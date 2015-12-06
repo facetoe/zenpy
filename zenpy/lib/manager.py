@@ -1,7 +1,7 @@
 import logging
 from json import JSONEncoder
 
-from zenpy.lib.api_objects import Activity
+from zenpy.lib.api_objects import Activity, Request
 from zenpy.lib.api_objects import Attachment
 from zenpy.lib.api_objects import Audit
 from zenpy.lib.api_objects import Brand
@@ -111,7 +111,8 @@ class ClassManager(object):
         'ticket_metric_item': TicketMetricItem,
         'user_field': UserField,
         'organization_field': OrganizationField,
-        'ticket_field': TicketField
+        'ticket_field': TicketField,
+        'request': Request
     }
 
     def __init__(self, api):
@@ -157,6 +158,7 @@ class ObjectManager(object):
         'brand': ZenpyCache('LRUCache', maxsize=10000),
         'ticket': ZenpyCache('TTLCache', maxsize=10000, ttl=30),
         'comment': ZenpyCache('LRUCache', maxsize=10000),
+        'request': ZenpyCache('LRUCache', maxsize=10000),
         'user_field': ZenpyCache('TTLCache', maxsize=10000, ttl=30),
         'organization_field': ZenpyCache('LRUCache', maxsize=10000),
         'ticket_field': ZenpyCache('LRUCache', maxsize=10000)
