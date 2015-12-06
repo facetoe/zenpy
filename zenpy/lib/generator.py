@@ -48,7 +48,7 @@ class ResultGenerator(object):
         return self
 
     def __len__(self):
-        return len(self.values)
+        return self.count
 
     def __next__(self):
         return self.next()
