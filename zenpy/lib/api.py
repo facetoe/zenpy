@@ -226,6 +226,9 @@ class Api(BaseApi):
     def get_system(self, system):
         return self.object_manager.object_from_json('system', system)
 
+    def get_problem(self, problem_id):
+        return self._get_item(problem_id, Endpoint.tickets, 'ticket')
+
     # This will be deprecated soon - https://developer.zendesk.com/rest_api/docs/web-portal/forums
     def get_forum(self, forum_id):
         return forum_id
