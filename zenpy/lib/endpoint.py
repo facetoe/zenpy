@@ -220,6 +220,20 @@ class SearchEndpoint(BaseEndpoint):
         return " ".join(['%s:"%s"' % (key, v) for v in values])
 
 
+class RequestSearchEndpoint(BaseEndpoint):
+
+    def __call__(self, *args, **kwargs):
+        if not args:
+            raise ZenpyException("You need to pass the query string as the first parameter")
+
+        query = "query=%s" % args[0]
+        result = []
+        for key, value in kwargs.items():
+            result.append("%s=%s" % (key, value))
+        query += '&' + "&".join(result)
+        return self.endpoint + query
+
+
 class Endpoint(object):
     """
     The Endpoint object ties it all together.
@@ -274,3 +288,4 @@ class Endpoint(object):
     requests.solved = PrimaryEndpoint("requests/solved")
     requests.ccd = PrimaryEndpoint("requests/ccd")
     requests.comments = SecondaryEndpoint('requests/%(id)s/comments.json')
+    requests.search = RequestSearchEndpoint('requests/search.json?')

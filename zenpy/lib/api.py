@@ -634,3 +634,6 @@ class RequestAPI(CRUDApi):
 
     def delete(self, items):
         raise ZenpyException("You cannot delete requests!")
+
+    def search(self, *args, **kwargs):
+        return self._get_items(self.endpoint.search, 'request', *args, **kwargs)
