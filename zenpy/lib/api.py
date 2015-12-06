@@ -624,25 +624,25 @@ class RequestAPI(CRUDApi):
         """
         Return all open requests
         """
-        return self._get_items(self.endpoint.open, 'request', **kwargs, sideload=False)
+        return self._get_items(self.endpoint.open, 'request', sideload=False, **kwargs)
 
     def solved(self, **kwargs):
         """
         Return all solved requests
         """
-        return self._get_items(self.endpoint.solved, 'request', **kwargs, sideload=False)
+        return self._get_items(self.endpoint.solved, 'request', sideload=False, **kwargs)
 
     def ccd(self, **kwargs):
         """
         Return all ccd requests
         """
-        return self._get_items(self.endpoint.ccd, 'request', **kwargs, sideload=False)
+        return self._get_items(self.endpoint.ccd, 'request', sideload=False, **kwargs)
 
     def comments(self, **kwargs):
         """
         Return comments for request
         """
-        return self._get_items(self.endpoint.comments, 'comment', **kwargs, sideload=False)
+        return self._get_items(self.endpoint.comments, 'comment', sideload=False, **kwargs)
 
     def delete(self, items):
         raise ZenpyException("You cannot delete requests!")
