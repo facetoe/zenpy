@@ -38,7 +38,7 @@ First, create a :class:`Zenpy` object:
 
 .. code:: python
 
-    # :class:`Zenpy` accepts a token
+    # Zenpy accepts a token
     creds = {
         'email' : 'youremail',
         'token' : 'yourtoken'
@@ -51,13 +51,13 @@ First, create a :class:`Zenpy` object:
     }
 
     # Default
-    :class:`Zenpy` = Zenpy('yourdomain', **creds)
+    zenpy = Zenpy('yourdomain', **creds)
 
     ## With debugging information
-    :class:`Zenpy` = Zenpy('yourdomain', **creds, debug=True)
+    zenpy = Zenpy('yourdomain', **creds, debug=True)
 
     ## Or with an existing requests.Session object
-    :class:`Zenpy` = Zenpy('yourdomain', **creds, session=some_session)
+    zenpy = Zenpy('yourdomain', **creds, session=some_session)
 
 Searching the API
 -----------------
@@ -330,6 +330,6 @@ By default :class:`Zenpy` caches for following objects:
 
 
 Zenpy Endpoint Reference
-------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. apidoc::

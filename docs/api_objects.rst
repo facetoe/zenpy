@@ -64,7 +64,11 @@ Will be serialized as::
 
 
 
-.. toctree::
-    :maxdepth: 4
 
-    api_object_docs
+
+Api Object Reference
+--------------------
+
+..  automodule:: zenpy.lib.api_objects
+    :members:
+    :undoc-members:
