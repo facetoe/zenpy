@@ -25,7 +25,7 @@ class Zenpy(object):
     """
 
     headers = {'Content-type': 'application/json',
-               'User-Agent': 'Zenpy/1.0.0'}
+               'User-Agent': 'Zenpy/1.0.1'}
 
     def __init__(self, subdomain, email=None, token=None, password=None, debug=False, session=None):
 
