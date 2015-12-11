@@ -2481,7 +2481,7 @@ class TicketAudit(BaseObject):
     def audit(self):
 
         if self.api and self._audit:
-            return self.api.get_audit(self._audit)
+            return self.api.get_audit(self._audit.id)
 
     @audit.setter
     def audit(self, audit):
@@ -2492,7 +2492,7 @@ class TicketAudit(BaseObject):
     def ticket(self):
 
         if self.api and self._ticket:
-            return self.api.get_ticket(self._ticket)
+            return self.api.get_ticket(self._ticket.id)
 
     @ticket.setter
     def ticket(self, ticket):
