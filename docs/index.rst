@@ -6,6 +6,8 @@
 Welcome to Zenpy's documentation!
 =================================
 
+You can find the latest code at https://github.com/facetoe/zenpy
+
 .. toctree::
    :maxdepth: 4
 
