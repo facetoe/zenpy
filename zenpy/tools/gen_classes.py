@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import glob
 import json
 import os
@@ -40,6 +42,7 @@ class {{object.name}}(BaseObject):
 
             attributes.append(attribute)
 
+        attributes = sorted(attributes, key=lambda x: x.attr_name)
         self.name = name
         self.init = Init(attributes)
         self.properties = Properties(attributes)
@@ -175,7 +178,7 @@ class Attribute(object):
     def get_attr_name(self, object_name, attr_name, attr_value):
         if isinstance(attr_value, bool):
             return attr_name
-        elif isinstance(attr_value, dict):
+        elif isinstance(attr_value, dict) and object_name not in ('ticket', 'audit'):
             return "_%s" % attr_name
         elif attr_name == 'id' or attr_name.endswith('_ids') or attr_name in ('tags',):
             return attr_name
@@ -201,7 +204,7 @@ class Attribute(object):
         return attr_name
 
     def get_is_property(self, attr_name, attr_value):
-        if attr_name in ('author', 'to', 'from', 'locale', 'locale_id', 'tags', 'domain_names'):
+        if attr_name in ('author', 'to', 'from', 'locale', 'locale_id', 'tags', 'domain_names', 'ticket', 'audit'):
             return False
         elif any([isinstance(attr_value, t) for t in (dict, list)]):
             return True
@@ -240,7 +243,7 @@ import dateutil.parser
 class BaseObject(object):
     def to_dict(self):
         copy_dict = self.__dict__.copy()
-        for key in copy_dict.keys():
+        for key in list(copy_dict.keys()):
             if copy_dict[key] is None or key == 'api':
                 del copy_dict[key]
                 continue
@@ -268,16 +271,13 @@ parser.add_option("--target-file", "-t", dest="target_file",
 (options, args) = parser.parse_args()
 
 if not options.spec_path:
-    print
-    "--spec-path is required!"
+    print("--spec-path is required!")
     sys.exit()
 elif not os.path.isdir(options.spec_path):
-    print
-    "--spec-path must be a directory!"
+    print("--spec-path must be a directory!")
     sys.exit()
 elif not options.doc_json_path:
-    print
-    "--doc-json is required!"
+    print("--doc-json is required!")
     sys.exit()
 
 doc_json = json.load(open(options.doc_json_path))
@@ -288,8 +288,7 @@ def process_file(path, output):
     class_name = "".join([w.capitalize() for w in class_name.split('_')])
     class_code = Class(class_name, json.load(open(path)), doc_json).render()
 
-    print
-    "Processing: %s -> %s" % (os.path.basename(path), class_name)
+    print("Processing: %s -> %s" % (os.path.basename(path), class_name))
     output.write(class_code)
 
 
