@@ -53,13 +53,13 @@ First, create a :class:`Zenpy` object:
     }
 
     # Default
-    zenpy = Zenpy('yourdomain', **creds)
+    zenpy = Zenpy(**creds)
 
     ## With debugging information
-    zenpy = Zenpy('yourdomain', **creds, debug=True)
+    zenpy = Zenpy(**creds, debug=True)
 
     ## Or with an existing requests.Session object
-    zenpy = Zenpy('yourdomain', **creds, session=some_session)
+    zenpy = Zenpy(**creds, session=some_session)
 
 Searching the API
 -----------------
