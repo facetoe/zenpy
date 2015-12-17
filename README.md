@@ -8,9 +8,23 @@ Zenpy supports both Python2 and Python3.
 
 Zenpy is still in beta, so please report any bugs!
 
+## Quickstart
+
+```python
+# Create a Zenpy object
+zenpy = Zenpy(**credentials, debug=True)
+
+# Create a new ticket
+zenpy.tickets.create(Ticket(subject="Important", description="Thing"))
+
+# Perform a simple search
+for ticket in zenpy.search("party", type='ticket', assignee="face"):
+    print(ticket)
+```
+
 ## Documentation
 
-The documentation has moved [here](https://facetoe.com.au/zenpy/docs/).
+Check out the [documentation](https://facetoe.com.au/zenpy/docs/) for more info.
 
 ### Contributions
 Contributions are very welcome. 
