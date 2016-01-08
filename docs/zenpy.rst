@@ -55,9 +55,6 @@ First, create a :class:`Zenpy` object:
     # Default
     zenpy = Zenpy(**creds)
 
-    ## With debugging information
-    zenpy = Zenpy(**creds, debug=True)
-
     ## Or with an existing requests.Session object
     zenpy = Zenpy(**creds, session=some_session)
 
