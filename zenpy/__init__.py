@@ -17,9 +17,6 @@ class Zenpy(object):
     """
     """
 
-    headers = {'Content-type': 'application/json',
-               'User-Agent': 'Zenpy/1.0.1'}
-
     def __init__(self, subdomain, email=None, token=None, password=None, session=None):
         session = self._init_session(email, token, password, session)
         endpoint = Endpoint()
@@ -204,8 +201,9 @@ class Zenpy(object):
             raise ZenpyException("password or token are required!")
         elif password and token:
             raise ZenpyException("password and token are mutually exclusive!")
-
+        headers = {'Content-type': 'application/json',
+                   'User-Agent': 'Zenpy/1.0.1'}
         session = session if session else requests.Session()
         session.auth = (email, password) if password else (email + '/token', token)
-        session.headers.update(self.headers)
+        session.headers.update(headers)
         return session
