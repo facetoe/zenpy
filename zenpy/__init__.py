@@ -202,7 +202,7 @@ class Zenpy(object):
         elif password and token:
             raise ZenpyException("password and token are mutually exclusive!")
         headers = {'Content-type': 'application/json',
-                   'User-Agent': 'Zenpy/1.0.1'}
+                   'User-Agent': 'Zenpy/1.0.2'}
         session = session if session else requests.Session()
         session.auth = (email, password) if password else (email + '/token', token)
         session.headers.update(headers)
