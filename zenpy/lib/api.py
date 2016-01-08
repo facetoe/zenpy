@@ -277,7 +277,7 @@ class ModifiableApi(Api):
 
     def _check_type(self, items):
         # We don't want people passing, for example, a Group object to a Ticket endpoint.
-        expected_class = getattr(sys.modules['zenpy.lib.api_objects'], self.object_type.capitalize())
+        expected_class = self.object_manager.class_manager.class_for_type(self.object_type)
         if isinstance(items, list):
             if any((o.__class__ is not expected_class for o in items)):
                 raise ZenpyException("Invalid type - expected %(expected_class)s" % locals())

@@ -119,10 +119,10 @@ class ClassManager(object):
         self.api = api
 
     def object_from_json(self, object_type, object_json):
-        obj = self._class_for_type(object_type)
+        obj = self.class_for_type(object_type)
         return self._object_from_json(obj, object_json)
 
-    def _class_for_type(self, object_type):
+    def class_for_type(self, object_type):
         if object_type not in self.class_mapping:
             raise ZenpyException("Unknown object_type: " + str(object_type))
         else:
