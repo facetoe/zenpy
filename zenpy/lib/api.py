@@ -122,7 +122,7 @@ class BaseApi(object):
         elif 'tags' in response_json:
             return response_json['tags']
 
-        for object_type in ('ticket', 'user', 'job_status', 'group', 'satisfaction_rating', 'request'):
+        for object_type in ('ticket', 'user', 'job_status', 'group', 'satisfaction_rating', 'request', 'organization'):
             if object_type in response_json:
                 return self.object_manager.object_from_json(object_type, response_json[object_type])
 
