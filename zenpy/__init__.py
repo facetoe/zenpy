@@ -1,5 +1,4 @@
 import logging
-import sys
 
 import requests
 
@@ -10,12 +9,6 @@ from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import ZenpyException
 
 log = logging.getLogger()
-log.setLevel(logging.INFO)
-ch = logging.StreamHandler(sys.stdout)
-formatter = logging.Formatter('%(levelname)s - %(message)s')
-ch.setFormatter(formatter)
-log.addHandler(ch)
-logging.getLogger("requests").setLevel(logging.WARNING)
 
 __author__ = 'facetoe'
 
@@ -27,128 +20,124 @@ class Zenpy(object):
     headers = {'Content-type': 'application/json',
                'User-Agent': 'Zenpy/1.0.1'}
 
-    def __init__(self, subdomain, email=None, token=None, password=None, debug=False, session=None):
-
-        if debug:
-            log.setLevel(logging.DEBUG)
-
+    def __init__(self, subdomain, email=None, token=None, password=None, session=None):
         session = self._init_session(email, token, password, session)
         endpoint = Endpoint()
 
         self.users = UserApi(
-            subdomain,
-            session=session,
-            endpoint=endpoint.users)
+                subdomain,
+                session=session,
+                endpoint=endpoint.users)
 
         self.groups = Api(
-            subdomain,
-            session=session,
-            endpoint=endpoint.groups,
-            object_type='group')
+                subdomain,
+                session=session,
+                endpoint=endpoint.groups,
+                object_type='group')
 
         self.organizations = OranizationApi(
-            subdomain,
-            session=session,
-            endpoint=endpoint.organizations)
+                subdomain,
+                session=session,
+                endpoint=endpoint.organizations)
 
         self.tickets = TicketApi(
-            subdomain,
-            session=session,
-            endpoint=endpoint.tickets)
+                subdomain,
+                session=session,
+                endpoint=endpoint.tickets)
 
         self.suspended_tickets = SuspendedTicketApi(
-            subdomain,
-            session=session,
-            endpoint=endpoint.suspended_tickets)
+                subdomain,
+                session=session,
+                endpoint=endpoint.suspended_tickets)
 
         self.search = Api(
-            subdomain,
-            session=session,
-            endpoint=endpoint.search,
-            object_type='results')
+                subdomain,
+                session=session,
+                endpoint=endpoint.search,
+                object_type='results')
 
         self.topics = Api(
-            subdomain,
-            session=session,
-            endpoint=endpoint.topics,
-            object_type='topic')
+                subdomain,
+                session=session,
+                endpoint=endpoint.topics,
+                object_type='topic')
 
         self.attachments = Api(
-            subdomain,
-            session=session,
-            endpoint=endpoint.attachments,
-            object_type='attachment')
+                subdomain,
+                session=session,
+                endpoint=endpoint.attachments,
+                object_type='attachment')
 
         self.brands = Api(
-            subdomain,
-            session=session,
-            endpoint=endpoint.brands,
-            object_type='brand')
+                subdomain,
+                session=session,
+                endpoint=endpoint.brands,
+                object_type='brand')
 
         self.job_status = Api(
-            subdomain,
-            session=session,
-            endpoint=endpoint.job_statuses,
-            object_type='job_status')
+                subdomain,
+                session=session,
+                endpoint=endpoint.job_statuses,
+                object_type='job_status')
 
         self.tags = Api(
-            subdomain,
-            session=session,
-            endpoint=endpoint.tags,
-            object_type='tag')
+                subdomain,
+                session=session,
+                endpoint=endpoint.tags,
+                object_type='tag')
 
         self.satisfaction_ratings = Api(
-            subdomain,
-            session=session,
-            endpoint=endpoint.satisfaction_ratings,
-            object_type='satisfaction_rating'
+                subdomain,
+                session=session,
+                endpoint=endpoint.satisfaction_ratings,
+                object_type='satisfaction_rating'
         )
 
         self.activities = Api(
-            subdomain,
-            session=session,
+                subdomain,
+                session=session,
 
-            endpoint=endpoint.activities,
-            object_type='activity'
+                endpoint=endpoint.activities,
+                object_type='activity'
         )
 
         self.group_memberships = Api(
-            subdomain,
-            session=session,
-            endpoint=endpoint.group_memberships,
-            object_type='group_membership'
+                subdomain,
+                session=session,
+                endpoint=endpoint.group_memberships,
+                object_type='group_membership'
         )
 
         self.end_user = EndUserApi(
-            subdomain,
-            session=session,
-            endpoint=endpoint.end_user
+                subdomain,
+                session=session,
+                endpoint=endpoint.end_user
         )
 
         self.ticket_metrics = Api(
-            subdomain,
-            session=session,
-            endpoint=endpoint.ticket_metrics,
-            object_type='ticket_metric'
+                subdomain,
+                session=session,
+                endpoint=endpoint.ticket_metrics,
+                object_type='ticket_metric'
         )
 
         self.ticket_fields = Api(
-            subdomain,
-            session=session,
-            endpoint=endpoint.ticket_fields,
-            object_type='ticket_field'
+                subdomain,
+                session=session,
+                endpoint=endpoint.ticket_fields,
+                object_type='ticket_field'
         )
 
         self.ticket_import = TicketImportAPI(
-            subdomain,
-            session=session,
-            endpoint=endpoint.ticket_import
+                subdomain,
+                session=session,
+                endpoint=endpoint.ticket_import
         )
 
         self.requests = RequestAPI(
-            subdomain,
-            session=session,
-            endpoint=endpoint.requests
+                subdomain,
+                session=session,
+                endpoint=endpoint.requests
         )
 
     def get_cache_names(self):
