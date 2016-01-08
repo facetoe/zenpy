@@ -64,7 +64,7 @@ class ZenpyCache(object):
     def _get_cache_impl(self, cache_impl, maxsize, **kwargs):
         if cache_impl not in self.AVAILABLE_CACHES:
             raise ZenpyCacheException(
-                "No such cache: %s, available caches: %s" % (cache_impl, str(self.AVAILABLE_CACHES)))
+                    "No such cache: %s, available caches: %s" % (cache_impl, str(self.AVAILABLE_CACHES)))
         return getattr(cachetools, cache_impl)(maxsize, **kwargs)
 
     def __iter__(self):

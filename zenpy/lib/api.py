@@ -2,7 +2,6 @@ import json
 from time import sleep
 
 import requests
-import sys
 
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import APIException, RecordNotFoundException
@@ -60,7 +59,7 @@ class BaseApi(object):
         while 'retry-after' in response.headers and int(response.headers['retry-after']) > 0:
             retry_after_seconds = int(response.headers['retry-after'])
             log.warn(
-                "APIRateLimitExceeded - sleeping for requested retry-after period: %s seconds" % retry_after_seconds)
+                    "APIRateLimitExceeded - sleeping for requested retry-after period: %s seconds" % retry_after_seconds)
             while retry_after_seconds > 0:
                 retry_after_seconds -= 1
                 log.debug("APIRateLimitExceeded - sleeping: %s more seconds" % retry_after_seconds)
@@ -289,8 +288,8 @@ class ModifiableApi(Api):
         if not endpoint:
             endpoint = self.endpoint
         return action(self._get_url(
-            endpoint=endpoint(**endpoint_kwargs)),
-            payload=payload)
+                endpoint=endpoint(**endpoint_kwargs)),
+                payload=payload)
 
 
 class CRUDApi(ModifiableApi):
@@ -358,7 +357,7 @@ class SuspendedTicketApi(ModifiableApi):
         object_type, payload = self._get_type_and_payload(tickets)
         if object_type.endswith('s'):
             return self._do(self._put, dict(
-                recover_ids=[i.id for i in tickets], sideload=False),
+                    recover_ids=[i.id for i in tickets], sideload=False),
                             endpoint=self.endpoint, payload=payload)
         else:
             return self._do(self._put, dict(id=tickets.id, sideload=False),
@@ -392,10 +391,10 @@ class TaggableApi(Api):
         :param tags: array of tags to apply to object
         """
         return self._put(self._get_url(
-            endpoint=self.endpoint.tags(
-                id=id,
-                sideload=False)),
-            payload={'tags': tags})
+                endpoint=self.endpoint.tags(
+                        id=id,
+                        sideload=False)),
+                payload={'tags': tags})
 
     def set_tags(self, id, tags):
         """
@@ -405,10 +404,10 @@ class TaggableApi(Api):
         :param tags: array of tags to apply to object
         """
         return self._post(self._get_url(
-            endpoint=self.endpoint.tags(
-                id=id,
-                sideload=False)),
-            payload={'tags': tags})
+                endpoint=self.endpoint.tags(
+                        id=id,
+                        sideload=False)),
+                payload={'tags': tags})
 
     def delete_tags(self, id, tags):
         """
@@ -418,10 +417,10 @@ class TaggableApi(Api):
         :param tags: array of tags to delete from object
         """
         return self._delete(self._get_url(
-            endpoint=self.endpoint.tags(
-                id=id,
-                sideload=False, )),
-            payload={'tags': tags})
+                endpoint=self.endpoint.tags(
+                        id=id,
+                        sideload=False, )),
+                payload={'tags': tags})
 
     def tags(self, **kwargs):
         """
@@ -443,10 +442,10 @@ class RateableApi(Api):
         :param rating: SatisfactionRating
         """
         return self._post(self._get_url(self.endpoint.satisfaction_ratings(
-            id=id,
-            sideload=False
+                id=id,
+                sideload=False
         )),
-            payload={'satisfaction_rating': vars(rating)})
+                payload={'satisfaction_rating': vars(rating)})
 
 
 class IncrementalApi(Api):

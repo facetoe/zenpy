@@ -221,7 +221,6 @@ class SearchEndpoint(BaseEndpoint):
 
 
 class RequestSearchEndpoint(BaseEndpoint):
-
     def __call__(self, *args, **kwargs):
         if not args:
             raise ZenpyException("You need to pass the query string as the first parameter")
