@@ -12,7 +12,7 @@ Zenpy is still in beta, so please report any bugs!
 
 ```python
 # Create a Zenpy object
-zenpy = Zenpy(**credentials, debug=True)
+zenpy = Zenpy(**credentials)
 
 # Create a new ticket
 zenpy.tickets.create(Ticket(subject="Important", description="Thing"))
