@@ -2,6 +2,7 @@ import json
 from time import sleep
 
 import requests
+import sys
 
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import APIException, RecordNotFoundException
@@ -263,6 +264,7 @@ class ModifiableApi(Api):
     """
 
     def _get_type_and_payload(self, items):
+        self._check_type(items)
         if isinstance(items, list):
             first_obj = next((x for x in items))
             # Object name needs to be plural when targeting many
@@ -272,6 +274,16 @@ class ModifiableApi(Api):
             object_type = items.__class__.__name__.lower()
             payload = {object_type: json.loads(json.dumps(items, cls=ApiObjectEncoder))}
         return object_type, payload
+
+    def _check_type(self, items):
+        # We don't want people passing, for example, a Group object to a Ticket endpoint.
+        expected_class = getattr(sys.modules['zenpy.lib.api_objects'], self.object_type.capitalize())
+        if isinstance(items, list):
+            if any((o.__class__ is not expected_class for o in items)):
+                raise ZenpyException("Invalid type - expected %(expected_class)s" % locals())
+        else:
+            if items.__class__ is not expected_class:
+                raise Exception("Invalid type - expected %(expected_class)s" % locals())
 
     def _do(self, action, endpoint_kwargs, payload=None, endpoint=None):
         if not endpoint:
