@@ -260,7 +260,7 @@ Caching
 
 :class:`Zenpy` maintains several caches to prevent unecessary API calls.
 
-If we turn DEBUG on, we can see Zenpy's caching in action. The code:
+If we turn logging on, we can see Zenpy's caching in action. The code:
 
 .. code:: python
 
