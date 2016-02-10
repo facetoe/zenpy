@@ -197,13 +197,19 @@ class Zenpy(object):
         return self.users.object_manager.cache_mapping
 
     def _init_session(self, email, token, password, session):
-        if not password and not token:
-            raise ZenpyException("password or token are required!")
-        elif password and token:
-            raise ZenpyException("password and token are mutually exclusive!")
+        if not session or not hasattr(session, 'authorized') \
+                or not session.authorized:
+            # session is not an OAuth session that has been authorized,
+            # so create a new Session.
+            if not password and not token:
+                raise ZenpyException("password or token are required!")
+            elif password and token:
+                raise ZenpyException("password and token "
+                                     "are mutually exclusive!")
+            session = session if session else requests.Session()
+            session.auth = (email, password) if password \
+                else (email + '/token', token)
         headers = {'Content-type': 'application/json',
                    'User-Agent': 'Zenpy/1.0.2'}
-        session = session if session else requests.Session()
-        session.auth = (email, password) if password else (email + '/token', token)
         session.headers.update(headers)
         return session
