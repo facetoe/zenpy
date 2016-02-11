@@ -544,7 +544,7 @@ class EndUserApi(CRUDApi):
         raise ZenpyException("EndUsers cannot create!")
 
 
-class OranizationApi(TaggableApi, IncrementalApi, CRUDApi):
+class OrganizationApi(TaggableApi, IncrementalApi, CRUDApi):
     def __init__(self, subdomain, session, endpoint):
         Api.__init__(self, subdomain, session, endpoint=endpoint,
                      object_type='organization')

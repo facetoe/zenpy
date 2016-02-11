@@ -2,7 +2,7 @@ import logging
 
 import requests
 
-from zenpy.lib.api import UserApi, Api, TicketApi, OranizationApi, SuspendedTicketApi, EndUserApi, TicketImportAPI, \
+from zenpy.lib.api import UserApi, Api, TicketApi, OrganizationApi, SuspendedTicketApi, EndUserApi, TicketImportAPI, \
     RequestAPI
 from zenpy.lib.cache import ZenpyCache
 from zenpy.lib.endpoint import Endpoint
@@ -32,7 +32,7 @@ class Zenpy(object):
                 endpoint=endpoint.groups,
                 object_type='group')
 
-        self.organizations = OranizationApi(
+        self.organizations = OrganizationApi(
                 subdomain,
                 session=session,
                 endpoint=endpoint.organizations)
