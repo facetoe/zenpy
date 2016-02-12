@@ -549,6 +549,13 @@ class OrganizationApi(TaggableApi, IncrementalApi, CRUDApi):
         Api.__init__(self, subdomain, session, endpoint=endpoint,
                      object_type='organization')
 
+    def __call__(self, *args, **kwargs):
+
+        if 'external_id' in kwargs:
+            return self.find_by_external_id(kwargs['external_id'])
+        else:
+            return super(OrganizationApi, self).__call__(*args, **kwargs)
+
     def organization_fields(self, **kwargs):
         """
         Retrieve the organization fields for this organization.
@@ -560,6 +567,16 @@ class OrganizationApi(TaggableApi, IncrementalApi, CRUDApi):
     def requests(self, **kwargs):
         return self._get_items(self.endpoint.requests, 'request', **kwargs)
 
+    def find_by_external_id(self, external_id):
+        endpoint = "organizations/search.json?external_id=" + str(external_id)
+        url = self._get_url(endpoint=endpoint)
+        response = self._get(url)
+        _json = response.json()['organizations'].pop)
+        object_type = self.object_type
+        return self.object_manager.object_from_json(
+            object_type,
+            _json
+        )
 
 class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
     """
