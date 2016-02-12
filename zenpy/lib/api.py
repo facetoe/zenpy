@@ -571,7 +571,7 @@ class OrganizationApi(TaggableApi, IncrementalApi, CRUDApi):
         endpoint = "organizations/search.json?external_id=" + str(external_id)
         url = self._get_url(endpoint=endpoint)
         response = self._get(url)
-        _json = response.json()['organizations'].pop)
+        _json = response.json()['organizations'].pop()
         object_type = self.object_type
         return self.object_manager.object_from_json(
             object_type,
