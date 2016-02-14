@@ -557,6 +557,13 @@ class OrganizationApi(TaggableApi, IncrementalApi, CRUDApi):
         """
         return self._get_items(self.endpoint.organization_fields, 'organization_field', **kwargs)
 
+    def external(self, external_id):
+        """
+        Locate an Organization by it's external_id attribute.
+        :param external_id: external id of organization
+        """
+        return self._get_items(self.endpoint.external, 'organization', id=external_id)
+
     def requests(self, **kwargs):
         return self._get_items(self.endpoint.requests, 'request', **kwargs)
 

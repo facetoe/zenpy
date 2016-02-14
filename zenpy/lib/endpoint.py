@@ -275,6 +275,7 @@ class Endpoint(object):
     organizations.tags = SecondaryEndpoint('organizations/%(id)s/tags.json')
     organizations.organization_fields = PrimaryEndpoint('organization_fields')
     organizations.requests = SecondaryEndpoint('organizations/%(id)s/requests.json')
+    organizations.external = SecondaryEndpoint('organizations/search.json?external_id=%(id)s')
     search = SearchEndpoint('search.json?')
     job_statuses = PrimaryEndpoint('job_statuses')
     tags = PrimaryEndpoint('tags')
