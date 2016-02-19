@@ -249,6 +249,7 @@ class Endpoint(object):
     users.user_fields = PrimaryEndpoint('user_fields')
     users.group_memberships = SecondaryEndpoint('users/%(id)s/group_memberships.json')
     users.requests = SecondaryEndpoint('users/%(id)s/requests.json')
+    users.create_or_update = PrimaryEndpoint('users/create_or_update')
     groups = PrimaryEndpoint('groups', ['users'])
     brands = PrimaryEndpoint('brands')
     topics = PrimaryEndpoint('topics')

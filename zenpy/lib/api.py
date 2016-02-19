@@ -528,6 +528,16 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
         """
         return self._get_items(self.endpoint.user_fields, 'user_field', **kwargs)
 
+    def create_or_update(self, user):
+        """
+        Creates a user (POST) if the user does not already exist, or updates an existing user identified
+        by e-mail address or external ID.
+        :param user: User object
+        :return: the created/updated User
+        """
+        object_type, payload = self._get_type_and_payload(user)
+        return self._do(self._post, dict(sideload=False), payload=payload, endpoint=self.endpoint.create_or_update)
+
 
 class EndUserApi(CRUDApi):
     """
