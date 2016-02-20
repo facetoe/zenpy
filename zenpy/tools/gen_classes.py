@@ -255,7 +255,7 @@ class BaseObject(object):
 
     def __str__(self):
         if hasattr(self, 'id'):
-            return "[%s %s]" % (self.__class__.__name__, self.id)
+            return "[%s(id=%s)]" % (self.__class__.__name__, self.id)
         else:
             return super().__str__()
 """
