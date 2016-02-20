@@ -241,6 +241,7 @@ class Endpoint(object):
     """
 
     users = PrimaryEndpoint('users', ['organizations', 'abilities', 'roles', 'identities', 'groups'])
+    users.me = SecondaryEndpoint('users/me.json')
     users.groups = SecondaryEndpoint('users/%(id)s/groups.json')
     users.organizations = SecondaryEndpoint('users/%(id)s/organizations.json')
     users.requested = SecondaryEndpoint('users/%(id)s/tickets/requested.json')

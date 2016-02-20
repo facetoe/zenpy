@@ -519,7 +519,19 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
         return self._get_items(self.endpoint.requests, 'request', **kwargs)
 
     def related(self, **kwargs):
+        """
+        Returns the UserRelated information for the requested User
+
+        :param id: User id
+        :return: UserRelated
+        """
         return self._get_items(self.endpoint.related, 'user_related', **kwargs)
+
+    def me(self):
+        """
+        Return the logged in user
+        """
+        return self._get_item(None, self.endpoint.me, 'user')
 
     def user_fields(self, **kwargs):
         """
