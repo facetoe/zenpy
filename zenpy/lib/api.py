@@ -420,11 +420,11 @@ class TaggableApi(Api):
                         sideload=False, )),
                 payload={'tags': tags})
 
-    def tags(self, **kwargs):
+    def tags(self, id):
         """
         Lists the most popular recent tags in decreasing popularity
         """
-        return self._get_items(self.endpoint.tags, 'tag', kwargs)
+        return self._get_items(self.endpoint.tags, 'tag', id=id)
 
 
 class RateableApi(Api):
@@ -451,12 +451,12 @@ class IncrementalApi(Api):
     IncrementalApi supports the incremental endpoint.
     """
 
-    def incremental(self, **kwargs):
+    def incremental(self, start_time):
         """
         Retrieve bulk data from the incremental API.
         :param start_time: The time of the oldest object you are interested in.
         """
-        return self._get_items(self.endpoint.incremental, self.object_type, **kwargs)
+        return self._get_items(self.endpoint.incremental, self.object_type, start_time=start_time)
 
 
 class UserApi(TaggableApi, IncrementalApi, CRUDApi):
@@ -467,65 +467,65 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
     def __init__(self, subdomain, session, endpoint):
         Api.__init__(self, subdomain, session, endpoint=endpoint, object_type='user')
 
-    def groups(self, **kwargs):
+    def groups(self, user_id):
         """
         Retrieve the groups for this user.
 
         :param id: user id
         """
-        return self._get_items(self.endpoint.groups, 'group', **kwargs)
+        return self._get_items(self.endpoint.groups, 'group', id=user_id)
 
-    def organizations(self, **kwargs):
+    def organizations(self, user_id):
         """
         Retrieve the organizations for this user.
 
         :param id: user id
         """
-        return self._get_items(self.endpoint.organizations, 'organization', **kwargs)
+        return self._get_items(self.endpoint.organizations, 'organization', id=user_id)
 
-    def requested(self, **kwargs):
+    def requested(self, user_id):
         """
         Retrieve the requested tickets for this user.
 
         :param id: user id
         """
-        return self._get_items(self.endpoint.requested, 'ticket', **kwargs)
+        return self._get_items(self.endpoint.requested, 'ticket', id=user_id)
 
-    def cced(self, **kwargs):
+    def cced(self, user_id):
         """
         Retrieve the tickets this user is cc'd into.
 
         :param id: user id
         """
-        return self._get_items(self.endpoint.cced, 'ticket', **kwargs)
+        return self._get_items(self.endpoint.cced, 'ticket', id=user_id)
 
-    def assigned(self, **kwargs):
+    def assigned(self, user_id):
         """
         Retrieve the assigned tickets for this user.
 
         :param id: user id
         """
-        return self._get_items(self.endpoint.assigned, 'ticket', **kwargs)
+        return self._get_items(self.endpoint.assigned, 'ticket', user_id)
 
-    def group_memberships(self, **kwargs):
+    def group_memberships(self, user_id):
         """
         Retrieve the group memberships for this user.
 
         :param id: user id
         """
-        return self._get_items(self.endpoint.group_memberships, 'group_membership', **kwargs)
+        return self._get_items(self.endpoint.group_memberships, 'group_membership', id=user_id)
 
     def requests(self, **kwargs):
         return self._get_items(self.endpoint.requests, 'request', **kwargs)
 
-    def related(self, **kwargs):
+    def related(self, user_id):
         """
         Returns the UserRelated information for the requested User
 
         :param id: User id
         :return: UserRelated
         """
-        return self._get_items(self.endpoint.related, 'user_related', **kwargs)
+        return self._get_items(self.endpoint.related, 'user_related', id=user_id)
 
     def me(self):
         """
@@ -533,13 +533,13 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
         """
         return self._get_item(None, self.endpoint.me, 'user')
 
-    def user_fields(self, **kwargs):
+    def user_fields(self, user_id):
         """
         Retrieve the user fields for this user.
 
         :param id: user id
         """
-        return self._get_items(self.endpoint.user_fields, 'user_field', **kwargs)
+        return self._get_items(self.endpoint.user_fields, 'user_field', id=user_id)
 
     def create_or_update(self, users):
         """
@@ -584,13 +584,13 @@ class OrganizationApi(TaggableApi, IncrementalApi, CRUDApi):
         Api.__init__(self, subdomain, session, endpoint=endpoint,
                      object_type='organization')
 
-    def organization_fields(self, **kwargs):
+    def organization_fields(self, org_id):
         """
         Retrieve the organization fields for this organization.
 
         :param id: organization id
         """
-        return self._get_items(self.endpoint.organization_fields, 'organization_field', **kwargs)
+        return self._get_items(self.endpoint.organization_fields, 'organization_field', id=org_id)
 
     def external(self, external_id):
         """
@@ -612,48 +612,48 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
     def __init__(self, subdomain, session, endpoint):
         Api.__init__(self, subdomain, session, endpoint=endpoint, object_type='ticket')
 
-    def organizations(self, **kwargs):
+    def organizations(self, org_id):
         """
         Retrieve the tickets for this organization.
 
         :param id: organization id
         """
-        return self._get_items(self.endpoint.organizations, 'ticket', **kwargs)
+        return self._get_items(self.endpoint.organizations, 'ticket', id=org_id)
 
-    def recent(self, **kwargs):
+    def recent(self):
         """
         Retrieve the most recent tickets
         """
-        return self._get_items(self.endpoint.recent, 'ticket', **kwargs)
+        return self._get_items(self.endpoint.recent, 'ticket', id=None)
 
-    def comments(self, **kwargs):
+    def comments(self, ticket_id):
         """
         Retrieve the comments for a ticket.
 
         :param id: ticket id
         """
-        return self._get_items(self.endpoint.comments, 'comment', **kwargs)
+        return self._get_items(self.endpoint.comments, 'comment', id=ticket_id)
 
-    def events(self, **kwargs):
+    def events(self, start_time):
         """
         Retrieve TicketEvents
         :param start_time: time to retrieve events from.
         """
-        return self._get_items(self.endpoint.events, 'ticket_event', **kwargs)
+        return self._get_items(self.endpoint.events, 'ticket_event', start_time=start_time)
 
-    def audits(self, **kwargs):
+    def audits(self, ticket_id):
         """
         Retrieve TicketAudits.
         :param id: ticket id
         """
-        return self._get_items(self.endpoint.audits, 'ticket_audit', **kwargs)
+        return self._get_items(self.endpoint.audits, 'ticket_audit', id=ticket_id)
 
-    def metrics(self, **kwargs):
+    def metrics(self, ticket_id):
         """
         Retrieve TicketMetric.
         :param id: ticket id
         """
-        return self._get_items(self.endpoint.metrics, 'ticket_metric', **kwargs)
+        return self._get_items(self.endpoint.metrics, 'ticket_metric', id=ticket_id)
 
 
 class TicketImportAPI(CRUDApi):
@@ -674,29 +674,29 @@ class RequestAPI(CRUDApi):
     def __init__(self, subdomain, session, endpoint):
         Api.__init__(self, subdomain, session, endpoint=endpoint, object_type='request')
 
-    def open(self, **kwargs):
+    def open(self):
         """
         Return all open requests
         """
-        return self._get_items(self.endpoint.open, 'request', sideload=False, **kwargs)
+        return self._get_items(self.endpoint.open, 'request', sideload=False)
 
-    def solved(self, **kwargs):
+    def solved(self):
         """
         Return all solved requests
         """
-        return self._get_items(self.endpoint.solved, 'request', sideload=False, **kwargs)
+        return self._get_items(self.endpoint.solved, 'request', sideload=False)
 
-    def ccd(self, **kwargs):
+    def ccd(self):
         """
         Return all ccd requests
         """
-        return self._get_items(self.endpoint.ccd, 'request', sideload=False, **kwargs)
+        return self._get_items(self.endpoint.ccd, 'request', sideload=False)
 
-    def comments(self, **kwargs):
+    def comments(self, request_id):
         """
         Return comments for request
         """
-        return self._get_items(self.endpoint.comments, 'comment', sideload=False, **kwargs)
+        return self._get_items(self.endpoint.comments, 'comment', sideload=False, id=request_id)
 
     def delete(self, items):
         raise ZenpyException("You cannot delete requests!")
