@@ -141,11 +141,9 @@ class BaseApi(object):
                         raise APIException(json.dumps(_json))
                 except ValueError:
                     pass
+
             # No can do, just raise the correct Exception.
-            try:
-                response.raise_for_status()
-            except requests.exceptions.HTTPError as e:
-                raise APIException(e.message)
+            response.raise_for_status()
         else:
             try:
                 self.object_manager.update_caches(response.json())
@@ -528,16 +526,27 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
         """
         return self._get_items(self.endpoint.user_fields, 'user_field', **kwargs)
 
-    def create_or_update(self, user):
+    def create_or_update(self, users):
         """
         Creates a user (POST) if the user does not already exist, or updates an existing user identified
         by e-mail address or external ID.
 
-        :param user: User object
-        :return: the created/updated User
+        :param user: User object or list of User objects
+        :return: the created/updated User or a  JobStatus object if a list was passed
         """
-        object_type, payload = self._get_type_and_payload(user)
-        return self._do(self._post, dict(sideload=False), payload=payload, endpoint=self.endpoint.create_or_update)
+
+        object_type, payload = self._get_type_and_payload(users)
+        if object_type.endswith('s'):
+            return self._do(self._post,
+                            dict(create_or_update_many=True, sideload=False),
+                            payload=payload,
+                            endpoint=self.endpoint.create_or_update_many)
+        else:
+            return self._do(self._post,
+                            dict(sideload=False),
+                            payload=payload,
+                            endpoint=self.endpoint.create_or_update)
+
 
 
 class EndUserApi(CRUDApi):

@@ -70,6 +70,8 @@ class PrimaryEndpoint(BaseEndpoint):
                 query += self._many(self.endpoint, value, action='destroy_many.json?ids=')
             elif key == 'create_many':
                 query = "".join([self.endpoint, '/create_many.json'])
+            elif key == 'create_or_update_many':
+                query = self.endpoint
             elif key == 'recover_ids':
                 query = self._many(self.endpoint, value, action='recover_many.json?ids=')
             elif key == 'update_many':
@@ -250,6 +252,7 @@ class Endpoint(object):
     users.group_memberships = SecondaryEndpoint('users/%(id)s/group_memberships.json')
     users.requests = SecondaryEndpoint('users/%(id)s/requests.json')
     users.create_or_update = PrimaryEndpoint('users/create_or_update')
+    users.create_or_update_many = PrimaryEndpoint('users/create_or_update_many.json')
     groups = PrimaryEndpoint('groups', ['users'])
     brands = PrimaryEndpoint('brands')
     topics = PrimaryEndpoint('topics')
