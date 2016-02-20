@@ -532,6 +532,7 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
         """
         Creates a user (POST) if the user does not already exist, or updates an existing user identified
         by e-mail address or external ID.
+
         :param user: User object
         :return: the created/updated User
         """
