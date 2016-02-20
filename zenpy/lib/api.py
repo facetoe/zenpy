@@ -518,6 +518,9 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
     def requests(self, **kwargs):
         return self._get_items(self.endpoint.requests, 'request', **kwargs)
 
+    def related(self, **kwargs):
+        return self._get_items(self.endpoint.related, 'user_related', **kwargs)
+
     def user_fields(self, **kwargs):
         """
         Retrieve the user fields for this user.

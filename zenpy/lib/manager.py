@@ -1,7 +1,7 @@
 import logging
 from json import JSONEncoder
 
-from zenpy.lib.api_objects import Activity, Request
+from zenpy.lib.api_objects import Activity, Request, UserRelated
 from zenpy.lib.api_objects import Attachment
 from zenpy.lib.api_objects import Audit
 from zenpy.lib.api_objects import Brand
@@ -112,7 +112,8 @@ class ClassManager(object):
         'user_field': UserField,
         'organization_field': OrganizationField,
         'ticket_field': TicketField,
-        'request': Request
+        'request': Request,
+        'user_related': UserRelated
     }
 
     def __init__(self, api):
