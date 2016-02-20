@@ -28,7 +28,7 @@ class {{object.name}}(BaseObject):
         attributes = []
         object_name = to_snake_case(name).lower() + 's'
 
-        for attr_name, attr in _json.items():
+        for attr_name, attr in iter(sorted(_json.items())):
             attribute = Attribute(attr_name=attr_name, attr_value=attr)
             if object_name in doc_json and attr_name in doc_json[object_name]:
                 doc_strings = []
@@ -252,6 +252,12 @@ class BaseObject(object):
                 copy_dict[key[1:]] = copy_dict[key]
                 del copy_dict[key]
         return copy_dict
+
+    def __str__(self):
+        if hasattr(self, 'id'):
+            return "[%s %s]" % (self.__class__.__name__, self.id)
+        else:
+            return super().__str__()
 """
 
 parser = OptionParser()
