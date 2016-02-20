@@ -210,6 +210,6 @@ class Zenpy(object):
             session.auth = (email, password) if password \
                 else (email + '/token', token)
         headers = {'Content-type': 'application/json',
-                   'User-Agent': 'Zenpy/1.0.3'}
+                   'User-Agent': 'Zenpy/1.0.4'}
         session.headers.update(headers)
         return session
