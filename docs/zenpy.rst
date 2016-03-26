@@ -163,6 +163,8 @@ code:
 
 .. code:: python
 
+    from zenpy.lib.api_objects import User
+
     user = User(name="John Doe", email="john@doe.com")
     created_user = zenpy.users.create(user)
 
