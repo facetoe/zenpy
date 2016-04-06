@@ -63,6 +63,24 @@ Will be serialized as::
     }
 
 
+A more useful example might be adding a comment to a ticket. Usually the `Ticket` object does not have a `comment` attribute, however if we add one it will be correctly serialized, sent to Zendesk and added to the specified ticket.
+For example, after adding the `comment` attribute containing a `Comment` object::
+
+    ticket.comment = Comment(body="I am a private comment", public=False)
+
+the serialized ticket will include the additional information::
+
+	{
+	  "description": "I am a test ticket",
+	  "subject": "Testing",
+
+	  ...snip...
+	  "comment": {
+	    "public": false,
+	    "body": "I am a private comment"
+	  }
+	}
+
 
 
 
