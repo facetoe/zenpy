@@ -209,8 +209,13 @@ class Api(BaseApi):
     def get_source(self, source):
         return self.object_manager.object_from_json('source', source)
 
-    def get_attachment(self, attachment):
-        return self.object_manager.object_from_json('attachment', attachment)
+    def get_attachments(self, attachments):
+        for attachment in attachments:
+            yield self.object_manager.object_from_json('attachment', attachment)
+
+    def get_thumbnails(self, thumbnails):
+        for thumbnail in thumbnails:
+            yield self.object_manager.object_from_json('thumbnail', thumbnail)
 
     def get_satisfaction_rating(self, satisfaction_rating):
         return self.object_manager.object_from_json('satisfaction_rating', satisfaction_rating)
