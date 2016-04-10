@@ -38,14 +38,21 @@ First, create a :class:`Zenpy` object:
 
 .. code:: python
 
-    # Zenpy accepts a token
+    # Zenpy accepts an API token
     creds = {
         'email' : 'youremail',
         'token' : 'yourtoken',
         'subdomain': 'yoursubdomain'
     }
 
-    # Or password
+    # An OAuth token
+    creds = {
+      "subdomain": "yoursubdomain",
+      "email": "youremail",
+      "oauth_token": "youroathtoken"
+    }
+
+    # Or a password
     creds = {
         'email' : 'youremail',
         'password' : 'yourpassword',
@@ -55,7 +62,7 @@ First, create a :class:`Zenpy` object:
     # Default
     zenpy = Zenpy(**creds)
 
-    ## Or with an existing requests.Session object
+    # Alternatively you can provide your own requests.Session object
     zenpy = Zenpy(**creds, session=some_session)
 
 Searching the API
