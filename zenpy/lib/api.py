@@ -236,7 +236,7 @@ class Api(BaseApi):
     def get_forum(self, forum_id):
         return forum_id
 
-    def get_user_fields(self, user_fields, endpoint=Endpoint().users.user_fields, object_type='user_field'):
+    def get_user_fields(self, user_fields, endpoint=Endpoint().user_fields, object_type='user_field'):
         return self._get_fields(user_fields, endpoint, object_type)
 
     def get_organization_fields(self, organization_fields, endpoint=Endpoint().organizations.organization_fields,

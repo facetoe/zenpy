@@ -26,6 +26,13 @@ class Zenpy(object):
             session=session,
             endpoint=endpoint.users)
 
+        self.user_fields = Api(
+            subdomain,
+            session=session,
+            endpoint=endpoint.user_fields,
+            object_type='user_field'
+        )
+
         self.groups = Api(
             subdomain,
             session=session,
