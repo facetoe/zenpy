@@ -18,7 +18,7 @@ class BaseObject(object):
                 del copy_dict[key]
         return copy_dict
 
-    def __str__(self):
+    def __repr__(self):
         if hasattr(self, 'id'):
             return "[%s(id=%s)]" % (self.__class__.__name__, self.id)
         else:
