@@ -1,12 +1,12 @@
 import json
+import re
 from time import sleep
-
-import requests
 
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import APIException, RecordNotFoundException
 from zenpy.lib.generator import ResultGenerator
 from zenpy.lib.manager import ApiObjectEncoder, ObjectManager
+from zenpy.lib.util import to_snake_case
 
 __author__ = 'facetoe'
 
@@ -59,7 +59,7 @@ class BaseApi(object):
         while 'retry-after' in response.headers and int(response.headers['retry-after']) > 0:
             retry_after_seconds = int(response.headers['retry-after'])
             log.warn(
-                    "APIRateLimitExceeded - sleeping for requested retry-after period: %s seconds" % retry_after_seconds)
+                "APIRateLimitExceeded - sleeping for requested retry-after period: %s seconds" % retry_after_seconds)
             while retry_after_seconds > 0:
                 retry_after_seconds -= 1
                 log.debug("APIRateLimitExceeded - sleeping: %s more seconds" % retry_after_seconds)
@@ -122,7 +122,10 @@ class BaseApi(object):
         elif 'tags' in response_json:
             return response_json['tags']
 
-        for object_type in ('ticket', 'user', 'job_status', 'group', 'satisfaction_rating', 'request', 'organization'):
+        known_objects = ('ticket', 'user', 'job_status', 'group', 'satisfaction_rating', 'request', 'organization',
+                         'organization_membership')
+
+        for object_type in known_objects:
             if object_type in response_json:
                 return self.object_manager.object_from_json(object_type, response_json[object_type])
 
@@ -270,10 +273,10 @@ class ModifiableApi(Api):
         if isinstance(items, list):
             first_obj = next((x for x in items))
             # Object name needs to be plural when targeting many
-            object_type = "%ss" % first_obj.__class__.__name__.lower()
+            object_type = "%ss" % to_snake_case(first_obj.__class__.__name__)
             payload = {object_type: [json.loads(json.dumps(i, cls=ApiObjectEncoder)) for i in items]}
         else:
-            object_type = items.__class__.__name__.lower()
+            object_type = to_snake_case(items.__class__.__name__)
             payload = {object_type: json.loads(json.dumps(items, cls=ApiObjectEncoder))}
         return object_type, payload
 
@@ -291,8 +294,8 @@ class ModifiableApi(Api):
         if not endpoint:
             endpoint = self.endpoint
         return action(self._get_url(
-                endpoint=endpoint(**endpoint_kwargs)),
-                payload=payload)
+            endpoint=endpoint(**endpoint_kwargs)),
+            payload=payload)
 
 
 class CRUDApi(ModifiableApi):
@@ -360,7 +363,7 @@ class SuspendedTicketApi(ModifiableApi):
         object_type, payload = self._get_type_and_payload(tickets)
         if object_type.endswith('s'):
             return self._do(self._put, dict(
-                    recover_ids=[i.id for i in tickets], sideload=False),
+                recover_ids=[i.id for i in tickets], sideload=False),
                             endpoint=self.endpoint, payload=payload)
         else:
             return self._do(self._put, dict(id=tickets.id, sideload=False),
@@ -394,10 +397,10 @@ class TaggableApi(Api):
         :param tags: array of tags to apply to object
         """
         return self._put(self._get_url(
-                endpoint=self.endpoint.tags(
-                        id=id,
-                        sideload=False)),
-                payload={'tags': tags})
+            endpoint=self.endpoint.tags(
+                id=id,
+                sideload=False)),
+            payload={'tags': tags})
 
     def set_tags(self, id, tags):
         """
@@ -407,10 +410,10 @@ class TaggableApi(Api):
         :param tags: array of tags to apply to object
         """
         return self._post(self._get_url(
-                endpoint=self.endpoint.tags(
-                        id=id,
-                        sideload=False)),
-                payload={'tags': tags})
+            endpoint=self.endpoint.tags(
+                id=id,
+                sideload=False)),
+            payload={'tags': tags})
 
     def delete_tags(self, id, tags):
         """
@@ -420,10 +423,10 @@ class TaggableApi(Api):
         :param tags: array of tags to delete from object
         """
         return self._delete(self._get_url(
-                endpoint=self.endpoint.tags(
-                        id=id,
-                        sideload=False, )),
-                payload={'tags': tags})
+            endpoint=self.endpoint.tags(
+                id=id,
+                sideload=False, )),
+            payload={'tags': tags})
 
     def tags(self, id):
         """
@@ -445,10 +448,10 @@ class RateableApi(Api):
         :param rating: SatisfactionRating
         """
         return self._post(self._get_url(self.endpoint.satisfaction_ratings(
-                id=id,
-                sideload=False
+            id=id,
+            sideload=False
         )),
-                payload={'satisfaction_rating': vars(rating)})
+            payload={'satisfaction_rating': vars(rating)})
 
 
 class IncrementalApi(Api):
@@ -476,7 +479,7 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
         """
         Retrieve the groups for this user.
 
-        :param id: user id
+        :param user_id: user id
         """
         return self._get_items(self.endpoint.groups, 'group', id=user_id)
 
@@ -484,7 +487,7 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
         """
         Retrieve the organizations for this user.
 
-        :param id: user id
+        :param user_id: user id
         """
         return self._get_items(self.endpoint.organizations, 'organization', id=user_id)
 
@@ -492,7 +495,7 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
         """
         Retrieve the requested tickets for this user.
 
-        :param id: user id
+        :param user_id: user id
         """
         return self._get_items(self.endpoint.requested, 'ticket', id=user_id)
 
@@ -500,7 +503,7 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
         """
         Retrieve the tickets this user is cc'd into.
 
-        :param id: user id
+        :param user_id: user id
         """
         return self._get_items(self.endpoint.cced, 'ticket', id=user_id)
 
@@ -508,7 +511,7 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
         """
         Retrieve the assigned tickets for this user.
 
-        :param id: user id
+        :param user_id: user id
         """
         return self._get_items(self.endpoint.assigned, 'ticket', user_id)
 
@@ -516,7 +519,7 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
         """
         Retrieve the group memberships for this user.
 
-        :param id: user id
+        :param user_id: user id
         """
         return self._get_items(self.endpoint.group_memberships, 'group_membership', id=user_id)
 
@@ -527,7 +530,7 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
         """
         Returns the UserRelated information for the requested User
 
-        :param id: User id
+        :param user_id: User id
         :return: UserRelated
         """
         return self._get_items(self.endpoint.related, 'user_related', id=user_id)
@@ -542,9 +545,17 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
         """
         Retrieve the user fields for this user.
 
-        :param id: user id
+        :param user_id: user id
         """
         return self._get_items(self.endpoint.user_fields, 'user_field', id=user_id)
+
+    def organization_memberships(self, user_id):
+        """
+        Retrieve the organization memberships for this user.
+
+        :param user_id: user id
+        """
+        return self._get_items(self.endpoint.organization_memberships, 'organization_membership', id=user_id)
 
     def create_or_update(self, users):
         """
@@ -566,7 +577,6 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
                             dict(sideload=False),
                             payload=payload,
                             endpoint=self.endpoint.create_or_update)
-
 
 
 class EndUserApi(CRUDApi):
@@ -593,9 +603,17 @@ class OrganizationApi(TaggableApi, IncrementalApi, CRUDApi):
         """
         Retrieve the organization fields for this organization.
 
-        :param id: organization id
+        :param org_id: organization id
         """
         return self._get_items(self.endpoint.organization_fields, 'organization_field', id=org_id)
+
+    def organization_memberships(self, org_id):
+        """
+        Retrieve the organization fields for this organization.
+
+        :param org_id: organization id
+        """
+        return self._get_items(self.endpoint.organization_memberships, 'organization_membership', id=org_id)
 
     def external(self, external_id):
         """
@@ -607,6 +625,18 @@ class OrganizationApi(TaggableApi, IncrementalApi, CRUDApi):
 
     def requests(self, **kwargs):
         return self._get_items(self.endpoint.requests, 'request', **kwargs)
+
+
+class OrganizationMembershipApi(CRUDApi):
+    """
+    The OrganizationMembershipApi allows the creation and deletion of Organization Memberships
+    """
+
+    def __init__(self, subdomain, session, endpoint):
+        Api.__init__(self, subdomain, session, endpoint=endpoint, object_type='organization_membership')
+
+    def update(self, items):
+        raise ZenpyException("You cannot update Organization Memberships!")
 
 
 class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):

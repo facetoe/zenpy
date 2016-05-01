@@ -1,7 +1,7 @@
 import logging
 from json import JSONEncoder
 
-from zenpy.lib.api_objects import Activity, Request, UserRelated
+from zenpy.lib.api_objects import Activity, Request, UserRelated, OrganizationMembership
 from zenpy.lib.api_objects import Attachment
 from zenpy.lib.api_objects import Audit
 from zenpy.lib.api_objects import Brand
@@ -47,6 +47,7 @@ from zenpy.lib.api_objects import Via
 from zenpy.lib.api_objects import VoiceCommentEvent
 from zenpy.lib.cache import ZenpyCache
 from zenpy.lib.exception import ZenpyException
+from zenpy.lib.util import to_snake_case
 
 log = logging.getLogger(__name__)
 
@@ -113,7 +114,8 @@ class ClassManager(object):
         'organization_field': OrganizationField,
         'ticket_field': TicketField,
         'request': Request,
-        'user_related': UserRelated
+        'user_related': UserRelated,
+        'organization_membership': OrganizationMembership
     }
 
     def __init__(self, api):
@@ -179,11 +181,12 @@ class ObjectManager(object):
             self._delete_from_cache(obj)
 
     def _delete_from_cache(self, obj):
-        object_type = obj.__class__.__name__.lower()
-        cache = self.cache_mapping[object_type]
-        obj = cache.pop(obj.id, None)
-        if obj:
-            log.debug("Cache RM: [%s %s]" % (object_type.capitalize(), obj.id))
+        object_type = to_snake_case(obj.__class__.__name__)
+        if object_type in self.cache_mapping:
+            cache = self.cache_mapping[object_type]
+            obj = cache.pop(obj.id, None)
+            if obj:
+                log.debug("Cache RM: [%s %s]" % (object_type.capitalize(), obj.id))
 
     def query_cache(self, object_type, _id):
         if object_type not in self.cache_mapping.keys():

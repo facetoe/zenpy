@@ -3,7 +3,7 @@ import logging
 import requests
 
 from zenpy.lib.api import UserApi, Api, TicketApi, OrganizationApi, SuspendedTicketApi, EndUserApi, TicketImportAPI, \
-    RequestAPI
+    RequestAPI, OrganizationMembershipApi
 from zenpy.lib.cache import ZenpyCache
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import ZenpyException
@@ -43,6 +43,12 @@ class Zenpy(object):
             subdomain,
             session=session,
             endpoint=endpoint.organizations)
+
+        self.organization_memberships = OrganizationMembershipApi(
+            subdomain,
+            session=session,
+            endpoint=endpoint.organization_memberships
+        )
 
         self.tickets = TicketApi(
             subdomain,
