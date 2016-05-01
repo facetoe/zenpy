@@ -24,7 +24,7 @@ for ticket in zenpy.search("party", type='ticket', assignee="face"):
 
 ## Documentation
 
-Check out the [documentation](https://facetoe.com.au/zenpy/docs/) for more info.
+Check out the [documentation](http://docs.facetoe.com.au/) for more info.
 
 ### Contributions
 Contributions are very welcome. 
