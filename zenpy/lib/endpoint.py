@@ -271,6 +271,7 @@ class Endpoint(object):
     tickets.audits = SecondaryEndpoint('tickets/%(id)s/audits.json')
     tickets.tags = SecondaryEndpoint('tickets/%(id)s/tags.json')
     tickets.metrics = SecondaryEndpoint('tickets/%(id)s/metrics.json')
+    tickets.metrics.incremental = IncrementalEndpoint('incremental/ticket_metric_events.json?')
     ticket_metrics = PrimaryEndpoint('ticket_metrics')
     ticket_import = PrimaryEndpoint('imports/tickets')
     ticket_fields = PrimaryEndpoint('ticket_fields')
