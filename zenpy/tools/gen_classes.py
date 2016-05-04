@@ -108,7 +108,7 @@ class Property(TemplateObject):
 
     PROPERTY_TEMPLATE = """
         if self.api and self.{{object.attribute.attr_name}}:
-            return self.api.get_{{object.attribute.object_type}}(self.{{object.attribute.attr_name}})
+            return self.api._get_{{object.attribute.object_type}}(self.{{object.attribute.attr_name}})
     """
 
     SETTER_TEMPLATE_ASSIGN = """

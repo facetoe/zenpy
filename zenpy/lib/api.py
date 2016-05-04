@@ -1,5 +1,4 @@
 import json
-import re
 from time import sleep
 
 from zenpy.lib.endpoint import Endpoint
@@ -181,82 +180,78 @@ class Api(BaseApi):
         """
         return self._get_items(self.endpoint, self.object_type, *args, **kwargs)
 
-    def get_user(self, _id, endpoint=Endpoint.users, object_type='user'):
+    def _get_user(self, _id, endpoint=Endpoint.users, object_type='user'):
         return self._get_item(_id, endpoint, object_type, sideload=True)
 
-    def get_users(self, _ids, endpoint=Endpoint.users, object_type='user'):
+    def _get_users(self, _ids, endpoint=Endpoint.users, object_type='user'):
         return self._get_items(endpoint, object_type, ids=_ids)
 
-    def get_comment(self, _id, endpoint=Endpoint.tickets.comments, object_type='comment'):
+    def _get_comment(self, _id, endpoint=Endpoint.tickets.comments, object_type='comment'):
         return self._get_item(_id, endpoint, object_type, sideload=True)
 
-    def get_organization(self, _id, endpoint=Endpoint.organizations, object_type='organization'):
+    def _get_organization(self, _id, endpoint=Endpoint.organizations, object_type='organization'):
         return self._get_item(_id, endpoint, object_type, sideload=True)
 
-    def get_group(self, _id, endpoint=Endpoint.groups, object_type='group'):
+    def _get_group(self, _id, endpoint=Endpoint.groups, object_type='group'):
         return self._get_item(_id, endpoint, object_type, sideload=True)
 
-    def get_brand(self, _id, endpoint=Endpoint.brands, object_type='brand'):
+    def _get_brand(self, _id, endpoint=Endpoint.brands, object_type='brand'):
         return self._get_item(_id, endpoint, object_type, sideload=True)
 
-    def get_ticket(self, _id, endpoint=Endpoint.tickets, object_type='ticket', skip_cache=False):
+    def _get_ticket(self, _id, endpoint=Endpoint.tickets, object_type='ticket', skip_cache=False):
         return self._get_item(_id, endpoint, object_type, sideload=False, skip_cache=skip_cache)
 
-    def get_events(self, events):
+    def _get_events(self, events):
         for event in events:
             yield self.object_manager.object_from_json(event['type'].lower(), event)
 
-    def get_via(self, via):
+    def _get_via(self, via):
         return self.object_manager.object_from_json('via', via)
 
-    def get_source(self, source):
+    def _get_source(self, source):
         return self.object_manager.object_from_json('source', source)
 
-    def get_attachments(self, attachments):
+    def _get_attachments(self, attachments):
         for attachment in attachments:
             yield self.object_manager.object_from_json('attachment', attachment)
 
-    def get_thumbnails(self, thumbnails):
+    def _get_thumbnails(self, thumbnails):
         for thumbnail in thumbnails:
             yield self.object_manager.object_from_json('thumbnail', thumbnail)
 
-    def get_satisfaction_rating(self, satisfaction_rating):
+    def _get_satisfaction_rating(self, satisfaction_rating):
         return self.object_manager.object_from_json('satisfaction_rating', satisfaction_rating)
 
-    def get_ticket_metric_item(self, metric_item):
+    def _get_ticket_metric_item(self, metric_item):
         return self.object_manager.object_from_json('ticket_metric_item', metric_item)
 
-    def get_metadata(self, metadata):
+    def _get_metadata(self, metadata):
         return self.object_manager.object_from_json('metadata', metadata)
 
-    def get_system(self, system):
+    def _get_system(self, system):
         return self.object_manager.object_from_json('system', system)
 
-    def get_problem(self, problem_id):
+    def _get_problem(self, problem_id):
         return self._get_item(problem_id, Endpoint.tickets, 'ticket')
 
     # This will be deprecated soon - https://developer.zendesk.com/rest_api/docs/web-portal/forums
-    def get_forum(self, forum_id):
+    def _get_forum(self, forum_id):
         return forum_id
 
-    def get_user_fields(self, user_fields, endpoint=Endpoint().user_fields, object_type='user_field'):
+    def _get_user_fields(self, user_fields, endpoint=Endpoint().user_fields, object_type='user_field'):
         return self._get_fields(user_fields, endpoint, object_type)
 
-    def get_organization_fields(self, organization_fields, endpoint=Endpoint().organizations.organization_fields,
-                                object_type='organization_field'):
+    def _get_organization_fields(self, organization_fields, endpoint=Endpoint().organizations.organization_fields,
+                                 object_type='organization_field'):
         return self._get_fields(organization_fields, endpoint, object_type)
 
     ## TODO implement this with Enterprise
-    def get_custom_fields(self, custom_fields):
+    def _get_custom_fields(self, custom_fields):
         return custom_fields
 
     # This is ticket fields, hopefully it doesn't conflict with another field type
-    def get_fields(self, fields, object_type='ticket_field', endpoint=Endpoint().ticket_fields):
-        return self._get_fields([f['id'] for f in fields], endpoint, object_type)
-
-    # Need to clean this up somehow.
-    def _get_fields(self, fields, endpoint, object_type):
-        if any([self.object_manager.query_cache(object_type, field) is None for field in fields]):
+    def _get_fields(self, fields, object_type='ticket_field', endpoint=Endpoint().ticket_fields):
+        if any([self.object_manager.query_cache(object_type, field) is None for field in [f['id'] for f in fields]]):
             # Populate field cache
             self._get(self._get_url(endpoint=endpoint()))
         for field in fields:
