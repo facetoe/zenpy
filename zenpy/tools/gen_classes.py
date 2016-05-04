@@ -257,7 +257,7 @@ class BaseObject(object):
         if hasattr(self, 'id'):
             return "[%s(id=%s)]" % (self.__class__.__name__, self.id)
         else:
-            return super().__str__()
+            return "[%s(id=None)]" % self.__class__.__name__
 """
 
 parser = OptionParser()
