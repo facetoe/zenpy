@@ -29,6 +29,7 @@ class ResultGenerator(object):
         'activity': 'activities',
         'group_membership': 'group_memberships',
         'ticket_metric': 'ticket_metrics',
+        'ticket_metric_events': 'ticket_metric_events',
         'request': 'requests',
         'user_field': 'user_fields',
         'organization_field': 'organization_fields',

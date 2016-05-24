@@ -613,7 +613,7 @@ class OrganizationApi(TaggableApi, IncrementalApi, CRUDApi):
     def external(self, external_id):
         """
         Locate an Organization by it's external_id attribute.
-        
+
         :param external_id: external id of organization
         """
         return self._get_items(self.endpoint.external, 'organization', id=external_id)
@@ -684,6 +684,13 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         :param id: ticket id
         """
         return self._get_items(self.endpoint.metrics, 'ticket_metric', id=ticket_id)
+
+    def metrics_incremental(self, start_time):
+        """
+        Retrieve TicketMetric incremental
+        :param start_time: time to retrieve events from.
+        """
+        return self._get_items(self.endpoint.metrics.incremental, 'ticket_metric_events', start_time=start_time)
 
 
 class TicketImportAPI(CRUDApi):
