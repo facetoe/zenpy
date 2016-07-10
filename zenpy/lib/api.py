@@ -36,34 +36,29 @@ class BaseApi(object):
         return self._build_response(response.json())
 
     def _put(self, url, payload):
-        log.debug("PUT: " + url)
         payload = json.loads(json.dumps(payload, cls=ApiObjectEncoder))
-        response = self.session.put(url, json=payload)
-        self._check_and_cache_response(response)
-        return self._build_response(response.json())
+        return self._call_api(self.session.put, url, json=payload)
 
     def _delete(self, url, payload=None):
-        log.debug("DELETE: " + url)
-        if payload:
-            response = self.session.delete(url, json=payload)
-        else:
-            response = self.session.delete(url)
-        return self._check_and_cache_response(response)
+        return self._call_api(self.session.delete, url, json=payload)
 
-    def _get(self, url, stream=False):
-        log.debug("GET: " + url)
-        response = self.session.get(url, stream=stream)
+    def _get(self, url):
+        return self._call_api(self.session.get, url)
+
+    def _call_api(self, http_method, url, **kwargs):
+        log.debug("{}: {}".format(http_method.__name__.upper(), url))
+        response = http_method(url, **kwargs)
 
         # If we are being rate-limited, wait the required period before trying again.
         while 'retry-after' in response.headers and int(response.headers['retry-after']) > 0:
             retry_after_seconds = int(response.headers['retry-after'])
             log.warn(
-                "APIRateLimitExceeded - sleeping for requested retry-after period: %s seconds" % retry_after_seconds)
+                "Waiting for requested retry-after period: %s seconds" % retry_after_seconds)
             while retry_after_seconds > 0:
                 retry_after_seconds -= 1
-                log.debug("APIRateLimitExceeded - sleeping: %s more seconds" % retry_after_seconds)
+                log.debug("    -> sleeping: %s more seconds" % retry_after_seconds)
                 sleep(1)
-            response = self.session.get(url, stream=stream)
+            response = http_method.get(url, **kwargs)
         return self._check_and_cache_response(response)
 
     def _get_items(self, endpoint, object_type, *args, **kwargs):
@@ -288,9 +283,8 @@ class ModifiableApi(Api):
     def _do(self, action, endpoint_kwargs, payload=None, endpoint=None):
         if not endpoint:
             endpoint = self.endpoint
-        return action(self._get_url(
-            endpoint=endpoint(**endpoint_kwargs)),
-            payload=payload)
+        url = self._get_url(endpoint=endpoint(**endpoint_kwargs))
+        return action(url, payload=payload)
 
 
 class CRUDApi(ModifiableApi):
