@@ -6,7 +6,7 @@ The wrapper supports both reading and writing from the API.
 
 Zenpy supports both Python2 and Python3. 
 
-Zenpy is still in beta, so please report any bugs!
+Please report bugs!
 
 ## Quickstart
 
