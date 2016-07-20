@@ -127,6 +127,7 @@ class BaseApi(object):
 
     def _check_and_cache_response(self, response):
         if response.status_code > 299 or response.status_code < 200:
+            log.debug("Received response code [%s] - headers: %s" % (response.status_code, str(response.headers)))
             # If it's just a RecordNotFound error raise the right exception,
             # otherwise try and get a nice error message.
             if 'application/json' in response.headers['content-type']:
