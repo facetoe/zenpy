@@ -503,7 +503,7 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
 
         :param user_id: user id
         """
-        return self._get_items(self.endpoint.assigned, 'ticket', user_id)
+        return self._get_items(self.endpoint.assigned, 'ticket', id=user_id)
 
     def group_memberships(self, user_id):
         """
