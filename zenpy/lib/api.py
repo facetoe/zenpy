@@ -58,7 +58,7 @@ class BaseApi(object):
                 retry_after_seconds -= 1
                 log.debug("    -> sleeping: %s more seconds" % retry_after_seconds)
                 sleep(1)
-            response = http_method.get(url, **kwargs)
+            response = http_method(url, **kwargs)
         return self._check_and_cache_response(response)
 
     def _get_items(self, endpoint, object_type, *args, **kwargs):
