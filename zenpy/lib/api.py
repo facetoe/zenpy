@@ -1,7 +1,7 @@
 import json
 from time import sleep
 
-from zenpy.lib.endpoint import Endpoint
+from zenpy.lib.endpoint import Endpoint, AttachmentEndpoint
 from zenpy.lib.exception import APIException, RecordNotFoundException
 from zenpy.lib.generator import ResultGenerator
 from zenpy.lib.manager import ApiObjectEncoder, ObjectManager
@@ -28,10 +28,13 @@ class BaseApi(object):
         self.object_manager = ObjectManager(self)
         self.session = session
 
-    def _post(self, url, payload):
+    def _post(self, url, payload, data=None):
         log.debug("POST: %s - %s" % (url, str(payload)))
         payload = json.loads(json.dumps(payload, cls=ApiObjectEncoder))
-        response = self.session.post(url, json=payload)
+        headers = None
+        if data:
+            headers = {'Content-Type': 'application/octet-stream'}
+        response = self.session.post(url, json=payload, data=data, headers=headers)
         self._check_and_cache_response(response)
         return self._build_response(response.json())
 
@@ -117,7 +120,7 @@ class BaseApi(object):
             return response_json['tags']
 
         known_objects = ('ticket', 'user', 'job_status', 'group', 'satisfaction_rating', 'request', 'organization',
-                         'organization_membership')
+                         'organization_membership', 'upload')
 
         for object_type in known_objects:
             if object_type in response_json:
@@ -252,6 +255,12 @@ class Api(BaseApi):
             self._get(self._get_url(endpoint=endpoint()))
         for field in fields:
             yield self.object_manager.query_cache(object_type, field)
+
+    def _get_upload(self, upload):
+        return self.object_manager.object_from_json('upload', upload)
+
+    def _get_attachment(self, attachment):
+        return self.object_manager.object_from_json('attachment', attachment)
 
 
 class ModifiableApi(Api):
@@ -567,6 +576,21 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
                             dict(sideload=False),
                             payload=payload,
                             endpoint=self.endpoint.create_or_update)
+
+
+class AttachmentApi(Api):
+    def __init__(self, subdomain, session, endpoint):
+        Api.__init__(self, subdomain, session, endpoint=endpoint,
+                     object_type='attachment')
+
+    def __call__(self, *args, **kwargs):
+        if 'id' not in kwargs:
+            raise ZenpyException("Attachment endpoint requires an id")
+        return Api.__call__(self, *args, **kwargs)
+
+    def upload(self, file_path, filename, token=None):
+        with open(file_path, 'rb') as upfile:
+            return self._post(self._get_url(self.endpoint.upload(filename=filename, token=token)), data=upfile, payload={})
 
 
 class EndUserApi(CRUDApi):

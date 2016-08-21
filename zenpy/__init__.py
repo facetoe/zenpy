@@ -3,7 +3,7 @@ import logging
 import requests
 
 from zenpy.lib.api import UserApi, Api, TicketApi, OrganizationApi, SuspendedTicketApi, EndUserApi, TicketImportAPI, \
-    RequestAPI, OrganizationMembershipApi
+    RequestAPI, OrganizationMembershipApi, AttachmentApi
 from zenpy.lib.cache import ZenpyCache
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import ZenpyException
@@ -72,11 +72,10 @@ class Zenpy(object):
             endpoint=endpoint.topics,
             object_type='topic')
 
-        self.attachments = Api(
+        self.attachments = AttachmentApi(
             subdomain,
             session=session,
-            endpoint=endpoint.attachments,
-            object_type='attachment')
+            endpoint=endpoint.attachments)
 
         self.brands = Api(
             subdomain,

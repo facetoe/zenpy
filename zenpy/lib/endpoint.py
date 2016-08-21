@@ -125,6 +125,17 @@ class IncrementalEndpoint(BaseEndpoint):
         raise ZenpyException("Incremental Endoint requires a start_time parameter!")
 
 
+class AttachmentEndpoint(BaseEndpoint):
+    def __call__(self, **kwargs):
+        query = self.endpoint
+        for key, value in kwargs.items():
+            if value:
+                if not '&' in query:
+                    query += '&'
+                query += '{}={}'.format(key, value)
+        return query
+
+
 class SearchEndpoint(BaseEndpoint):
     """
     The search endpoint accepts all the parameters defined in the Zendesk `Search Documentation <https://developer.zendesk.com/rest_api/docs/core/search>`_.
@@ -278,6 +289,7 @@ class Endpoint(object):
     suspended_tickets = PrimaryEndpoint('suspended_tickets')
     suspended_tickets.recover = SecondaryEndpoint('suspended_tickets/%(id)s/recover.json')
     attachments = PrimaryEndpoint('attachments')
+    attachments.upload = AttachmentEndpoint('uploads.json?')
     organization_memberships = PrimaryEndpoint('organization_memberships')
     organizations = PrimaryEndpoint('organizations')
     organizations.incremental = IncrementalEndpoint('incremental/organizations.json?')

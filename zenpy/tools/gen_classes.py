@@ -256,6 +256,8 @@ class BaseObject(object):
     def __repr__(self):
         if hasattr(self, 'id'):
             return "[%s(id=%s)]" % (self.__class__.__name__, self.id)
+        elif hasattr(self, 'token'):
+            return "[%s(token='%s')]" % (self.__class__.__name__, self.token)
         else:
             return "[%s(id=None)]" % self.__class__.__name__
 """

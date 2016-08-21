@@ -21,6 +21,8 @@ class BaseObject(object):
     def __repr__(self):
         if hasattr(self, 'id'):
             return "[%s(id=%s)]" % (self.__class__.__name__, self.id)
+        elif hasattr(self, 'token'):
+            return "[%s(token='%s')]" % (self.__class__.__name__, self.token)
         else:
             return "[%s(id=None)]" % self.__class__.__name__
 
@@ -3523,3 +3525,48 @@ class PushEvent(BaseObject):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+
+class Upload(BaseObject):
+    def __init__(self, api=None, **kwargs):
+        self.api = api
+        self._attachment = None
+        self._attachments = None
+        self.expires_at = None
+        self.token = None
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def attachment(self):
+
+        if self.api and self._attachment:
+            return self.api._get_attachment(self._attachment)
+
+    @attachment.setter
+    def attachment(self, attachment):
+        if attachment:
+            self._attachment = attachment
+
+    @property
+    def attachments(self):
+
+        if self.api and self._attachments:
+            return self.api._get_attachments(self._attachments)
+
+    @attachments.setter
+    def attachments(self, attachments):
+        if attachments:
+            self._attachments = attachments
+
+    @property
+    def expires(self):
+
+        if self.expires_at:
+            return dateutil.parser.parse(self.expires_at)
+
+    @expires.setter
+    def expires(self, expires):
+        if expires:
+            self.expires_at = expires
