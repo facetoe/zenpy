@@ -588,9 +588,9 @@ class AttachmentApi(Api):
             raise ZenpyException("Attachment endpoint requires an id")
         return Api.__call__(self, *args, **kwargs)
 
-    def upload(self, file_path, filename, token=None):
+    def upload(self, file_path, token=None):
         with open(file_path, 'rb') as upfile:
-            return self._post(self._get_url(self.endpoint.upload(filename=filename, token=token)), data=upfile, payload={})
+            return self._post(self._get_url(self.endpoint.upload(filename=upfile.name, token=token)), data=upfile, payload={})
 
 
 class EndUserApi(CRUDApi):
