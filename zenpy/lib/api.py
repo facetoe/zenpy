@@ -589,6 +589,13 @@ class AttachmentApi(Api):
         return Api.__call__(self, *args, **kwargs)
 
     def upload(self, file_path, token=None):
+        """
+        Upload a file to Zendesk.
+
+        :param file_path: path to file to upload
+        :param token: upload token for uploading multiple files
+        :return: :class:`Upload` object containing a token and other information (see https://developer.zendesk.com/rest_api/docs/core/attachments#uploading-files)
+        """
         with open(file_path, 'rb') as upfile:
             return self._post(self._get_url(self.endpoint.upload(filename=upfile.name, token=token)), data=upfile, payload={})
 
