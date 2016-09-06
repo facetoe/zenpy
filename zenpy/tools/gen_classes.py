@@ -114,7 +114,7 @@ class Property(TemplateObject):
     SETTER_TEMPLATE_ASSIGN = """
             if {{object.attribute.object_name}}:
                 self.{{object.attribute.attr_name}} = {{object.attribute.attr_assignment}}
-                self._{{object.attribute.object_name}} = {{object.attribute.object_name}}.to_dict()
+                self._{{object.attribute.object_name}} = {{object.attribute.object_name}}
     """
 
     SETTER_TEMPLATE_DEFAULT = """

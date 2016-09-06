@@ -94,7 +94,7 @@ class Forum(BaseObject):
     def category(self, category):
         if category:
             self.category_id = category.id
-            self._category = category.to_dict()
+            self._category = category
 
     @property
     def created(self):
@@ -117,7 +117,7 @@ class Forum(BaseObject):
     def organization(self, organization):
         if organization:
             self.organization_id = organization.id
-            self._organization = organization.to_dict()
+            self._organization = organization
 
     @property
     def updated(self):
@@ -145,124 +145,124 @@ class TicketField(BaseObject):
     def __init__(self, api=None, **kwargs):
         self.api = api
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: Whether this field is available
+        #:| Read-only: no
         #:| Type: boolean
+        #:| Mandatory: no
         self.active = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: If this field should be shown to agents by default or be hidden alongside infrequently used fields. Classic interface only
+        #:| Read-only: no
         #:| Type: boolean
+        #:| Mandatory: no
         self.collapsed_for_agents = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The time the ticket field was created
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.created_at = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The description of the purpose of this ticket field, shown to users
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.description = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: Whether this field is editable by end users
+        #:| Read-only: no
         #:| Type: boolean
+        #:| Mandatory: no
         self.editable_in_portal = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: Automatically assigned upon creation
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: no
         self.id = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: A relative position for the ticket fields, determines the order of ticket fields on a ticket
+        #:| Read-only: no
         #:| Type: integer
+        #:| Mandatory: no
         self.position = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The dynamic content placeholder, if present, or the "description" value, if not. See Dynamic Content
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.raw_description = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The dynamic content placeholder, if present, or the "title" value, if not. See Dynamic Content
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.raw_title = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The dynamic content placeholder, if present, or the "title_in_portal" value, if not. See Dynamic Content
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.raw_title_in_portal = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: Regular expression field only. The validation pattern for a field value to be deemed valid.
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.regexp_for_validation = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: If it's required for this field to have a value when updated by agents
+        #:| Read-only: no
         #:| Type: boolean
+        #:| Mandatory: no
         self.required = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: If it's required for this field to have a value when updated by end users
+        #:| Read-only: no
         #:| Type: boolean
+        #:| Mandatory: no
         self.required_in_portal = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: A tag value to set for checkbox fields when checked
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.tag = None
 
-        #:| Read-only: no
-        #:| Mandatory: yes
         #:| Comment: The title of the ticket field
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: yes
         self.title = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The title of the ticket field when shown to end users
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.title_in_portal = None
 
-        #:| Read-only: no
-        #:| Mandatory: yes
         #:| Comment: The type of the ticket field: "checkbox", "date", "decimal", "integer", "regexp", "tagger", "text", or "textarea"
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: yes
         self.type = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The time of the last update of the ticket field
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.updated_at = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The URL for this resource
+        #:| Read-only: yes
         #:| Type: string
+        #:| Mandatory: no
         self.url = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: Whether this field is available to end users
+        #:| Read-only: no
         #:| Type: boolean
+        #:| Mandatory: no
         self.visible_in_portal = None
 
         for key, value in kwargs.items():
@@ -271,7 +271,7 @@ class TicketField(BaseObject):
     @property
     def created(self):
         """
-        |  Read-only: yes
+        |  Comment: The time the ticket field was created
         """
         if self.created_at:
             return dateutil.parser.parse(self.created_at)
@@ -284,7 +284,7 @@ class TicketField(BaseObject):
     @property
     def updated(self):
         """
-        |  Read-only: yes
+        |  Comment: The time of the last update of the ticket field
         """
         if self.updated_at:
             return dateutil.parser.parse(self.updated_at)
@@ -323,125 +323,125 @@ class TicketMetric(BaseObject):
     def __init__(self, api=None, **kwargs):
         self.api = api
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: Number of minutes the agent spent waiting inside and out of business hours
+        #:| Read-only: yes
         #:| Type: object
+        #:| Mandatory: no
         self._agent_wait_time_in_minutes = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: Number of minutes to the first resolution time inside and out of business hours
+        #:| Read-only: yes
         #:| Type: object
+        #:| Mandatory: no
         self._first_resolution_time_in_minutes = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: Number of minutes to the full resolution inside and out of business hours
+        #:| Read-only: yes
         #:| Type: object
+        #:| Mandatory: no
         self._full_resolution_time_in_minutes = None
         self._on_hold_time_in_minutes = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: Number of minutes to the first reply inside and out of business hours
+        #:| Read-only: yes
         #:| Type: object
+        #:| Mandatory: no
         self._reply_time_in_minutes = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: Number of minutes the requester spent waiting inside and out of business hours
+        #:| Read-only: yes
         #:| Type: object
+        #:| Mandatory: no
         self._requester_wait_time_in_minutes = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: When the ticket was last assigned
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.assigned_at = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: Number of assignees this ticket had
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: no
         self.assignee_stations = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: When the assignee last updated the ticket
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.assignee_updated_at = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: When this record was created
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.created_at = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: Number of groups this ticket passed through
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: no
         self.group_stations = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: Automatically assigned
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: no
         self.id = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: When the ticket was initially assigned
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.initially_assigned_at = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: When the latest comment was added
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.latest_comment_added_at = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: Total number of times the ticket was reopened
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: no
         self.reopens = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: Total number of times ticket was replied to
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: no
         self.replies = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: When the requester last updated the ticket
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.requester_updated_at = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: When the ticket was solved
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.solved_at = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: When the status was last updated
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.status_updated_at = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: Id of the associated ticket
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: no
         self.ticket_id = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: When this record last got updated
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.updated_at = None
 
         for key, value in kwargs.items():
@@ -450,7 +450,7 @@ class TicketMetric(BaseObject):
     @property
     def agent_wait_time_in_minutes(self):
         """
-        |  Read-only: yes
+        |  Comment: Number of minutes the agent spent waiting inside and out of business hours
         """
         if self.api and self._agent_wait_time_in_minutes:
             return self.api._get_ticket_metric_item(self._agent_wait_time_in_minutes)
@@ -463,7 +463,7 @@ class TicketMetric(BaseObject):
     @property
     def first_resolution_time_in_minutes(self):
         """
-        |  Read-only: yes
+        |  Comment: Number of minutes to the first resolution time inside and out of business hours
         """
         if self.api and self._first_resolution_time_in_minutes:
             return self.api._get_ticket_metric_item(self._first_resolution_time_in_minutes)
@@ -476,7 +476,7 @@ class TicketMetric(BaseObject):
     @property
     def full_resolution_time_in_minutes(self):
         """
-        |  Read-only: yes
+        |  Comment: Number of minutes to the full resolution inside and out of business hours
         """
         if self.api and self._full_resolution_time_in_minutes:
             return self.api._get_ticket_metric_item(self._full_resolution_time_in_minutes)
@@ -500,7 +500,7 @@ class TicketMetric(BaseObject):
     @property
     def reply_time_in_minutes(self):
         """
-        |  Read-only: yes
+        |  Comment: Number of minutes to the first reply inside and out of business hours
         """
         if self.api and self._reply_time_in_minutes:
             return self.api._get_ticket_metric_item(self._reply_time_in_minutes)
@@ -513,7 +513,7 @@ class TicketMetric(BaseObject):
     @property
     def requester_wait_time_in_minutes(self):
         """
-        |  Read-only: yes
+        |  Comment: Number of minutes the requester spent waiting inside and out of business hours
         """
         if self.api and self._requester_wait_time_in_minutes:
             return self.api._get_ticket_metric_item(self._requester_wait_time_in_minutes)
@@ -526,7 +526,7 @@ class TicketMetric(BaseObject):
     @property
     def assigned(self):
         """
-        |  Read-only: yes
+        |  Comment: When the ticket was last assigned
         """
         if self.assigned_at:
             return dateutil.parser.parse(self.assigned_at)
@@ -539,7 +539,7 @@ class TicketMetric(BaseObject):
     @property
     def assignee_updated(self):
         """
-        |  Read-only: yes
+        |  Comment: When the assignee last updated the ticket
         """
         if self.assignee_updated_at:
             return dateutil.parser.parse(self.assignee_updated_at)
@@ -552,7 +552,7 @@ class TicketMetric(BaseObject):
     @property
     def created(self):
         """
-        |  Read-only: yes
+        |  Comment: When this record was created
         """
         if self.created_at:
             return dateutil.parser.parse(self.created_at)
@@ -565,7 +565,7 @@ class TicketMetric(BaseObject):
     @property
     def initially_assigned(self):
         """
-        |  Read-only: yes
+        |  Comment: When the ticket was initially assigned
         """
         if self.initially_assigned_at:
             return dateutil.parser.parse(self.initially_assigned_at)
@@ -578,7 +578,7 @@ class TicketMetric(BaseObject):
     @property
     def latest_comment_added(self):
         """
-        |  Read-only: yes
+        |  Comment: When the latest comment was added
         """
         if self.latest_comment_added_at:
             return dateutil.parser.parse(self.latest_comment_added_at)
@@ -591,7 +591,7 @@ class TicketMetric(BaseObject):
     @property
     def requester_updated(self):
         """
-        |  Read-only: yes
+        |  Comment: When the requester last updated the ticket
         """
         if self.requester_updated_at:
             return dateutil.parser.parse(self.requester_updated_at)
@@ -604,7 +604,7 @@ class TicketMetric(BaseObject):
     @property
     def solved(self):
         """
-        |  Read-only: yes
+        |  Comment: When the ticket was solved
         """
         if self.solved_at:
             return dateutil.parser.parse(self.solved_at)
@@ -617,7 +617,7 @@ class TicketMetric(BaseObject):
     @property
     def status_updated(self):
         """
-        |  Read-only: yes
+        |  Comment: When the status was last updated
         """
         if self.status_updated_at:
             return dateutil.parser.parse(self.status_updated_at)
@@ -630,7 +630,7 @@ class TicketMetric(BaseObject):
     @property
     def ticket(self):
         """
-        |  Read-only: yes
+        |  Comment: Id of the associated ticket
         """
         if self.api and self.ticket_id:
             return self.api._get_ticket(self.ticket_id)
@@ -639,12 +639,12 @@ class TicketMetric(BaseObject):
     def ticket(self, ticket):
         if ticket:
             self.ticket_id = ticket.id
-            self._ticket = ticket.to_dict()
+            self._ticket = ticket
 
     @property
     def updated(self):
         """
-        |  Read-only: yes
+        |  Comment: When this record last got updated
         """
         if self.updated_at:
             return dateutil.parser.parse(self.updated_at)
@@ -672,82 +672,82 @@ class OrganizationField(BaseObject):
     def __init__(self, api=None, **kwargs):
         self.api = api
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: If true, this field is available for use
+        #:| Read-only: no
         #:| Type: boolean
+        #:| Mandatory: no
         self.active = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The time the ticket field was created
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.created_at = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: User-defined description of this field's purpose
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.description = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: Automatically assigned upon creation
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: no
         self.id = None
 
-        #:| Read-only: no
-        #:| Mandatory: on create
         #:| Comment: A unique key that identifies this custom field. This is used for updating the field and referencing in placeholders.
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: on create
         self.key = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: Ordering of the field relative to other fields
+        #:| Read-only: no
         #:| Type: integer
+        #:| Mandatory: no
         self.position = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The dynamic content placeholder, if present, or the "description" value, if not. See Dynamic Content
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.raw_description = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The dynamic content placeholder, if present, or the "title" value, if not. See Dynamic Content
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.raw_title = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: Regular expression field only. The validation pattern for a field value to be deemed valid.
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.regexp_for_validation = None
 
-        #:| Read-only: no
-        #:| Mandatory: yes
         #:| Comment: The title of the custom field
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: yes
         self.title = None
 
-        #:| Read-only: no
-        #:| Mandatory: yes
         #:| Comment: Type of the custom field: "checkbox", "date", "decimal", "dropdown", "integer", "regexp", "text", or "textarea"
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: yes
         self.type = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The time of the last update of the ticket field
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.updated_at = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The URL for this resource
+        #:| Read-only: yes
         #:| Type: string
+        #:| Mandatory: no
         self.url = None
 
         for key, value in kwargs.items():
@@ -756,7 +756,7 @@ class OrganizationField(BaseObject):
     @property
     def created(self):
         """
-        |  Read-only: yes
+        |  Comment: The time the ticket field was created
         """
         if self.created_at:
             return dateutil.parser.parse(self.created_at)
@@ -769,7 +769,7 @@ class OrganizationField(BaseObject):
     @property
     def updated(self):
         """
-        |  Read-only: yes
+        |  Comment: The time of the last update of the ticket field
         """
         if self.updated_at:
             return dateutil.parser.parse(self.updated_at)
@@ -832,7 +832,7 @@ class TicketEvent(BaseObject):
     def ticket(self, ticket):
         if ticket:
             self.ticket_id = ticket.id
-            self._ticket = ticket.to_dict()
+            self._ticket = ticket
 
     @property
     def updater(self):
@@ -844,7 +844,7 @@ class TicketEvent(BaseObject):
     def updater(self, updater):
         if updater:
             self.updater_id = updater.id
-            self._updater = updater.to_dict()
+            self._updater = updater
 
 
 class Result(BaseObject):
@@ -922,114 +922,114 @@ class VoiceCommentEvent(BaseObject):
     def author(self, author):
         if author:
             self.author_id = author.id
-            self._author = author.to_dict()
+            self._author = author
 
 
 class Request(BaseObject):
     def __init__(self, api=None, **kwargs):
         self.api = api
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The fields and entries for this request
+        #:| Read-only: no
         #:| Type: :class:`Array`
+        #:| Mandatory: no
         self._custom_fields = None
         self._fields = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: This object explains how the request was created
+        #:| Read-only: yes
         #:| Type: :class:`Via`
+        #:| Mandatory: no
         self._via = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The id of the assignee if the field is visible to end users
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: no
         self.assignee_id = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: If true, end user can mark request as solved.
+        #:| Read-only: yes
         #:| Type: boolean
+        #:| Mandatory: no
         self.can_be_solved_by_me = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: Who are currently CC'ed on the ticket
+        #:| Read-only: no
         #:| Type: array
+        #:| Mandatory: no
         self.collaborator_ids = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: When this record was created
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.created_at = None
 
-        #:| Read-only: yes
-        #:| Mandatory: yes
         #:| Comment: The first comment on the request
+        #:| Read-only: yes
         #:| Type: string
+        #:| Mandatory: yes
         self.description = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: When the task is due (only applies if the request is of type "task")
+        #:| Read-only: no
         #:| Type: date
+        #:| Mandatory: no
         self.due_at = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: Automatically assigned when creating requests
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: no
         self.id = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The organization of the requester
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: no
         self.organization_id = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The priority of the request, "low", "normal", "high", "urgent"
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.priority = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The id of the requester
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: no
         self.requester_id = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The state of the request, "new", "open", "pending", "hold", "solved", "closed"
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.status = None
 
-        #:| Read-only: no
-        #:| Mandatory: yes
         #:| Comment: The value of the subject field for this request if the subject field is visible to end users; a truncated version of the description otherwise
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: yes
         self.subject = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The type of the request, "question", "incident", "problem", "task"
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.type = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: When this record last got updated
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.updated_at = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The API url of this request
+        #:| Read-only: yes
         #:| Type: string
+        #:| Mandatory: no
         self.url = None
 
         for key, value in kwargs.items():
@@ -1038,7 +1038,7 @@ class Request(BaseObject):
     @property
     def custom_fields(self):
         """
-        |  Read-only: no
+        |  Comment: The fields and entries for this request
         """
         if self.api and self._custom_fields:
             return self.api._get_custom_fields(self._custom_fields)
@@ -1062,7 +1062,7 @@ class Request(BaseObject):
     @property
     def via(self):
         """
-        |  Read-only: yes
+        |  Comment: This object explains how the request was created
         """
         if self.api and self._via:
             return self.api._get_via(self._via)
@@ -1075,7 +1075,7 @@ class Request(BaseObject):
     @property
     def assignee(self):
         """
-        |  Read-only: yes
+        |  Comment: The id of the assignee if the field is visible to end users
         """
         if self.api and self.assignee_id:
             return self.api._get_user(self.assignee_id)
@@ -1084,12 +1084,12 @@ class Request(BaseObject):
     def assignee(self, assignee):
         if assignee:
             self.assignee_id = assignee.id
-            self._assignee = assignee.to_dict()
+            self._assignee = assignee
 
     @property
     def collaborators(self):
         """
-        |  Read-only: no
+        |  Comment: Who are currently CC'ed on the ticket
         """
         if self.api and self.collaborator_ids:
             return self.api._get_users(self.collaborator_ids)
@@ -1098,12 +1098,12 @@ class Request(BaseObject):
     def collaborators(self, collaborators):
         if collaborators:
             self.collaborator_ids = [o.id for o in collaborators]
-            self._collaborators = collaborators.to_dict()
+            self._collaborators = collaborators
 
     @property
     def created(self):
         """
-        |  Read-only: yes
+        |  Comment: When this record was created
         """
         if self.created_at:
             return dateutil.parser.parse(self.created_at)
@@ -1116,7 +1116,7 @@ class Request(BaseObject):
     @property
     def due(self):
         """
-        |  Read-only: no
+        |  Comment: When the task is due (only applies if the request is of type "task")
         """
         if self.due_at:
             return dateutil.parser.parse(self.due_at)
@@ -1129,7 +1129,7 @@ class Request(BaseObject):
     @property
     def organization(self):
         """
-        |  Read-only: yes
+        |  Comment: The organization of the requester
         """
         if self.api and self.organization_id:
             return self.api._get_organization(self.organization_id)
@@ -1138,12 +1138,12 @@ class Request(BaseObject):
     def organization(self, organization):
         if organization:
             self.organization_id = organization.id
-            self._organization = organization.to_dict()
+            self._organization = organization
 
     @property
     def requester(self):
         """
-        |  Read-only: yes
+        |  Comment: The id of the requester
         """
         if self.api and self.requester_id:
             return self.api._get_user(self.requester_id)
@@ -1152,12 +1152,12 @@ class Request(BaseObject):
     def requester(self, requester):
         if requester:
             self.requester_id = requester.id
-            self._requester = requester.to_dict()
+            self._requester = requester
 
     @property
     def updated(self):
         """
-        |  Read-only: yes
+        |  Comment: When this record last got updated
         """
         if self.updated_at:
             return dateutil.parser.parse(self.updated_at)
@@ -1172,82 +1172,82 @@ class UserField(BaseObject):
     def __init__(self, api=None, **kwargs):
         self.api = api
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: If true, this field is available for use
+        #:| Read-only: no
         #:| Type: boolean
+        #:| Mandatory: no
         self.active = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The time the ticket field was created
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.created_at = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: User-defined description of this field's purpose
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.description = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: Automatically assigned upon creation
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: no
         self.id = None
 
-        #:| Read-only: no
-        #:| Mandatory: on create
         #:| Comment: A unique key that identifies this custom field. This is used for updating the field and referencing in placeholders.
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: on create
         self.key = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: Ordering of the field relative to other fields
+        #:| Read-only: no
         #:| Type: integer
+        #:| Mandatory: no
         self.position = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The dynamic content placeholder, if present, or the "description" value, if not. See Dynamic Content
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.raw_description = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The dynamic content placeholder, if present, or the "title" value, if not. See Dynamic Content
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.raw_title = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: Regular expression field only. The validation pattern for a field value to be deemed valid.
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.regexp_for_validation = None
 
-        #:| Read-only: no
-        #:| Mandatory: yes
         #:| Comment: The title of the custom field
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: yes
         self.title = None
 
-        #:| Read-only: no
-        #:| Mandatory: yes
         #:| Comment: Type of the custom field: "checkbox", "date", "decimal", "dropdown", "integer", "regexp", "text", or "textarea"
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: yes
         self.type = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The time of the last update of the ticket field
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.updated_at = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The URL for this resource
+        #:| Read-only: yes
         #:| Type: string
+        #:| Mandatory: no
         self.url = None
 
         for key, value in kwargs.items():
@@ -1256,7 +1256,7 @@ class UserField(BaseObject):
     @property
     def created(self):
         """
-        |  Read-only: yes
+        |  Comment: The time the ticket field was created
         """
         if self.created_at:
             return dateutil.parser.parse(self.created_at)
@@ -1269,7 +1269,7 @@ class UserField(BaseObject):
     @property
     def updated(self):
         """
-        |  Read-only: yes
+        |  Comment: The time of the last update of the ticket field
         """
         if self.updated_at:
             return dateutil.parser.parse(self.updated_at)
@@ -1366,7 +1366,7 @@ class Topic(BaseObject):
     def forum(self, forum):
         if forum:
             self.forum_id = forum.id
-            self._forum = forum.to_dict()
+            self._forum = forum
 
     @property
     def submitter(self):
@@ -1378,7 +1378,7 @@ class Topic(BaseObject):
     def submitter(self, submitter):
         if submitter:
             self.submitter_id = submitter.id
-            self._submitter = submitter.to_dict()
+            self._submitter = submitter
 
     @property
     def updated(self):
@@ -1401,7 +1401,7 @@ class Topic(BaseObject):
     def updater(self, updater):
         if updater:
             self.updater_id = updater.id
-            self._updater = updater.to_dict()
+            self._updater = updater
 
 
 class Activity(BaseObject):
@@ -1477,7 +1477,7 @@ class TicketSharingEvent(BaseObject):
     def agreement(self, agreement):
         if agreement:
             self.agreement_id = agreement.id
-            self._agreement = agreement.to_dict()
+            self._agreement = agreement
 
 
 class PushEvent(BaseObject):
@@ -1609,197 +1609,197 @@ class User(BaseObject):
     def __init__(self, api=None, **kwargs):
         self.api = api
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: Custom fields for the user
+        #:| Read-only: no
         #:| Type: :class:`hash`
+        #:| Mandatory: no
         self._user_fields = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: false if the user has been deleted
+        #:| Read-only: yes
         #:| Type: boolean
+        #:| Mandatory: no
         self.active = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: An alias displayed to end users
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.alias = None
         self.chat_only = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The time the user was created
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.created_at = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: A custom role if the user is an agent on the Enterprise plan
+        #:| Read-only: no
         #:| Type: integer
+        #:| Mandatory: no
         self.custom_role_id = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: Any details you want to store about the user, such as an address
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.details = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The user's primary email address
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.email = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: A unique id you can specify for the user
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.external_id = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: Automatically assigned when the user is created
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: no
         self.id = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The last time the user signed in to Zendesk
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.last_login_at = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The user's locale
+        #:| Read-only: yes
         #:| Type: string
+        #:| Mandatory: no
         self.locale = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The user's language identifier
+        #:| Read-only: no
         #:| Type: integer
+        #:| Mandatory: no
         self.locale_id = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: Designates whether the user has forum moderation capabilities
+        #:| Read-only: no
         #:| Type: boolean
+        #:| Mandatory: no
         self.moderator = None
 
-        #:| Read-only: no
-        #:| Mandatory: yes
         #:| Comment: The user's name
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: yes
         self.name = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: Any notes you want to store about the user
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.notes = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: true if the user can only create private comments
+        #:| Read-only: no
         #:| Type: boolean
+        #:| Mandatory: no
         self.only_private_comments = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The id of the organization the user is associated with
+        #:| Read-only: no
         #:| Type: integer
+        #:| Mandatory: no
         self.organization_id = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The user's primary phone number
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.phone = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The user's profile picture represented as an Attachment object
+        #:| Read-only: no
         #:| Type: :class:`Attachment`
+        #:| Mandatory: no
         self.photo = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: If the agent has any restrictions; false for admins and unrestricted agents, true for other agents
+        #:| Read-only: no
         #:| Type: boolean
+        #:| Mandatory: no
         self.restricted_agent = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The user's role. Possible values are "end-user", "agent", or "admin"
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.role = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: If the user is shared from a different Zendesk. Ticket sharing accounts only
+        #:| Read-only: yes
         #:| Type: boolean
+        #:| Mandatory: no
         self.shared = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: If the user is a shared agent from a different Zendesk. Ticket sharing accounts only
+        #:| Read-only: yes
         #:| Type: boolean
+        #:| Mandatory: no
         self.shared_agent = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The user's signature. Only agents and admins can have signatures
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.signature = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: If the agent is suspended. Tickets from suspended users are also suspended, and these users cannot sign in to the end user portal
+        #:| Read-only: no
         #:| Type: boolean
+        #:| Mandatory: no
         self.suspended = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The user's tags. Only present if your account has user tagging enabled
+        #:| Read-only: no
         #:| Type: array
+        #:| Mandatory: no
         self.tags = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: Specifies which tickets the user has access to. Possible values are: "organization", "groups", "assigned", "requested", null
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.ticket_restriction = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The user's time zone. See Time Zone below
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.time_zone = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: If two factor authentication is enabled.
+        #:| Read-only: yes
         #:| Type: boolean
+        #:| Mandatory: no
         self.two_factor_auth_enabled = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The time the user was last updated
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.updated_at = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The user's API url
+        #:| Read-only: yes
         #:| Type: string
+        #:| Mandatory: no
         self.url = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: If the user's identity has been verified or not
+        #:| Read-only: no
         #:| Type: boolean
+        #:| Mandatory: no
         self.verified = None
 
         for key, value in kwargs.items():
@@ -1808,7 +1808,7 @@ class User(BaseObject):
     @property
     def user_fields(self):
         """
-        |  Read-only: no
+        |  Comment: Custom fields for the user
         """
         if self.api and self._user_fields:
             return self.api._get_user_fields(self._user_fields)
@@ -1821,7 +1821,7 @@ class User(BaseObject):
     @property
     def created(self):
         """
-        |  Read-only: yes
+        |  Comment: The time the user was created
         """
         if self.created_at:
             return dateutil.parser.parse(self.created_at)
@@ -1834,7 +1834,7 @@ class User(BaseObject):
     @property
     def custom_role(self):
         """
-        |  Read-only: no
+        |  Comment: A custom role if the user is an agent on the Enterprise plan
         """
         if self.api and self.custom_role_id:
             return self.api._get_custom_role(self.custom_role_id)
@@ -1843,12 +1843,12 @@ class User(BaseObject):
     def custom_role(self, custom_role):
         if custom_role:
             self.custom_role_id = custom_role.id
-            self._custom_role = custom_role.to_dict()
+            self._custom_role = custom_role
 
     @property
     def last_login(self):
         """
-        |  Read-only: yes
+        |  Comment: The last time the user signed in to Zendesk
         """
         if self.last_login_at:
             return dateutil.parser.parse(self.last_login_at)
@@ -1861,7 +1861,7 @@ class User(BaseObject):
     @property
     def organization(self):
         """
-        |  Read-only: no
+        |  Comment: The id of the organization the user is associated with
         """
         if self.api and self.organization_id:
             return self.api._get_organization(self.organization_id)
@@ -1870,12 +1870,12 @@ class User(BaseObject):
     def organization(self, organization):
         if organization:
             self.organization_id = organization.id
-            self._organization = organization.to_dict()
+            self._organization = organization
 
     @property
     def updated(self):
         """
-        |  Read-only: yes
+        |  Comment: The time the user was last updated
         """
         if self.updated_at:
             return dateutil.parser.parse(self.updated_at)
@@ -1935,65 +1935,65 @@ class FacebookCommentEvent(BaseObject):
     def author(self, author):
         if author:
             self.author_id = author.id
-            self._author = author.to_dict()
+            self._author = author
 
 
 class SatisfactionRating(BaseObject):
     def __init__(self, api=None, **kwargs):
         self.api = api
 
-        #:| Read-only: yes
-        #:| Mandatory: yes
         #:| Comment: The id of agent assigned to at the time of rating
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: yes
         self.assignee_id = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The time the satisfaction rating got created
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.created_at = None
 
-        #:| Read-only: yes
-        #:| Mandatory: yes
         #:| Comment: The id of group assigned to at the time of rating
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: yes
         self.group_id = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: Automatically assigned upon creation
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: no
         self.id = None
 
-        #:| Read-only: yes
-        #:| Mandatory: yes
         #:| Comment: The id of ticket requester submitting the rating
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: yes
         self.requester_id = None
 
-        #:| Read-only: yes
-        #:| Mandatory: yes
         #:| Comment: The rating: "offered", "unoffered", "good" or "bad"
+        #:| Read-only: yes
         #:| Type: string
+        #:| Mandatory: yes
         self.score = None
 
-        #:| Read-only: yes
-        #:| Mandatory: yes
         #:| Comment: The id of ticket being rated
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: yes
         self.ticket_id = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The time the satisfaction rating got updated
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.updated_at = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The API url of this rating
+        #:| Read-only: yes
         #:| Type: string
+        #:| Mandatory: no
         self.url = None
 
         for key, value in kwargs.items():
@@ -2002,7 +2002,7 @@ class SatisfactionRating(BaseObject):
     @property
     def assignee(self):
         """
-        |  Read-only: yes
+        |  Comment: The id of agent assigned to at the time of rating
         """
         if self.api and self.assignee_id:
             return self.api._get_user(self.assignee_id)
@@ -2011,12 +2011,12 @@ class SatisfactionRating(BaseObject):
     def assignee(self, assignee):
         if assignee:
             self.assignee_id = assignee.id
-            self._assignee = assignee.to_dict()
+            self._assignee = assignee
 
     @property
     def created(self):
         """
-        |  Read-only: yes
+        |  Comment: The time the satisfaction rating got created
         """
         if self.created_at:
             return dateutil.parser.parse(self.created_at)
@@ -2029,7 +2029,7 @@ class SatisfactionRating(BaseObject):
     @property
     def group(self):
         """
-        |  Read-only: yes
+        |  Comment: The id of group assigned to at the time of rating
         """
         if self.api and self.group_id:
             return self.api._get_group(self.group_id)
@@ -2038,12 +2038,12 @@ class SatisfactionRating(BaseObject):
     def group(self, group):
         if group:
             self.group_id = group.id
-            self._group = group.to_dict()
+            self._group = group
 
     @property
     def requester(self):
         """
-        |  Read-only: yes
+        |  Comment: The id of ticket requester submitting the rating
         """
         if self.api and self.requester_id:
             return self.api._get_user(self.requester_id)
@@ -2052,12 +2052,12 @@ class SatisfactionRating(BaseObject):
     def requester(self, requester):
         if requester:
             self.requester_id = requester.id
-            self._requester = requester.to_dict()
+            self._requester = requester
 
     @property
     def ticket(self):
         """
-        |  Read-only: yes
+        |  Comment: The id of ticket being rated
         """
         if self.api and self.ticket_id:
             return self.api._get_ticket(self.ticket_id)
@@ -2066,12 +2066,12 @@ class SatisfactionRating(BaseObject):
     def ticket(self, ticket):
         if ticket:
             self.ticket_id = ticket.id
-            self._ticket = ticket.to_dict()
+            self._ticket = ticket
 
     @property
     def updated(self):
         """
-        |  Read-only: yes
+        |  Comment: The time the satisfaction rating got updated
         """
         if self.updated_at:
             return dateutil.parser.parse(self.updated_at)
@@ -2104,7 +2104,7 @@ class SatisfactionRatingEvent(BaseObject):
     def assignee(self, assignee):
         if assignee:
             self.assignee_id = assignee.id
-            self._assignee = assignee.to_dict()
+            self._assignee = assignee
 
 
 class Comment(BaseObject):
@@ -2166,7 +2166,7 @@ class Comment(BaseObject):
     def author(self, author):
         if author:
             self.author_id = author.id
-            self._author = author.to_dict()
+            self._author = author
 
     @property
     def created(self):
@@ -2218,40 +2218,40 @@ class Group(BaseObject):
     def __init__(self, api=None, **kwargs):
         self.api = api
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The time the group was created
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.created_at = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: Deleted groups get marked as such
+        #:| Read-only: yes
         #:| Type: boolean
+        #:| Mandatory: no
         self.deleted = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: Automatically assigned when creating groups
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: no
         self.id = None
 
-        #:| Read-only: no
-        #:| Mandatory: yes
         #:| Comment: The name of the group
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: yes
         self.name = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The time of the last update of the group
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.updated_at = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The API url of this group
+        #:| Read-only: yes
         #:| Type: string
+        #:| Mandatory: no
         self.url = None
 
         for key, value in kwargs.items():
@@ -2260,7 +2260,7 @@ class Group(BaseObject):
     @property
     def created(self):
         """
-        |  Read-only: yes
+        |  Comment: The time the group was created
         """
         if self.created_at:
             return dateutil.parser.parse(self.created_at)
@@ -2273,7 +2273,7 @@ class Group(BaseObject):
     @property
     def updated(self):
         """
-        |  Read-only: yes
+        |  Comment: The time of the last update of the group
         """
         if self.updated_at:
             return dateutil.parser.parse(self.updated_at)
@@ -2305,53 +2305,53 @@ class CommentPrivacyChangeEvent(BaseObject):
     def comment(self, comment):
         if comment:
             self.comment_id = comment.id
-            self._comment = comment.to_dict()
+            self._comment = comment
 
 
 class GroupMembership(BaseObject):
     def __init__(self, api=None, **kwargs):
         self.api = api
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The time the membership was created
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.created_at = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: If true, tickets assigned directly to the agent will assume this membership's group.
+        #:| Read-only: no
         #:| Type: boolean
+        #:| Mandatory: no
         self.default = None
 
-        #:| Read-only: no
-        #:| Mandatory: yes
         #:| Comment: The id of a group
+        #:| Read-only: no
         #:| Type: integer
+        #:| Mandatory: yes
         self.group_id = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: Automatically assigned upon creation
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: no
         self.id = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The time of the last update of the membership
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.updated_at = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The API url of this record
+        #:| Read-only: yes
         #:| Type: string
+        #:| Mandatory: no
         self.url = None
 
-        #:| Read-only: no
-        #:| Mandatory: yes
         #:| Comment: The id of an agent
+        #:| Read-only: no
         #:| Type: integer
+        #:| Mandatory: yes
         self.user_id = None
 
         for key, value in kwargs.items():
@@ -2360,7 +2360,7 @@ class GroupMembership(BaseObject):
     @property
     def created(self):
         """
-        |  Read-only: yes
+        |  Comment: The time the membership was created
         """
         if self.created_at:
             return dateutil.parser.parse(self.created_at)
@@ -2373,7 +2373,7 @@ class GroupMembership(BaseObject):
     @property
     def group(self):
         """
-        |  Read-only: no
+        |  Comment: The id of a group
         """
         if self.api and self.group_id:
             return self.api._get_group(self.group_id)
@@ -2382,12 +2382,12 @@ class GroupMembership(BaseObject):
     def group(self, group):
         if group:
             self.group_id = group.id
-            self._group = group.to_dict()
+            self._group = group
 
     @property
     def updated(self):
         """
-        |  Read-only: yes
+        |  Comment: The time of the last update of the membership
         """
         if self.updated_at:
             return dateutil.parser.parse(self.updated_at)
@@ -2400,7 +2400,7 @@ class GroupMembership(BaseObject):
     @property
     def user(self):
         """
-        |  Read-only: no
+        |  Comment: The id of an agent
         """
         if self.api and self.user_id:
             return self.api._get_user(self.user_id)
@@ -2409,53 +2409,53 @@ class GroupMembership(BaseObject):
     def user(self, user):
         if user:
             self.user_id = user.id
-            self._user = user.to_dict()
+            self._user = user
 
 
 class OrganizationMembership(BaseObject):
     def __init__(self, api=None, **kwargs):
         self.api = api
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: When this record was created
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.created_at = None
 
-        #:| Read-only: no
-        #:| Mandatory: yes
         #:| Comment: Denotes whether this is the default organization membership for the user
+        #:| Read-only: no
         #:| Type: boolean
+        #:| Mandatory: yes
         self.default = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: Automatically assigned when creating memberships
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: no
         self.id = None
 
-        #:| Read-only: yes
-        #:| Mandatory: yes
         #:| Comment: The ID of the organization associated with this user, in this membership
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: yes
         self.organization_id = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: When this record last got updated
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.updated_at = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The API url of this membership
+        #:| Read-only: yes
         #:| Type: string
+        #:| Mandatory: no
         self.url = None
 
-        #:| Read-only: yes
-        #:| Mandatory: yes
         #:| Comment: The ID of the user for whom this memberships belongs
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: yes
         self.user_id = None
 
         for key, value in kwargs.items():
@@ -2464,7 +2464,7 @@ class OrganizationMembership(BaseObject):
     @property
     def created(self):
         """
-        |  Read-only: yes
+        |  Comment: When this record was created
         """
         if self.created_at:
             return dateutil.parser.parse(self.created_at)
@@ -2477,7 +2477,7 @@ class OrganizationMembership(BaseObject):
     @property
     def organization(self):
         """
-        |  Read-only: yes
+        |  Comment: The ID of the organization associated with this user, in this membership
         """
         if self.api and self.organization_id:
             return self.api._get_organization(self.organization_id)
@@ -2486,12 +2486,12 @@ class OrganizationMembership(BaseObject):
     def organization(self, organization):
         if organization:
             self.organization_id = organization.id
-            self._organization = organization.to_dict()
+            self._organization = organization
 
     @property
     def updated(self):
         """
-        |  Read-only: yes
+        |  Comment: When this record last got updated
         """
         if self.updated_at:
             return dateutil.parser.parse(self.updated_at)
@@ -2504,7 +2504,7 @@ class OrganizationMembership(BaseObject):
     @property
     def user(self):
         """
-        |  Read-only: yes
+        |  Comment: The ID of the user for whom this memberships belongs
         """
         if self.api and self.user_id:
             return self.api._get_user(self.user_id)
@@ -2513,7 +2513,7 @@ class OrganizationMembership(BaseObject):
     def user(self, user):
         if user:
             self.user_id = user.id
-            self._user = user.to_dict()
+            self._user = user
 
 
 class CreateEvent(BaseObject):
@@ -2567,82 +2567,82 @@ class Brand(BaseObject):
     def __init__(self, api=None, **kwargs):
         self.api = api
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: Logo image for this brand
+        #:| Read-only: no
         #:| Type: :class:`Attachment`
+        #:| Mandatory: no
         self._logo = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: If the brand is set as active
+        #:| Read-only: no
         #:| Type: boolean
+        #:| Mandatory: no
         self.active = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The url of the brand
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.brand_url = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The time the brand was created
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.created_at = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: Is the brand the default brand for this account
+        #:| Read-only: no
         #:| Type: boolean
+        #:| Mandatory: no
         self.default = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: If the brand has a Help Center
+        #:| Read-only: no
         #:| Type: boolean
+        #:| Mandatory: no
         self.has_help_center = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The state of the Help Center: enabled, disabled, or restricted
+        #:| Read-only: yes
         #:| Type: string
+        #:| Mandatory: no
         self.help_center_state = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The hostmapping to this brand, if any (only admins view this key)
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.host_mapping = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: Automatically assigned when the brand is created
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: no
         self.id = None
 
-        #:| Read-only: no
-        #:| Mandatory: yes
         #:| Comment: The name of the brand
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: yes
         self.name = None
 
-        #:| Read-only: no
-        #:| Mandatory: yes
         #:| Comment: The subdomain of the brand (only admins view this key)
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: yes
         self.subdomain = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The time of the last update of the brand
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.updated_at = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The API url of this brand
+        #:| Read-only: yes
         #:| Type: string
+        #:| Mandatory: no
         self.url = None
 
         for key, value in kwargs.items():
@@ -2651,7 +2651,7 @@ class Brand(BaseObject):
     @property
     def logo(self):
         """
-        |  Read-only: no
+        |  Comment: Logo image for this brand
         """
         if self.api and self._logo:
             return self.api._get_logo(self._logo)
@@ -2664,7 +2664,7 @@ class Brand(BaseObject):
     @property
     def created(self):
         """
-        |  Read-only: yes
+        |  Comment: The time the brand was created
         """
         if self.created_at:
             return dateutil.parser.parse(self.created_at)
@@ -2677,7 +2677,7 @@ class Brand(BaseObject):
     @property
     def updated(self):
         """
-        |  Read-only: yes
+        |  Comment: The time of the last update of the brand
         """
         if self.updated_at:
             return dateutil.parser.parse(self.updated_at)
@@ -2745,7 +2745,7 @@ class Audit(BaseObject):
     def author(self, author):
         if author:
             self.author_id = author.id
-            self._author = author.to_dict()
+            self._author = author
 
     @property
     def created(self):
@@ -2768,7 +2768,7 @@ class Audit(BaseObject):
     def ticket(self, ticket):
         if ticket:
             self.ticket_id = ticket.id
-            self._ticket = ticket.to_dict()
+            self._ticket = ticket
 
 
 class Thumbnail(BaseObject):
@@ -2788,34 +2788,34 @@ class Attachment(BaseObject):
     def __init__(self, api=None, **kwargs):
         self.api = api
 
-        #:| Read-only: yes
         #:| Comment: An array of Photo objects. Note that thumbnails do not have thumbnails.
         #:| Type: array
+        #:| Read-only: yes
         self._thumbnails = None
 
-        #:| Read-only: yes
         #:| Comment: The content type of the image. Example value: image/png
         #:| Type: string
+        #:| Read-only: yes
         self.content_type = None
 
-        #:| Read-only: yes
         #:| Comment: A full URL where the attachment image file can be downloaded
         #:| Type: string
+        #:| Read-only: yes
         self.content_url = None
 
-        #:| Read-only: yes
         #:| Comment: The name of the image file
         #:| Type: string
+        #:| Read-only: yes
         self.file_name = None
 
-        #:| Read-only: yes
         #:| Comment: Automatically assigned when created
         #:| Type: integer
+        #:| Read-only: yes
         self.id = None
 
-        #:| Read-only: yes
         #:| Comment: The size of the image file in bytes
         #:| Type: integer
+        #:| Read-only: yes
         self.size = None
 
         for key, value in kwargs.items():
@@ -2824,7 +2824,7 @@ class Attachment(BaseObject):
     @property
     def thumbnails(self):
         """
-        |  Read-only: yes
+        |  Comment: An array of Photo objects. Note that thumbnails do not have thumbnails.
         """
         if self.api and self._thumbnails:
             return self.api._get_thumbnails(self._thumbnails)
@@ -2839,76 +2839,76 @@ class SuspendedTicket(BaseObject):
     def __init__(self, api=None, **kwargs):
         self.api = api
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The author id (if available), name and email
+        #:| Read-only: yes
         #:| Type: object
+        #:| Mandatory: no
         self._author = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: This object explains how the ticket was created
+        #:| Read-only: yes
         #:| Type: :class:`Via`
+        #:| Mandatory: no
         self._via = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The id of the brand this ticket is associated with - only applicable for enterprise accounts
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: no
         self.brand_id = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: Why the ticket was suspended
+        #:| Read-only: yes
         #:| Type: string
+        #:| Mandatory: no
         self.cause = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The content that was flagged
+        #:| Read-only: yes
         #:| Type: string
+        #:| Mandatory: no
         self.content = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: When this record was created
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.created_at = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: Automatically assigned
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: no
         self.id = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The original recipient e-mail address of the ticket
+        #:| Read-only: yes
         #:| Type: string
+        #:| Mandatory: no
         self.recipient = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The value of the subject field for this ticket
+        #:| Read-only: yes
         #:| Type: string
+        #:| Mandatory: no
         self.subject = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The ticket ID this suspended email is associated with, if available
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: no
         self.ticket_id = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: When this record last got updated
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.updated_at = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The API url of this ticket
+        #:| Read-only: yes
         #:| Type: string
+        #:| Mandatory: no
         self.url = None
 
         for key, value in kwargs.items():
@@ -2917,7 +2917,7 @@ class SuspendedTicket(BaseObject):
     @property
     def via(self):
         """
-        |  Read-only: yes
+        |  Comment: This object explains how the ticket was created
         """
         if self.api and self._via:
             return self.api._get_via(self._via)
@@ -2930,7 +2930,7 @@ class SuspendedTicket(BaseObject):
     @property
     def brand(self):
         """
-        |  Read-only: yes
+        |  Comment: The id of the brand this ticket is associated with - only applicable for enterprise accounts
         """
         if self.api and self.brand_id:
             return self.api._get_brand(self.brand_id)
@@ -2939,12 +2939,12 @@ class SuspendedTicket(BaseObject):
     def brand(self, brand):
         if brand:
             self.brand_id = brand.id
-            self._brand = brand.to_dict()
+            self._brand = brand
 
     @property
     def created(self):
         """
-        |  Read-only: yes
+        |  Comment: When this record was created
         """
         if self.created_at:
             return dateutil.parser.parse(self.created_at)
@@ -2957,7 +2957,7 @@ class SuspendedTicket(BaseObject):
     @property
     def ticket(self):
         """
-        |  Read-only: yes
+        |  Comment: The ticket ID this suspended email is associated with, if available
         """
         if self.api and self.ticket_id:
             return self.api._get_ticket(self.ticket_id)
@@ -2966,12 +2966,12 @@ class SuspendedTicket(BaseObject):
     def ticket(self, ticket):
         if ticket:
             self.ticket_id = ticket.id
-            self._ticket = ticket.to_dict()
+            self._ticket = ticket
 
     @property
     def updated(self):
         """
-        |  Read-only: yes
+        |  Comment: When this record last got updated
         """
         if self.updated_at:
             return dateutil.parser.parse(self.updated_at)
@@ -3048,88 +3048,88 @@ class Organization(BaseObject):
     def __init__(self, api=None, **kwargs):
         self.api = api
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: An array of domain names associated with this organization
+        #:| Read-only: no
         #:| Type: array
+        #:| Mandatory: no
         self._domain_names = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: Custom fields for this organization
+        #:| Read-only: no
         #:| Type: :class:`hash`
+        #:| Mandatory: no
         self._organization_fields = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The time the organization was created
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.created_at = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: Any details obout the organization, such as the address
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.details = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: A unique external id to associate organizations to an external record
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.external_id = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: New tickets from users in this organization are automatically put in this group
+        #:| Read-only: no
         #:| Type: integer
+        #:| Mandatory: no
         self.group_id = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: Automatically assigned when the organization is created
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: no
         self.id = None
 
-        #:| Read-only: no
-        #:| Mandatory: yes
         #:| Comment: The name of the organization
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: yes
         self.name = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: Any notes you have about the organization
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.notes = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: End users in this organization are able to see each other's comments on tickets
+        #:| Read-only: no
         #:| Type: boolean
+        #:| Mandatory: no
         self.shared_comments = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: End users in this organization are able to see each other's tickets
+        #:| Read-only: no
         #:| Type: boolean
+        #:| Mandatory: no
         self.shared_tickets = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The tags of the organization
+        #:| Read-only: no
         #:| Type: array
+        #:| Mandatory: no
         self.tags = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The time of the last update of the organization
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.updated_at = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The API url of this organization
+        #:| Read-only: yes
         #:| Type: string
+        #:| Mandatory: no
         self.url = None
 
         for key, value in kwargs.items():
@@ -3138,7 +3138,7 @@ class Organization(BaseObject):
     @property
     def organization_fields(self):
         """
-        |  Read-only: no
+        |  Comment: Custom fields for this organization
         """
         if self.api and self._organization_fields:
             return self.api._get_organization_fields(self._organization_fields)
@@ -3151,7 +3151,7 @@ class Organization(BaseObject):
     @property
     def created(self):
         """
-        |  Read-only: yes
+        |  Comment: The time the organization was created
         """
         if self.created_at:
             return dateutil.parser.parse(self.created_at)
@@ -3164,7 +3164,7 @@ class Organization(BaseObject):
     @property
     def group(self):
         """
-        |  Read-only: no
+        |  Comment: New tickets from users in this organization are automatically put in this group
         """
         if self.api and self.group_id:
             return self.api._get_group(self.group_id)
@@ -3173,12 +3173,12 @@ class Organization(BaseObject):
     def group(self, group):
         if group:
             self.group_id = group.id
-            self._group = group.to_dict()
+            self._group = group
 
     @property
     def updated(self):
         """
-        |  Read-only: yes
+        |  Comment: The time of the last update of the organization
         """
         if self.updated_at:
             return dateutil.parser.parse(self.updated_at)
@@ -3193,173 +3193,173 @@ class Ticket(BaseObject):
     def __init__(self, api=None, **kwargs):
         self.api = api
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The custom fields of the ticket
+        #:| Read-only: no
         #:| Type: array
+        #:| Mandatory: no
         self._custom_fields = None
         self._fields = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The satisfaction rating of the ticket, if it exists, or the state of satisfaction, 'offered' or 'unoffered'
+        #:| Read-only: yes
         #:| Type: object
+        #:| Mandatory: no
         self._satisfaction_rating = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: This object explains how the ticket was created
+        #:| Read-only: yes
         #:| Type: :class:`Via`
+        #:| Mandatory: no
         self._via = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: What agent is currently assigned to the ticket
+        #:| Read-only: no
         #:| Type: integer
+        #:| Mandatory: no
         self.assignee_id = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The id of the brand this ticket is associated with - only applicable for enterprise accounts
+        #:| Read-only: no
         #:| Type: integer
+        #:| Mandatory: no
         self.brand_id = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: Who are currently CC'ed on the ticket
+        #:| Read-only: no
         #:| Type: array
+        #:| Mandatory: no
         self.collaborator_ids = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: When this record was created
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.created_at = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The first comment on the ticket
+        #:| Read-only: yes
         #:| Type: string
+        #:| Mandatory: no
         self.description = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: If this is a ticket of type "task" it has a due date.  Due date format uses ISO 8601 format.
+        #:| Read-only: no
         #:| Type: date
+        #:| Mandatory: no
         self.due_at = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: An id you can use to link Zendesk tickets to local records
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.external_id = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The topic this ticket originated from, if any
+        #:| Read-only: no
         #:| Type: integer
+        #:| Mandatory: no
         self.forum_topic_id = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The group this ticket is assigned to
+        #:| Read-only: no
         #:| Type: integer
+        #:| Mandatory: no
         self.group_id = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: Is true of this ticket has been marked as a problem, false otherwise
+        #:| Read-only: yes
         #:| Type: boolean
+        #:| Mandatory: no
         self.has_incidents = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: Automatically assigned when creating tickets
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: no
         self.id = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The organization of the requester
+        #:| Read-only: yes
         #:| Type: integer
+        #:| Mandatory: no
         self.organization_id = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: Priority, defines the urgency with which the ticket should be addressed: "urgent", "high", "normal", "low"
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.priority = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The problem this incident is linked to, if any
+        #:| Read-only: no
         #:| Type: integer
+        #:| Mandatory: no
         self.problem_id = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The dynamic content placeholder, if present, or the "subject" value, if not. See Dynamic Content
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.raw_subject = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The original recipient e-mail address of the ticket
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.recipient = None
 
-        #:| Read-only: no
-        #:| Mandatory: yes
         #:| Comment: The user who requested this ticket
+        #:| Read-only: no
         #:| Type: integer
+        #:| Mandatory: yes
         self.requester_id = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The ids of the sharing agreements used for this ticket
+        #:| Read-only: yes
         #:| Type: array
+        #:| Mandatory: no
         self.sharing_agreement_ids = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The state of the ticket, "new", "open", "pending", "hold", "solved", "closed"
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.status = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The value of the subject field for this ticket
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.subject = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The user who submitted the ticket; The submitter always becomes the author of the first comment on the ticket.
+        #:| Read-only: no
         #:| Type: integer
+        #:| Mandatory: no
         self.submitter_id = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The array of tags applied to this ticket
+        #:| Read-only: no
         #:| Type: array
+        #:| Mandatory: no
         self.tags = None
 
-        #:| Read-only: no
-        #:| Mandatory: no
         #:| Comment: The type of this ticket, i.e. "problem", "incident", "question" or "task"
+        #:| Read-only: no
         #:| Type: string
+        #:| Mandatory: no
         self.type = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: When this record last got updated
+        #:| Read-only: yes
         #:| Type: date
+        #:| Mandatory: no
         self.updated_at = None
 
-        #:| Read-only: yes
-        #:| Mandatory: no
         #:| Comment: The API url of this ticket
+        #:| Read-only: yes
         #:| Type: string
+        #:| Mandatory: no
         self.url = None
 
         for key, value in kwargs.items():
@@ -3368,7 +3368,7 @@ class Ticket(BaseObject):
     @property
     def custom_fields(self):
         """
-        |  Read-only: no
+        |  Comment: The custom fields of the ticket
         """
         if self.api and self._custom_fields:
             return self.api._get_custom_fields(self._custom_fields)
@@ -3392,7 +3392,7 @@ class Ticket(BaseObject):
     @property
     def satisfaction_rating(self):
         """
-        |  Read-only: yes
+        |  Comment: The satisfaction rating of the ticket, if it exists, or the state of satisfaction, 'offered' or 'unoffered'
         """
         if self.api and self._satisfaction_rating:
             return self.api._get_satisfaction_rating(self._satisfaction_rating)
@@ -3405,7 +3405,7 @@ class Ticket(BaseObject):
     @property
     def via(self):
         """
-        |  Read-only: yes
+        |  Comment: This object explains how the ticket was created
         """
         if self.api and self._via:
             return self.api._get_via(self._via)
@@ -3418,7 +3418,7 @@ class Ticket(BaseObject):
     @property
     def assignee(self):
         """
-        |  Read-only: no
+        |  Comment: What agent is currently assigned to the ticket
         """
         if self.api and self.assignee_id:
             return self.api._get_user(self.assignee_id)
@@ -3427,12 +3427,12 @@ class Ticket(BaseObject):
     def assignee(self, assignee):
         if assignee:
             self.assignee_id = assignee.id
-            self._assignee = assignee.to_dict()
+            self._assignee = assignee
 
     @property
     def brand(self):
         """
-        |  Read-only: no
+        |  Comment: The id of the brand this ticket is associated with - only applicable for enterprise accounts
         """
         if self.api and self.brand_id:
             return self.api._get_brand(self.brand_id)
@@ -3441,12 +3441,12 @@ class Ticket(BaseObject):
     def brand(self, brand):
         if brand:
             self.brand_id = brand.id
-            self._brand = brand.to_dict()
+            self._brand = brand
 
     @property
     def collaborators(self):
         """
-        |  Read-only: no
+        |  Comment: Who are currently CC'ed on the ticket
         """
         if self.api and self.collaborator_ids:
             return self.api._get_users(self.collaborator_ids)
@@ -3455,12 +3455,12 @@ class Ticket(BaseObject):
     def collaborators(self, collaborators):
         if collaborators:
             self.collaborator_ids = [o.id for o in collaborators]
-            self._collaborators = collaborators.to_dict()
+            self._collaborators = collaborators
 
     @property
     def created(self):
         """
-        |  Read-only: yes
+        |  Comment: When this record was created
         """
         if self.created_at:
             return dateutil.parser.parse(self.created_at)
@@ -3473,7 +3473,7 @@ class Ticket(BaseObject):
     @property
     def due(self):
         """
-        |  Read-only: no
+        |  Comment: If this is a ticket of type "task" it has a due date.  Due date format uses ISO 8601 format.
         """
         if self.due_at:
             return dateutil.parser.parse(self.due_at)
@@ -3486,7 +3486,7 @@ class Ticket(BaseObject):
     @property
     def forum_topic(self):
         """
-        |  Read-only: no
+        |  Comment: The topic this ticket originated from, if any
         """
         if self.api and self.forum_topic_id:
             return self.api._get_topic(self.forum_topic_id)
@@ -3495,12 +3495,12 @@ class Ticket(BaseObject):
     def forum_topic(self, forum_topic):
         if forum_topic:
             self.forum_topic_id = forum_topic.id
-            self._forum_topic = forum_topic.to_dict()
+            self._forum_topic = forum_topic
 
     @property
     def group(self):
         """
-        |  Read-only: no
+        |  Comment: The group this ticket is assigned to
         """
         if self.api and self.group_id:
             return self.api._get_group(self.group_id)
@@ -3509,12 +3509,12 @@ class Ticket(BaseObject):
     def group(self, group):
         if group:
             self.group_id = group.id
-            self._group = group.to_dict()
+            self._group = group
 
     @property
     def organization(self):
         """
-        |  Read-only: yes
+        |  Comment: The organization of the requester
         """
         if self.api and self.organization_id:
             return self.api._get_organization(self.organization_id)
@@ -3523,12 +3523,12 @@ class Ticket(BaseObject):
     def organization(self, organization):
         if organization:
             self.organization_id = organization.id
-            self._organization = organization.to_dict()
+            self._organization = organization
 
     @property
     def problem(self):
         """
-        |  Read-only: no
+        |  Comment: The problem this incident is linked to, if any
         """
         if self.api and self.problem_id:
             return self.api._get_problem(self.problem_id)
@@ -3537,12 +3537,12 @@ class Ticket(BaseObject):
     def problem(self, problem):
         if problem:
             self.problem_id = problem.id
-            self._problem = problem.to_dict()
+            self._problem = problem
 
     @property
     def requester(self):
         """
-        |  Read-only: no
+        |  Comment: The user who requested this ticket
         """
         if self.api and self.requester_id:
             return self.api._get_user(self.requester_id)
@@ -3551,12 +3551,12 @@ class Ticket(BaseObject):
     def requester(self, requester):
         if requester:
             self.requester_id = requester.id
-            self._requester = requester.to_dict()
+            self._requester = requester
 
     @property
     def sharing_agreements(self):
         """
-        |  Read-only: yes
+        |  Comment: The ids of the sharing agreements used for this ticket
         """
         if self.api and self.sharing_agreement_ids:
             return self.api._get_sharing_agreements(self.sharing_agreement_ids)
@@ -3565,12 +3565,12 @@ class Ticket(BaseObject):
     def sharing_agreements(self, sharing_agreements):
         if sharing_agreements:
             self.sharing_agreement_ids = [o.id for o in sharing_agreements]
-            self._sharing_agreements = sharing_agreements.to_dict()
+            self._sharing_agreements = sharing_agreements
 
     @property
     def submitter(self):
         """
-        |  Read-only: no
+        |  Comment: The user who submitted the ticket; The submitter always becomes the author of the first comment on the ticket.
         """
         if self.api and self.submitter_id:
             return self.api._get_user(self.submitter_id)
@@ -3579,12 +3579,12 @@ class Ticket(BaseObject):
     def submitter(self, submitter):
         if submitter:
             self.submitter_id = submitter.id
-            self._submitter = submitter.to_dict()
+            self._submitter = submitter
 
     @property
     def updated(self):
         """
-        |  Read-only: yes
+        |  Comment: When this record last got updated
         """
         if self.updated_at:
             return dateutil.parser.parse(self.updated_at)
