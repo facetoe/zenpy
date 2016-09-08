@@ -1,7 +1,7 @@
 import json
 from time import sleep
 
-from zenpy.lib.endpoint import Endpoint, AttachmentEndpoint
+from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import APIException, RecordNotFoundException
 from zenpy.lib.generator import ResultGenerator
 from zenpy.lib.manager import ApiObjectEncoder, ObjectManager
@@ -13,6 +13,10 @@ from zenpy.lib.exception import ZenpyException
 import logging
 
 log = logging.getLogger(__name__)
+
+
+def serialize(api_object):
+    return json.loads(json.dumps(api_object, cls=ApiObjectEncoder))
 
 
 class BaseApi(object):
@@ -30,17 +34,15 @@ class BaseApi(object):
 
     def _post(self, url, payload, data=None):
         log.debug("POST: %s - %s" % (url, str(payload)))
-        payload = json.loads(json.dumps(payload, cls=ApiObjectEncoder))
         headers = None
         if data:
             headers = {'Content-Type': 'application/octet-stream'}
-        response = self.session.post(url, json=payload, data=data, headers=headers)
+        response = self.session.post(url, json=serialize(payload), data=data, headers=headers)
         self._check_and_cache_response(response)
         return self._build_response(response.json())
 
     def _put(self, url, payload):
-        payload = json.loads(json.dumps(payload, cls=ApiObjectEncoder))
-        return self._call_api(self.session.put, url, json=payload)
+        return self._call_api(self.session.put, url, json=serialize(payload))
 
     def _delete(self, url, payload=None):
         return self._call_api(self.session.delete, url, json=payload)
@@ -597,7 +599,8 @@ class AttachmentApi(Api):
         :return: :class:`Upload` object containing a token and other information (see https://developer.zendesk.com/rest_api/docs/core/attachments#uploading-files)
         """
         with open(file_path, 'rb') as upfile:
-            return self._post(self._get_url(self.endpoint.upload(filename=upfile.name, token=token)), data=upfile, payload={})
+            return self._post(self._get_url(self.endpoint.upload(filename=upfile.name, token=token)), data=upfile,
+                              payload={})
 
 
 class EndUserApi(CRUDApi):
