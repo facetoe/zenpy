@@ -1,6 +1,8 @@
 import logging
 from json import JSONEncoder
 
+from datetime import datetime, date
+
 from zenpy.lib.api_objects import Activity, Request, UserRelated, OrganizationMembership, Upload
 from zenpy.lib.api_objects import Attachment
 from zenpy.lib.api_objects import Audit
@@ -60,6 +62,10 @@ class ApiObjectEncoder(JSONEncoder):
     def default(self, o):
         if hasattr(o, 'to_dict'):
             return o.to_dict()
+        elif isinstance(o, datetime):
+            return o.date().isoformat()
+        elif isinstance(o, date):
+            return o.isoformat()
 
 
 class ClassManager(object):
