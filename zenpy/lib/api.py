@@ -322,7 +322,7 @@ class CRUDApi(ModifiableApi):
         else:
             return self._do(self._put, dict(id=items.id, sideload=False), payload=payload)
 
-    def _delete(self, items):
+    def delete(self, items):
         """
         Delete (DELETE) one or more API objects. After successfully deleting the objects from the API
         they will also be removed from the relevant Zenpy caches.
