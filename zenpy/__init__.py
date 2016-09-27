@@ -17,135 +17,156 @@ class Zenpy(object):
     """
     """
 
-    def __init__(self, subdomain, email=None, token=None, oauth_token=None, password=None, session=None):
+    def __init__(self, subdomain, email=None, token=None, oauth_token=None, password=None, session=None, timeout=60.0):
         session = self._init_session(email, token, oauth_token, password, session)
         endpoint = Endpoint()
 
         self.users = UserApi(
-            subdomain,
+            subdomain=subdomain,
             session=session,
+            timeout=timeout,
             endpoint=endpoint.users)
 
         self.user_fields = Api(
-            subdomain,
+            subdomain=subdomain,
             session=session,
+            timeout=timeout,
             endpoint=endpoint.user_fields,
             object_type='user_field'
         )
 
         self.groups = Api(
-            subdomain,
+            subdomain=subdomain,
             session=session,
+            timeout=timeout,
             endpoint=endpoint.groups,
             object_type='group')
 
         self.organizations = OrganizationApi(
-            subdomain,
+            subdomain=subdomain,
             session=session,
+            timeout=timeout,
             endpoint=endpoint.organizations)
 
         self.organization_memberships = OrganizationMembershipApi(
-            subdomain,
+            subdomain=subdomain,
             session=session,
+            timeout=timeout,
             endpoint=endpoint.organization_memberships
         )
 
         self.tickets = TicketApi(
-            subdomain,
+            subdomain=subdomain,
             session=session,
+            timeout=timeout,
             endpoint=endpoint.tickets)
 
         self.suspended_tickets = SuspendedTicketApi(
-            subdomain,
+            subdomain=subdomain,
             session=session,
+            timeout=timeout,
+            object_type='suspended_ticket',
             endpoint=endpoint.suspended_tickets)
 
         self.search = Api(
-            subdomain,
+            subdomain=subdomain,
             session=session,
+            timeout=timeout,
             endpoint=endpoint.search,
             object_type='results')
 
         self.topics = Api(
-            subdomain,
+            subdomain=subdomain,
             session=session,
+            timeout=timeout,
             endpoint=endpoint.topics,
             object_type='topic')
 
         self.attachments = AttachmentApi(
-            subdomain,
+            subdomain=subdomain,
             session=session,
+            timeout=timeout,
             endpoint=endpoint.attachments)
 
         self.brands = Api(
-            subdomain,
+            subdomain=subdomain,
             session=session,
+            timeout=timeout,
             endpoint=endpoint.brands,
             object_type='brand')
 
         self.job_status = Api(
-            subdomain,
+            subdomain=subdomain,
             session=session,
+            timeout=timeout,
             endpoint=endpoint.job_statuses,
             object_type='job_status')
 
         self.tags = Api(
-            subdomain,
+            subdomain=subdomain,
             session=session,
+            timeout=timeout,
             endpoint=endpoint.tags,
             object_type='tag')
 
         self.satisfaction_ratings = Api(
-            subdomain,
+            subdomain=subdomain,
             session=session,
+            timeout=timeout,
             endpoint=endpoint.satisfaction_ratings,
             object_type='satisfaction_rating'
         )
 
         self.activities = Api(
-            subdomain,
+            subdomain=subdomain,
             session=session,
-
+            timeout=timeout,
             endpoint=endpoint.activities,
             object_type='activity'
         )
 
         self.group_memberships = Api(
-            subdomain,
+            subdomain=subdomain,
             session=session,
+            timeout=timeout,
             endpoint=endpoint.group_memberships,
             object_type='group_membership'
         )
 
         self.end_user = EndUserApi(
-            subdomain,
+            subdomain=subdomain,
             session=session,
+            timeout=timeout,
             endpoint=endpoint.end_user
         )
 
         self.ticket_metrics = Api(
-            subdomain,
+            subdomain=subdomain,
             session=session,
+            timeout=timeout,
             endpoint=endpoint.ticket_metrics,
             object_type='ticket_metric'
         )
 
         self.ticket_fields = Api(
-            subdomain,
+            subdomain=subdomain,
             session=session,
+            timeout=timeout,
             endpoint=endpoint.ticket_fields,
             object_type='ticket_field'
         )
 
         self.ticket_import = TicketImportAPI(
-            subdomain,
+            subdomain=subdomain,
             session=session,
+            timeout=timeout,
             endpoint=endpoint.ticket_import
         )
 
         self.requests = RequestAPI(
-            subdomain,
+            subdomain=subdomain,
             session=session,
+            timeout=timeout,
             endpoint=endpoint.requests
         )
 
