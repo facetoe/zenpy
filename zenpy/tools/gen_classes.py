@@ -50,7 +50,11 @@ class {{object.name}}(BaseObject):
 
 class Init(TemplateObject):
     OBJECT_TEMPLATE = """
+    {% if object.init_params %}
+    def __init__(self, api=None, {{ object.init_params }}, **kwargs):
+    {% else %}
     def __init__(self, api=None, **kwargs):
+    {% endif %}
         self.api = api
         {% for attr in object.attributes -%}
         {% if attr.attr_docs and attr.attr_name %}
@@ -58,7 +62,9 @@ class Init(TemplateObject):
         #:| {{ docline-}}
         {% endfor %}
         {% endif -%}
-        {% if attr.attr_name -%}
+        {% if attr.attr_name and not attr.attr_name.startswith('_') -%}
+        self.{{attr.attr_name}} = {{attr.attr_name}}
+        {% elif attr.attr_name %}
         self.{{attr.attr_name}} = None
         {% endif -%}
         {% endfor %}
@@ -68,6 +74,11 @@ class Init(TemplateObject):
     """
 
     def __init__(self, attributes):
+        self.init_params = ", ".join(
+            ["{}=None".format(a.attr_name)
+             for a in attributes
+             if not a.attr_name.startswith('_')
+             and a.attr_name])
         self.attributes = attributes
 
 
