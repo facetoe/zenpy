@@ -59,6 +59,9 @@ First, create a :class:`Zenpy` object:
         'subdomain': 'yoursubdomain'
     }
 
+    # Import the Zenpy Object
+    from zenpy import Zenpy
+
     # Default
     zenpy = Zenpy(**creds)
 
