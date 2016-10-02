@@ -15,7 +15,7 @@ Please report bugs!
       * [Creating a ticket with a custom field set](#creating-a-ticket-with-a-custom-field-set)
       * [Updating a custom field on a ticket](#updating-a-custom-field-on-a-ticket)
 * [Documentation](#documentation)
-  * [Contributions](#contributions)
+* [Contributions](#contributions)
 
 
 ## Quickstart
