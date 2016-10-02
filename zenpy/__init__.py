@@ -14,11 +14,32 @@ __author__ = 'facetoe'
 
 
 class Zenpy(object):
-    """
-    """
+    """"""
 
-    def __init__(self, subdomain, email=None, token=None, oauth_token=None, password=None, session=None, timeout=60.0):
+    DEFAULT_TIMEOUT = 60.0
+
+    def __init__(self, subdomain, email=None, token=None, oauth_token=None, password=None, session=None, timeout=None):
+        """
+        Python Wrapper for the Zendesk API.
+
+        There are several ways to authenticate with the Zendesk API:
+            * Email and password
+            * Email and Zendesk API token
+            * Email and OAuth token
+            * Existing authenticated Requests Session object.
+
+
+        :param subdomain: your Zendesk subdomain
+        :param email: email address
+        :param token: Zendesk API token
+        :param oauth_token: OAuth token
+        :param password: Zendesk password
+        :param session: Existing Requests Session object
+        :param timeout: Global timeout on API requests.
+        """
+
         session = self._init_session(email, token, oauth_token, password, session)
+        timeout = timeout or self.DEFAULT_TIMEOUT
         endpoint = Endpoint()
 
         self.users = UserApi(
