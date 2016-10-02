@@ -22,6 +22,52 @@ for ticket in zenpy.search("party", type='ticket', assignee="face"):
     print(ticket)
 ```
 
+## Examples
+
+##### Commenting on a ticket
+
+```python
+from zenpy.lib.api_objects import Comment
+
+ticket = zenpy.tickets(id=some_ticket_id)
+ticket.comment = Comment(body="Important private comment", public=False)
+zenpy.tickets.update(ticket)
+```
+
+##### Uploading an attachment
+
+```python
+from zenpy.lib.api_objects import Comment
+
+# Upload the file to Zendesk and obtain a Upload object
+upload_object = zenpy.attachments.upload('/tmp/awesome_file.txt')
+
+ticket = zenpy.tickets(id=some_ticket_id)
+ticket.comment = Comment(body='This comment has my file attached', uploads=[upload_object.token])
+zenpy.tickets.update(ticket)
+```
+
+##### Creating a ticket with a custom field set
+
+```python
+from zenpy.lib.api_objects import CustomField, Ticket
+
+ticket = zenpy.tickets.create(Ticket(
+    subject='Has custom field',
+    description="Wow, such field",
+    custom_fields=[CustomField(id=43528467, value=1337)]
+))
+```
+
+##### Updating a custom field on a ticket
+
+```python
+from zenpy.lib.api_objects import CustomField
+ticket = zenpy.tickets(id=some_ticket_id)
+ticket.custom_fields.append(CustomField(id=43528467, value=1337))
+zenpy.tickets.update(ticket)
+```
+
 ## Documentation
 
 Check out the [documentation](http://docs.facetoe.com.au/) for more info.
