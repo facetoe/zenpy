@@ -52,7 +52,7 @@ zenpy.tickets.update(ticket)
 ```python
 from zenpy.lib.api_objects import CustomField, Ticket
 
-ticket = zenpy.tickets.create(Ticket(
+ticket_audit = zenpy.tickets.create(Ticket(
     subject='Has custom field',
     description="Wow, such field",
     custom_fields=[CustomField(id=43528467, value=1337)]
