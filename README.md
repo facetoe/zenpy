@@ -8,6 +8,16 @@ Zenpy supports both Python2 and Python3.
 
 Please report bugs!
 
+* [Quickstart](#quickstart)
+* [Examples](#examples)
+      * [Commenting on a ticket](#commenting-on-a-ticket)
+      * [Uploading an attachment](#uploading-an-attachment)
+      * [Creating a ticket with a custom field set](#creating-a-ticket-with-a-custom-field-set)
+      * [Updating a custom field on a ticket](#updating-a-custom-field-on-a-ticket)
+* [Documentation](#documentation)
+  * [Contributions](#contributions)
+
+
 ## Quickstart
 
 ```python
