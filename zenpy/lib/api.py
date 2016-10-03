@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 from time import sleep
 
 from zenpy.lib.endpoint import Endpoint
@@ -579,17 +580,20 @@ class AttachmentApi(Api):
             raise ZenpyException("Attachment endpoint requires an id")
         return Api.__call__(self, *args, **kwargs)
 
-    def upload(self, file_path, token=None):
+    def upload(self, file_path, token=None, target_name=None):
         """
         Upload a file to Zendesk.
 
         :param file_path: path to file to upload
         :param token: upload token for uploading multiple files
+        :param target_name: name of the file inside Zendesk
         :return: :class:`Upload` object containing a token and other information
                     (see https://developer.zendesk.com/rest_api/docs/core/attachments#uploading-files)
         """
         with open(file_path, 'rb') as upfile:
-            return self.post(self._get_url(self.endpoint.upload(filename=upfile.name, token=token)),
+            if(target_name is None):
+                target_name = upfile.name
+            return self.post(self._get_url(self.endpoint.upload(filename=target_name, token=token)),
                              data=upfile,
                              payload={})
 
