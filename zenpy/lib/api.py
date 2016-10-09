@@ -282,7 +282,7 @@ class ModifiableApi(Api):
                 raise ZenpyException("Invalid type - expected %(expected_class)s" % locals())
         else:
             if items.__class__ is not expected_class:
-                raise Exception("Invalid type - expected %(expected_class)s" % locals())
+                raise ZenpyException("Invalid type - expected %(expected_class)s" % locals())
 
     def _do(self, action, endpoint_kwargs, payload=None, endpoint=None):
         if not endpoint:
