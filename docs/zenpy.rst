@@ -84,13 +84,13 @@ search documentation and are mapped as follows:
     +-----------------+------------------+
     | keyword         | : (equality)     |
     +-----------------+------------------+
-    | \*_greater_than | >                |
+    | \*_greater_than | > (numeric|type) |
     +-----------------+------------------+
-    | \*_less_than    | <                |
+    | \*_less_than    | < (numeric|type) |
     +-----------------+------------------+
-    | \*_after        | <                |
+    | \*_after        | > (time|date)    |
     +-----------------+------------------+
-    | \*_before       | <                |
+    | \*_before       | < (time|date)    |
     +-----------------+------------------+
     | minus           | \- (negation)    |
     +-----------------+------------------+
