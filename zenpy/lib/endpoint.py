@@ -220,8 +220,8 @@ class SearchEndpoint(BaseEndpoint):
         return "%(query)s%(search_parameters)s%(sort_section)s" % locals()
 
     def format_between(self, key, values):
-        if not isinstance(values, list):
-            raise ZenpyException("*_between requires a list!")
+        if not isinstance(values, list) and not isinstance(values, tuple):
+            raise ZenpyException("*_between requires a list or tuple!")
         elif not len(values) == 2:
             raise ZenpyException("*_between requires exactly 2 items!")
         elif not all([isinstance(d, datetime) for d in values]):
