@@ -180,16 +180,17 @@ class SearchEndpoint(BaseEndpoint):
         modifiers = list()
         sort_order = list()
         for key, value in kwargs.items():
-            if key.endswith('_between'):
-                modifiers.append(self.format_between(key, value))
-            elif isinstance(value, list):
-                modifiers.append(self.format_or(key, value))
-            elif key in ('sort_by', 'sort_order'):
-                sort_order.append("%s=%s" % (key, value))
-            elif isinstance(value, datetime):
+            if isinstance(value, datetime):
                 kwargs[key] = value.strftime(self.ZENDESK_DATE_FORMAT)
             elif isinstance(value, list) and key == 'ids':
-                value = self._format_many(value)
+                kwargs[key] = self._format_many(value)
+            elif isinstance(value, list):
+                modifiers.append(self.format_or(key, value))
+
+            if key.endswith('_between'):
+                modifiers.append(self.format_between(key, value))
+            elif key in ('sort_by', 'sort_order'):
+                sort_order.append("%s=%s" % (key, value))
             elif key.endswith('_after'):
                 renamed_kwargs[key.replace('_after', '>')] = kwargs[key]
             elif key.endswith('_before'):
