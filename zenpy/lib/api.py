@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 from time import sleep
 
 from zenpy.lib.endpoint import Endpoint
@@ -579,22 +580,43 @@ class AttachmentApi(Api):
             raise ZenpyException("Attachment endpoint requires an id")
         return Api.__call__(self, *args, **kwargs)
 
-    def upload(self, file_path, token=None, target_name=None):
+    def upload(self, fp, token=None, target_name=None):
         """
         Upload a file to Zendesk.
 
-        :param file_path: path to file to upload
+        :param fp: file object, StringIO instance, content, or file path to be
+                   uploaded
         :param token: upload token for uploading multiple files
         :param target_name: name of the file inside Zendesk
         :return: :class:`Upload` object containing a token and other information
                     (see https://developer.zendesk.com/rest_api/docs/core/attachments#uploading-files)
         """
-        with open(file_path, 'rb') as upfile:
-            if(target_name is None):
-                target_name = upfile.name
-            return self.post(self._get_url(self.endpoint.upload(filename=target_name, token=token)),
-                             data=upfile,
-                             payload={})
+
+        if hasattr(fp, 'read'):
+            # File-like objects such as:
+            #   PY3: io.StringIO, io.TextIOBase, io.BufferedIOBase
+            #   PY2: file, io.StringIO, StringIO.StringIO, cStringIO.StringIO
+
+            if not hasattr(fp, 'name') and not target_name:
+                raise ZenpyException("upload requires a target file name")
+            else:
+                target_name = target_name or fp.name
+
+        elif isinstance(fp, str):
+            if os.path.isfile(fp):
+                fp = open(fp, 'rb')
+                target_name = target_name or fp.name
+            elif not target_name:
+                # Valid string, which is not a path, and without a target name
+                raise ZenpyException("upload requires a target file name")
+
+        elif not target_name:
+            # Other serializable types accepted by requests (like dict)
+            raise ZenpyException("upload requires a target file name")
+
+        return self.post(self._get_url(self.endpoint.upload(filename=target_name, token=token)),
+                         data=fp,
+                         payload={})
 
 
 class EndUserApi(CRUDApi):
