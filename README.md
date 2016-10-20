@@ -49,11 +49,11 @@ zenpy.tickets.update(ticket)
 ```python
 from zenpy.lib.api_objects import Comment
 
-# Upload the file to Zendesk and obtain a Upload object
-upload_object = zenpy.attachments.upload('/tmp/awesome_file.txt')
+# Upload the file (or file-like object) to Zendesk and obtain an Upload instance
+upload_instance = zenpy.attachments.upload('/tmp/awesome_file.txt')
 
 ticket = zenpy.tickets(id=some_ticket_id)
-ticket.comment = Comment(body='This comment has my file attached', uploads=[upload_object.token])
+ticket.comment = Comment(body='This comment has my file attached', uploads=[upload_instance.token])
 zenpy.tickets.update(ticket)
 ```
 
