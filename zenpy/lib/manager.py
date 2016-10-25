@@ -147,7 +147,7 @@ class ClassManager(object):
 
         obj = object_type(api=self.api)
         for key, value in object_json.items():
-            if key in ('results', 'metadata', 'from', 'system', 'photo', 'thumbnails'):
+            if key in ('metadata', 'from', 'system', 'photo', 'thumbnails'):
                 key = '_%s' % key
 
             if key in self.class_mapping.keys():
