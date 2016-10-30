@@ -34,6 +34,19 @@ for ticket in zenpy.search("party", type='ticket', assignee="face"):
 
 ## Examples
 
+##### Creating a ticket with a different requester
+
+```python
+from zenpy.lib.api_objects import Ticket, User
+
+zenpy.tickets.create(
+    Ticket(
+        description='Some description',
+        requester=User(name='bob', email='bob@example.com')
+    )
+)
+```
+
 ##### Commenting on a ticket
 
 ```python
