@@ -10,6 +10,7 @@ Please report bugs!
 
 * [Quickstart](#quickstart)
 * [Examples](#examples)
+      * [Creating a ticket with a different requester](#creating-a-ticket-with-a-different-requester)
       * [Commenting on a ticket](#commenting-on-a-ticket)
       * [Uploading an attachment](#uploading-an-attachment)
       * [Creating a ticket with a custom field set](#creating-a-ticket-with-a-custom-field-set)
