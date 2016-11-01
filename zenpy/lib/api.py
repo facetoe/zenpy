@@ -3,6 +3,7 @@ import logging
 import os
 from time import sleep
 
+from zenpy.lib.api_objects import User
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import APIException, RecordNotFoundException
 from zenpy.lib.exception import ZenpyException
@@ -534,6 +535,22 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
         Return the logged in user
         """
         return self._get_item(None, self.endpoint.me, 'user')
+
+    def merge(self, source, dest):
+        """
+        Merge the user provided in source into dest
+        :param source: User object or id of user to be merged
+        :param dest: User object to merge source into
+        :return: The merged User
+        """
+        if isinstance(source, User):
+            source = source.id
+        response = self._do(self._put,
+                            endpoint_kwargs=dict(id=source),
+                            payload=dict(user=dest),
+                            endpoint=self.endpoint.merge)
+
+        return self._build_response(response_json=response.json())
 
     def user_fields(self, user_id):
         """
