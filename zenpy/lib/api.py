@@ -536,18 +536,19 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
         """
         return self._get_item(None, self.endpoint.me, 'user')
 
-    def merge(self, source, dest):
+    def merge(self, source_user, dest_user):
         """
-        Merge the user provided in source into dest
-        :param source: User object or id of user to be merged
-        :param dest: User object to merge source into
+        Merge the user provided in source_user into dest_user
+
+        :param source_user: User object or id of user to be merged
+        :param dest_user: User object to merge into
         :return: The merged User
         """
-        if isinstance(source, User):
-            source = source.id
+        if isinstance(source_user, User):
+            source_user = source_user.id
         response = self._do(self._put,
-                            endpoint_kwargs=dict(id=source),
-                            payload=dict(user=dest),
+                            endpoint_kwargs=dict(id=source_user),
+                            payload=dict(user=dest_user),
                             endpoint=self.endpoint.merge)
 
         return self._build_response(response_json=response.json())
