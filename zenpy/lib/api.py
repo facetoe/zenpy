@@ -297,6 +297,7 @@ class CRUDApi(ModifiableApi):
     CRUDApi supports create/update/delete operations
     """
 
+    # TODO - Fix the post method to be consistent with get and put.
     def create(self, api_objects):
         """
         Create (POST) one or more API objects. Before being submitted to Zendesk the object or objects
@@ -319,9 +320,10 @@ class CRUDApi(ModifiableApi):
         """
         object_type, payload = self._get_type_and_payload(items)
         if object_type.endswith('s'):
-            return self._do(self._put, dict(update_many=True, sideload=False), payload=payload)
+            response = self._do(self._put, dict(update_many=True, sideload=False), payload=payload)
         else:
-            return self._do(self._put, dict(id=items.id, sideload=False), payload=payload)
+            response = self._do(self._put, dict(id=items.id, sideload=False), payload=payload)
+        return self._build_response(response_json=response.json())
 
     def delete(self, items):
         """
