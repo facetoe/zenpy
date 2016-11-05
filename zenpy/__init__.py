@@ -1,6 +1,7 @@
 import logging
 
 import requests
+from requests.adapters import HTTPAdapter
 
 from zenpy.lib.api import UserApi, Api, TicketApi, OrganizationApi, SuspendedTicketApi, EndUserApi, TicketImportAPI, \
     RequestAPI, OrganizationMembershipApi, AttachmentApi
@@ -39,6 +40,10 @@ class Zenpy(object):
         """
 
         session = self._init_session(email, token, oauth_token, password, session)
+
+        # Workaround for https://github.com/kennethreitz/requests/issues/2364
+        session.mount('https://', HTTPAdapter(max_retries=3))
+
         timeout = timeout or self.DEFAULT_TIMEOUT
         endpoint = Endpoint()
 
