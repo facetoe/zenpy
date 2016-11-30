@@ -55,7 +55,7 @@ class Api(object):
         return self._call_api(self.session.get, url, timeout=self.timeout)
 
     def _call_api(self, http_method, url, **kwargs):
-        log.debug("{}: {}".format(http_method.__name__.upper(), url))
+        log.debug("{}: {} - {}".format(http_method.__name__.upper(), url, kwargs))
         response = http_method(url, **kwargs)
 
         # If we are being rate-limited, wait the required period before trying again.
