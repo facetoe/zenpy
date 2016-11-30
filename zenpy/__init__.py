@@ -2,7 +2,6 @@ import logging
 
 import requests
 from requests.adapters import HTTPAdapter
-
 from zenpy.lib.api import UserApi, Api, TicketApi, OrganizationApi, SuspendedTicketApi, EndUserApi, TicketImportAPI, \
     RequestAPI, OrganizationMembershipApi, AttachmentApi
 from zenpy.lib.cache import ZenpyCache
@@ -196,6 +195,31 @@ class Zenpy(object):
             endpoint=endpoint.requests
         )
 
+    def _init_session(self, email, token, oath_token, password, session):
+        if not session or not hasattr(session, 'authorized') \
+                or not session.authorized:
+            # session is not an OAuth session that has been authorized,
+            # so create a new Session.
+            if not password and not token and not oath_token:
+                raise ZenpyException("password, token or oauth_token are required!")
+            elif password and token:
+                raise ZenpyException("password and token "
+                                     "are mutually exclusive!")
+            session = session if session else requests.Session()
+            if password:
+                session.auth = (email, password)
+            elif token:
+                session.auth = ('%s/token' % email, token)
+            elif oath_token:
+                session.headers.update({'Authorization': 'Bearer %s' % oath_token})
+            else:
+                raise ZenpyException("Invalid arguments to _init_session()!")
+
+        headers = {'Content-type': 'application/json',
+                   'User-Agent': 'Zenpy/1.1'}
+        session.headers.update(headers)
+        return session
+
     def get_cache_names(self):
         """
         Returns a list of current caches
@@ -254,28 +278,3 @@ class Zenpy(object):
         # Even though we access the users API object the cache_mapping that
         # we receive applies to all API's as it is a class attribute of ObjectManager.
         return self.users.object_manager.cache_mapping
-
-    def _init_session(self, email, token, oath_token, password, session):
-        if not session or not hasattr(session, 'authorized') \
-                or not session.authorized:
-            # session is not an OAuth session that has been authorized,
-            # so create a new Session.
-            if not password and not token and not oath_token:
-                raise ZenpyException("password, token or oauth_token are required!")
-            elif password and token:
-                raise ZenpyException("password and token "
-                                     "are mutually exclusive!")
-            session = session if session else requests.Session()
-            if password:
-                session.auth = (email, password)
-            elif token:
-                session.auth = ('%s/token' % email, token)
-            elif oath_token:
-                session.headers.update({'Authorization': 'Bearer %s' % oath_token})
-            else:
-                raise ZenpyException("Invalid arguments to _init_session()!")
-
-        headers = {'Content-type': 'application/json',
-                   'User-Agent': 'Zenpy/1.0.9'}
-        session.headers.update(headers)
-        return session
