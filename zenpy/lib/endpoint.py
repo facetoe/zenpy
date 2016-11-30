@@ -184,7 +184,7 @@ class SearchEndpoint(BaseEndpoint):
                 kwargs[key] = value.strftime(self.ZENDESK_DATE_FORMAT)
             elif isinstance(value, list) and key == 'ids':
                 kwargs[key] = self._format_many(value)
-            elif isinstance(value, list):
+            elif isinstance(value, list) and not key.endswith('_between'):
                 modifiers.append(self.format_or(key, value))
 
             if key.endswith('_between'):
