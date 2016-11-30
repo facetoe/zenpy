@@ -652,7 +652,7 @@ class EndUserApi(CRUDApi):
     def __init__(self, subdomain, session, endpoint, timeout):
         Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='user')
 
-    def _delete(self, items):
+    def delete(self, items):
         raise ZenpyException("EndUsers cannot delete!")
 
     def create(self, api_objects):
@@ -772,7 +772,7 @@ class TicketImportAPI(CRUDApi):
     def update(self, items):
         raise ZenpyException("You cannot update objects using ticket_import endpoint!")
 
-    def _delete(self, items):
+    def delete(self, items):
         raise ZenpyException("You cannot delete objects using the ticket_import endpoint!")
 
 
@@ -804,7 +804,7 @@ class RequestAPI(CRUDApi):
         """
         return self._get_items(self.endpoint.comments, 'comment', sideload=False, id=request_id)
 
-    def _delete(self, items):
+    def delete(self, items):
         raise ZenpyException("You cannot delete requests!")
 
     def search(self, *args, **kwargs):
