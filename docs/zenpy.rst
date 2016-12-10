@@ -147,14 +147,14 @@ print all the comments on a ticket:
 
 .. code:: python
 
-    for comment in zenpy.tickets.comments(id=86):
+    for comment in zenpy.tickets.comments(ticket_id=86):
         print comment.body
 
 Or organizations attached to a user:
 
 .. code:: python
 
-    for organization in zenpy.users.organizations(id=1276936927):
+    for organization in zenpy.users.organizations(user_id=1276936927):
         print organization.name
 
 You could do so with these second level endpoints.
