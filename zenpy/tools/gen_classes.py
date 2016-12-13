@@ -271,7 +271,7 @@ class BaseObject(object):
         elif hasattr(self, 'token'):
             return "[%s(token='%s')]" % (self.__class__.__name__, self.token)
         else:
-            return "[%s(id=None)]" % self.__class__.__name__
+            return "[%s()]" % self.__class__.__name__
 """
 
 parser = OptionParser()
