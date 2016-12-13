@@ -66,7 +66,7 @@ def parse_link(link):
 
 from multiprocessing.pool import ThreadPool
 
-pool = ThreadPool(processes=2)
+pool = ThreadPool(processes=20)
 
 results = pool.map_async(parse_link, get_links())
 output = dict()
