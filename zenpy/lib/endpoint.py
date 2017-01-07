@@ -19,6 +19,8 @@ else:
     bytes = str
     basestring = basestring
 
+import time
+
 
 class BaseEndpoint(object):
     """
@@ -114,15 +116,15 @@ class IncrementalEndpoint(BaseEndpoint):
     UNIX_TIME = "%s"
 
     def __call__(self, **kwargs):
-        query = "start_time="
-        if 'start_time' in kwargs:
-            if isinstance(kwargs['start_time'], datetime):
-                query += kwargs['start_time'].strftime(self.UNIX_TIME)
-            else:
-                query += str(kwargs['start_time'])
-            return self.endpoint + query + self._format_sideload(self.sideload, seperator='&')
+        if 'start_time' not in kwargs:
+            raise ZenpyException("Incremental Endoint requires a start_time parameter!")
 
-        raise ZenpyException("Incremental Endoint requires a start_time parameter!")
+        if isinstance(kwargs['start_time'], datetime):
+            unix_time = time.mktime(kwargs['start_time'].timetuple())
+        else:
+            unix_time = kwargs['start_time']
+        query = "start_time=%s" % str(unix_time)
+        return self.endpoint + query + self._format_sideload(self.sideload, seperator='&')
 
 
 class AttachmentEndpoint(BaseEndpoint):
