@@ -113,8 +113,6 @@ class IncrementalEndpoint(BaseEndpoint):
     for querying the incremental api endpoint
     """
 
-    UNIX_TIME = "%s"
-
     def __call__(self, **kwargs):
         if 'start_time' not in kwargs:
             raise ZenpyException("Incremental Endoint requires a start_time parameter!")
