@@ -304,6 +304,7 @@ class Endpoint(object):
     job_statuses = PrimaryEndpoint('job_statuses')
     tags = PrimaryEndpoint('tags')
     satisfaction_ratings = PrimaryEndpoint('satisfaction_ratings')
+    sharing_agreements = PrimaryEndpoint('sharing_agreements')
     activities = PrimaryEndpoint('activities')
     group_memberships = PrimaryEndpoint('group_memberships')
     end_user = SecondaryEndpoint('end_users/%(id)s.json')

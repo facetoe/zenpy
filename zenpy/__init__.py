@@ -3,7 +3,7 @@ import logging
 import requests
 from requests.adapters import HTTPAdapter
 from zenpy.lib.api import UserApi, Api, TicketApi, OrganizationApi, SuspendedTicketApi, EndUserApi, TicketImportAPI, \
-    RequestAPI, OrganizationMembershipApi, AttachmentApi
+    RequestAPI, OrganizationMembershipApi, AttachmentApi, SharingAgreementAPI
 from zenpy.lib.cache import ZenpyCache
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import ZenpyException
@@ -140,6 +140,13 @@ class Zenpy(object):
             timeout=timeout,
             endpoint=endpoint.satisfaction_ratings,
             object_type='satisfaction_rating'
+        )
+
+        self.sharing_agreements = SharingAgreementAPI(
+            subdomain=subdomain,
+            session=session,
+            timeout=timeout,
+            endpoint=endpoint.sharing_agreements,
         )
 
         self.activities = Api(

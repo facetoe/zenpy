@@ -26,6 +26,7 @@ class ResultGenerator(object):
         'tag': 'tags',
         'suspended_ticket': 'suspended_tickets',
         'satisfaction_rating': 'satisfaction_ratings',
+        'sharing_agreement': 'sharing_agreements',
         'activity': 'activities',
         'group_membership': 'group_memberships',
         'ticket_metric': 'ticket_metrics',

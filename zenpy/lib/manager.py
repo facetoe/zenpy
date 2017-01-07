@@ -1,9 +1,8 @@
 import logging
+from datetime import datetime, date
 from json import JSONEncoder
 
-from datetime import datetime, date
-
-from zenpy.lib.api_objects import Activity, Request, UserRelated, OrganizationMembership, Upload
+from zenpy.lib.api_objects import Activity, Request, UserRelated, OrganizationMembership, Upload, SharingAgreement
 from zenpy.lib.api_objects import Attachment
 from zenpy.lib.api_objects import Audit
 from zenpy.lib.api_objects import Brand
@@ -123,7 +122,8 @@ class ClassManager(object):
         'request': Request,
         'user_related': UserRelated,
         'organization_membership': OrganizationMembership,
-        'upload': Upload
+        'upload': Upload,
+        'sharing_agreement': SharingAgreement
     }
 
     def __init__(self, api):
@@ -172,7 +172,8 @@ class ObjectManager(object):
         'request': ZenpyCache('LRUCache', maxsize=10000),
         'user_field': ZenpyCache('TTLCache', maxsize=10000, ttl=30),
         'organization_field': ZenpyCache('LRUCache', maxsize=10000),
-        'ticket_field': ZenpyCache('LRUCache', maxsize=10000)
+        'ticket_field': ZenpyCache('LRUCache', maxsize=10000),
+        'sharing_agreement': ZenpyCache('TTLCache', maxsize=10000, ttl=6000),
     }
 
     def __init__(self, api):

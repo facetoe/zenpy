@@ -217,6 +217,14 @@ class Api(object):
     def _get_satisfaction_rating(self, satisfaction_rating):
         return self._object_from_json('satisfaction_rating', satisfaction_rating)
 
+    def _get_sharing_agreements(self, sharing_agreement_ids):
+        sharing_agreements = []
+        for _id in sharing_agreement_ids:
+            sharing_agreement = self._get_item(_id, Endpoint.sharing_agreements, 'sharing_agreement')
+            if sharing_agreement:
+                sharing_agreements.append(sharing_agreement)
+        return sharing_agreements
+
     def _get_ticket_metric_item(self, metric_item):
         return self._object_from_json('ticket_metric_item', metric_item)
 
@@ -813,3 +821,8 @@ class RequestAPI(CRUDApi):
          https://developer.zendesk.com/rest_api/docs/core/requests#searching-requests
         """
         return self._get_items(self.endpoint.search, 'request', *args, **kwargs)
+
+
+class SharingAgreementAPI(CRUDApi):
+    def __init__(self, subdomain, session, endpoint, timeout):
+        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='sharing_agreement')
