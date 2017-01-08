@@ -92,6 +92,20 @@ ticket.custom_fields.append(CustomField(id=43528467, value=1337))
 zenpy.tickets.update(ticket)
 ```
 
+##### Applying a Macro to a ticket
+
+```python
+# Obtain a ticket and macro instance. Ids are also accepted. 
+ticket = zenpy.tickets(id=some_ticket_id_or_object)
+macro = zenpy.macros(id=some_macro_id_or_object)
+
+# Execute the show_macro_effect() method which returns what the macro *would* do.
+macro_result = zenpy.tickets.show_macro_effect(ticket, macro)
+
+# Update the ticket to actually change the ticket. 
+zenpy.tickets.update(macro_result.ticket)
+```
+
 ## Documentation
 
 Check out the [documentation](http://docs.facetoe.com.au/) for more info.
