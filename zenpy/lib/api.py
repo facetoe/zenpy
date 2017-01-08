@@ -711,6 +711,26 @@ class OrganizationMembershipApi(CRUDApi):
         raise ZenpyException("You cannot update Organization Memberships!")
 
 
+class SatisfactionRatingApi(ModifiableApi):
+    def __init__(self, subdomain, session, endpoint, timeout):
+        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='satisfaction_rating')
+
+    def create(self, ticket_id, satisfaction_rating):
+        """
+        Create/update a Satisfaction Rating for a ticket.
+
+        :param ticket_id: id of Ticket to rate
+        :param satisfaction_rating: SatisfactionRating object.
+        """
+
+        self._check_type(satisfaction_rating)
+        object_type, payload = self._get_type_and_payload(satisfaction_rating)
+        return self._do(self.post,
+                        payload=payload,
+                        endpoint=Endpoint.satisfaction_ratings.create,
+                        endpoint_kwargs=dict(id=ticket_id))
+
+
 class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
     """
     The TicketApi adds some Ticket specific functionality

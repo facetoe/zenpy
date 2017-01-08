@@ -247,6 +247,22 @@ class RequestSearchEndpoint(BaseEndpoint):
         return self.endpoint + query
 
 
+class SatisfactionRatingEndpoint(BaseEndpoint):
+    def __call__(self, score=None, sort_order=None):
+        if sort_order not in ('asc', 'desc'):
+            raise ZenpyException("sort_order must be one of (asc, desc)")
+
+        base_url = self.endpoint + '?'
+        if score:
+            result = base_url + "score={}".format(score)
+        else:
+            result = base_url
+
+        if sort_order:
+            result += '&sort_order={}'.format(sort_order)
+        return result
+
+
 class Endpoint(object):
     """
     The Endpoint object ties it all together.
@@ -279,7 +295,6 @@ class Endpoint(object):
     tickets.recent = SecondaryEndpoint('tickets/recent.json')
     tickets.incremental = IncrementalEndpoint('incremental/tickets.json?',
                                               sideload=['users', 'groups', 'organizations'])
-    tickets.satisfaction_ratings = SecondaryEndpoint('tickets/%(id)s/satisfaction_rating.json')
     tickets.events = IncrementalEndpoint('incremental/ticket_events.json?')
     tickets.audits = SecondaryEndpoint('tickets/%(id)s/audits.json')
     tickets.tags = SecondaryEndpoint('tickets/%(id)s/tags.json')
@@ -303,7 +318,8 @@ class Endpoint(object):
     search = SearchEndpoint('search.json?')
     job_statuses = PrimaryEndpoint('job_statuses')
     tags = PrimaryEndpoint('tags')
-    satisfaction_ratings = PrimaryEndpoint('satisfaction_ratings')
+    satisfaction_ratings = SatisfactionRatingEndpoint('satisfaction_ratings')
+    satisfaction_ratings.create = SecondaryEndpoint('tickets/%(id)s/satisfaction_rating.json')
     sharing_agreements = PrimaryEndpoint('sharing_agreements')
     activities = PrimaryEndpoint('activities')
     group_memberships = PrimaryEndpoint('group_memberships')
