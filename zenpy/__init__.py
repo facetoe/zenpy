@@ -2,8 +2,9 @@ import logging
 
 import requests
 from requests.adapters import HTTPAdapter
+
 from zenpy.lib.api import UserApi, Api, TicketApi, OrganizationApi, SuspendedTicketApi, EndUserApi, TicketImportAPI, \
-    RequestAPI, OrganizationMembershipApi, AttachmentApi, SharingAgreementAPI, SatisfactionRatingApi
+    RequestAPI, OrganizationMembershipApi, AttachmentApi, SharingAgreementAPI, SatisfactionRatingApi, MacroApi
 from zenpy.lib.cache import ZenpyCache
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import ZenpyException
@@ -66,6 +67,12 @@ class Zenpy(object):
             timeout=timeout,
             endpoint=endpoint.groups,
             object_type='group')
+
+        self.macros = MacroApi(
+            subdomain=subdomain,
+            session=session,
+            timeout=timeout,
+        )
 
         self.organizations = OrganizationApi(
             subdomain=subdomain,

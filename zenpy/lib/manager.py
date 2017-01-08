@@ -2,7 +2,8 @@ import logging
 from datetime import datetime, date
 from json import JSONEncoder
 
-from zenpy.lib.api_objects import Activity, Request, UserRelated, OrganizationMembership, Upload, SharingAgreement
+from zenpy.lib.api_objects import Activity, Request, UserRelated, OrganizationMembership, Upload, SharingAgreement, \
+    Macro, Action, MacroResult
 from zenpy.lib.api_objects import Attachment
 from zenpy.lib.api_objects import Audit
 from zenpy.lib.api_objects import Brand
@@ -123,7 +124,10 @@ class ClassManager(object):
         'user_related': UserRelated,
         'organization_membership': OrganizationMembership,
         'upload': Upload,
-        'sharing_agreement': SharingAgreement
+        'sharing_agreement': SharingAgreement,
+        'macro': Macro,
+        'action': Action,
+        'result': MacroResult
     }
 
     def __init__(self, api):

@@ -3,7 +3,7 @@ import logging
 import os
 from time import sleep
 
-from zenpy.lib.api_objects import User
+from zenpy.lib.api_objects import User, Ticket, Macro
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import APIException, RecordNotFoundException
 from zenpy.lib.exception import ZenpyException
@@ -125,8 +125,16 @@ class Api(object):
         elif 'tags' in response_json:
             return response_json['tags']
 
-        known_objects = ('ticket', 'user', 'job_status', 'group', 'satisfaction_rating', 'request', 'organization',
-                         'organization_membership', 'upload')
+        known_objects = ('ticket',
+                         'user',
+                         'job_status',
+                         'group',
+                         'satisfaction_rating',
+                         'request',
+                         'organization',
+                         'organization_membership',
+                         'upload',
+                         'result')
 
         for object_type in known_objects:
             if object_type in response_json:
@@ -195,6 +203,10 @@ class Api(object):
     def _get_ticket(self, _id, skip_cache=False):
         return self._get_item(_id, endpoint=Endpoint.tickets, object_type='ticket', sideload=False,
                               skip_cache=skip_cache)
+
+    def _get_actions(self, actions):
+        for action in actions:
+            yield self._object_from_json('action', action)
 
     def _get_events(self, events):
         for event in events:
@@ -731,6 +743,20 @@ class SatisfactionRatingApi(ModifiableApi):
                         endpoint_kwargs=dict(id=ticket_id))
 
 
+class MacroApi(CRUDApi):
+    def __init__(self, subdomain, session, timeout):
+        Api.__init__(self, subdomain, session, Endpoint.macros, timeout=timeout, object_type='macro')
+
+    def apply(self, macro_id):
+        """
+        Show what a macro would do - https://developer.zendesk.com/rest_api/docs/core/macros#show-changes-to-ticket
+
+        :param macro_id: id of macro to test
+        """
+
+        return self._get_items(self.endpoint.apply, 'result', id=macro_id)
+
+
 class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
     """
     The TicketApi adds some Ticket specific functionality
@@ -788,6 +814,25 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         :param start_time: time to retrieve events from.
         """
         return self._get_items(self.endpoint.metrics.incremental, 'ticket_metric_events', start_time=start_time)
+
+    def show_macro_effect(self, ticket, macro):
+        """
+        Apply macro to ticket. Returns what it *would* do, does not alter the ticket.
+
+        :param ticket: Ticket or ticket id to target
+        :param macro_id: Macro or macro id to use
+        """
+
+        if isinstance(ticket, Ticket):
+            ticket = ticket.id
+        if isinstance(macro, Macro):
+            macro = macro.id
+
+        response = self._get(
+            url=self._get_url(self.endpoint.macro(ticket, macro))
+        )
+        self._check_and_cache_response(response)
+        return self._build_response(response.json())
 
 
 class TicketImportAPI(CRUDApi):

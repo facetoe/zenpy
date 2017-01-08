@@ -107,6 +107,13 @@ class SecondaryEndpoint(BaseEndpoint):
         return self.endpoint % kwargs
 
 
+class MutlipleIDEndpoint(BaseEndpoint):
+    def __call__(self, *args):
+        if not args or len(args) < 2:
+            raise ZenpyException("This endpoint requires at least two arguments!")
+        return self.endpoint.format(*args)
+
+
 class IncrementalEndpoint(BaseEndpoint):
     """
     An IncrementalEndpoint takes a start_time parameter
@@ -263,6 +270,37 @@ class SatisfactionRatingEndpoint(BaseEndpoint):
         return result
 
 
+class MacroEndpoint(BaseEndpoint):
+    def __call__(self, sort_order=None, sort_by=None, **kwargs):
+        kwargs.pop('sideload', None)
+        if sort_order and sort_order not in ('asc', 'desc'):
+            raise ZenpyException("sort_order must be one of (asc, desc)")
+        if sort_by and sort_by not in ('alphabetical', 'created_at', 'updated_at', 'usage_1h', 'usage_24h', 'usage_7d'):
+            raise ZenpyException(
+                "sort_by is invalid - https://developer.zendesk.com/rest_api/docs/core/macros#available-parameters")
+
+        if 'id' in kwargs:
+            if len(kwargs) > 1:
+                raise ZenpyException("When specifying an id it must be the only parameter")
+            url_out = ''
+        else:
+            url_out = self.endpoint + '?'
+
+        for key, value in kwargs.items():
+            if isinstance(value, bool):
+                value = str(value).lower()
+            if key == 'id':
+                url_out += self._single(self.endpoint, value)
+            else:
+                url_out += '&{}={}'.format(key, value)
+
+        if sort_order:
+            url_out += '&sort_order={}'.format(sort_order)
+        if sort_by:
+            url_out += '&sort_by={}'.format(sort_by)
+        return url_out
+
+
 class Endpoint(object):
     """
     The Endpoint object ties it all together.
@@ -276,6 +314,8 @@ class Endpoint(object):
     group_memberships = PrimaryEndpoint('group_memberships')
     groups = PrimaryEndpoint('groups', ['users'])
     job_statuses = PrimaryEndpoint('job_statuses')
+    macros = MacroEndpoint('macros')
+    macros.apply = SecondaryEndpoint('macros/%(id)s/apply.json')
     organization_memberships = PrimaryEndpoint('organization_memberships')
     organizations = PrimaryEndpoint('organizations')
     organizations.external = SecondaryEndpoint('organizations/search.json?external_id=%(id)s')
@@ -304,12 +344,14 @@ class Endpoint(object):
     tickets.audits = SecondaryEndpoint('tickets/%(id)s/audits.json')
     tickets.comments = SecondaryEndpoint('tickets/%(id)s/comments.json')
     tickets.events = IncrementalEndpoint('incremental/ticket_events.json?')
-    tickets.incremental = IncrementalEndpoint('incremental/tickets.json?', sideload=['users', 'groups', 'organizations'])
+    tickets.incremental = IncrementalEndpoint('incremental/tickets.json?',
+                                              sideload=['users', 'groups', 'organizations'])
     tickets.metrics = SecondaryEndpoint('tickets/%(id)s/metrics.json')
     tickets.metrics.incremental = IncrementalEndpoint('incremental/ticket_metric_events.json?')
     tickets.organizations = SecondaryEndpoint('organizations/%(id)s/tickets.json')
     tickets.recent = SecondaryEndpoint('tickets/recent.json')
     tickets.tags = SecondaryEndpoint('tickets/%(id)s/tags.json')
+    tickets.macro = MutlipleIDEndpoint('tickets/{0}/macros/{1}/apply.json')
     topics = PrimaryEndpoint('topics')
     topics.tags = SecondaryEndpoint('topics/%(id)s/tags.json')
     user_fields = PrimaryEndpoint('user_fields')

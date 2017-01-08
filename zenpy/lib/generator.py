@@ -37,7 +37,8 @@ class ResultGenerator(object):
         'brand': 'brands',
         'ticket_field': 'ticket_fields',
         'organization_membership': 'organization_memberships',
-        'organization_memberships': 'organization_memberships'
+        'organization_memberships': 'organization_memberships',
+        'macro':  'macros'
     }
 
     def __init__(self, api, result_key, _json):
