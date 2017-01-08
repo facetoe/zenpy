@@ -36,7 +36,7 @@ class {{object.name}}(BaseObject):
                 if attr_docs['type'] not in ('string', 'boolean', 'date', 'integer', 'array', 'object'):
                     attr_docs['type'] = ':class:`%s`' % attr_docs['type']
 
-                for key, value in attr_docs.items():
+                for key, value in sorted(attr_docs.items()):
                     doc_strings.append("%s: %s" % (key.capitalize(), value))
                 attribute.attr_docs = doc_strings
 
