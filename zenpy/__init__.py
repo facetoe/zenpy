@@ -8,6 +8,7 @@ from zenpy.lib.api import UserApi, Api, TicketApi, OrganizationApi, SuspendedTic
 from zenpy.lib.cache import ZenpyCache
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import ZenpyException
+from zenpy.lib.manager import ClassManager, ObjectManager
 
 log = logging.getLogger()
 
@@ -268,7 +269,7 @@ class Zenpy(object):
         """
         Add a new cache for the named object type and cache implementation
         """
-        if object_type not in self.users.object_manager.class_manager.class_mapping:
+        if object_type not in self._get_class_mapping():
             raise ZenpyException("No such object type: %s" % object_type)
         cache_mapping = self._get_cache_mapping()
         cache_mapping[object_type] = ZenpyCache(cache_impl_name, maxsize, **kwargs)
@@ -288,6 +289,7 @@ class Zenpy(object):
             return cache_mapping[cache_name]
 
     def _get_cache_mapping(self):
-        # Even though we access the users API object the cache_mapping that
-        # we receive applies to all API's as it is a class attribute of ObjectManager.
-        return self.users.object_manager.cache_mapping
+        return ObjectManager.cache_mapping
+
+    def _get_class_mapping(self):
+        return ClassManager.class_mapping
