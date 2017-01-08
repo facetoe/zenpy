@@ -97,12 +97,9 @@ zenpy.tickets.update(ticket)
 ##### Applying a Macro to a ticket
 
 ```python
-# Obtain a ticket and macro instance. Ids are also accepted. 
-ticket = zenpy.tickets(id=some_ticket_id_or_object)
-macro = zenpy.macros(id=some_macro_id_or_object)
-
 # Execute the show_macro_effect() method which returns what the macro *would* do.
-macro_result = zenpy.tickets.show_macro_effect(ticket, macro)
+# The method accepts either Zenpy objects or ids. 
+macro_result = zenpy.tickets.show_macro_effect(ticket_id_or_object, macro_id_or_object)
 
 # Update the ticket to actually change the ticket. 
 zenpy.tickets.update(macro_result.ticket)
