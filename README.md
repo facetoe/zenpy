@@ -10,13 +10,15 @@ Please report bugs!
 
 * [Quickstart](#quickstart)
 * [Examples](#examples)
-      * [Creating a ticket with a different requester](#creating-a-ticket-with-a-different-requester)
-      * [Commenting on a ticket](#commenting-on-a-ticket)
-      * [Uploading an attachment](#uploading-an-attachment)
-      * [Creating a ticket with a custom field set](#creating-a-ticket-with-a-custom-field-set)
-      * [Updating a custom field on a ticket](#updating-a-custom-field-on-a-ticket)
+    * [Creating a ticket with a different requester](#creating-a-ticket-with-a-different-requester)
+    * [Commenting on a ticket](#commenting-on-a-ticket)
+    * [Uploading an attachment](#uploading-an-attachment)
+    * [Creating a ticket with a custom field set](#creating-a-ticket-with-a-custom-field-set)
+    * [Updating a custom field on a ticket](#updating-a-custom-field-on-a-ticket)
+    * [Applying a Macro to a ticket](#applying-a-macro-to-a-ticket)
 * [Documentation](#documentation)
 * [Contributions](#contributions)
+
 
 
 ## Quickstart
