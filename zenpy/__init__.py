@@ -1,6 +1,7 @@
 import logging
 
 import requests
+from requests import adapters
 from requests.adapters import HTTPAdapter
 
 from zenpy.lib.api import UserApi, Api, TicketApi, OrganizationApi, SuspendedTicketApi, EndUserApi, TicketImportAPI, \
@@ -43,7 +44,13 @@ class Zenpy(object):
         session = self._init_session(email, token, oauth_token, password, session)
 
         # Workaround for https://github.com/kennethreitz/requests/issues/2364
-        session.mount('https://', HTTPAdapter(max_retries=3))
+        # If the user has mounted their own adapter or provided their own max_retries value leave it alone.
+        adapter = session.get_adapter('https://')
+        if isinstance(adapter, HTTPAdapter):
+            if adapter.max_retries.total == adapters.DEFAULT_RETRIES:
+                session.mount('https://', HTTPAdapter(max_retries=3))
+        else:
+            log.warning("Expected: HTTPAdapter, found {}. Not setting max_retries.".format(adapter.__class__.__name__))
 
         timeout = timeout or self.DEFAULT_TIMEOUT
         endpoint = Endpoint()
