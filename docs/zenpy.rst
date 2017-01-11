@@ -48,7 +48,6 @@ First, create a :class:`Zenpy` object:
     # An OAuth token
     creds = {
       "subdomain": "yoursubdomain",
-      "email": "youremail",
       "oauth_token": "youroathtoken"
     }
 
