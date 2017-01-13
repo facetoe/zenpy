@@ -58,14 +58,14 @@ First, create a :class:`Zenpy` object:
         'subdomain': 'yoursubdomain'
     }
 
-    # Import the Zenpy Object
+    # Import the Zenpy Class
     from zenpy import Zenpy
 
     # Default
-    zenpy = Zenpy(**creds)
+    zenpy_client = Zenpy(**creds)
 
     # Alternatively you can provide your own requests.Session object
-    zenpy = Zenpy(**creds, session=some_session)
+    zenpy_client = Zenpy(**creds, session=some_session)
 
 Searching the API
 -----------------
@@ -102,7 +102,7 @@ For example, the code:
 
     yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
     today = datetime.datetime.now()
-    for ticket in zenpy.search("zenpy", created_between=[yesterday, today], type='ticket', minus='negated'):
+    for ticket in zenpy_client.search("zenpy", created_between=[yesterday, today], type='ticket', minus='negated'):
         print ticket
 
 Would generate the following API call:
@@ -116,7 +116,7 @@ The ordering can be controlled by passing the ``sort_by`` and/or
 
 .. code:: python
 
-    zenpy.search("some query", type='ticket', sort_by='created_at', sort_order='desc')
+    zenpy_client.search("some query", type='ticket', sort_by='created_at', sort_order='desc')
 
 See the `Zendesk
 docs <https://developer.zendesk.com/rest_api/docs/core/search#available-parameters>`__
@@ -131,14 +131,14 @@ returns all results (as a generator):
 
 .. code:: python
 
-    for user in zenpy.users():
+    for user in zenpy_client.users():
         print user.name
 
 And called with an ID returns the object with that ID:
 
 .. code:: python
 
-    print zenpy.users(id=1159307768)
+    print zenpy_client.users(id=1159307768)
 
 In addition to the top level endpoints there are several secondary level
 endpoints that reference the level above. For example, if you wanted to
@@ -146,14 +146,14 @@ print all the comments on a ticket:
 
 .. code:: python
 
-    for comment in zenpy.tickets.comments(ticket_id=86):
+    for comment in zenpy_client.tickets.comments(ticket_id=86):
         print comment.body
 
 Or organizations attached to a user:
 
 .. code:: python
 
-    for organization in zenpy.users.organizations(user_id=1276936927):
+    for organization in zenpy_client.users.organizations(user_id=1276936927):
         print organization.name
 
 You could do so with these second level endpoints.
@@ -175,7 +175,7 @@ code:
     from zenpy.lib.api_objects import User
 
     user = User(name="John Doe", email="john@doe.com")
-    created_user = zenpy.users.create(user)
+    created_user = zenpy_client.users.create(user)
 
 The ``create`` method returns the created object with it's various
 attributes (such as ``id``/ ``created_at``) filled in by Zendesk.
@@ -187,7 +187,7 @@ We can update this user by modifying it's attributes and calling the
 
     created_user.role = 'agent'
     created_user.phone = '123 434 333'
-    modified_user = zenpy.users.update(created_user)
+    modified_user = zenpy_client.users.update(created_user)
 
 Like ``create``, the ``update`` method returns the modified object.
 
@@ -195,9 +195,9 @@ Next, let's assign all new tickets to this user:
 
 .. code:: python
 
-    for new_ticket in zenpy.search(type='ticket', status='new'):
+    for new_ticket in zenpy_client.search(type='ticket', status='new'):
         new_ticket.assignee = modified_user
-        ticket_audit = zenpy.tickets.update(new_ticket)
+        ticket_audit = zenpy_client.tickets.update(new_ticket)
 
 When updating a ticket, a ``TicketAudit``
 (https://developer.zendesk.com/rest\_api/docs/core/ticket\_audits)
@@ -208,7 +208,7 @@ Finally, let's delete all the tickets assigned to the user:
 
 .. code:: python
 
-    for ticket in zenpy.search(type='ticket', assignee='John Doe'):
+    for ticket in zenpy_client.search(type='ticket', assignee='John Doe'):
         zenpy.tickets.delete(ticket)
 
 Deleting ticket returns nothing on success and raises an
@@ -224,7 +224,9 @@ example, the code:
 
 .. code:: python
 
-    job_status = zenpy.tickets.create([Ticket(subject="Ticket%s" % i, description="Bulk")for i in range(0, 20)])
+    job_status = zenpy_client.tickets.create(
+        [Ticket(subject="Ticket%s" % i, description="Bulk") for i in range(0, 20)]
+    )
 
 will create 20 tickets in one API call. When performing bulk operations,
 a ``JobStatus`` object is returned
@@ -253,7 +255,7 @@ code will retrieve all tickets created or modified in the last day:
 .. code:: python
 
     yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
-    result_generator = zenpy.tickets.incremental(start_time=yesterday)
+    result_generator = zenpy_client.tickets.incremental(start_time=yesterday)
     for ticket in result_generator:
         print ticket.id
 
@@ -275,8 +277,8 @@ If we turn logging on, we can see Zenpy's caching in action. The code:
 
 .. code:: python
 
-    print zenpy.users(id=1159307768).name
-    print zenpy.users(id=1159307768).name
+    print zenpy_client.users(id=1159307768).name
+    print zenpy_client.users(id=1159307768).name
 
 Outputs:
 
@@ -316,7 +318,7 @@ For example, to also cache SatisfactionRatings:
 
 .. code:: python
 
-    zenpy.add_cache(object_type='satisfaction_rating', cache_impl_name='LRUCache', maxsize=10000)
+    zenpy_client.add_cache(object_type='satisfaction_rating', cache_impl_name='LRUCache', maxsize=10000)
 
 
 Cache method reference

@@ -24,14 +24,15 @@ Please report bugs!
 ## Quickstart
 
 ```python
-# Create a Zenpy object
-zenpy = Zenpy(**credentials)
+from zenpy import Zenpy
+# Create a Zenpy instance
+zenpy_client = Zenpy(**credentials)
 
 # Create a new ticket
-zenpy.tickets.create(Ticket(subject="Important", description="Thing"))
+zenpy_client.tickets.create(Ticket(subject="Important", description="Thing"))
 
 # Perform a simple search
-for ticket in zenpy.search("party", type='ticket', assignee="face"):
+for ticket in zenpy_client.search("party", type='ticket', assignee="face"):
     print(ticket)
 ```
 
@@ -42,7 +43,7 @@ for ticket in zenpy.search("party", type='ticket', assignee="face"):
 ```python
 from zenpy.lib.api_objects import Ticket, User
 
-zenpy.tickets.create(
+zenpy_client.tickets.create(
     Ticket(
         description='Some description',
         requester=User(name='bob', email='bob@example.com')
@@ -55,9 +56,9 @@ zenpy.tickets.create(
 ```python
 from zenpy.lib.api_objects import Comment
 
-ticket = zenpy.tickets(id=some_ticket_id)
+ticket = zenpy_client.tickets(id=some_ticket_id)
 ticket.comment = Comment(body="Important private comment", public=False)
-zenpy.tickets.update(ticket)
+zenpy_client.tickets.update(ticket)
 ```
 
 ##### Uploading an attachment
@@ -66,11 +67,11 @@ zenpy.tickets.update(ticket)
 from zenpy.lib.api_objects import Comment
 
 # Upload the file (or file-like object) to Zendesk and obtain an Upload instance
-upload_instance = zenpy.attachments.upload('/tmp/awesome_file.txt')
+upload_instance = zenpy_client.attachments.upload('/tmp/awesome_file.txt')
 
-ticket = zenpy.tickets(id=some_ticket_id)
+ticket = zenpy_client.tickets(id=some_ticket_id)
 ticket.comment = Comment(body='This comment has my file attached', uploads=[upload_instance.token])
-zenpy.tickets.update(ticket)
+zenpy_client.tickets.update(ticket)
 ```
 
 ##### Creating a ticket with a custom field set
@@ -78,7 +79,7 @@ zenpy.tickets.update(ticket)
 ```python
 from zenpy.lib.api_objects import CustomField, Ticket
 
-ticket_audit = zenpy.tickets.create(Ticket(
+ticket_audit = zenpy_client.tickets.create(Ticket(
     subject='Has custom field',
     description="Wow, such field",
     custom_fields=[CustomField(id=43528467, value=1337)]
@@ -89,9 +90,9 @@ ticket_audit = zenpy.tickets.create(Ticket(
 
 ```python
 from zenpy.lib.api_objects import CustomField
-ticket = zenpy.tickets(id=some_ticket_id)
+ticket = zenpy_client.tickets(id=some_ticket_id)
 ticket.custom_fields.append(CustomField(id=43528467, value=1337))
-zenpy.tickets.update(ticket)
+zenpy_client.tickets.update(ticket)
 ```
 
 ##### Applying a Macro to a ticket
@@ -99,10 +100,10 @@ zenpy.tickets.update(ticket)
 ```python
 # Execute the show_macro_effect() method which returns what the macro *would* do.
 # The method accepts either Zenpy objects or ids. 
-macro_result = zenpy.tickets.show_macro_effect(ticket_id_or_object, macro_id_or_object)
+macro_result = zenpy_client.tickets.show_macro_effect(ticket_id_or_object, macro_id_or_object)
 
 # Update the ticket to actually change the ticket. 
-zenpy.tickets.update(macro_result.ticket)
+zenpy_client.tickets.update(macro_result.ticket)
 ```
 
 ## Documentation
