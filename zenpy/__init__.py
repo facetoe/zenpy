@@ -1,7 +1,6 @@
 import logging
 
 import requests
-from requests import adapters
 from requests.adapters import HTTPAdapter
 
 from zenpy.lib.api import UserApi, Api, TicketApi, OrganizationApi, SuspendedTicketApi, EndUserApi, TicketImportAPI, \
@@ -222,7 +221,7 @@ class Zenpy(object):
             session.mount('https://', HTTPAdapter(**self.http_adapter_kwargs()))
 
         if not hasattr(session, 'authorized') or not session.authorized:
-            # session is not an OAuth session that has been authorized, so authorize the session. 
+            # session is not an OAuth session that has been authorized, so authorize the session.
             if not password and not token and not oath_token:
                 raise ZenpyException("password, token or oauth_token are required!")
             elif password and token:
