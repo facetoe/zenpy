@@ -67,6 +67,12 @@ First, create a :class:`Zenpy` object:
     # Alternatively you can provide your own requests.Session object
     zenpy_client = Zenpy(**creds, session=some_session)
 
+    # If you are providing your own HTTPAdapter object, Zenpy provides defaults via the
+    # Zenpy.http_adapter_kwargs() method. You can choose to use these defaults like so:
+    session = requests.Session()
+    session.mount('https://', MyAdapter(**Zenpy.http_adapter_kwargs()))
+    zenpy_client = Zenpy(**creds, session=some_session)
+
 Searching the API
 -----------------
 
