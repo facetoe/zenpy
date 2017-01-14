@@ -21,6 +21,15 @@ class Zenpy(object):
 
     DEFAULT_TIMEOUT = 60.0
 
+    @staticmethod
+    def http_adapter_kwargs():
+        """
+        Provides Zenpy's default HTTPAdapter args for those users providing their own adapter.
+        """
+        return dict(
+            max_retries=3
+        )
+
     def __init__(self, subdomain, email=None, token=None, oauth_token=None, password=None, session=None, timeout=None):
         """
         Python Wrapper for the Zendesk API.
@@ -42,15 +51,6 @@ class Zenpy(object):
         """
 
         session = self._init_session(email, token, oauth_token, password, session)
-
-        # Workaround for https://github.com/kennethreitz/requests/issues/2364
-        # If the user has mounted their own adapter or provided their own max_retries value leave it alone.
-        adapter = session.get_adapter('https://')
-        if isinstance(adapter, HTTPAdapter):
-            if adapter.max_retries.total == adapters.DEFAULT_RETRIES:
-                session.mount('https://', HTTPAdapter(max_retries=3))
-        else:
-            log.warning("Expected: HTTPAdapter, found {}. Not setting max_retries.".format(adapter.__class__.__name__))
 
         timeout = timeout or self.DEFAULT_TIMEOUT
         endpoint = Endpoint()
@@ -217,16 +217,17 @@ class Zenpy(object):
         )
 
     def _init_session(self, email, token, oath_token, password, session):
-        if not session or not hasattr(session, 'authorized') \
-                or not session.authorized:
-            # session is not an OAuth session that has been authorized,
-            # so create a new Session.
+        if not session:
+            session = requests.Session()
+            session.mount('https://', HTTPAdapter(**self.http_adapter_kwargs()))
+
+        if not hasattr(session, 'authorized') or not session.authorized:
+            # session is not an OAuth session that has been authorized, so authorize the session. 
             if not password and not token and not oath_token:
                 raise ZenpyException("password, token or oauth_token are required!")
             elif password and token:
                 raise ZenpyException("password and token "
                                      "are mutually exclusive!")
-            session = session if session else requests.Session()
             if password:
                 session.auth = (email, password)
             elif token:
