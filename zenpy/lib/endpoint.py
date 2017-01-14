@@ -1,6 +1,11 @@
+import logging
+import time
 from datetime import datetime
 
+from dateutil.tz import tzutc
+
 from zenpy.lib.exception import ZenpyException
+from zenpy.lib.util import is_timezone_aware
 
 __author__ = 'facetoe'
 
@@ -19,7 +24,7 @@ else:
     bytes = str
     basestring = basestring
 
-import time
+log = logging.getLogger(__name__)
 
 
 class BaseEndpoint(object):
@@ -117,17 +122,30 @@ class MutlipleIDEndpoint(BaseEndpoint):
 class IncrementalEndpoint(BaseEndpoint):
     """
     An IncrementalEndpoint takes a start_time parameter
-    for querying the incremental api endpoint
+    for querying the incremental api endpoint.
+
+    Note: The Zendesk API expects UTC time. If a timezone aware datetime object is passed
+    Zenpy will convert it to UTC, however if a naive object or unix timestamp is passed there is nothing
+    Zenpy can do. It is recommended to always pass timezone aware objects to this endpoint.
+
+    :param start_time: Unix timestamp or datetime object
     """
 
-    def __call__(self, **kwargs):
-        if 'start_time' not in kwargs:
+    def __call__(self, start_time=None):
+        if not start_time:
             raise ZenpyException("Incremental Endoint requires a start_time parameter!")
 
-        if isinstance(kwargs['start_time'], datetime):
-            unix_time = time.mktime(kwargs['start_time'].timetuple())
+        if isinstance(start_time, datetime):
+            if is_timezone_aware(start_time):
+                start_time = start_time.astimezone(tzutc())
+            else:
+                log.warning(
+                    "Non timezone-aware datetime object passed to IncrementalEndpoint. "
+                    "The Zendesk API expects UTC time, if this is not the case results will be incorrect!"
+                )
+            unix_time = time.mktime(start_time.timetuple())
         else:
-            unix_time = kwargs['start_time']
+            unix_time = start_time
         query = "start_time=%s" % str(unix_time)
         return self.endpoint + query + self._format_sideload(self.sideload, seperator='&')
 
