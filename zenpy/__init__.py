@@ -25,7 +25,9 @@ class Zenpy(object):
         """
         Provides Zenpy's default HTTPAdapter args for those users providing their own adapter.
         """
+
         return dict(
+            # http://docs.python-requests.org/en/latest/api/?highlight=max_retries#requests.adapters.HTTPAdapter
             max_retries=3
         )
 
@@ -218,6 +220,7 @@ class Zenpy(object):
     def _init_session(self, email, token, oath_token, password, session):
         if not session:
             session = requests.Session()
+            # Workaround for possible race condition - https://github.com/kennethreitz/requests/issues/3661
             session.mount('https://', HTTPAdapter(**self.http_adapter_kwargs()))
 
         if not hasattr(session, 'authorized') or not session.authorized:
