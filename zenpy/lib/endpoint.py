@@ -5,7 +5,7 @@ from datetime import datetime
 from dateutil.tz import tzutc
 
 from zenpy.lib.exception import ZenpyException
-from zenpy.lib.util import is_timezone_aware
+from zenpy.lib.util import is_timezone_aware, is_iterable_but_not_string
 
 __author__ = 'facetoe'
 
@@ -207,10 +207,8 @@ class SearchEndpoint(BaseEndpoint):
         for key, value in kwargs.items():
             if isinstance(value, datetime):
                 kwargs[key] = value.strftime(self.ZENDESK_DATE_FORMAT)
-            elif isinstance(value, list) and key == 'ids':
+            elif is_iterable_but_not_string(value) and key == 'ids':
                 kwargs[key] = self._format_many(value)
-            elif isinstance(value, list) and not key.endswith('_between'):
-                modifiers.append(self.format_or(key, value))
 
             if key.endswith('_between'):
                 modifiers.append(self.format_between(key, value))
@@ -225,10 +223,12 @@ class SearchEndpoint(BaseEndpoint):
             elif key.endswith('_less_than'):
                 renamed_kwargs[key.replace('_less_than', '<')] = kwargs[key]
             elif key == 'minus':
-                if isinstance(value, list):
+                if is_iterable_but_not_string(value):
                     [modifiers.append("-%s" % v) for v in value]
                 else:
                     modifiers.append("-%s" % value)
+            elif is_iterable_but_not_string(value):
+                modifiers.append(self.format_or(key, value))
             else:
                 renamed_kwargs.update({key + ':': '"%s"' % value})
 
@@ -245,8 +245,8 @@ class SearchEndpoint(BaseEndpoint):
         return "%(query)s%(search_parameters)s%(sort_section)s" % locals()
 
     def format_between(self, key, values):
-        if not isinstance(values, list) and not isinstance(values, tuple):
-            raise ZenpyException("*_between requires a list or tuple!")
+        if not is_iterable_but_not_string(values):
+            raise ZenpyException("*_between requires an iterable (list, set, tuple etc)")
         elif not len(values) == 2:
             raise ZenpyException("*_between requires exactly 2 items!")
         elif not all([isinstance(d, datetime) for d in values]):
