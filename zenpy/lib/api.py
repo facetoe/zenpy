@@ -254,11 +254,10 @@ class Api(object):
         return forum_id
 
     def _get_user_fields(self, user_fields):
-        return self._get_fields(user_fields, endpoint=Endpoint.user_fields, object_type='user_field')
+        return user_fields
 
     def _get_organization_fields(self, organization_fields):
-        return self._get_fields(organization_fields, endpoint=Endpoint().organizations.organization_fields,
-                                object_type='organization_field')
+        return organization_fields
 
     # TODO implement this with Enterprise
     def _get_custom_fields(self, custom_fields):
