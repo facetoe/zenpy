@@ -22,6 +22,7 @@ from zenpy.lib.api_objects import JobStatus
 from zenpy.lib.api_objects import LogmeinTranscriptEvent
 from zenpy.lib.api_objects import Metadata
 from zenpy.lib.api_objects import NotificationEvent
+from zenpy.lib.api_objects import AgentMacroReference
 from zenpy.lib.api_objects import Organization
 from zenpy.lib.api_objects import OrganizationActivityEvent
 from zenpy.lib.api_objects import OrganizationField
@@ -127,7 +128,8 @@ class ClassManager(object):
         'sharing_agreement': SharingAgreement,
         'macro': Macro,
         'action': Action,
-        'result': MacroResult
+        'result': MacroResult,
+        'agentmacroreference': AgentMacroReference
     }
 
     def __init__(self, api):
