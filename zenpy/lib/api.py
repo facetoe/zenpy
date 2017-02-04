@@ -709,6 +709,21 @@ class OrganizationApi(TaggableApi, IncrementalApi, CRUDApi):
     def requests(self, **kwargs):
         return self._get_items(self.endpoint.requests, 'request', **kwargs)
 
+    def create_or_update(self, organization):
+        """
+        Creates an organization if it doesn't already exist, or updates an existing
+        organization identified by ID or external ID
+
+        :param organization: Organization object
+        :return: the created/updated Organization
+        """
+
+        object_type, payload = self._get_type_and_payload(organization)
+        return self._do(self.post,
+                        dict(sideload=False),
+                        payload=payload,
+                        endpoint=self.endpoint.create_or_update)
+
 
 class OrganizationMembershipApi(CRUDApi):
     """

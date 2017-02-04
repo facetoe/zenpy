@@ -342,6 +342,7 @@ class Endpoint(object):
     organizations.organization_memberships = SecondaryEndpoint('organizations/%(id)s/organization_memberships.json')
     organizations.requests = SecondaryEndpoint('organizations/%(id)s/requests.json')
     organizations.tags = SecondaryEndpoint('organizations/%(id)s/tags.json')
+    organizations.create_or_update = PrimaryEndpoint('organizations/create_or_update')
     requests = PrimaryEndpoint('requests')
     requests.ccd = PrimaryEndpoint("requests/ccd")
     requests.comments = SecondaryEndpoint('requests/%(id)s/comments.json')
