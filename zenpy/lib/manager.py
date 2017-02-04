@@ -3,7 +3,7 @@ from datetime import datetime, date
 from json import JSONEncoder
 
 from zenpy.lib.api_objects import Activity, Request, UserRelated, OrganizationMembership, Upload, SharingAgreement, \
-    Macro, Action, MacroResult
+    Macro, Action, MacroResult, AgentMacroReference
 from zenpy.lib.api_objects import Attachment
 from zenpy.lib.api_objects import Audit
 from zenpy.lib.api_objects import Brand
@@ -127,7 +127,8 @@ class ClassManager(object):
         'sharing_agreement': SharingAgreement,
         'macro': Macro,
         'action': Action,
-        'result': MacroResult
+        'result': MacroResult,
+        'agentmacroreference': AgentMacroReference
     }
 
     def __init__(self, api):
