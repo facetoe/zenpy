@@ -2703,6 +2703,32 @@ class FacebookEvent(BaseObject):
             self._page = page
 
 
+class AgentMacroReference(BaseObject):
+    def __init__(self, api=None, id=None, macro_id=None, macro_title=None, type=None, **kwargs):
+
+        self.api = api
+
+        self._via = None
+        self.id = id
+        self.macro_id = macro_id
+        self.macro_title = macro_title
+        self.type = type
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def via(self):
+
+        if self.api and self._via:
+            return self.api._get_via(self._via)
+
+    @via.setter
+    def via(self, via):
+        if via:
+            self._via = via
+
+
 class Brand(BaseObject):
     def __init__(self, api=None, active=None, brand_url=None, created_at=None, default=None, has_help_center=None,
                  help_center_state=None, host_mapping=None, id=None, name=None, subdomain=None, updated_at=None,
