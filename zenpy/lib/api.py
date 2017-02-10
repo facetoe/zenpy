@@ -103,9 +103,9 @@ class Api(object):
                 log.debug("    -> sleeping: %s more seconds" % retry_after_seconds)
                 sleep(1)
             response = http_method(url, **kwargs)
-            if self.ratelimit is not None:
-                self.callsafety['lastcalltime'] = time()
-                self.callsafety['lastlimitremaining'] = response.headers['X-Rate-Limit-Remaining']
+        if self.ratelimit is not None:
+            self.callsafety['lastcalltime'] = time()
+            self.callsafety['lastlimitremaining'] = response.headers['X-Rate-Limit-Remaining']
         return self._check_and_cache_response(response)
 
     def _get_items(self, endpoint, object_type, *args, **kwargs):
