@@ -31,7 +31,7 @@ class Zenpy(object):
             max_retries=3
         )
 
-    def __init__(self, subdomain, email=None, token=None, oauth_token=None, password=None, session=None, timeout=None):
+    def __init__(self, subdomain, email=None, token=None, oauth_token=None, password=None, session=None, timeout=None, ratelimit=None):
         """
         Python Wrapper for the Zendesk API.
 
@@ -49,6 +49,7 @@ class Zenpy(object):
         :param password: Zendesk password
         :param session: Existing Requests Session object
         :param timeout: Global timeout on API requests.
+        :param ratelimit: User specified rate limit
         """
 
         session = self._init_session(email, token, oauth_token, password, session)
@@ -60,14 +61,17 @@ class Zenpy(object):
             subdomain=subdomain,
             session=session,
             timeout=timeout,
-            endpoint=endpoint.users)
+            endpoint=endpoint.users,
+            ratelimit=ratelimit
+        )
 
         self.user_fields = Api(
             subdomain=subdomain,
             session=session,
             timeout=timeout,
             endpoint=endpoint.user_fields,
-            object_type='user_field'
+            object_type='user_field',
+            ratelimit=ratelimit
         )
 
         self.groups = Api(
@@ -75,86 +79,109 @@ class Zenpy(object):
             session=session,
             timeout=timeout,
             endpoint=endpoint.groups,
-            object_type='group')
+            object_type='group',
+            ratelimit=ratelimit
+        )
 
         self.macros = MacroApi(
             subdomain=subdomain,
             session=session,
             timeout=timeout,
+            ratelimit=ratelimit
         )
 
         self.organizations = OrganizationApi(
             subdomain=subdomain,
             session=session,
             timeout=timeout,
-            endpoint=endpoint.organizations)
+            endpoint=endpoint.organizations,
+            ratelimit=ratelimit
+        )
 
         self.organization_memberships = OrganizationMembershipApi(
             subdomain=subdomain,
             session=session,
             timeout=timeout,
-            endpoint=endpoint.organization_memberships
+            endpoint=endpoint.organization_memberships,
+            ratelimit=ratelimit
         )
 
         self.tickets = TicketApi(
             subdomain=subdomain,
             session=session,
             timeout=timeout,
-            endpoint=endpoint.tickets)
+            endpoint=endpoint.tickets,
+            ratelimit=ratelimit
+        )
 
         self.suspended_tickets = SuspendedTicketApi(
             subdomain=subdomain,
             session=session,
             timeout=timeout,
             object_type='suspended_ticket',
-            endpoint=endpoint.suspended_tickets)
+            endpoint=endpoint.suspended_tickets,
+            ratelimit=ratelimit
+        )
 
         self.search = Api(
             subdomain=subdomain,
             session=session,
             timeout=timeout,
             endpoint=endpoint.search,
-            object_type='results')
+            object_type='results',
+            ratelimit=ratelimit
+        )
 
         self.topics = Api(
             subdomain=subdomain,
             session=session,
             timeout=timeout,
             endpoint=endpoint.topics,
-            object_type='topic')
+            object_type='topic',
+            ratelimit=ratelimit
+        )
 
         self.attachments = AttachmentApi(
             subdomain=subdomain,
             session=session,
             timeout=timeout,
-            endpoint=endpoint.attachments)
+            endpoint=endpoint.attachments,
+            ratelimit=ratelimit
+        )
 
         self.brands = Api(
             subdomain=subdomain,
             session=session,
             timeout=timeout,
             endpoint=endpoint.brands,
-            object_type='brand')
+            object_type='brand',
+            ratelimit=ratelimit
+        )
 
         self.job_status = Api(
             subdomain=subdomain,
             session=session,
             timeout=timeout,
             endpoint=endpoint.job_statuses,
-            object_type='job_status')
+            object_type='job_status',
+            ratelimit=ratelimit
+        )
 
         self.tags = Api(
             subdomain=subdomain,
             session=session,
             timeout=timeout,
             endpoint=endpoint.tags,
-            object_type='tag')
+            object_type='tag',
+            ratelimit=ratelimit
+        )
 
         self.satisfaction_ratings = SatisfactionRatingApi(
             subdomain=subdomain,
             session=session,
             timeout=timeout,
-            endpoint=endpoint.satisfaction_ratings
+            endpoint=endpoint.satisfaction_ratings,
+            ratelimit=ratelimit
         )
 
         self.sharing_agreements = SharingAgreementAPI(
@@ -162,6 +189,7 @@ class Zenpy(object):
             session=session,
             timeout=timeout,
             endpoint=endpoint.sharing_agreements,
+            ratelimit=ratelimit
         )
 
         self.activities = Api(
@@ -169,7 +197,8 @@ class Zenpy(object):
             session=session,
             timeout=timeout,
             endpoint=endpoint.activities,
-            object_type='activity'
+            object_type='activity',
+            ratelimit=ratelimit
         )
 
         self.group_memberships = Api(
@@ -177,14 +206,16 @@ class Zenpy(object):
             session=session,
             timeout=timeout,
             endpoint=endpoint.group_memberships,
-            object_type='group_membership'
+            object_type='group_membership',
+            ratelimit=ratelimit
         )
 
         self.end_user = EndUserApi(
             subdomain=subdomain,
             session=session,
             timeout=timeout,
-            endpoint=endpoint.end_user
+            endpoint=endpoint.end_user,
+            ratelimit=ratelimit
         )
 
         self.ticket_metrics = Api(
@@ -192,7 +223,8 @@ class Zenpy(object):
             session=session,
             timeout=timeout,
             endpoint=endpoint.ticket_metrics,
-            object_type='ticket_metric'
+            object_type='ticket_metric',
+            ratelimit=ratelimit
         )
 
         self.ticket_fields = Api(
@@ -200,21 +232,24 @@ class Zenpy(object):
             session=session,
             timeout=timeout,
             endpoint=endpoint.ticket_fields,
-            object_type='ticket_field'
+            object_type='ticket_field',
+            ratelimit=ratelimit
         )
 
         self.ticket_import = TicketImportAPI(
             subdomain=subdomain,
             session=session,
             timeout=timeout,
-            endpoint=endpoint.ticket_import
+            endpoint=endpoint.ticket_import,
+            ratelimit=ratelimit
         )
 
         self.requests = RequestAPI(
             subdomain=subdomain,
             session=session,
             timeout=timeout,
-            endpoint=endpoint.requests
+            endpoint=endpoint.requests,
+            ratelimit=ratelimit
         )
 
     def _init_session(self, email, token, oath_token, password, session):

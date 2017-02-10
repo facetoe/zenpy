@@ -1,7 +1,7 @@
 import json
 import logging
 import os
-from time import sleep
+from time import sleep, time
 
 from zenpy.lib.api_objects import User, Ticket, Macro
 from zenpy.lib.endpoint import Endpoint
@@ -26,15 +26,46 @@ class Api(object):
     """
     subdomain = None
 
-    def __init__(self, subdomain, session, endpoint, object_type, timeout):
+    def __init__(self, subdomain, session, endpoint, object_type, timeout, ratelimit):
         self.subdomain = subdomain
         self.session = session
         self.timeout = timeout
+        self.ratelimit = ratelimit
         self.endpoint = endpoint
         self.object_type = object_type
         self.protocol = 'https'
         self.version = 'v2'
         self.object_manager = ObjectManager(self)
+        self.callsafety = {
+            'lastcalltime': None,
+            'lastlimitremaining': None
+        }
+
+    def _ratelimit(self, http_method, url, **kwargs):
+        def time_since_last_call():
+            if self.callsafety['lastcalltime'] is not None:
+                return int(time() - self.callsafety['lastcalltime'])
+            else:
+                return None
+        lastlimitremaining = self.callsafety['lastlimitremaining']
+
+        if time_since_last_call() is None or time_since_last_call() >= 10 or lastlimitremaining >= self.ratelimit:
+            response = http_method(url, **kwargs)
+        else:
+            # We hit our limit floor and aren't quite at 10 seconds yet..
+            log.warn("Safety Limit Reached of %s remaining calls and time since last call is under 10 seconds" % self.ratelimit)
+            while time_since_last_call() < 10:
+                remaining_sleep = int(10 - time_since_last_call())
+                log.debug("  -> sleeping: %s more seconds" % remaining_sleep)
+                sleep(1)
+            response = http_method(url, **kwargs)
+
+        self.callsafety['lastcalltime'] = time()
+        if 'X-Rate-Limit-Remaining' in response.headers:
+            self.callsafety['lastlimitremaining'] = int(response.headers['X-Rate-Limit-Remaining'])
+        else:
+            self.callsafety['lastlimitremaining'] = 0
+        return response
 
     def post(self, url, payload, data=None):
         log.debug("POST: %s - %s" % (url, str(payload)))
@@ -56,7 +87,11 @@ class Api(object):
 
     def _call_api(self, http_method, url, **kwargs):
         log.debug("{}: {} - {}".format(http_method.__name__.upper(), url, kwargs))
-        response = http_method(url, **kwargs)
+        if self.ratelimit is not None:
+            # This path indicates we're taking a proactive approach to not hit the rate limit
+            response = self._ratelimit(http_method=http_method, url=url, **kwargs)
+        else:
+            response = http_method(url, **kwargs)
 
         # If we are being rate-limited, wait the required period before trying again.
         while 'retry-after' in response.headers and int(response.headers['retry-after']) > 0:
@@ -68,6 +103,9 @@ class Api(object):
                 log.debug("    -> sleeping: %s more seconds" % retry_after_seconds)
                 sleep(1)
             response = http_method(url, **kwargs)
+            if self.ratelimit is not None:
+                self.callsafety['lastcalltime'] = time()
+                self.callsafety['lastlimitremaining'] = response.headers['X-Rate-Limit-Remaining']
         return self._check_and_cache_response(response)
 
     def _get_items(self, endpoint, object_type, *args, **kwargs):
@@ -486,8 +524,8 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
     The UserApi adds some User specific functionality
     """
 
-    def __init__(self, subdomain, session, endpoint, timeout):
-        Api.__init__(self, subdomain, session, endpoint, object_type='user', timeout=timeout)
+    def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
+        Api.__init__(self, subdomain, session, endpoint, object_type='user', timeout=timeout, ratelimit=ratelimit)
 
     def groups(self, user_id):
         """
@@ -616,8 +654,8 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
 
 
 class AttachmentApi(Api):
-    def __init__(self, subdomain, session, endpoint, timeout):
-        Api.__init__(self, subdomain, session, endpoint, object_type='attachment', timeout=timeout)
+    def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
+        Api.__init__(self, subdomain, session, endpoint, object_type='attachment', timeout=timeout, ratelimit=ratelimit)
 
     def __call__(self, *args, **kwargs):
         if 'id' not in kwargs:
@@ -668,8 +706,8 @@ class EndUserApi(CRUDApi):
     EndUsers can only update.
     """
 
-    def __init__(self, subdomain, session, endpoint, timeout):
-        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='user')
+    def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
+        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='user', ratelimit=ratelimit)
 
     def delete(self, items):
         raise ZenpyException("EndUsers cannot delete!")
@@ -679,8 +717,8 @@ class EndUserApi(CRUDApi):
 
 
 class OrganizationApi(TaggableApi, IncrementalApi, CRUDApi):
-    def __init__(self, subdomain, session, endpoint, timeout):
-        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='organization')
+    def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
+        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='organization', ratelimit=ratelimit)
 
     def organization_fields(self, org_id):
         """
@@ -730,16 +768,16 @@ class OrganizationMembershipApi(CRUDApi):
     The OrganizationMembershipApi allows the creation and deletion of Organization Memberships
     """
 
-    def __init__(self, subdomain, session, endpoint, timeout):
-        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='organization_membership')
+    def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
+        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='organization_membership', ratelimit=ratelimit)
 
     def update(self, items):
         raise ZenpyException("You cannot update Organization Memberships!")
 
 
 class SatisfactionRatingApi(ModifiableApi):
-    def __init__(self, subdomain, session, endpoint, timeout):
-        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='satisfaction_rating')
+    def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
+        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='satisfaction_rating', ratelimit=ratelimit)
 
     def create(self, ticket_id, satisfaction_rating):
         """
@@ -758,8 +796,8 @@ class SatisfactionRatingApi(ModifiableApi):
 
 
 class MacroApi(CRUDApi):
-    def __init__(self, subdomain, session, timeout):
-        Api.__init__(self, subdomain, session, Endpoint.macros, timeout=timeout, object_type='macro')
+    def __init__(self, subdomain, session, timeout, ratelimit):
+        Api.__init__(self, subdomain, session, Endpoint.macros, timeout=timeout, object_type='macro', ratelimit=ratelimit)
 
     def apply(self, macro_id):
         """
@@ -776,8 +814,8 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
     The TicketApi adds some Ticket specific functionality
     """
 
-    def __init__(self, subdomain, session, endpoint, timeout):
-        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='ticket')
+    def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
+        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='ticket', ratelimit=ratelimit)
 
     def organizations(self, org_id):
         """
@@ -850,8 +888,8 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
 
 
 class TicketImportAPI(CRUDApi):
-    def __init__(self, subdomain, session, endpoint, timeout):
-        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='ticket')
+    def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
+        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='ticket', ratelimit=ratelimit)
 
     def __call__(self, *args, **kwargs):
         raise ZenpyException("You must pass ticket objects to this endpoint!")
@@ -864,8 +902,8 @@ class TicketImportAPI(CRUDApi):
 
 
 class RequestAPI(CRUDApi):
-    def __init__(self, subdomain, session, endpoint, timeout):
-        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='request')
+    def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
+        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='request', ratelimit=ratelimit)
 
     def open(self):
         """
@@ -903,5 +941,5 @@ class RequestAPI(CRUDApi):
 
 
 class SharingAgreementAPI(CRUDApi):
-    def __init__(self, subdomain, session, endpoint, timeout):
-        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='sharing_agreement')
+    def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
+        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='sharing_agreement', ratelimit=ratelimit)
