@@ -37,7 +37,7 @@ class {{object.name}}(BaseObject):
                     attr_docs['type'] = ':class:`%s`' % attr_docs['type']
 
                 for key, value in sorted(attr_docs.items()):
-                    doc_strings.append("%s: %s" % (key.capitalize(), value))
+                    doc_strings.append("%s: %s" % (key.capitalize(), value.replace('*', '')))
                 attribute.attr_docs = doc_strings
 
             attributes.append(attribute)

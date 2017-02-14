@@ -3546,9 +3546,9 @@ class Ticket(BaseObject):
         #:| Type: integer
         self.id = id
 
-        #:| Comment: The organization of the requester. *Writable only when creating, not when updating
+        #:| Comment: The organization of the requester. Writable only when creating, not when updating
         #:| Mandatory: no
-        #:| Read-only: no*
+        #:| Read-only: no
         #:| Type: integer
         self.organization_id = organization_id
 
@@ -3782,7 +3782,7 @@ class Ticket(BaseObject):
     @property
     def organization(self):
         """
-        |  Comment: The organization of the requester. *Writable only when creating, not when updating
+        |  Comment: The organization of the requester. Writable only when creating, not when updating
         """
         if self.api and self.organization_id:
             return self.api._get_organization(self.organization_id)
