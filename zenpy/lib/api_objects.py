@@ -845,7 +845,7 @@ class TicketEvent(BaseObject):
     def child_events(self):
 
         if self.api and self._child_events:
-            return self.api._get_child_events(self._child_events)
+            return self._child_events
 
     @child_events.setter
     def child_events(self, child_events):
