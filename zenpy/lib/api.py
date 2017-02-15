@@ -107,7 +107,7 @@ class Api(object):
             response = http_method(url, **kwargs)
         if self.ratelimit is not None:
             self.callsafety['lastcalltime'] = time()
-            self.callsafety['lastlimitremaining'] = response.headers['X-Rate-Limit-Remaining']
+            self.callsafety['lastlimitremaining'] = int(response.headers['X-Rate-Limit-Remaining'])
         return self._check_and_cache_response(response)
 
     def _get_items(self, endpoint, object_type, *args, **kwargs):
