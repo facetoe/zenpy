@@ -47,13 +47,15 @@ class Api(object):
                 return int(time() - self.callsafety['lastcalltime'])
             else:
                 return None
+
         lastlimitremaining = self.callsafety['lastlimitremaining']
 
         if time_since_last_call() is None or time_since_last_call() >= 10 or lastlimitremaining >= self.ratelimit:
             response = http_method(url, **kwargs)
         else:
             # We hit our limit floor and aren't quite at 10 seconds yet..
-            log.warn("Safety Limit Reached of %s remaining calls and time since last call is under 10 seconds" % self.ratelimit)
+            log.warn(
+                "Safety Limit Reached of %s remaining calls and time since last call is under 10 seconds" % self.ratelimit)
             while time_since_last_call() < 10:
                 remaining_sleep = int(10 - time_since_last_call())
                 log.debug("  -> sleeping: %s more seconds" % remaining_sleep)
@@ -302,12 +304,8 @@ class Api(object):
         return custom_fields
 
     # This is ticket fields, hopefully it doesn't conflict with another field type
-    def _get_fields(self, fields, object_type='ticket_field', endpoint=Endpoint().ticket_fields):
-        if any([self._query_cache(object_type, field) is None for field in [f['id'] for f in fields]]):
-            # Populate field cache
-            self._get(self._get_url(endpoint=endpoint()))
-        for field in fields:
-            yield self._query_cache(object_type, field)
+    def _get_fields(self, fields):
+        return fields
 
     def _get_upload(self, upload):
         return self._object_from_json('upload', upload)
@@ -718,7 +716,8 @@ class EndUserApi(CRUDApi):
 
 class OrganizationApi(TaggableApi, IncrementalApi, CRUDApi):
     def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
-        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='organization', ratelimit=ratelimit)
+        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='organization',
+                     ratelimit=ratelimit)
 
     def organization_fields(self, org_id):
         """
@@ -769,7 +768,8 @@ class OrganizationMembershipApi(CRUDApi):
     """
 
     def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
-        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='organization_membership', ratelimit=ratelimit)
+        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='organization_membership',
+                     ratelimit=ratelimit)
 
     def update(self, items):
         raise ZenpyException("You cannot update Organization Memberships!")
@@ -777,7 +777,8 @@ class OrganizationMembershipApi(CRUDApi):
 
 class SatisfactionRatingApi(ModifiableApi):
     def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
-        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='satisfaction_rating', ratelimit=ratelimit)
+        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='satisfaction_rating',
+                     ratelimit=ratelimit)
 
     def create(self, ticket_id, satisfaction_rating):
         """
@@ -797,7 +798,8 @@ class SatisfactionRatingApi(ModifiableApi):
 
 class MacroApi(CRUDApi):
     def __init__(self, subdomain, session, timeout, ratelimit):
-        Api.__init__(self, subdomain, session, Endpoint.macros, timeout=timeout, object_type='macro', ratelimit=ratelimit)
+        Api.__init__(self, subdomain, session, Endpoint.macros, timeout=timeout, object_type='macro',
+                     ratelimit=ratelimit)
 
     def apply(self, macro_id):
         """
@@ -942,4 +944,5 @@ class RequestAPI(CRUDApi):
 
 class SharingAgreementAPI(CRUDApi):
     def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
-        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='sharing_agreement', ratelimit=ratelimit)
+        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='sharing_agreement',
+                     ratelimit=ratelimit)
