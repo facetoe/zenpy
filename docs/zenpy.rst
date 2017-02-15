@@ -277,11 +277,11 @@ created or modified since that point in time.
 Rate Limiting
 -------------
 
-Zendesk imposes rate limiting (https://developer.zendesk.com/rest_api/docs/core/introduction#rate-limits). By default Zenpy will detect this and wait the required period before trying again. If you wish to avoid ever hitting the rate limit you can set the `ratelimit` parameter to True when instantiating your Zenpy client:
+Zendesk imposes rate limiting (https://developer.zendesk.com/rest_api/docs/core/introduction#rate-limits). By default Zenpy will detect this and wait the required period before trying again. If you wish to avoid ever hitting the rate limit you can set the `ratelimit` parameter when instantiating your Zenpy client:
 
 .. code:: python
 
-    zenpy_client = Zenpy(ratelimit=True, **creds)
+    zenpy_client = Zenpy(ratelimit=20, **creds)
 
 See https://github.com/facetoe/zenpy/pull/99 for more details on how this feature works.
 
