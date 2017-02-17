@@ -313,6 +313,8 @@ class Api(object):
     def _get_attachment(self, attachment):
         return self._object_from_json('attachment', attachment)
 
+    def _get_child_events(self, child_events):
+        return child_events
 
 class ModifiableApi(Api):
     """
