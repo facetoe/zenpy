@@ -362,7 +362,7 @@ class Endpoint(object):
     tickets = PrimaryEndpoint('tickets', ['users', 'groups', 'organizations'])
     tickets.audits = SecondaryEndpoint('tickets/%(id)s/audits.json')
     tickets.comments = SecondaryEndpoint('tickets/%(id)s/comments.json')
-    tickets.events = IncrementalEndpoint('incremental/ticket_events.json?')
+    tickets.events = IncrementalEndpoint('incremental/ticket_events.json?', sideload=['comment_events'])
     tickets.incremental = IncrementalEndpoint('incremental/tickets.json?',
                                               sideload=['users', 'groups', 'organizations'])
     tickets.metrics = SecondaryEndpoint('tickets/%(id)s/metrics.json')
