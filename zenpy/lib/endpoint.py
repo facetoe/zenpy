@@ -85,6 +85,8 @@ class PrimaryEndpoint(BaseEndpoint):
                 query = "".join([self.endpoint, '/update_many.json'])
             elif key in ('sort_by', 'sort_order'):
                 modifiers.append((key, value))
+            elif key == 'permission_set':
+                modifiers.append(('permission_set', value))
             elif key == 'role':
                 if isinstance(value, basestring):
                    value = [value]
