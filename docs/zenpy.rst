@@ -146,6 +146,8 @@ And called with an ID returns the object with that ID:
 
     print zenpy_client.users(id=1159307768)
 
+You can also filter by passing in ``permission_set`` or ``role``.
+
 In addition to the top level endpoints there are several secondary level
 endpoints that reference the level above. For example, if you wanted to
 print all the comments on a ticket:
