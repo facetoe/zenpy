@@ -22,6 +22,7 @@ from zenpy.lib.api_objects import JobStatus
 from zenpy.lib.api_objects import LogmeinTranscriptEvent
 from zenpy.lib.api_objects import Metadata
 from zenpy.lib.api_objects import NotificationEvent
+from zenpy.lib.api_objects import AgentMacroReference
 from zenpy.lib.api_objects import Organization
 from zenpy.lib.api_objects import OrganizationActivityEvent
 from zenpy.lib.api_objects import OrganizationField

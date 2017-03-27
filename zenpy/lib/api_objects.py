@@ -26,6 +26,28 @@ class BaseObject(object):
         else:
             return "[%s()]" % self.__class__.__name__
 
+class AgentMacroReference(BaseObject):
+    def __init__(self, api=None, body=None, id=None, type=None, **kwargs):
+
+        self.api = api
+
+        self._via = None
+        self.id = id
+        self.type = type
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def via(self):
+
+        if self.api and self._via:
+            return self.api._get_via(self._via)
+
+    @via.setter
+    def via(self, via):
+        if via:
+            self._via = via
 
 class NotificationEvent(BaseObject):
     def __init__(self, api=None, body=None, id=None, subject=None, type=None, **kwargs):
@@ -64,6 +86,8 @@ class NotificationEvent(BaseObject):
     def via(self, via):
         if via:
             self._via = via
+
+
 
 
 class Forum(BaseObject):
