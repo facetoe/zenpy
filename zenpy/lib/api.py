@@ -9,7 +9,7 @@ from zenpy.lib.exception import APIException, RecordNotFoundException
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.generator import ResultGenerator
 from zenpy.lib.manager import ApiObjectEncoder, ObjectManager
-from zenpy.lib.util import to_snake_case
+from zenpy.lib.util import to_snake_case, is_iterable_but_not_string
 
 __author__ = 'facetoe'
 
@@ -313,6 +313,7 @@ class Api(object):
     def _get_child_events(self, child_events):
         return child_events
 
+
 class ModifiableApi(Api):
     """
     ModifiableApi contains helper methods for modifying an API
@@ -320,7 +321,9 @@ class ModifiableApi(Api):
 
     def _get_type_and_payload(self, items):
         self._check_type(items)
-        if isinstance(items, list):
+        if is_iterable_but_not_string(items):
+            if len(items) < 1:
+                raise ZenpyException("At least one item is required to perform this action!")
             first_obj = next((x for x in items))
             # Object name needs to be plural when targeting many
             object_type = "%ss" % to_snake_case(first_obj.__class__.__name__)
@@ -333,7 +336,7 @@ class ModifiableApi(Api):
     def _check_type(self, items):
         # We don't want people passing, for example, a Group object to a Ticket endpoint.
         expected_class = self.object_manager.class_manager.class_for_type(self.object_type)
-        if isinstance(items, list):
+        if is_iterable_but_not_string(items):
             if any((o.__class__ is not expected_class for o in items)):
                 raise ZenpyException("Invalid type - expected %(expected_class)s" % locals())
         else:
