@@ -890,6 +890,36 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         self._check_and_cache_response(response)
         return self._build_response(response.json())
 
+    def merge(self, target, source,
+              target_comment=None, source_comment=None):
+        """
+        Merge the ticket(s) or ticket ID(s) in source into the target ticket. 
+
+        :param target: ticket id or object to merge tickets into
+        :param source: ticket id, object or list of tickets or ids to merge into target
+        :param source_comment: optional comment for the source ticket(s)
+        :param target_comment: optional comment for the target ticket
+        
+        :return: a JobStatus object
+        """
+        if isinstance(target, Ticket):
+            target = target.id
+        if isinstance(source, Ticket):
+            source_ids = [source.id]
+        else:
+            source_ids = [t.id if isinstance(t, Ticket) else t for t in source]
+
+        payload = dict(
+            ids=source_ids,
+            target_comment=target_comment,
+            source_comment=source_comment
+        )
+
+        return self._do(self.post,
+                        endpoint_kwargs=dict(id=target),
+                        payload=payload,
+                        endpoint=self.endpoint.merge)
+
 
 class TicketImportAPI(CRUDApi):
     def __init__(self, subdomain, session, endpoint, timeout, ratelimit):

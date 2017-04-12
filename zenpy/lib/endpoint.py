@@ -378,6 +378,7 @@ class Endpoint(object):
     tickets.recent = SecondaryEndpoint('tickets/recent.json')
     tickets.tags = SecondaryEndpoint('tickets/%(id)s/tags.json')
     tickets.macro = MutlipleIDEndpoint('tickets/{0}/macros/{1}/apply.json')
+    tickets.merge = SecondaryEndpoint('tickets/%(id)s/merge.json')
     topics = PrimaryEndpoint('topics')
     topics.tags = SecondaryEndpoint('topics/%(id)s/tags.json')
     user_fields = PrimaryEndpoint('user_fields')
