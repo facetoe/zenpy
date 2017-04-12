@@ -63,10 +63,7 @@ class Api(object):
             response = http_method(url, **kwargs)
 
         self.callsafety['lastcalltime'] = time()
-        if 'X-Rate-Limit-Remaining' in response.headers:
-            self.callsafety['lastlimitremaining'] = int(response.headers['X-Rate-Limit-Remaining'])
-        else:
-            self.callsafety['lastlimitremaining'] = 0
+        self.callsafety['lastlimitremaining'] = response.headers.get('X-Rate-Limit-Remaining', 0)
         return response
 
     def post(self, url, payload, data=None):
