@@ -3,7 +3,7 @@ import logging
 import os
 from time import sleep, time
 
-from zenpy.lib.api_objects import User, Ticket, Macro
+from zenpy.lib.api_objects import User, Ticket, Macro, Identity
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import APIException, RecordNotFoundException
 from zenpy.lib.exception import ZenpyException
@@ -171,7 +171,8 @@ class Api(object):
                          'organization',
                          'organization_membership',
                          'upload',
-                         'result')
+                         'result',
+                         'identity')
 
         for object_type in known_objects:
             if object_type in response_json:
@@ -343,10 +344,13 @@ class ModifiableApi(Api):
             if items.__class__ is not expected_class:
                 raise ZenpyException("Invalid type - expected %(expected_class)s" % locals())
 
-    def _do(self, action, endpoint_kwargs, payload=None, endpoint=None):
+    def _do(self, action, endpoint_kwargs, endpoint_args=None, payload=None, endpoint=None):
         if not endpoint:
             endpoint = self.endpoint
-        url = self._get_url(endpoint=endpoint(**endpoint_kwargs))
+        if not endpoint_args:
+            endpoint_args = tuple()
+        url = self._get_url(endpoint=endpoint(*endpoint_args, **endpoint_kwargs))
+
         return action(url, payload=payload)
 
 
@@ -524,8 +528,150 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
     The UserApi adds some User specific functionality
     """
 
+    class UserIdentityApi(ModifiableApi):
+        def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
+            Api.__init__(self, subdomain, session, endpoint.identities,
+                         object_type='identity',
+                         timeout=timeout,
+                         ratelimit=ratelimit)
+
+        def show(self, user, identity):
+            """
+            Show the specified identity for the specified user.
+            
+            :param user: user id or User object 
+            :param identity: identity id object
+            :return: Identity
+            """
+            if isinstance(user, User):
+                user = user.id
+            if isinstance(identity, Identity):
+                identity = identity.id
+
+            response = self._get(
+                url=self._get_url(self.endpoint.show(user, identity))
+            )
+            self._check_and_cache_response(response)
+            return self._build_response(response.json())
+
+        def create(self, user, identity):
+            """
+            Create an additional identity for the specified user
+            
+            :param user: User id or object
+            :param identity: Identity object to be created
+            :return: 
+            """
+            if not isinstance(identity, Identity):
+                raise ZenpyException("You must pass an Identity object to this endpoint!")
+            if isinstance(user, User):
+                user = user.id
+            object_type, payload = self._get_type_and_payload(identity)
+            return self._do(self.post, dict(sideload=False, id=user), payload=payload)
+
+        def update(self, user, identity):
+            """
+            Update specified identity for the specified user
+            
+            :param user: User object or id 
+            :param identity: Identity object to be updated.
+            :return: The updated Identity
+            """
+            if not isinstance(identity, Identity):
+                raise ZenpyException("You must pass an Identity object to this endpoint!")
+            if isinstance(user, User):
+                user = user.id
+            object_type, payload = self._get_type_and_payload(identity)
+            response = self._do(self._put,
+                                {},
+                                endpoint=self.endpoint.update,
+                                endpoint_args=(user, identity.id),
+                                payload=payload)
+            self._check_and_cache_response(response)
+            return self._build_response(response.json())
+
+        def make_primary(self, user, identity):
+            """
+            Set the specified user as primary for the specified user.
+            
+            :param user: User object or id
+            :param identity: Identity object or id
+            :return: list of user's Identities
+            """
+            if isinstance(user, User):
+                user = user.id
+            if isinstance(identity, Identity):
+                identity = identity.id
+            response = self._do(self._put,
+                                {},
+                                endpoint=self.endpoint.make_primary,
+                                endpoint_args=(user, identity))
+            # We need to consume the generator here as we need to update the Identity cache.
+            # If we don't then it is possible a stale version will be returned on a subsequent call.
+            return [i for i in ResultGenerator(self, self.object_type, response.json())]
+
+        def request_verification(self, user, identity):
+            """
+            Sends the user a verification email with a link to verify ownership of the email address.
+
+            :param user: User id or object
+            :param identity: Identity id or object
+            :return: requests Response object
+            """
+            if isinstance(user, User):
+                user = user.id
+            if isinstance(identity, Identity):
+                identity = identity.id
+            return self._do(self._put,
+                            {},
+                            endpoint=self.endpoint.request_verification,
+                            endpoint_args=(user, identity))
+
+        def verify(self, user, identity):
+            """
+            Verify an identity for a user
+            
+            :param user: User id or object
+            :param identity: Identity id or object
+            :return: the verified Identity
+            """
+            if isinstance(user, User):
+                user = user.id
+            if isinstance(identity, Identity):
+                identity = identity.id
+            response = self._do(self._put,
+                                {},
+                                endpoint=self.endpoint.verify,
+                                endpoint_args=(user, identity))
+            self._check_and_cache_response(response)
+            return self._build_response(response.json())
+
+        def delete(self, user, identity):
+            """
+            Deletes the identity for a given user
+            
+            :param user: User id or object
+            :param identity: Identity id or object
+            :return: requests Response object
+            """
+            if isinstance(user, User):
+                user = user.id
+            # Be sure to remove the Identity from the cache
+            if isinstance(identity, Identity):
+                self.object_manager.delete_from_cache(identity)
+                identity = identity.id
+            else:
+                self.object_manager.delete_from_cache(Identity(id=identity))
+            return self._do(self._delete,
+                            {},
+                            endpoint=self.endpoint.delete,
+                            endpoint_args=(user, identity))
+
+    identities = UserIdentityApi
+
     def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
         Api.__init__(self, subdomain, session, endpoint, object_type='user', timeout=timeout, ratelimit=ratelimit)
+        self.identities = self.identities(subdomain, session, endpoint, timeout=timeout, ratelimit=ratelimit)
 
     def groups(self, user_id):
         """

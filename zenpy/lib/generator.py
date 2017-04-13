@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 
+from zenpy.lib.util import as_singular
+
 __author__ = 'facetoe'
 
 import logging
@@ -38,7 +40,8 @@ class ResultGenerator(object):
         'ticket_field': 'ticket_fields',
         'organization_membership': 'organization_memberships',
         'organization_memberships': 'organization_memberships',
-        'macro':  'macros'
+        'macro': 'macros',
+        'identity': 'identities'
     }
 
     def __init__(self, api, result_key, _json):
@@ -97,7 +100,7 @@ class ResultGenerator(object):
             object_type = item_json.pop('result_type')
         else:
             # Multiple results have a plural key, however the object_type is singular
-            object_type = self.get_singular(self.result_key)
+            object_type = as_singular(self.result_key)
         return self.api.object_manager.object_from_json(object_type, item_json)
 
     def update_attrs(self, _json):
@@ -111,9 +114,3 @@ class ResultGenerator(object):
         response = self.api._get(url)
         return response.json()
 
-    def get_singular(self, result_key):
-        if result_key.endswith('ies'):
-            object_type = result_key.replace('ies', 'y')
-        else:
-            object_type = result_key[:-1]
-        return object_type

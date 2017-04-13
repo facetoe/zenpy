@@ -1,9 +1,11 @@
 import logging
+import re
+
 from datetime import datetime, date
 from json import JSONEncoder
 
 from zenpy.lib.api_objects import Activity, Request, UserRelated, OrganizationMembership, Upload, SharingAgreement, \
-    Macro, Action, MacroResult, AgentMacroReference
+    Macro, Action, MacroResult, AgentMacroReference, Identity
 from zenpy.lib.api_objects import Attachment
 from zenpy.lib.api_objects import Audit
 from zenpy.lib.api_objects import Brand
@@ -128,7 +130,8 @@ class ClassManager(object):
         'macro': Macro,
         'action': Action,
         'result': MacroResult,
-        'agentmacroreference': AgentMacroReference
+        'agentmacroreference': AgentMacroReference,
+        'identity': Identity
     }
 
     def __init__(self, api):
@@ -179,6 +182,7 @@ class ObjectManager(object):
         'organization_field': ZenpyCache('LRUCache', maxsize=10000),
         'ticket_field': ZenpyCache('LRUCache', maxsize=10000),
         'sharing_agreement': ZenpyCache('TTLCache', maxsize=10000, ttl=6000),
+        'identity': ZenpyCache('LRUCache', maxsize=10000)
     }
 
     def __init__(self, api):
@@ -222,17 +226,21 @@ class ObjectManager(object):
 
     def _add_to_cache(self, object_type, object_json):
         cache = self.cache_mapping[object_type]
-        multiple_key = object_type + 's'
         if object_type in object_json:
             obj = object_json[object_type]
             log.debug("Caching: [%s %s]" % (object_type.capitalize(), obj['id']))
             self._cache_item(cache, obj, object_type)
 
-        elif multiple_key in object_json:
-            objects = object_json[multiple_key]
-            log.debug("Caching %s %s " % (len(objects), multiple_key.capitalize()))
-            for obj in object_json[multiple_key]:
-                self._cache_item(cache, obj, object_type)
+        else:
+            # When collections are returned they are returned in the plural form (users, identities)
+            # We can only guess at the correct form and then attempt to locate it in the JSON.
+            multiple_keys = (object_type + 's', re.sub('y$', 'ies', object_type))
+            for plural_key in multiple_keys:
+                if plural_key in object_json:
+                    objects = object_json[plural_key]
+                    log.debug("Caching %s %s " % (len(objects), plural_key.capitalize()))
+                    for obj in object_json[plural_key]:
+                        self._cache_item(cache, obj, object_type)
 
     def _cache_search_results(self, _json):
         results = _json['results']

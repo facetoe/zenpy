@@ -89,7 +89,7 @@ class PrimaryEndpoint(BaseEndpoint):
                 modifiers.append(('permission_set', value))
             elif key == 'role':
                 if isinstance(value, basestring):
-                   value = [value]
+                    value = [value]
                 for role in value:
                     modifiers.append(('role[]', role))
             elif key == 'since':
@@ -398,3 +398,10 @@ class Endpoint(object):
     users.requested = SecondaryEndpoint('users/%(id)s/tickets/requested.json')
     users.requests = SecondaryEndpoint('users/%(id)s/requests.json')
     users.tags = SecondaryEndpoint('users/%(id)s/tags.json')
+    users.identities = SecondaryEndpoint('users/%(id)s/identities.json')
+    users.identities.show = MutlipleIDEndpoint('users/{0}/identities/{1}.json')
+    users.identities.update = MutlipleIDEndpoint('users/{0}/identities/{1}.json')
+    users.identities.make_primary = MutlipleIDEndpoint('users/{0}/identities/{1}/make_primary')
+    users.identities.verify = MutlipleIDEndpoint('users/{0}/identities/{1}/verify')
+    users.identities.request_verification = MutlipleIDEndpoint('users/{0}/identities/{1}/request_verification.json')
+    users.identities.delete = MutlipleIDEndpoint('users/{0}/identities/{1}.json')

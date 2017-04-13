@@ -21,3 +21,14 @@ def is_iterable_but_not_string(obj):
     Determine whether or not obj is iterable but not a string (eg, a list, set, tuple etc).
     """
     return hasattr(obj, '__iter__') and not isinstance(obj, str) and not isinstance(obj, bytes)
+
+
+def as_singular(result_key):
+    """
+    This is a bit hackery. Given a result key, return in the singular form
+    """
+    if result_key.endswith('ies'):
+        object_type = result_key.replace('ies', 'y')
+    else:
+        object_type = result_key[:-1]
+    return object_type
