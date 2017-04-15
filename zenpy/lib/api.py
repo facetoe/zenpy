@@ -8,7 +8,7 @@ from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import APIException, RecordNotFoundException
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.generator import ResultGenerator
-from zenpy.lib.manager import ApiObjectEncoder, ObjectManager
+from zenpy.lib.manager import ApiObjectEncoder, ObjectManager, class_for_type
 from zenpy.lib.util import to_snake_case, is_iterable_but_not_string
 
 __author__ = 'facetoe'
@@ -336,7 +336,7 @@ class ModifiableApi(Api):
 
     def _check_type(self, items):
         # We don't want people passing, for example, a Group object to a Ticket endpoint.
-        expected_class = self.object_manager.class_manager.class_for_type(self.object_type)
+        expected_class = class_for_type(self.object_type)
         if is_iterable_but_not_string(items):
             if any((o.__class__ is not expected_class for o in items)):
                 raise ZenpyException("Invalid type - expected %(expected_class)s" % locals())
