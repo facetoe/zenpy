@@ -551,7 +551,6 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
             response = self._get(
                 url=self._get_url(self.endpoint.show(user, identity))
             )
-            self._check_and_cache_response(response)
             return self._build_response(response.json())
 
         def create(self, user, identity):
@@ -587,7 +586,6 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
                                 endpoint=self.endpoint.update,
                                 endpoint_args=(user, identity.id),
                                 payload=payload)
-            self._check_and_cache_response(response)
             return self._build_response(response.json())
 
         def make_primary(self, user, identity):
@@ -643,7 +641,6 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
                                 {},
                                 endpoint=self.endpoint.verify,
                                 endpoint_args=(user, identity))
-            self._check_and_cache_response(response)
             return self._build_response(response.json())
 
         def delete(self, user, identity):
