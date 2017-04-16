@@ -1,10 +1,5 @@
 import logging
 
-import re
-
-from datetime import datetime, date
-from json import JSONEncoder
-
 from zenpy.lib.api_objects import Activity, Request, UserRelated, OrganizationMembership, Upload, SharingAgreement, \
     Macro, Action, MacroResult, AgentMacroReference, Identity
 from zenpy.lib.api_objects import Attachment
@@ -124,37 +119,16 @@ def class_for_type(object_type):
         return class_mapping[object_type]
 
 
-class ApiObjectEncoder(JSONEncoder):
-    """ Class for encoding API objects"""
-
-    def default(self, o):
-        if hasattr(o, 'to_dict'):
-            return o.to_dict()
-        elif isinstance(o, datetime):
-            return o.date().isoformat()
-        elif isinstance(o, date):
-            return o.isoformat()
-
-
-class ObjectManager(object):
-    """
-    The ObjectManager is responsible for maintaining various caches
-    and converting the JSON returned from Zendesk to Python objects.
-    """
-
-    def __init__(self, api):
-        self.api = api
-
-    def object_from_json(self, object_type, object_json):
-        if not isinstance(object_json, dict):
-            return
-        ZenpyClass = class_for_type(object_type)
-        obj = ZenpyClass(api=self.api)
-        for key, value in object_json.items():
-            if key in ('metadata', 'from', 'system', 'photo', 'thumbnails'):
-                key = '_%s' % key
-            if key in class_mapping:
-                value = self.object_from_json(key, value)
-            setattr(obj, key, value)
-        add_to_cache(obj)
-        return obj
+def object_from_json(api, object_type, object_json):
+    if not isinstance(object_json, dict):
+        return
+    ZenpyClass = class_for_type(object_type)
+    obj = ZenpyClass(api=api)
+    for key, value in object_json.items():
+        if key in ('metadata', 'from', 'system', 'photo', 'thumbnails'):
+            key = '_%s' % key
+        if key in class_mapping:
+            value = object_from_json(api, key, value)
+        setattr(obj, key, value)
+    add_to_cache(obj)
+    return obj

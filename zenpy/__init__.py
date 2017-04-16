@@ -8,7 +8,7 @@ from zenpy.lib.api import UserApi, Api, TicketApi, OrganizationApi, SuspendedTic
 from zenpy.lib.cache import ZenpyCache
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import ZenpyException
-from zenpy.lib.manager import ObjectManager, class_mapping
+from zenpy.lib.manager import class_mapping
 
 log = logging.getLogger()
 
