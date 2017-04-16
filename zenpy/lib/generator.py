@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+from zenpy.lib.cache import update_caches
 from zenpy.lib.util import as_singular
 
 __author__ = 'facetoe'
@@ -101,7 +102,9 @@ class ResultGenerator(object):
         else:
             # Multiple results have a plural key, however the object_type is singular
             object_type = as_singular(self.result_key)
-        return self.api.object_manager.object_from_json(object_type, item_json)
+        zenpy_object = self.api.object_manager.object_from_json(object_type, item_json)
+        update_caches(zenpy_object)
+        return zenpy_object
 
     def update_attrs(self, _json):
         # Add attributes such as count/end_time that can be present

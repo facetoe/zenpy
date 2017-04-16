@@ -4,12 +4,13 @@ import os
 from time import sleep, time
 
 from zenpy.lib.api_objects import User, Ticket, Macro, Identity
+from zenpy.lib.cache import update_caches, query_cache, delete_from_cache
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import APIException, RecordNotFoundException
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.generator import ResultGenerator
 from zenpy.lib.manager import ApiObjectEncoder, ObjectManager, class_for_type
-from zenpy.lib.util import to_snake_case, is_iterable_but_not_string
+from zenpy.lib.util import to_snake_case, is_iterable_but_not_string, as_singular
 
 __author__ = 'facetoe'
 
@@ -66,14 +67,15 @@ class Api(object):
         self.callsafety['lastlimitremaining'] = response.headers.get('X-Rate-Limit-Remaining', 0)
         return response
 
-    def post(self, url, payload, data=None):
+    def _post(self, url, payload, data=None):
         log.debug("POST: %s - %s" % (url, str(payload)))
-        headers = None
-        if data:
-            headers = {'Content-Type': 'application/octet-stream'}
-        response = self.session.post(url, json=serialize(payload), data=data, headers=headers, timeout=self.timeout)
-        self._check_and_cache_response(response)
-        return self._build_response(response.json())
+        headers = {'Content-Type': 'application/octet-stream'} if data else None
+        response = self._call_api(self.session.post, url,
+                                  json=serialize(payload),
+                                  data=data,
+                                  headers=headers,
+                                  timeout=self.timeout)
+        return response
 
     def _put(self, url, payload):
         return self._call_api(self.session.put, url, json=serialize(payload), timeout=self.timeout)
@@ -105,63 +107,22 @@ class Api(object):
         if self.ratelimit is not None:
             self.callsafety['lastcalltime'] = time()
             self.callsafety['lastlimitremaining'] = int(response.headers['X-Rate-Limit-Remaining'])
-        return self._check_and_cache_response(response)
+        self._check_response(response)
+        deserialization_result = self._deserialize(response.json())
 
-    def _get_items(self, endpoint, object_type, *args, **kwargs):
-        sideload = 'sideload' not in kwargs or ('sideload' in kwargs and kwargs['sideload'])
+        # Caches are update in the result generator
+        if not isinstance(deserialization_result, ResultGenerator):
+            self._update_caches(deserialization_result, http_method.__name__)
+        return deserialization_result
 
-        # If an ID is present a single object has been requested
-        if 'id' in kwargs:
-            return self._get_item(kwargs['id'], endpoint, object_type, sideload)
-
-        if 'ids' in kwargs:
-            cached_objects = []
-            # Check to see if we have all objects in the cache.
-            # If we are missing even one we need to request them all again.
-            for _id in kwargs['ids']:
-                obj = self.object_manager.query_cache(object_type, _id)
-                if obj:
-                    cached_objects.append(obj)
-                else:
-                    return self._get_paginated(endpoint, object_type, *args, **kwargs)
-            return cached_objects
-
-        return self._get_paginated(endpoint, object_type, *args, **kwargs)
-
-    def _get_item(self, _id, endpoint, object_type, sideload=True, skip_cache=False):
-        if not skip_cache:
-            # Check if we already have this item in the cache
-            item = self.object_manager.query_cache(object_type, _id)
-            if item:
-                return item
-
-        _json = self._query(endpoint=endpoint(id=_id, sideload=sideload))
-
-        # If the result is paginated return a generator
-        if 'next_page' in _json:
-            return ResultGenerator(self, object_type, _json)
-        # Annoyingly, tags is always plural.
-        if 'tags' in _json:
-            return self.object_manager.object_from_json(object_type, _json[object_type + 's'])
+    def _update_caches(self, deserialized_json, http_method_name):
+        if http_method_name == "delete":
+            delete_from_cache(deserialized_json)
         else:
-            return self.object_manager.object_from_json(object_type, _json[object_type])
+            update_caches(deserialized_json)
+        return deserialized_json
 
-    def _get_paginated(self, endpoint, object_type, *args, **kwargs):
-        _json = self._query(endpoint=endpoint(*args, **kwargs))
-        return ResultGenerator(self, object_type, _json)
-
-    def _query(self, endpoint):
-        response = self._get(self._get_url(endpoint=endpoint))
-        return response.json()
-
-    def _build_response(self, response_json):
-        # When updating and deleting API objects various responses can be returned
-        # We can figure out what we have by the keys in the returned JSON
-        if 'ticket' and 'audit' in response_json:
-            return self.object_manager.object_from_json('ticket_audit', response_json)
-        elif 'tags' in response_json:
-            return response_json['tags']
-
+    def _deserialize(self, response_json):
         known_objects = ('ticket',
                          'user',
                          'job_status',
@@ -174,51 +135,85 @@ class Api(object):
                          'result',
                          'identity')
 
+        if 'ticket' and 'audit' in response_json:
+            return self.object_manager.object_from_json('ticket_audit', response_json)
+        elif 'tags' in response_json:
+            return response_json['tags']
+
+        # TODO: refactor all this out of the ResultGenerator somehow
+        for key in response_json:
+            if key in ResultGenerator.endpoint_mapping.values():
+                return ResultGenerator(self, as_singular(key), response_json)
+
+        # TODO: Figure out a better way of doing this
         for object_type in known_objects:
             if object_type in response_json:
                 return self.object_manager.object_from_json(object_type, response_json[object_type])
 
         raise ZenpyException("Unknown Response: " + str(response_json))
 
-    def _check_and_cache_response(self, response):
+    def _get_items(self, endpoint, object_type, **kwargs):
+        sideload = 'sideload' not in kwargs or ('sideload' in kwargs and kwargs['sideload'])
+
+        # If an ID is present a single object has been requested
+        if 'id' in kwargs:
+            return self._get_item(kwargs['id'], endpoint, object_type, sideload)
+
+        if 'ids' in kwargs:
+            cached_objects = []
+            # Check to see if we have all objects in the cache.
+            # If we are missing even one we need to request them all again.
+            for _id in kwargs['ids']:
+                obj = query_cache(object_type, _id)
+                if obj:
+                    cached_objects.append(obj)
+                else:
+                    return self._get(self._get_url(endpoint=endpoint()))
+            return cached_objects
+
+        return self._get(self._get_url(endpoint=endpoint()))
+
+    def _get_item(self, _id, endpoint, object_type, sideload=True):
+        # Check if we already have this item in the cache
+        item = query_cache(object_type, _id)
+        if item:
+            return item
+        return self._get(url=self._get_url(endpoint(id=_id, sideload=sideload)))
+
+    def _as_generator(self, endpoint, object_type):
+        response = self._get(self._get_url(endpoint=endpoint))
+        print("response: {}".format(response))
+        return ResultGenerator(self, object_type, response.json())
+
+    def _check_response(self, response):
         if response.status_code > 299 or response.status_code < 200:
             log.debug("Received response code [%s] - headers: %s" % (response.status_code, str(response.headers)))
             # If it's just a RecordNotFound error raise the right exception,
             # otherwise try and get a nice error message.
-            if 'application/json' in response.headers['content-type']:
-                try:
-                    _json = response.json()
-                    if 'error' in _json and _json['error'] == 'RecordNotFound':
-                        raise RecordNotFoundException(json.dumps(_json))
-                    else:
-                        raise APIException(json.dumps(_json))
-                except ValueError:
-                    pass
+            try:
+                _json = response.json()
+                if 'error' in _json and _json['error'] == 'RecordNotFound':
+                    raise RecordNotFoundException(json.dumps(_json))
+                else:
+                    raise APIException(json.dumps(_json))
+            except ValueError:
+                pass
 
             # No can do, just raise the correct Exception.
             response.raise_for_status()
-        else:
-            try:
-                self.object_manager.update_caches(response.json())
-            except ValueError:
-                pass
-            return response
 
     def _object_from_json(self, object_type, object_json):
         return self.object_manager.object_from_json(object_type, object_json)
 
-    def _query_cache(self, object_type, _id):
-        return self.object_manager.query_cache(object_type, _id)
-
     def _get_url(self, endpoint=''):
         return "%(protocol)s://%(subdomain)s.zendesk.com/api/%(version)s/" % self.__dict__ + endpoint
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, **kwargs):
         """
         Retrieve API objects. If called with no arguments returns a ResultGenerator of
         all retrievable items. Alternatively, can be called with an id to only return that item.
         """
-        return self._get_items(self.endpoint, self.object_type, *args, **kwargs)
+        return self._get_items(self.endpoint, self.object_type, **kwargs)
 
     def _get_user(self, _id):
         return self._get_item(_id, endpoint=Endpoint.users, object_type='user', sideload=True)
@@ -238,9 +233,8 @@ class Api(object):
     def _get_brand(self, _id):
         return self._get_item(_id, endpoint=Endpoint.brands, object_type='brand', sideload=True)
 
-    def _get_ticket(self, _id, skip_cache=False):
-        return self._get_item(_id, endpoint=Endpoint.tickets, object_type='ticket', sideload=False,
-                              skip_cache=skip_cache)
+    def _get_ticket(self, _id):
+        return self._get_item(_id, endpoint=Endpoint.tickets, object_type='ticket', sideload=False)
 
     def _get_actions(self, actions):
         for action in actions:
@@ -342,7 +336,7 @@ class ModifiableApi(Api):
                 raise ZenpyException("Invalid type - expected %(expected_class)s" % locals())
         else:
             if items.__class__ is not expected_class:
-                raise ZenpyException("Invalid type - expected %(expected_class)s" % locals())
+                raise ZenpyException("Invalid type {} - expected {}".format(items.__class__, expected_class))
 
     def _do(self, action, endpoint_kwargs, endpoint_args=None, payload=None, endpoint=None):
         if not endpoint:
@@ -350,7 +344,6 @@ class ModifiableApi(Api):
         if not endpoint_args:
             endpoint_args = tuple()
         url = self._get_url(endpoint=endpoint(*endpoint_args, **endpoint_kwargs))
-
         return action(url, payload=payload)
 
 
@@ -369,9 +362,9 @@ class CRUDApi(ModifiableApi):
         """
         object_type, payload = self._get_type_and_payload(api_objects)
         if object_type.endswith('s'):
-            return self._do(self.post, dict(create_many=True, sideload=False), payload=payload)
+            return self._do(self._post, dict(create_many=True, sideload=False), payload=payload)
         else:
-            return self._do(self.post, dict(sideload=False), payload=payload)
+            return self._do(self._post, dict(sideload=False), payload=payload)
 
     def update(self, items):
         """
@@ -385,7 +378,7 @@ class CRUDApi(ModifiableApi):
             response = self._do(self._put, dict(update_many=True, sideload=False), payload=payload)
         else:
             response = self._do(self._put, dict(id=items.id, sideload=False), payload=payload)
-        return self._build_response(response_json=response.json())
+        return response
 
     def delete(self, items):
         """
@@ -399,7 +392,6 @@ class CRUDApi(ModifiableApi):
             response = self._do(self._delete, dict(destroy_ids=[i.id for i in items], sideload=False))
         else:
             response = self._do(self._delete, dict(id=items.id, sideload=False))
-        self.object_manager.delete_from_cache(items)
         return response
 
 
@@ -464,7 +456,7 @@ class TaggableApi(Api):
         :param id: the id of the object to tag
         :param tags: array of tags to apply to object
         """
-        return self.post(self._get_url(
+        return self._post(self._get_url(
             endpoint=self.endpoint.tags(
                 id=id,
                 sideload=False)),
@@ -503,7 +495,7 @@ class RateableApi(Api):
         :param id: id of object to rate
         :param rating: SatisfactionRating
         """
-        return self.post(self._get_url(self.endpoint.satisfaction_ratings(
+        return self._post(self._get_url(self.endpoint.satisfaction_ratings(
             id=id,
             sideload=False
         )),
@@ -566,7 +558,7 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
             if isinstance(user, User):
                 user = user.id
             object_type, payload = self._get_type_and_payload(identity)
-            return self._do(self.post, dict(sideload=False, id=user), payload=payload)
+            return self._do(self._post, dict(sideload=False, id=user), payload=payload)
 
         def update(self, user, identity):
             """
@@ -653,12 +645,8 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
             """
             if isinstance(user, User):
                 user = user.id
-            # Be sure to remove the Identity from the cache
             if isinstance(identity, Identity):
-                self.object_manager.delete_from_cache(identity)
                 identity = identity.id
-            else:
-                self.object_manager.delete_from_cache(Identity(id=identity))
             return self._do(self._delete,
                             {},
                             endpoint=self.endpoint.delete,
@@ -785,12 +773,12 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
 
         object_type, payload = self._get_type_and_payload(users)
         if object_type.endswith('s'):
-            return self._do(self.post,
+            return self._do(self._post,
                             dict(create_or_update_many=True, sideload=False),
                             payload=payload,
                             endpoint=self.endpoint.create_or_update_many)
         else:
-            return self._do(self.post,
+            return self._do(self._post,
                             dict(sideload=False),
                             payload=payload,
                             endpoint=self.endpoint.create_or_update)
@@ -803,7 +791,7 @@ class AttachmentApi(Api):
     def __call__(self, *args, **kwargs):
         if 'id' not in kwargs:
             raise ZenpyException("Attachment endpoint requires an id")
-        return Api.__call__(self, *args, **kwargs)
+        return Api.__call__(self, **kwargs)
 
     def upload(self, fp, token=None, target_name=None):
         """
@@ -839,9 +827,9 @@ class AttachmentApi(Api):
             # Other serializable types accepted by requests (like dict)
             raise ZenpyException("upload requires a target file name")
 
-        return self.post(self._get_url(self.endpoint.upload(filename=target_name, token=token)),
-                         data=fp,
-                         payload={})
+        return self._post(self._get_url(self.endpoint.upload(filename=target_name, token=token)),
+                          data=fp,
+                          payload={})
 
 
 class EndUserApi(CRUDApi):
@@ -901,7 +889,7 @@ class OrganizationApi(TaggableApi, IncrementalApi, CRUDApi):
         """
 
         object_type, payload = self._get_type_and_payload(organization)
-        return self._do(self.post,
+        return self._do(self._post,
                         dict(sideload=False),
                         payload=payload,
                         endpoint=self.endpoint.create_or_update)
@@ -935,7 +923,7 @@ class SatisfactionRatingApi(ModifiableApi):
 
         self._check_type(satisfaction_rating)
         object_type, payload = self._get_type_and_payload(satisfaction_rating)
-        return self._do(self.post,
+        return self._do(self._post,
                         payload=payload,
                         endpoint=Endpoint.satisfaction_ratings.create,
                         endpoint_kwargs=dict(id=ticket_id))
@@ -1030,7 +1018,7 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         response = self._get(
             url=self._get_url(self.endpoint.macro(ticket, macro))
         )
-        self._check_and_cache_response(response)
+        self._check_response(response)
         return self._build_response(response.json())
 
     def merge(self, target, source,
@@ -1058,7 +1046,7 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
             source_comment=source_comment
         )
 
-        return self._do(self.post,
+        return self._do(self._post,
                         endpoint_kwargs=dict(id=target),
                         payload=payload,
                         endpoint=self.endpoint.merge)

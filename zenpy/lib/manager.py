@@ -50,15 +50,13 @@ from zenpy.lib.api_objects import User
 from zenpy.lib.api_objects import UserField
 from zenpy.lib.api_objects import Via
 from zenpy.lib.api_objects import VoiceCommentEvent
-from zenpy.lib.cache import ZenpyCache
 from zenpy.lib.exception import ZenpyException
-from zenpy.lib.util import to_snake_case
 
 log = logging.getLogger(__name__)
 
 __author__ = 'facetoe'
 
-# Dict for mapping object types to Python classes
+# Dictionary for mapping object types to Python classes
 class_mapping = {
     'ticket': Ticket,
     'user': User,
@@ -117,22 +115,6 @@ class_mapping = {
     'identity': Identity
 }
 
-# Dict for managing default object caches
-cache_mapping = {
-    'user': ZenpyCache('LRUCache', maxsize=10000),
-    'organization': ZenpyCache('LRUCache', maxsize=10000),
-    'group': ZenpyCache('LRUCache', maxsize=10000),
-    'brand': ZenpyCache('LRUCache', maxsize=10000),
-    'ticket': ZenpyCache('TTLCache', maxsize=10000, ttl=30),
-    'comment': ZenpyCache('LRUCache', maxsize=10000),
-    'request': ZenpyCache('LRUCache', maxsize=10000),
-    'user_field': ZenpyCache('TTLCache', maxsize=10000, ttl=30),
-    'organization_field': ZenpyCache('LRUCache', maxsize=10000),
-    'ticket_field': ZenpyCache('LRUCache', maxsize=10000),
-    'sharing_agreement': ZenpyCache('TTLCache', maxsize=10000, ttl=6000),
-    'identity': ZenpyCache('LRUCache', maxsize=10000)
-}
-
 
 def class_for_type(object_type):
     if object_type not in class_mapping:
@@ -175,72 +157,4 @@ class ObjectManager(object):
             setattr(obj, key, value)
         return obj
 
-    def update_caches(self, _json):
-        if 'results' in _json:
-            self._cache_search_results(_json)
-        else:
-            for object_type in cache_mapping:
-                self._add_to_cache(object_type, _json)
 
-    def delete_from_cache(self, obj):
-        if isinstance(obj, list):
-            for o in obj:
-                self._delete_from_cache(o)
-        else:
-            self._delete_from_cache(obj)
-
-    def _delete_from_cache(self, obj):
-        object_type = to_snake_case(obj.__class__.__name__)
-        if object_type in cache_mapping:
-            cache = cache_mapping[object_type]
-            obj = cache.pop(obj.id, None)
-            if obj:
-                log.debug("Cache RM: [%s %s]" % (object_type.capitalize(), obj.id))
-
-    def query_cache(self, object_type, _id):
-        if object_type not in cache_mapping:
-            return None
-
-        cache = cache_mapping[object_type]
-        if _id in cache:
-            log.debug("Cache HIT: [%s %s]" % (object_type.capitalize(), _id))
-            return cache[_id]
-        else:
-            log.debug('Cache MISS: [%s %s]' % (object_type.capitalize(), _id))
-
-    def _add_to_cache(self, object_type, object_json):
-        cache = cache_mapping[object_type]
-        if object_type in object_json:
-            obj = object_json[object_type]
-            log.debug("Caching: [%s %s]" % (object_type.capitalize(), obj['id']))
-            self._cache_item(cache, obj, object_type)
-
-        else:
-            # When collections are returned they are returned in the plural form (eg, users, identities)
-            # We can only guess at the correct form and then attempt to locate it in the JSON.
-            multiple_keys = (object_type + 's', re.sub('y$', 'ies', object_type))
-            for plural_key in multiple_keys:
-                if plural_key in object_json:
-                    objects = object_json[plural_key]
-                    log.debug("Caching %s %s " % (len(objects), plural_key.capitalize()))
-                    for obj in object_json[plural_key]:
-                        self._cache_item(cache, obj, object_type)
-
-    def _cache_search_results(self, _json):
-        results = _json['results']
-        log.debug("Caching %s search results" % len(results))
-        for result in results:
-            object_type = result['result_type']
-            cache = cache_mapping[object_type]
-            self._cache_item(cache, result, object_type)
-
-    def _cache_item(self, cache, item_json, item_type):
-        key = self.get_key(item_type)
-        cache[item_json[key]] = self.object_from_json(item_type, item_json)
-
-    def get_key(self, item_type):
-        if item_type in ('user_field', 'organization_field'):
-            key = 'key'
-        else:
-            key = 'id'
-        return key
