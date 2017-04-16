@@ -25,10 +25,24 @@ def is_iterable_but_not_string(obj):
 
 def as_singular(result_key):
     """
-    This is a bit hackery. Given a result key, return in the singular form
+    Given a result key, return in the singular form
     """
     if result_key.endswith('ies'):
-        object_type = result_key.replace('ies', 'y')
+        return re.sub('ies$', 'y', result_key)
+    elif result_key.endswith('s'):
+        return result_key[:-1]
     else:
-        object_type = result_key[:-1]
-    return object_type
+        return result_key
+
+
+def as_plural(result_key):
+    """
+    Given a result key, return in the plural form.
+    """
+    # Not at all guaranteed to work in all cases...
+    if result_key.endswith('y'):
+        return re.sub("y$", "ies", result_key)
+    elif not result_key.endswith('s'):
+        return result_key + 's'
+    else:
+        return result_key

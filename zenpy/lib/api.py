@@ -4,13 +4,13 @@ import os
 from time import sleep, time
 
 from zenpy.lib.api_objects import User, Ticket, Macro, Identity
-from zenpy.lib.cache import update_caches, query_cache, delete_from_cache
+from zenpy.lib.cache import query_cache, delete_from_cache
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import APIException, RecordNotFoundException
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.generator import ResultGenerator
 from zenpy.lib.manager import ApiObjectEncoder, ObjectManager, class_for_type
-from zenpy.lib.util import to_snake_case, is_iterable_but_not_string, as_singular
+from zenpy.lib.util import to_snake_case, is_iterable_but_not_string, as_singular, as_plural
 
 __author__ = 'facetoe'
 
@@ -25,7 +25,17 @@ class Api(object):
     """
     Base class for API.
     """
-    subdomain = None
+    _known_api_response_objects = ('ticket',
+                                   'user',
+                                   'job_status',
+                                   'group',
+                                   'satisfaction_rating',
+                                   'request',
+                                   'organization',
+                                   'organization_membership',
+                                   'upload',
+                                   'result',
+                                   'identity')
 
     def __init__(self, subdomain, session, endpoint, object_type, timeout, ratelimit):
         self.subdomain = subdomain
@@ -68,7 +78,6 @@ class Api(object):
         return response
 
     def _post(self, url, payload, data=None):
-        log.debug("POST: %s - %s" % (url, str(payload)))
         headers = {'Content-Type': 'application/octet-stream'} if data else None
         response = self._call_api(self.session.post, url,
                                   json=serialize(payload),
@@ -108,51 +117,37 @@ class Api(object):
             self.callsafety['lastcalltime'] = time()
             self.callsafety['lastlimitremaining'] = int(response.headers['X-Rate-Limit-Remaining'])
         self._check_response(response)
-        deserialization_result = self._deserialize(response.json())
 
-        # Caches are update in the result generator
-        if not isinstance(deserialization_result, ResultGenerator):
-            self._update_caches(deserialization_result, http_method.__name__)
-        return deserialization_result
-
-    def _update_caches(self, deserialized_json, http_method_name):
-        if http_method_name == "delete":
-            delete_from_cache(deserialized_json)
+        if http_method.__name__ == "delete":
+            return response
         else:
-            update_caches(deserialized_json)
-        return deserialized_json
+            return self._deserialize(response.json())
 
     def _deserialize(self, response_json):
-        known_objects = ('ticket',
-                         'user',
-                         'job_status',
-                         'group',
-                         'satisfaction_rating',
-                         'request',
-                         'organization',
-                         'organization_membership',
-                         'upload',
-                         'result',
-                         'identity')
-
+        # TicketAudit and tags are special cases.
         if 'ticket' and 'audit' in response_json:
             return self.object_manager.object_from_json('ticket_audit', response_json)
         elif 'tags' in response_json:
             return response_json['tags']
 
-        # TODO: refactor all this out of the ResultGenerator somehow
-        for key in response_json:
-            if key in ResultGenerator.endpoint_mapping.values():
-                return ResultGenerator(self, as_singular(key), response_json)
+        # Search result
+        if 'results' in response_json:
+            return ResultGenerator(self, 'results', response_json)
 
-        # TODO: Figure out a better way of doing this
-        for object_type in known_objects:
+        # A single object, eg "user"
+        for object_type in self._known_api_response_objects:
             if object_type in response_json:
                 return self.object_manager.object_from_json(object_type, response_json[object_type])
 
+        # Multiple of a single object, eg "users"
+        for key in response_json:
+            singular_key = as_singular(key)
+            if singular_key in self._known_api_response_objects:
+                return ResultGenerator(self, key, response_json)
+
         raise ZenpyException("Unknown Response: " + str(response_json))
 
-    def _get_items(self, endpoint, object_type, **kwargs):
+    def _get_items(self, endpoint, object_type, *args, **kwargs):
         sideload = 'sideload' not in kwargs or ('sideload' in kwargs and kwargs['sideload'])
 
         # If an ID is present a single object has been requested
@@ -168,10 +163,10 @@ class Api(object):
                 if obj:
                     cached_objects.append(obj)
                 else:
-                    return self._get(self._get_url(endpoint=endpoint()))
+                    return self._get(self._get_url(endpoint=endpoint(*args, **kwargs)))
             return cached_objects
 
-        return self._get(self._get_url(endpoint=endpoint()))
+        return self._get(self._get_url(endpoint=endpoint(*args, **kwargs)))
 
     def _get_item(self, _id, endpoint, object_type, sideload=True):
         # Check if we already have this item in the cache
@@ -179,11 +174,6 @@ class Api(object):
         if item:
             return item
         return self._get(url=self._get_url(endpoint(id=_id, sideload=sideload)))
-
-    def _as_generator(self, endpoint, object_type):
-        response = self._get(self._get_url(endpoint=endpoint))
-        print("response: {}".format(response))
-        return ResultGenerator(self, object_type, response.json())
 
     def _check_response(self, response):
         if response.status_code > 299 or response.status_code < 200:
@@ -208,12 +198,12 @@ class Api(object):
     def _get_url(self, endpoint=''):
         return "%(protocol)s://%(subdomain)s.zendesk.com/api/%(version)s/" % self.__dict__ + endpoint
 
-    def __call__(self, **kwargs):
+    def __call__(self, *args, **kwargs):
         """
         Retrieve API objects. If called with no arguments returns a ResultGenerator of
         all retrievable items. Alternatively, can be called with an id to only return that item.
         """
-        return self._get_items(self.endpoint, self.object_type, **kwargs)
+        return self._get_items(self.endpoint, self.object_type, *args, **kwargs)
 
     def _get_user(self, _id):
         return self._get_item(_id, endpoint=Endpoint.users, object_type='user', sideload=True)
@@ -387,6 +377,7 @@ class CRUDApi(ModifiableApi):
 
         :param items: object or objects to delete
         """
+        delete_from_cache(items)
         object_type, payload = self._get_type_and_payload(items)
         if object_type.endswith('s'):
             response = self._do(self._delete, dict(destroy_ids=[i.id for i in items], sideload=False))

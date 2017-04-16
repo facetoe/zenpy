@@ -50,6 +50,7 @@ from zenpy.lib.api_objects import User
 from zenpy.lib.api_objects import UserField
 from zenpy.lib.api_objects import Via
 from zenpy.lib.api_objects import VoiceCommentEvent
+from zenpy.lib.cache import add_to_cache
 from zenpy.lib.exception import ZenpyException
 
 log = logging.getLogger(__name__)
@@ -155,6 +156,5 @@ class ObjectManager(object):
             if key in class_mapping:
                 value = self.object_from_json(key, value)
             setattr(obj, key, value)
+        add_to_cache(obj)
         return obj
-
-

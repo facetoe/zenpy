@@ -106,14 +106,6 @@ cache_mapping = {
 }
 
 
-def update_caches(to_update):
-    if isinstance(to_update, list):
-        for zenpy_object in to_update:
-            _add_to_cache(zenpy_object)
-    else:
-        _add_to_cache(to_update)
-
-
 def delete_from_cache(to_delete):
     if isinstance(to_delete, list):
         for zenpy_object in to_delete:
@@ -143,47 +135,21 @@ def query_cache(object_type, _id):
         log.debug('Cache MISS: [%s %s]' % (object_type.capitalize(), _id))
 
 
-def _add_to_cache(zenpy_object):
+def add_to_cache(zenpy_object):
     object_type = to_snake_case(zenpy_object.__class__.__name__)
     if object_type not in cache_mapping:
         return
-    cache = cache_mapping[object_type]
-
-    _cache_item(cache, zenpy_object, object_type)
-    # if object_type in object_json:
-    #     obj = object_json[object_type]
-    #     log.debug("Caching: [%s %s]" % (object_type.capitalize(), obj['id']))
-    #     _cache_item(cache, obj, object_type)
-    #
-    # else:
-    #     # When collections are returned they are returned in the plural form (eg, users, identities)
-    #     # We can only guess at the correct form and then attempt to locate it in the JSON.
-    #     multiple_keys = (object_type + 's', re.sub('y$', 'ies', object_type))
-    #     for plural_key in multiple_keys:
-    #         if plural_key in object_json:
-    #             objects = object_json[plural_key]
-    #             log.debug("Caching %s %s " % (len(objects), plural_key.capitalize()))
-    #             for obj in object_json[plural_key]:
-    #                 _cache_item(cache, obj, object_type)
-
-
-def _cache_search_results(_json):
-    results = _json['results']
-    log.debug("Caching %s search results" % len(results))
-    for result in results:
-        object_type = result['result_type']
-        cache = cache_mapping[object_type]
-        _cache_item(cache, result, object_type)
+    _cache_item(cache_mapping[object_type], zenpy_object, object_type)
 
 
 def _cache_item(cache, zenpy_object, object_type):
-    identifier = get_identifier(object_type)
+    identifier = _get_identifier(object_type)
     cache_key = getattr(zenpy_object, identifier)
     log.debug("Caching: {}({}={})".format(zenpy_object.__class__.__name__, identifier, cache_key))
     cache[cache_key] = zenpy_object
 
 
-def get_identifier(item_type):
+def _get_identifier(item_type):
     if item_type in ('user_field', 'organization_field'):
         key = 'key'
     else:

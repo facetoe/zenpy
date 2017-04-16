@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 
-from zenpy.lib.cache import update_caches
-from zenpy.lib.util import as_singular
+from zenpy.lib.util import as_singular, as_plural
 
 __author__ = 'facetoe'
 
@@ -15,40 +14,10 @@ class ResultGenerator(object):
     Generator for handling pagination.
     """
 
-    # TODO fix this
-    endpoint_mapping = {
-        'user': 'users',
-        'ticket': 'tickets',
-        'group': 'groups',
-        'results': 'results',
-        'organization': 'organizations',
-        'topic': 'topics',
-        'comment': 'comments',
-        'ticket_event': 'ticket_events',
-        'ticket_audit': 'audits',
-        'tag': 'tags',
-        'suspended_ticket': 'suspended_tickets',
-        'satisfaction_rating': 'satisfaction_ratings',
-        'sharing_agreement': 'sharing_agreements',
-        'activity': 'activities',
-        'group_membership': 'group_memberships',
-        'ticket_metric': 'ticket_metrics',
-        'ticket_metric_events': 'ticket_metric_events',
-        'request': 'requests',
-        'user_field': 'user_fields',
-        'organization_field': 'organization_fields',
-        'brand': 'brands',
-        'ticket_field': 'ticket_fields',
-        'organization_membership': 'organization_memberships',
-        'organization_memberships': 'organization_memberships',
-        'macro': 'macros',
-        'identity': 'identities'
-    }
-
     def __init__(self, api, result_key, _json):
         self.api = api
         self._json = _json
-        self.result_key = self.endpoint_mapping[result_key]
+        self.result_key = result_key
         self.values = _json[self.result_key]
         self.position = 0
         self.update_attrs(self._json)
@@ -102,9 +71,7 @@ class ResultGenerator(object):
         else:
             # Multiple results have a plural key, however the object_type is singular
             object_type = as_singular(self.result_key)
-        zenpy_object = self.api.object_manager.object_from_json(object_type, item_json)
-        update_caches(zenpy_object)
-        return zenpy_object
+        return self.api.object_manager.object_from_json(object_type, item_json)
 
     def update_attrs(self, _json):
         # Add attributes such as count/end_time that can be present
@@ -116,4 +83,3 @@ class ResultGenerator(object):
         log.debug("GENERATOR: " + url)
         response = self.api._get(url)
         return response.json()
-
