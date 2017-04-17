@@ -1,0 +1,7 @@
+language: python
+sudo: false
+python:
+  - "3.3"
+install:
+  - "pip install -r dev-requirements.txt"
+script: "./ci-build.sh"
