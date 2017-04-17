@@ -1,6 +1,5 @@
-from zenpy.lib.api_objects import User
-
 from test_fixtures import ZenpyApiTestCase
+from zenpy.lib.api_objects import User
 
 
 class UserAPITestCase(ZenpyApiTestCase):
@@ -46,6 +45,3 @@ class TestSingleUserCRUD(UserAPITestCase):
 
             self.zenpy_client.users.delete(updated_user)
             self.assertNotInCache(updated_user)
-
-
-
