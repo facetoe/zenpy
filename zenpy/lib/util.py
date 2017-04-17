@@ -5,8 +5,14 @@ ALL_CAP_REGEX = re.compile('([a-z0-9])([A-Z])')
 
 
 def to_snake_case(name):
+    """ Given a name in camelCase return in snake_case """
     s1 = FIRST_CAP_REGEX.sub(r'\1_\2', name)
     return ALL_CAP_REGEX.sub(r'\1_\2', s1).lower()
+
+
+def get_object_type(zenpy_object):
+    """ Given an instance of a Zenpy object, return it's object type """
+    return to_snake_case(zenpy_object.__class__.__name__)
 
 
 def is_timezone_aware(datetime_obj):

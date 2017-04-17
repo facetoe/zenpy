@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from zenpy.lib.manager import object_from_json
+from zenpy.lib.object_manager import object_from_json
 from zenpy.lib.util import as_singular
 
 __author__ = 'facetoe'

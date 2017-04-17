@@ -12,7 +12,7 @@ from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import APIException, RecordNotFoundException
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.generator import ResultGenerator
-from zenpy.lib.manager import class_for_type, object_from_json
+from zenpy.lib.object_manager import class_for_type, object_from_json
 from zenpy.lib.util import to_snake_case, is_iterable_but_not_string, as_singular
 
 __author__ = 'facetoe'
@@ -35,7 +35,7 @@ class ZenpyObjectEncoder(JSONEncoder):
 class BaseApi(object):
     """
     Base class for API. Responsible for submitting requests to Zendesk, controlling 
-    rate limiting and deserializing and caching responses. 
+    rate limiting and deserializing responses. 
     """
     KNOWN_RESPONSES = ('ticket',
                        'user',
@@ -47,7 +47,8 @@ class BaseApi(object):
                        'organization_membership',
                        'upload',
                        'result',
-                       'identity')
+                       'identity',
+                       'brand')
 
     def __init__(self, subdomain, session, endpoint, object_type, timeout, ratelimit):
         self.subdomain = subdomain
@@ -85,7 +86,7 @@ class BaseApi(object):
     def _call_api(self, http_method, url, **kwargs):
         """
         Execute a call to the Zendesk API. Handles rate limiting, checking the response 
-        from Zendesk and deserialization and caching of the Zendesk response. All
+        from Zendesk and deserialization of the Zendesk response. All
         communication with Zendesk should go through this method. 
         
         :param http_method: The requests method to call (eg post, put, get).
@@ -186,10 +187,9 @@ class BaseApi(object):
 
     def _query_zendesk(self, endpoint, object_type, *endpoint_args, **endpoint_kwargs):
         """
-        Query Zendesk for items. There are three cases this method caters to:
-          1) An id is passed. Return cached object if present, otherwise make a request to Zendesk.
-          2) Multiple ids are passed. Return from cache if all are present, otherwise make a request to Zendesk. 
-          3) None of the above. Make a request to Zendesk.  
+        Query Zendesk for items. If an id or list of ids are passed, attempt to locate these items
+         in the relevant cache. If they cannot be found, or no ids are passed, execute a call to Zendesk
+         to retrieve the items.
         
         :param endpoint: target endpoint.
         :param object_type: object type we are expecting.
@@ -209,7 +209,8 @@ class BaseApi(object):
         elif 'ids' in endpoint_kwargs:
             cached_objects = []
             # Check to see if we have all objects in the cache.
-            # If we are missing even one we need to request them all again.
+            # If we are missing even one we request them all again.
+            # This could be optimized to only request the missing objects.
             for _id in endpoint_kwargs['ids']:
                 obj = query_cache(object_type, _id)
                 if obj:
@@ -222,13 +223,14 @@ class BaseApi(object):
 
     def _check_response(self, response):
         """
-        Check the response code returned by Zendesk. If it is outside the 200 range, raise an Exception. 
+        Check the response code returned by Zendesk. If it is outside the 200 range, raise an exception. 
+        If the response includes a JSON error response from Zendesk, an APIException or RecordNotFoundException
+        will be raised, if not, the requests Exception for the received HTTP status code will be raised. 
+        
         :param response: requests Response object.
         """
         if response.status_code > 299 or response.status_code < 200:
             log.debug("Received response code [%s] - headers: %s" % (response.status_code, str(response.headers)))
-            # If it's just a RecordNotFound error raise the right exception,
-            # otherwise try and get a nice error message.
             try:
                 _json = response.json()
                 if _json.get("error", '') == 'RecordNotFound':
@@ -249,7 +251,7 @@ class Api(BaseApi):
     only be called with no arguments to return a collection, or an id to return a single item. 
     
     This class also contains many methods for retrieving specific objects or collections of objects. 
-    These methods are called by the objects found in zenpy.lib.api_objects. 
+    These methods are called by the classes found in zenpy.lib.api_objects. 
     """
 
     def __call__(self, *args, **kwargs):
@@ -424,16 +426,18 @@ class CRUDApi(ModifiableApi):
     def delete(self, items):
         """
         Delete (DELETE) one or more API objects. After successfully deleting the objects from the API
-        they will also be removed from the relevant Zenpy caches.
+        they will also be removed from the relevant Zenpy caches. It is important that only this method
+        is used when deleting items from Zendesk as otherwise they may not be purged from the cache. 
 
         :param items: object or objects to delete
         """
-        delete_from_cache(items)
+
         object_type, payload = self._get_type_and_payload(items)
         if object_type.endswith('s'):
             response = self._do(self._delete, dict(destroy_ids=[i.id for i in items]))
         else:
             response = self._do(self._delete, dict(id=items.id))
+        delete_from_cache(items)
         return response
 
 
