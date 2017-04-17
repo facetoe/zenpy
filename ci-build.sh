@@ -17,5 +17,5 @@ PYTHONPATH=${BUILD}/test-install python3 setup.py --quiet install --install-lib 
 
 #test -f ${BUILD}/test-install-bin/zenpy
 
-PYTHONPATH=${BUILD}/test-install python3 -m unittest discover -t zenpy/tests
+PYTHONPATH=${BUILD}/test-install python3 -m unittest discover -s tests
 
