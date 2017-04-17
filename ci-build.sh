@@ -1,7 +1,6 @@
 #!/bin/bash -xe
 
 python3 --version
-py.test --version
 python3 -mpycodestyle --version
 
 # Target directory for all build files
