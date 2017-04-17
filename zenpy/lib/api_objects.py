@@ -2375,19 +2375,31 @@ class Activity(BaseObject):
 
 
 class JobStatus(BaseObject):
-    def __init__(self, api=None, id=None, message=None, progress=None, results=None, status=None, total=None, url=None,
-                 **kwargs):
+    def __init__(self, api=None, id=None, message=None, progress=None, status=None, total=None, url=None, **kwargs):
+
         self.api = api
+
+        self._results = None
         self.id = id
         self.message = message
         self.progress = progress
-        self.results = results
         self.status = status
         self.total = total
         self.url = url
 
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+    @property
+    def results(self):
+
+        if self.api and self._results:
+            return self.api._get_results(self._results)
+
+    @results.setter
+    def results(self, results):
+        if results:
+            self._results = results
 
 
 class Topic(BaseObject):

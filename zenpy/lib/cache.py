@@ -1,6 +1,7 @@
 import logging
 
 import cachetools
+from threading import RLock
 
 from zenpy.lib.exception import ZenpyCacheException
 from zenpy.lib.util import get_object_type
@@ -8,6 +9,7 @@ from zenpy.lib.util import get_object_type
 __author__ = 'facetoe'
 
 log = logging.getLogger(__name__)
+purge_lock = RLock()
 
 
 class ZenpyCache(object):
@@ -57,6 +59,11 @@ class ZenpyCache(object):
         new_cache = self._get_cache_impl(self.impl_name, maxsize, **kwargs)
         self._populate_new_cache(new_cache)
         self.cache = new_cache
+
+    def purge(self):
+        """ Purge the cache of all items. """
+        with purge_lock:
+            self.cache.clear()
 
     @property
     def currsize(self):
@@ -148,6 +155,12 @@ def add_to_cache(zenpy_object):
     log.debug("Caching: [{}({}={})]".format(zenpy_object.__class__.__name__, attr_name, cache_key))
     cache_mapping[object_type][cache_key] = zenpy_object
 
+
+def purge_cache(object_type):
+    """ Purge the named cache of all values. If no cache exists for object_type, nothing is done """
+    if object_type in cache_mapping:
+        log.debug("Purging [{}] cache".format(object_type))
+        cache_mapping[object_type].purge()
 
 def in_cache(zenpy_object):
     """ Determine whether or not this object is in the cache """

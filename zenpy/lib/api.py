@@ -116,7 +116,7 @@ class BaseApi(object):
         if http_method.__name__ == "delete":
             return response
         else:
-            return self._deserialize(response.json())
+            return self._deserialize(response)
 
     def _ratelimit(self, http_method, url, **kwargs):
         """ Ensure we do not hit the rate limit. """
@@ -155,22 +155,19 @@ class BaseApi(object):
         """ Serialize a Zenpy object to JSON """
         return json.loads(json.dumps(zenpy_object, cls=ZenpyObjectEncoder))
 
-    def _deserialize(self, response_json):
+    def _deserialize(self, response):
         """
         Deserialize the JSON returned by Zendesk into either a Zenpy object (in the case of a single result),
         or a ResultGenerator (in the case of multiple results).
         
         :param response_json: the JSON returned by Zendesk. 
         """
+        response_json = response.json()
         # TicketAudit and tags are special cases.
         if 'ticket' and 'audit' in response_json:
             return object_from_json(self, 'ticket_audit', response_json)
         elif 'tags' in response_json:
             return response_json['tags']
-
-        # Search result
-        if 'results' in response_json:
-            return ResultGenerator(self, 'results', response_json)
 
         # A single object, eg "user"
         for object_type in self.KNOWN_RESPONSES:
@@ -182,6 +179,10 @@ class BaseApi(object):
             singular_key = as_singular(key)
             if singular_key in self.KNOWN_RESPONSES:
                 return ResultGenerator(self, key, response_json)
+
+        # Search result
+        if 'results' in response_json:
+            return ResultGenerator(self, 'results', response_json)
 
         raise ZenpyException("Unknown Response: " + str(response_json))
 
