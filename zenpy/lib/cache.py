@@ -162,6 +162,7 @@ def purge_cache(object_type):
         log.debug("Purging [{}] cache".format(object_type))
         cache_mapping[object_type].purge()
 
+
 def in_cache(zenpy_object):
     """ Determine whether or not this object is in the cache """
     object_type = get_object_type(zenpy_object)

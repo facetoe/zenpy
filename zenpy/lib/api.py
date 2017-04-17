@@ -34,8 +34,8 @@ class ZenpyObjectEncoder(JSONEncoder):
 
 class BaseApi(object):
     """
-    Base class for API. Responsible for submitting requests to Zendesk, controlling 
-    rate limiting and deserializing responses. 
+    Base class for API. Responsible for submitting requests to Zendesk, controlling
+    rate limiting and deserializing responses.
     """
 
     KNOWN_OBJECTS = CLASS_MAPPING.keys()
@@ -75,10 +75,10 @@ class BaseApi(object):
 
     def _call_api(self, http_method, url, **kwargs):
         """
-        Execute a call to the Zendesk API. Handles rate limiting, checking the response 
+        Execute a call to the Zendesk API. Handles rate limiting, checking the response
         from Zendesk and deserialization of the Zendesk response. All
-        communication with Zendesk should go through this method. 
-        
+        communication with Zendesk should go through this method.
+
         :param http_method: The requests method to call (eg post, put, get).
         :param url: The url to pass to to the requests method.
         :param kwargs: Any additional kwargs to pass on to requests.
@@ -124,7 +124,9 @@ class BaseApi(object):
         else:
             # We hit our limit floor and aren't quite at 10 seconds yet..
             log.warn(
-                "Safety Limit Reached of %s remaining calls and time since last call is under 10 seconds" % self.ratelimit)
+                "Safety Limit Reached of %s remaining calls and time since last call is under 10 seconds"
+                % self.ratelimit
+            )
             while time_since_last_call() < 10:
                 remaining_sleep = int(10 - time_since_last_call())
                 log.debug("  -> sleeping: %s more seconds" % remaining_sleep)
@@ -149,8 +151,8 @@ class BaseApi(object):
         """
         Deserialize the JSON returned by Zendesk into either a Zenpy object (in the case of a single result),
         or a ResultGenerator (in the case of multiple results).
-        
-        :param response_json: the JSON returned by Zendesk. 
+
+        :param response_json: the JSON returned by Zendesk.
         """
         response_json = response.json()
         # TicketAudit and tags are special cases.
@@ -181,13 +183,13 @@ class BaseApi(object):
         Query Zendesk for items. If an id or list of ids are passed, attempt to locate these items
          in the relevant cache. If they cannot be found, or no ids are passed, execute a call to Zendesk
          to retrieve the items.
-        
+
         :param endpoint: target endpoint.
         :param object_type: object type we are expecting.
         :param endpoint_args: args for endpoint
         :param endpoint_kwargs: kwargs for endpoint
-        
-        :return: either a ResultGenerator or a Zenpy object. 
+
+        :return: either a ResultGenerator or a Zenpy object.
         """
 
         _id = endpoint_kwargs.get('id', None)
@@ -214,10 +216,10 @@ class BaseApi(object):
 
     def _check_response(self, response):
         """
-        Check the response code returned by Zendesk. If it is outside the 200 range, raise an exception. 
+        Check the response code returned by Zendesk. If it is outside the 200 range, raise an exception.
         If the response includes a JSON error response from Zendesk, an APIException or RecordNotFoundException
-        will be raised, if not, the requests Exception for the received HTTP status code will be raised. 
-        
+        will be raised, if not, the requests Exception for the received HTTP status code will be raised.
+
         :param response: requests Response object.
         """
         if response.status_code > 299 or response.status_code < 200:
@@ -239,10 +241,10 @@ class BaseApi(object):
 class Api(BaseApi):
     """
     Most general API class. It is callable, and is suitable for basic API endpoints that can
-    only be called with no arguments to return a collection, or an id to return a single item. 
-    
-    This class also contains many methods for retrieving specific objects or collections of objects. 
-    These methods are called by the classes found in zenpy.lib.api_objects. 
+    only be called with no arguments to return a collection, or an id to return a single item.
+
+    This class also contains many methods for retrieving specific objects or collections of objects.
+    These methods are called by the classes found in zenpy.lib.api_objects.
     """
 
     def __call__(self, *args, **kwargs):
@@ -418,7 +420,7 @@ class CRUDApi(ModifiableApi):
         """
         Delete (DELETE) one or more API objects. After successfully deleting the objects from the API
         they will also be removed from the relevant Zenpy caches. It is important that only this method
-        is used when deleting items from Zendesk as otherwise they may not be purged from the cache. 
+        is used when deleting items from Zendesk as otherwise they may not be purged from the cache.
 
         :param items: object or objects to delete
         """
@@ -445,8 +447,8 @@ class SuspendedTicketApi(ModifiableApi):
         """
         object_type, payload = self._get_type_and_payload(tickets)
         if object_type.endswith('s'):
-            return self._do(self._put, dict(
-                recover_ids=[i.id for i in tickets]),
+            return self._do(self._put,
+                            dict(recover_ids=[i.id for i in tickets]),
                             endpoint=self.endpoint, payload=payload)
         else:
             return self._do(self._put, dict(id=tickets.id),
@@ -557,8 +559,8 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
         def show(self, user, identity):
             """
             Show the specified identity for the specified user.
-            
-            :param user: user id or User object 
+
+            :param user: user id or User object
             :param identity: identity id object
             :return: Identity
             """
@@ -575,10 +577,9 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
         def create(self, user, identity):
             """
             Create an additional identity for the specified user
-            
+
             :param user: User id or object
             :param identity: Identity object to be created
-            :return: 
             """
             if not isinstance(identity, Identity):
                 raise ZenpyException("You must pass an Identity object to this endpoint!")
@@ -590,8 +591,8 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
         def update(self, user, identity):
             """
             Update specified identity for the specified user
-            
-            :param user: User object or id 
+
+            :param user: User object or id
             :param identity: Identity object to be updated.
             :return: The updated Identity
             """
@@ -609,7 +610,7 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
         def make_primary(self, user, identity):
             """
             Set the specified user as primary for the specified user.
-            
+
             :param user: User object or id
             :param identity: Identity object or id
             :return: list of user's Identities
@@ -643,7 +644,7 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
         def verify(self, user, identity):
             """
             Verify an identity for a user
-            
+
             :param user: User id or object
             :param identity: Identity id or object
             :return: the verified Identity
@@ -660,7 +661,7 @@ class UserApi(TaggableApi, IncrementalApi, CRUDApi):
         def delete(self, user, identity):
             """
             Deletes the identity for a given user
-            
+
             :param user: User id or object
             :param identity: Identity id or object
             :return: requests Response object
@@ -1045,13 +1046,13 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
     def merge(self, target, source,
               target_comment=None, source_comment=None):
         """
-        Merge the ticket(s) or ticket ID(s) in source into the target ticket. 
+        Merge the ticket(s) or ticket ID(s) in source into the target ticket.
 
         :param target: ticket id or object to merge tickets into
         :param source: ticket id, object or list of tickets or ids to merge into target
         :param source_comment: optional comment for the source ticket(s)
         :param target_comment: optional comment for the target ticket
-        
+
         :return: a JobStatus object
         """
         if isinstance(target, Ticket):

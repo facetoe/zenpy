@@ -1,7 +1,7 @@
 import logging
+
 import time
 from datetime import datetime
-
 from dateutil.tz import tzutc
 
 from zenpy.lib.exception import ZenpyException
@@ -162,7 +162,7 @@ class AttachmentEndpoint(BaseEndpoint):
         query = self.endpoint
         for key, value in kwargs.items():
             if value:
-                if not '&' in query:
+                if '&' not in query:
                     query += '&'
                 query += '{}={}'.format(key, value)
         return query
