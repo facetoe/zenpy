@@ -6,7 +6,7 @@ class UserAPITestCase(ZenpyApiTestCase):
     """ Base class for testing user functionality. Ensures we start and finish with no non-admin users in Zendesk. """
 
     def setUp(self):
-        super().setUp()
+        super(UserAPITestCase, self).setUp()
         cassette_name = '{0}-setUp'.format(self.__class__.__name__)
         with self.recorder.use_cassette(cassette_name=cassette_name, serialize_with='prettyjson'):
             # Sanity check, we expect our test environment to be empty of non-admin users.
@@ -15,7 +15,7 @@ class UserAPITestCase(ZenpyApiTestCase):
                     raise Exception("Non-admin users found in test instance, bailing out!")
 
     def tearDown(self):
-        super().setUp()
+        super(UserAPITestCase, self).setUp()
         cassette_name = '{0}-tearDown'.format(self.__class__.__name__)
         with self.recorder.use_cassette(cassette_name=cassette_name, serialize_with='prettyjson'):
             to_delete = list()
