@@ -8,7 +8,7 @@ from zenpy.lib.api import UserApi, Api, TicketApi, OrganizationApi, SuspendedTic
 from zenpy.lib.cache import ZenpyCache
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import ZenpyException
-from zenpy.lib.manager import ClassManager, ObjectManager
+from zenpy.lib.object_manager import CLASS_MAPPING
 
 log = logging.getLogger()
 
@@ -31,7 +31,8 @@ class Zenpy(object):
             max_retries=3
         )
 
-    def __init__(self, subdomain, email=None, token=None, oauth_token=None, password=None, session=None, timeout=None, ratelimit=None):
+    def __init__(self, subdomain, email=None, token=None, oauth_token=None, password=None, session=None, timeout=None,
+                 ratelimit=None):
         """
         Python Wrapper for the Zendesk API.
 
@@ -283,7 +284,7 @@ class Zenpy(object):
         """
         Returns a list of current caches
         """
-        return self._get_cache_mapping().keys()
+        return cache_mapping.keys()
 
     def get_cache_max(self, cache_name):
         """
@@ -314,27 +315,18 @@ class Zenpy(object):
         """
         Add a new cache for the named object type and cache implementation
         """
-        if object_type not in self._get_class_mapping():
+        if object_type not in CLASS_MAPPING:
             raise ZenpyException("No such object type: %s" % object_type)
-        cache_mapping = self._get_cache_mapping()
         cache_mapping[object_type] = ZenpyCache(cache_impl_name, maxsize, **kwargs)
 
     def delete_cache(self, cache_name):
         """
         Deletes the named cache
         """
-        cache_mapping = self._get_cache_mapping()
         del cache_mapping[cache_name]
 
     def _get_cache(self, cache_name):
-        cache_mapping = self._get_cache_mapping()
         if cache_name not in cache_mapping:
             raise ZenpyException("No such cache - %s" % cache_name)
         else:
             return cache_mapping[cache_name]
-
-    def _get_cache_mapping(self):
-        return ObjectManager.cache_mapping
-
-    def _get_class_mapping(self):
-        return ClassManager.class_mapping

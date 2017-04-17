@@ -5,8 +5,14 @@ ALL_CAP_REGEX = re.compile('([a-z0-9])([A-Z])')
 
 
 def to_snake_case(name):
+    """ Given a name in camelCase return in snake_case """
     s1 = FIRST_CAP_REGEX.sub(r'\1_\2', name)
     return ALL_CAP_REGEX.sub(r'\1_\2', s1).lower()
+
+
+def get_object_type(zenpy_object):
+    """ Given an instance of a Zenpy object, return it's object type """
+    return to_snake_case(zenpy_object.__class__.__name__)
 
 
 def is_timezone_aware(datetime_obj):
@@ -25,10 +31,24 @@ def is_iterable_but_not_string(obj):
 
 def as_singular(result_key):
     """
-    This is a bit hackery. Given a result key, return in the singular form
+    Given a result key, return in the singular form
     """
     if result_key.endswith('ies'):
-        object_type = result_key.replace('ies', 'y')
+        return re.sub('ies$', 'y', result_key)
+    elif result_key.endswith('s'):
+        return result_key[:-1]
     else:
-        object_type = result_key[:-1]
-    return object_type
+        return result_key
+
+
+def as_plural(result_key):
+    """
+    Given a result key, return in the plural form.
+    """
+    # Not at all guaranteed to work in all cases...
+    if result_key.endswith('y'):
+        return re.sub("y$", "ies", result_key)
+    elif not result_key.endswith('s'):
+        return result_key + 's'
+    else:
+        return result_key
