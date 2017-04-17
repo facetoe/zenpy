@@ -53,7 +53,7 @@ log = logging.getLogger(__name__)
 __author__ = 'facetoe'
 
 # Dictionary for mapping object types to Python classes
-class_mapping = {
+CLASS_MAPPING = {
     'ticket': Ticket,
     'user': User,
     'organization': Organization,
@@ -113,10 +113,10 @@ class_mapping = {
 
 
 def class_for_type(object_type):
-    if object_type not in class_mapping:
+    if object_type not in CLASS_MAPPING:
         raise ZenpyException("Unknown object_type: " + str(object_type))
     else:
-        return class_mapping[object_type]
+        return CLASS_MAPPING[object_type]
 
 
 def object_from_json(api, object_type, object_json):
@@ -127,7 +127,7 @@ def object_from_json(api, object_type, object_json):
     for key, value in object_json.items():
         if key in ('metadata', 'from', 'system', 'photo', 'thumbnails'):
             key = '_%s' % key
-        if key in class_mapping:
+        if key in CLASS_MAPPING:
             value = object_from_json(api, key, value)
         setattr(obj, key, value)
     add_to_cache(obj)

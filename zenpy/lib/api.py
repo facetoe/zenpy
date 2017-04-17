@@ -12,7 +12,7 @@ from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import APIException, RecordNotFoundException
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.generator import ResultGenerator
-from zenpy.lib.object_manager import class_for_type, object_from_json
+from zenpy.lib.object_manager import class_for_type, object_from_json, CLASS_MAPPING
 from zenpy.lib.util import to_snake_case, is_iterable_but_not_string, as_singular
 
 __author__ = 'facetoe'
@@ -37,18 +37,8 @@ class BaseApi(object):
     Base class for API. Responsible for submitting requests to Zendesk, controlling 
     rate limiting and deserializing responses. 
     """
-    KNOWN_RESPONSES = ('ticket',
-                       'user',
-                       'job_status',
-                       'group',
-                       'satisfaction_rating',
-                       'request',
-                       'organization',
-                       'organization_membership',
-                       'upload',
-                       'result',
-                       'identity',
-                       'brand')
+
+    KNOWN_OBJECTS = CLASS_MAPPING.keys()
 
     def __init__(self, subdomain, session, endpoint, object_type, timeout, ratelimit):
         self.subdomain = subdomain
@@ -170,14 +160,14 @@ class BaseApi(object):
             return response_json['tags']
 
         # A single object, eg "user"
-        for object_type in self.KNOWN_RESPONSES:
+        for object_type in self.KNOWN_OBJECTS:
             if object_type in response_json:
                 return object_from_json(self, object_type, response_json[object_type])
 
         # Multiple of a single object, eg "users"
         for key in response_json:
             singular_key = as_singular(key)
-            if singular_key in self.KNOWN_RESPONSES:
+            if singular_key in self.KNOWN_OBJECTS:
                 return ResultGenerator(self, key, response_json)
 
         # Search result
@@ -383,13 +373,13 @@ class ModifiableApi(Api):
             if items.__class__ is not expected_class:
                 raise ZenpyException("Invalid type {} - expected {}".format(items.__class__, expected_class))
 
-    def _do(self, action, endpoint_kwargs, endpoint_args=None, payload=None, endpoint=None):
+    def _do(self, action, endpoint_kwargs, endpoint_args=None, endpoint=None, **kwargs):
         if not endpoint:
             endpoint = self.endpoint
         if not endpoint_args:
             endpoint_args = tuple()
         url = self._build_url(endpoint=endpoint(*endpoint_args, **endpoint_kwargs))
-        return action(url, payload=payload)
+        return action(url, **kwargs)
 
 
 class CRUDApi(ModifiableApi):
@@ -1047,11 +1037,10 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         if isinstance(macro, Macro):
             macro = macro.id
 
-        response = self._get(
-            url=self._build_url(self.endpoint.macro(ticket, macro))
-        )
-        self._check_response(response)
-        return self._build_response(response.json())
+        return self._do(self._get,
+                        endpoint_kwargs={},
+                        endpoint_args=(ticket, macro),
+                        endpoint=self.endpoint.macro)
 
     def merge(self, target, source,
               target_comment=None, source_comment=None):

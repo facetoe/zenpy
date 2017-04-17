@@ -8,7 +8,7 @@ from zenpy.lib.api import UserApi, Api, TicketApi, OrganizationApi, SuspendedTic
 from zenpy.lib.cache import ZenpyCache
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import ZenpyException
-from zenpy.lib.object_manager import class_mapping
+from zenpy.lib.object_manager import CLASS_MAPPING
 
 log = logging.getLogger()
 
@@ -315,7 +315,7 @@ class Zenpy(object):
         """
         Add a new cache for the named object type and cache implementation
         """
-        if object_type not in class_mapping:
+        if object_type not in CLASS_MAPPING:
             raise ZenpyException("No such object type: %s" % object_type)
         cache_mapping[object_type] = ZenpyCache(cache_impl_name, maxsize, **kwargs)
 
