@@ -15,7 +15,7 @@ rm -rf ${BUILD}/test-install ${BUILD}/test-install-bin
 mkdir ${BUILD}/test-install ${BUILD}/test-install-bin
 PYTHONPATH=${BUILD}/test-install python3 setup.py --quiet install --install-lib ${BUILD}/test-install --install-scripts ${BUILD}/test-install-bin
 
-test -f ${BUILD}/test-install-bin/zenpy
+#test -f ${BUILD}/test-install-bin/zenpy
 
 PYTHONPATH=${BUILD}/test-install python3 -m unittest discover -t zenpy/tests
 
