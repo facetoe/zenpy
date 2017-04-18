@@ -26,6 +26,11 @@ else:
     }
 
 
+# https://stackoverflow.com/questions/434287/what-is-the-most-pythonic-way-to-iterate-over-a-list-in-chunks
+def chunker(seq, size):
+    return (seq[pos:pos + size] for pos in range(0, len(seq), size))
+
+
 class ZenpyApiTestCase(BetamaxTestCase):
     SESSION_CLASS = requests.Session
 
@@ -74,8 +79,16 @@ class ZenpyApiTestCase(BetamaxTestCase):
         else:
             return True
 
-    def wait_for_job_status(self, job_status, request_interval=0.01, max_attempts=30):
+    # TODO: make this run fast on Travis (as testing against betamax files)
+    def wait_for_job_status(self, job_status, max_attempts=30):
         """ Wait until a background job has completed. """
+
+        # If we are currently recording be nice and don't hammer Zendesk for status updates.
+        # If not we are replaying an interaction and can hammer the status update to speed up the tests.
+        if self.recorder.current_cassette.is_recording():
+            request_interval = 2
+        else:
+            request_interval = 0.0001
         n = 0
         while True:
             sleep(request_interval)

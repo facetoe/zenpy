@@ -1,4 +1,6 @@
-from test_fixtures import ZenpyApiTestCase
+from time import sleep
+
+from test_fixtures import ZenpyApiTestCase, chunker
 from zenpy.lib.api_objects import Ticket, TicketAudit, Audit
 from zenpy.lib.exception import RecordNotFoundException, ZenpyException
 
@@ -18,8 +20,8 @@ class TicketAPITestCase(ZenpyApiTestCase):
         super(TicketAPITestCase, self).setUp()
         cassette_name = '{0}-tearDown'.format(self.__class__.__name__)
         with self.recorder.use_cassette(cassette_name=cassette_name, serialize_with='prettyjson'):
-            tickets = [t for t in self.zenpy_client.tickets()]
-            if tickets:
+            to_delete = [t for t in self.zenpy_client.tickets()]
+            for tickets in chunker(to_delete, 100):
                 self.zenpy_client.tickets.delete(tickets)
 
 
@@ -137,3 +139,44 @@ class TestTicketProperties(TicketAPITestCase):
         """ Recursively test that a ticket's properties, and each linked property can be called without error. """
         with self.recorder.use_cassette(self.generate_cassette_name(), serialize_with='prettyjson'):
             self.recursively_call_properties(self.test_ticket)
+
+
+class TestTicketGenerator(TicketAPITestCase):
+    def test_empty_generator(self):
+        """ Ensure things don't blow up on an empty list """
+        with self.recorder.use_cassette(cassette_name=self.generate_cassette_name(), serialize_with='prettyjson'):
+            self.assertListEqual([t for t in self.zenpy_client.tickets()], [])
+
+    def test_half_full_ticket_generator(self):
+        """ Ensure a half full ticket generator behaves as expected. """
+        with self.recorder.use_cassette(cassette_name=self.generate_cassette_name(), serialize_with='prettyjson'):
+            ticket_count = 50
+            self.generate_tickets(ticket_count)
+            self.verify(ticket_count)
+
+    def test_full_ticket_generator(self):
+        """ Ensure a half full ticket generator behaves as expected. """
+        with self.recorder.use_cassette(cassette_name=self.generate_cassette_name(), serialize_with='prettyjson'):
+            ticket_count = 100  # max tickets that can be created in a single call
+            self.generate_tickets(ticket_count)
+            self.verify(ticket_count)
+
+    def test_over_full_ticket_generator(self):
+        """ Ensure a half full ticket generator behaves as expected. """
+        with self.recorder.use_cassette(cassette_name=self.generate_cassette_name(), serialize_with='prettyjson'):
+            ticket_count = 150
+            self.generate_tickets(100)
+            self.generate_tickets(50)
+            self.verify(ticket_count)
+
+    def verify(self, ticket_count):
+        returned_tickets = [t for t in self.zenpy_client.tickets()]
+        self.assertEqual(len(returned_tickets), ticket_count)
+        for ticket in returned_tickets:
+            self.assertIsInstance(ticket, Ticket)
+            self.assertInCache(ticket)
+
+    def generate_tickets(self, num_tickets):
+        tickets = [Ticket(subject=str(i), description=str(i)) for i in range(num_tickets)]
+        job_status = self.zenpy_client.tickets.create(tickets)
+        self.wait_for_job_status(job_status)

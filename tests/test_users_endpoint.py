@@ -1,4 +1,4 @@
-from test_fixtures import ZenpyApiTestCase
+from test_fixtures import ZenpyApiTestCase, chunker
 from zenpy.lib.api_objects import User
 
 
@@ -22,8 +22,8 @@ class UserAPITestCase(ZenpyApiTestCase):
             for user in self.zenpy_client.users():
                 if user.role != "admin" and user.name != "Mailer-daemon":
                     to_delete.append(user)
-            if to_delete:
-                self.zenpy_client.users.delete(to_delete)
+            for users in chunker(to_delete, 100):
+                self.zenpy_client.users.delete(users)
 
 
 class TestSingleUserCRUD(UserAPITestCase):
