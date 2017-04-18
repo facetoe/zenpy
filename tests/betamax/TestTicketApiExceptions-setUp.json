@@ -1,7 +1,7 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2017-04-17T14:10:38",
+      "recorded_at": "2017-04-18T12:16:00",
       "request": {
         "body": {
           "encoding": "utf-8",
@@ -10,13 +10,13 @@
         "headers": {
           "Accept": "*/*",
           "Accept-Encoding": "gzip, deflate",
-          "Authorization": "Basic ZmFjZXRvZUBmYWNldG9lLmNvbS5hdS90b2tlbjpKTGQ1WWVsb2hXR21BNmpmZmhyT2NneUlFSnpBYUdPQTBwWVNLSk5x",
+          "Authorization": "Basic ZmFjZXRvZUBmYWNldG9lLmNvbS5hdS90b2tlbjpkbWZIVnh6ak90b0ZsVlhJNnMzeFE2YmQ1dXZ1RG5Sb0kydkZWWW85",
           "Connection": "keep-alive",
           "Content-type": "application/json",
           "User-Agent": "Zenpy/1.1"
         },
         "method": "GET",
-        "uri": "https://facetoehelp.zendesk.com/api/v2/tickets.json?&include=users,groups,organizations"
+        "uri": "https://facetoe1.zendesk.com/api/v2/tickets.json?&include=users,groups,organizations"
       },
       "response": {
         "body": {
@@ -29,7 +29,7 @@
           "Connection": "keep-alive",
           "Content-Encoding": "gzip",
           "Content-Type": "application/json; charset=UTF-8",
-          "Date": "Mon, 17 Apr 2017 14:10:41 GMT",
+          "Date": "Tue, 18 Apr 2017 12:16:04 GMT",
           "ETag": "W/\"b4bb44272a45ed5e0670b299127e1c30\"",
           "Server": "nginx",
           "Strict-Transport-Security": "max-age=31536000;",
@@ -38,20 +38,20 @@
           "X-Frame-Options": "SAMEORIGIN",
           "X-Rack-Cache": "miss",
           "X-Rate-Limit": "400",
-          "X-Rate-Limit-Remaining": "373",
-          "X-Request-Id": "225e842d-6ca2-4135-c12b-ecf4bbdf6f15",
-          "X-Runtime": "0.173678",
+          "X-Rate-Limit-Remaining": "396",
+          "X-Request-Id": "e9b0a6d7-e15b-4848-c88a-b8ca3a6b1aa8",
+          "X-Runtime": "0.166372",
           "X-UA-Compatible": "IE=Edge,chrome=1",
           "X-Zendesk-API-Version": "v2",
-          "X-Zendesk-Application-Version": "v19.29",
-          "X-Zendesk-Origin-Server": "app44.pod6.iad1.zdsys.com",
-          "X-Zendesk-Request-Id": "02a43c7f57b39eecfe70"
+          "X-Zendesk-Application-Version": "v19.30-3-g6a132e0",
+          "X-Zendesk-Origin-Server": "app24.pod5.iad1.zdsys.com",
+          "X-Zendesk-Request-Id": "36f5396dffeff09ce046"
         },
         "status": {
           "code": 200,
           "message": "OK"
         },
-        "url": "https://facetoehelp.zendesk.com/api/v2/tickets.json?&include=users,groups,organizations"
+        "url": "https://facetoe1.zendesk.com/api/v2/tickets.json?&include=users,groups,organizations"
       }
     }
   ],

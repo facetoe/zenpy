@@ -1,9 +1,9 @@
 import json
-import os
-from collections import defaultdict
 
+import os
 import requests
 from bs4 import BeautifulSoup, SoupStrainer
+from collections import defaultdict
 
 base_url = "https://developer.zendesk.com"
 

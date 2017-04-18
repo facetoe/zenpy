@@ -1,7 +1,7 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2017-04-18T12:16:02",
+      "recorded_at": "2017-04-18T12:15:51",
       "request": {
         "body": {
           "encoding": "utf-8",
@@ -12,46 +12,47 @@
           "Accept-Encoding": "gzip, deflate",
           "Authorization": "Basic ZmFjZXRvZUBmYWNldG9lLmNvbS5hdS90b2tlbjpkbWZIVnh6ak90b0ZsVlhJNnMzeFE2YmQ1dXZ1RG5Sb0kydkZWWW85",
           "Connection": "keep-alive",
+          "Content-Length": "0",
           "Content-type": "application/json",
           "User-Agent": "Zenpy/1.1"
         },
-        "method": "GET",
-        "uri": "https://facetoe1.zendesk.com/api/v2/tickets.json?&include=users,groups,organizations"
+        "method": "DELETE",
+        "uri": "https://facetoe1.zendesk.com/api/v2/tickets/destroy_many.json?ids=348,349,350,351,352&include=users,groups,organizations"
       },
       "response": {
         "body": {
-          "base64_string": "H4sIAAAAAAAAA1XIMQqAMAwAwL9k7uDcr4hIKaEESxLSRETx7y5d3I57wKke6APyuiWIgTbZTEKnxVphuouT8CzGy3ctDSFz9J5ADU+SGL+sEuyQl/cDU6C1hmgAAAA=",
+          "base64_string": "H4sIAAAAAAAAA4WOQQ6DMAwE/+IzIoAgBT5TBeJQaCAUOz0U8fdaalGPva21o/HuMIXuSmw4ErQ7jBZaqOrC1Y12da5L00m4OJ1VjS0znaPrGkggbl7AG/NKrVLO9MgB8/SFi0W6p32YlVlH9SzUz4+k/pnTicIieg5s5MESvU9g3cKwIcm+z32uhUfEiFbwWVoz4AkIHD1/+eN4A92vP1DkAAAA",
           "encoding": "UTF-8",
           "string": ""
         },
         "headers": {
-          "Cache-Control": "must-revalidate, private, max-age=0",
+          "Cache-Control": "max-age=0, private, must-revalidate",
           "Connection": "keep-alive",
           "Content-Encoding": "gzip",
           "Content-Type": "application/json; charset=UTF-8",
-          "Date": "Tue, 18 Apr 2017 12:16:05 GMT",
-          "ETag": "W/\"b4bb44272a45ed5e0670b299127e1c30\"",
+          "Date": "Tue, 18 Apr 2017 12:15:55 GMT",
+          "ETag": "W/\"290e90ce7c45d78488f504d166122bbb\"",
           "Server": "nginx",
           "Strict-Transport-Security": "max-age=31536000;",
           "Transfer-Encoding": "chunked",
           "X-Content-Type-Options": "nosniff",
           "X-Frame-Options": "SAMEORIGIN",
-          "X-Rack-Cache": "miss",
+          "X-Rack-Cache": "invalidate, pass",
           "X-Rate-Limit": "400",
-          "X-Rate-Limit-Remaining": "395",
-          "X-Request-Id": "ff162aac-83d6-4e4d-ce7e-b8ca3a6bdb19",
-          "X-Runtime": "0.170761",
+          "X-Rate-Limit-Remaining": "386",
+          "X-Request-Id": "7e991a2f-1be6-4dba-cdc4-b8ca3a6bb7d1",
+          "X-Runtime": "0.168016",
           "X-UA-Compatible": "IE=Edge,chrome=1",
           "X-Zendesk-API-Version": "v2",
           "X-Zendesk-Application-Version": "v19.30-3-g6a132e0",
           "X-Zendesk-Origin-Server": "app5.pod5.iad1.zdsys.com",
-          "X-Zendesk-Request-Id": "0c57d5819e6227d259ca"
+          "X-Zendesk-Request-Id": "4e8b5fc990bc784ee69a"
         },
         "status": {
           "code": 200,
           "message": "OK"
         },
-        "url": "https://facetoe1.zendesk.com/api/v2/tickets.json?&include=users,groups,organizations"
+        "url": "https://facetoe1.zendesk.com/api/v2/tickets/destroy_many.json?ids=348,349,350,351,352&include=users,groups,organizations"
       }
     }
   ],

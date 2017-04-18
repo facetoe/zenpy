@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 
-import glob
 import json
+from optparse import OptionParser
+
+import glob
 import os
 import re
 import sys
-from optparse import OptionParser
 
 __author__ = 'facetoe'
 from jinja2 import Template
@@ -59,7 +60,7 @@ class Init(TemplateObject):
         {% for attr in object.attributes -%}
         {% if attr.attr_docs and attr.attr_name %}
         {% for docline in attr.attr_docs %}
-        #:| {{ docline-}}
+        # {{ docline-}}
         {% endfor %}
         {% endif -%}
         {% if attr.attr_name and not attr.attr_name.startswith('_') -%}
@@ -77,8 +78,7 @@ class Init(TemplateObject):
         self.init_params = ", ".join(
             ["{}=None".format(a.attr_name)
              for a in attributes
-             if not a.attr_name.startswith('_')
-             and a.attr_name])
+             if not a.attr_name.startswith('_') and a.attr_name])
         self.attributes = attributes
 
 

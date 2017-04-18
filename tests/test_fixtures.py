@@ -12,13 +12,18 @@ from zenpy import Zenpy
 
 from zenpy.lib.api_objects import BaseObject
 from zenpy.lib.cache import should_cache, in_cache, query_cache_by_object
-from zenpy.lib.generator import ResultGenerator
+from zenpy.lib.generator import SearchResultGenerator
 
-credentials = {}
-creds_path = os.path.expanduser('~/zenpy-test-credentials.json')
-if os.path.exists(creds_path):
-    with open(creds_path) as f:
+cred_path = os.path.expanduser('~/zenpy-test-credentials.json')
+if os.path.exists(cred_path):
+    with open(cred_path) as f:
         credentials = json.load(f)
+else:
+    credentials = {
+        "subdomain": "facetoe1",
+        "email": "example@example.com",
+        "token": "not really a token"
+    }
 
 
 class ZenpyApiTestCase(BetamaxTestCase):
@@ -28,18 +33,19 @@ class ZenpyApiTestCase(BetamaxTestCase):
         config = Betamax.configure()
         config.cassette_library_dir = "tests/betamax/"
         config.default_cassette_options['record_mode'] = 'once'
-        config.default_cassette_options['match_requests_on'] = ['method', 'uri', 'json-body']
+        config.default_cassette_options['match_requests_on'] = ['method', 'uri']
         if credentials:
             config.define_cassette_placeholder(
                 '<ZENPY-CREDENTIALS>',
                 str(base64.b64encode(
-                    "{}/{}".format(credentials['email'], credentials['token']).encode('utf-8')
+                    "{}/token:{}".format(credentials['email'], credentials['token']).encode('utf-8')
                 ))
             )
-        super().setUp()
+        super(ZenpyApiTestCase, self).setUp()
 
         self.recorder.register_request_matcher(JSONBodyMatcher)
         self.recorder.register_serializer(PrettyJSONSerializer)
+        self.session.auth = ()
         credentials['session'] = self.session
         self.zenpy_client = Zenpy(**credentials)
 
@@ -87,6 +93,6 @@ class ZenpyApiTestCase(BetamaxTestCase):
                 prop_val = getattr(zenpy_object, attr_name)
                 if prop_val and issubclass(prop_val.__class__, BaseObject):
                     self.recursively_call_properties(prop_val)
-                elif isinstance(prop_val, ResultGenerator):
+                elif isinstance(prop_val, SearchResultGenerator):
                     for obj in prop_val:
                         self.recursively_call_properties(obj)
