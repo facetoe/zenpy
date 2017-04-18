@@ -11,7 +11,7 @@ class UserAPITestCase(ZenpyApiTestCase):
         with self.recorder.use_cassette(cassette_name=cassette_name, serialize_with='prettyjson'):
             # Sanity check, we expect our test environment to be empty of non-admin users.
             for user in self.zenpy_client.search(type="user"):
-                if user.role != "admin":
+                if user.role != "admin" and user.name != "Mailer-daemon":
                     raise Exception("Non-admin users found in test instance, bailing out!")
 
     def tearDown(self):
@@ -19,8 +19,8 @@ class UserAPITestCase(ZenpyApiTestCase):
         cassette_name = '{0}-tearDown'.format(self.__class__.__name__)
         with self.recorder.use_cassette(cassette_name=cassette_name, serialize_with='prettyjson'):
             to_delete = list()
-            for user in self.zenpy_client.search(type='user'):
-                if user.role != "admin":
+            for user in self.zenpy_client.users():
+                if user.role != "admin" and user.name != "Mailer-daemon":
                     to_delete.append(user)
             if to_delete:
                 self.zenpy_client.users.delete(to_delete)

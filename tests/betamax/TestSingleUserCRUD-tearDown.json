@@ -1,7 +1,7 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2017-04-17T18:50:50",
+      "recorded_at": "2017-04-18T12:16:14",
       "request": {
         "body": {
           "encoding": "utf-8",
@@ -16,11 +16,11 @@
           "User-Agent": "Zenpy/1.1"
         },
         "method": "GET",
-        "uri": "https://facetoe1.zendesk.com/api/v2/search.json?query=type:%22user%22"
+        "uri": "https://facetoe1.zendesk.com/api/v2/users.json?&include=organizations,abilities,roles,identities,groups"
       },
       "response": {
         "body": {
-          "base64_string": "H4sIAAAAAAAAA3VSQW7jMAz8i85OHDlBEvi02MN+YNvLLgqBtRlbG1kyJMptE+TvpWzHbYHtKdGYHHKGcxUeQzQURPn3KnQtykJupdxvi2J3yET0RpSiJepDmecnqJAcyvUFbY3hvK5cl0Ov86HIY0Af8k/N63/BWZEJCx0yx6+plwHsQCfWme3H/JvI1hC5oPIIhLUC4qpiIw+rzW4lDw/yWEpZys0frol9/V3Ntih3+1RDukN1cTaN/wm2Obszo307IjYak4nQgudJI6Zs7J7R3z8xRu7+MK4Cgyr5IzMxvZgV7erxN3M634DVFyDt7FS0l8dNcTxuk4nembQC1J1Ohgzo9UkjU5GPyH68EnoLZmyc1iJo0kGeMgFGA/+dYKhID0w19U27i/IEJjDNLAUatOzbDBoIpIxrtP2fmx9OvTjFZyDnFURqFVp4NmnD2SXdWKDoF9tqJL7hspd1hMujioFcp5LoT4o6V6MHHnDfnnR1RlKcPvKadXFW5mnOmjfVez3wgRWHomNBzD4rujekfHyRGmLoUyx567m0aoFUYluQFFLF3puaCa83Ps0YfkVvfbpQ+ixu7PoYyQ95fCHV87QlGh4H7WL4AlYuJuPl7R1BrmePUwMAAA==",
+          "base64_string": "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",
           "encoding": "UTF-8",
           "string": ""
         },
@@ -29,8 +29,8 @@
           "Connection": "keep-alive",
           "Content-Encoding": "gzip",
           "Content-Type": "application/json; charset=UTF-8",
-          "Date": "Mon, 17 Apr 2017 18:50:54 GMT",
-          "ETag": "W/\"b2b167eae48a77ffef56f9ecb30333ce\"",
+          "Date": "Tue, 18 Apr 2017 12:16:18 GMT",
+          "ETag": "W/\"2a57831359e810e725cae2472bd6a07d\"",
           "Server": "nginx",
           "Strict-Transport-Security": "max-age=31536000;",
           "Transfer-Encoding": "chunked",
@@ -38,20 +38,20 @@
           "X-Frame-Options": "SAMEORIGIN",
           "X-Rack-Cache": "miss",
           "X-Rate-Limit": "400",
-          "X-Rate-Limit-Remaining": "370",
-          "X-Request-Id": "6e2320e3-9a3e-4c4d-cc51-b8ca3a6bb7d1",
-          "X-Runtime": "0.219818",
+          "X-Rate-Limit-Remaining": "385",
+          "X-Request-Id": "4730a866-9dbe-430d-c3b9-b8ca3a6bdb19",
+          "X-Runtime": "0.277296",
           "X-UA-Compatible": "IE=Edge,chrome=1",
           "X-Zendesk-API-Version": "v2",
-          "X-Zendesk-Application-Version": "v19.29",
-          "X-Zendesk-Origin-Server": "app44.pod5.iad1.zdsys.com",
-          "X-Zendesk-Request-Id": "ceff569f57ac6599df81"
+          "X-Zendesk-Application-Version": "v19.30-3-g6a132e0",
+          "X-Zendesk-Origin-Server": "app38.pod5.iad1.zdsys.com",
+          "X-Zendesk-Request-Id": "e61c7b9b55b2841f5b2c"
         },
         "status": {
           "code": 200,
           "message": "OK"
         },
-        "url": "https://facetoe1.zendesk.com/api/v2/search.json?query=type:%22user%22"
+        "url": "https://facetoe1.zendesk.com/api/v2/users.json?&include=organizations,abilities,roles,identities,groups"
       }
     }
   ],
