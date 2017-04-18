@@ -2,7 +2,6 @@ import json
 import logging
 
 import os
-from collections import defaultdict
 from datetime import datetime, date
 from json import JSONEncoder
 from time import sleep, time
@@ -164,65 +163,51 @@ class BaseApi(object):
         if 'results' in response_json:
             return SearchResultGenerator(self, response_json)
 
-        response_objects = self._deserialize_objects(response_json)
-
+        zenpy_objects = self._deserialize(response_json)
         if 'job_status' in response_json:
-            if len(response_objects[self.object_type]) > 1:
-                raise ZenpyException("Expected single result but found: {}".format(len(response_objects)))
-            return response_objects['job_status'][0]
+            return zenpy_objects['job_status']
 
         if 'ticket' and 'audit' in response_json:
-            return response_objects['ticket_audit'][0]
+            return zenpy_objects['ticket_audit']
 
-        # Check if a single object has been returned.
-        if self.object_type in response_json:
-            if len(response_objects[self.object_type]) > 1:
-                raise ZenpyException("Expected single result but found: {}".format(len(response_objects)))
-            return response_objects[self.object_type][0]
-
-        # Maybe a collection?
+        # Collection of objects (eg, user/ticket)
         plural_object_type = as_plural(self.object_type)
         if plural_object_type in response_json:
             return ResultGenerator(self, response_json)
 
-        # TODO: figure out what to do with tags
-        # elif 'tags' in response_json:
-        #     return response_json['tags']
+        if self.object_type in response_json:
+            return zenpy_objects[self.object_type]
+
+        for zenpy_object_name in self.KNOWN_OBJECTS:
+            if zenpy_object_name in response_json:
+                return zenpy_objects[zenpy_object_name]
 
         raise ZenpyException("Unknown Response: " + str(response_json))
 
-    def _deserialize_objects(self, response_json):
+    def _deserialize(self, response_json, return_type=None):
         """
         Locate and deserialize all objects in the returned JSON. 
         
         Return a dict keyed by object_type containing a list of deserialized objects of that type.
         :param response_json: 
         """
-        response_objects = defaultdict(list)
+        response_objects = dict()
 
-        combined_objects = (
-            ('ticket', 'audit'),
-        )
-        for a, b in combined_objects:
-            if a in response_json and b in response_json:
-                object_type = "{}_{}".format(a, b)
-                response_objects[object_type].append(
-                    object_from_json(self, object_type, response_json)
-                )
+        if all((t in response_json for t in ('ticket', 'audit'))):
+            response_objects["ticket_audit"] = object_from_json(self, "ticket_audit", response_json)
 
-        for object_type in self.KNOWN_OBJECTS:
-            if object_type in response_json:
-                response_objects[object_type].append(
-                    object_from_json(self, object_type, response_json[object_type])
-                )
+        for zenpy_object_name in self.KNOWN_OBJECTS:
+            if zenpy_object_name in response_json:
+                response_objects[zenpy_object_name] = object_from_json(self, zenpy_object_name, response_json[zenpy_object_name])
 
-        for key in response_json:
-            object_type = as_singular(key)
-            if object_type in self.KNOWN_OBJECTS:
-                for object_json in response_json[key]:
-                    zenpy_object = object_from_json(self, object_type, object_json)
-                    if zenpy_object:
-                        response_objects[object_type].append(zenpy_object)
+        for key, value in response_json.items():
+            if isinstance(value, list):
+                zenpy_object_name = as_singular(key)
+                if zenpy_object_name in self.KNOWN_OBJECTS:
+                    response_objects[key] = []
+                    for object_json in response_json[key]:
+                        zenpy_object = object_from_json(self, zenpy_object_name, object_json)
+                        response_objects[key].append(zenpy_object)
         return response_objects
 
     def _query_zendesk(self, endpoint, object_type, *endpoint_args, **endpoint_kwargs):
@@ -591,7 +576,7 @@ class IncrementalApi(Api):
         return self._query_zendesk(self.endpoint.incremental, self.object_type, start_time=start_time)
 
 
-class UserApi(TaggableApi, IncrementalApi, CRUDApi):
+class UserApi(IncrementalApi, CRUDApi):
     """
     The UserApi adds some User specific functionality
     """

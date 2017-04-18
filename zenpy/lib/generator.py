@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+from lib.util import as_plural
 from zenpy.lib.object_manager import object_from_json
 
 __author__ = 'facetoe'
@@ -71,8 +72,8 @@ class ResultGenerator(BaseResultGenerator):
     """ Generic result generator. """
 
     def process_page(self):
-        response_objects = self.api._deserialize_objects(self._response_json)
-        self.values = response_objects[self.api.object_type]
+        response_objects = self.api._deserialize(self._response_json)
+        self.values = response_objects[as_plural(self.api.object_type)]
 
     def get_next_page(self):
         end_time = self._response_json.get('end_time', None)
