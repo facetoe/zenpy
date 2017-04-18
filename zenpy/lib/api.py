@@ -152,8 +152,13 @@ class BaseApi(object):
 
     def _process_response(self, response):
         """
-        Deserialize the JSON returned by Zendesk into either a Zenpy object (in the case of a single result),
-        or a ResultGenerator (in the case of multiple results).
+        Deserialize the returned objects and return either a single Zenpy object, or a ResultGenerator in 
+        the case of multiple results. 
+
+        This is complicated by the fact that when we receive a response from Zendesk, we don't really know 
+        what the call was that initiated it. Through a series of guesses and a sprinkling of luck, try to
+        return the correct response. The ordering of the statements in this method is highly important,
+        changing it is likely to break things. 
 
         :param response: the requests Response object.
         """
@@ -163,32 +168,39 @@ class BaseApi(object):
         if 'results' in response_json:
             return SearchResultGenerator(self, response_json)
 
+        # JobStatus responses also include a ticket key so treat it specially.
         zenpy_objects = self._deserialize(response_json)
         if 'job_status' in response_json:
             return zenpy_objects['job_status']
 
+        # TicketAudit responses are another special case containing both
+        # a ticket and audit key.
         if 'ticket' and 'audit' in response_json:
             return zenpy_objects['ticket_audit']
 
-        # Collection of objects (eg, user/ticket)
+        # Collection of objects (eg, users/tickets)
         plural_object_type = as_plural(self.object_type)
         if plural_object_type in response_json:
             return ResultGenerator(self, response_json)
 
+        # Here the response matches the API object_type, seems legit.
         if self.object_type in response_json:
             return zenpy_objects[self.object_type]
 
+        # Could be anything, if we know of this object then return it.
         for zenpy_object_name in self.KNOWN_OBJECTS:
             if zenpy_object_name in response_json:
                 return zenpy_objects[zenpy_object_name]
 
+        # Bummer, bail out with an informative message.
         raise ZenpyException("Unknown Response: " + str(response_json))
 
-    def _deserialize(self, response_json, return_type=None):
+    def _deserialize(self, response_json):
         """
         Locate and deserialize all objects in the returned JSON. 
         
-        Return a dict keyed by object_type containing a list of deserialized objects of that type.
+        Return a dict keyed by object_type. If the key is plural, the value will be a list,
+        if it is singular, the value will be an object of that type. 
         :param response_json: 
         """
         response_objects = dict()
@@ -196,10 +208,13 @@ class BaseApi(object):
         if all((t in response_json for t in ('ticket', 'audit'))):
             response_objects["ticket_audit"] = object_from_json(self, "ticket_audit", response_json)
 
+        # Locate and store the single objects.
         for zenpy_object_name in self.KNOWN_OBJECTS:
             if zenpy_object_name in response_json:
-                response_objects[zenpy_object_name] = object_from_json(self, zenpy_object_name, response_json[zenpy_object_name])
+                zenpy_object = object_from_json(self, zenpy_object_name, response_json[zenpy_object_name])
+                response_objects[zenpy_object_name] = zenpy_object
 
+        # Locate and store the collections of objects.
         for key, value in response_json.items():
             if isinstance(value, list):
                 zenpy_object_name = as_singular(key)
