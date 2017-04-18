@@ -12,7 +12,7 @@ from zenpy import Zenpy
 
 from zenpy.lib.api_objects import BaseObject
 from zenpy.lib.cache import should_cache, in_cache, query_cache_by_object
-from zenpy.lib.generator import SearchResultGenerator
+from zenpy.lib.generator import BaseResultGenerator
 
 cred_path = os.path.expanduser('~/zenpy-test-credentials.json')
 if os.path.exists(cred_path):
@@ -93,6 +93,6 @@ class ZenpyApiTestCase(BetamaxTestCase):
                 prop_val = getattr(zenpy_object, attr_name)
                 if prop_val and issubclass(prop_val.__class__, BaseObject):
                     self.recursively_call_properties(prop_val)
-                elif isinstance(prop_val, SearchResultGenerator):
+                elif issubclass(prop_val, BaseResultGenerator):
                     for obj in prop_val:
                         self.recursively_call_properties(obj)
