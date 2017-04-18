@@ -135,5 +135,5 @@ class TestTicketProperties(TicketAPITestCase):
 
     def test_ticket_properties(self):
         """ Recursively test that a ticket's properties, and each linked property can be called without error. """
-        # with self.recorder.use_cassette(self.generate_cassette_name(), serialize_with='prettyjson'):
-        #     self.recursively_call_properties(self.test_ticket)
+        with self.recorder.use_cassette(self.generate_cassette_name(), serialize_with='prettyjson'):
+            self.recursively_call_properties(self.test_ticket)
