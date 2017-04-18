@@ -164,30 +164,30 @@ class BaseApi(object):
         if 'results' in response_json:
             return SearchResultGenerator(self, response_json)
 
+        response_objects = self._deserialize_objects(response_json)
+
+        if 'job_status' in response_json:
+            if len(response_objects[self.object_type]) > 1:
+                raise ZenpyException("Expected single result but found: {}".format(len(response_objects)))
+            return response_objects['job_status'][0]
+
+        if 'ticket' and 'audit' in response_json:
+            return response_objects['ticket_audit'][0]
+
+        # Check if a single object has been returned.
+        if self.object_type in response_json:
+            if len(response_objects[self.object_type]) > 1:
+                raise ZenpyException("Expected single result but found: {}".format(len(response_objects)))
+            return response_objects[self.object_type][0]
+
         # Maybe a collection?
         plural_object_type = as_plural(self.object_type)
         if plural_object_type in response_json:
             return ResultGenerator(self, response_json)
 
-        response_objects = self._deserialize_objects(response_json)
-        # TicketAudit and tags are special cases.
-        if 'ticket' and 'audit' in response_objects:
-            return response_objects['ticket_audit']
         # TODO: figure out what to do with tags
         # elif 'tags' in response_json:
         #     return response_json['tags']
-
-        # Check if a single object has been returned.
-        if self.object_type in response_json:
-            if len(response_objects) > 1:
-                raise ZenpyException("Expected single result but found: {}".format(len(response_objects)))
-            return response_objects[self.object_type][0]
-
-        # No idea, just see if we know how to handle this sort of object
-        if 'job_status' in response_json:
-            if len(response_objects) > 1:
-                raise ZenpyException("Expected single result but found: {}".format(len(response_objects)))
-            return response_objects['job_status'][0]
 
         raise ZenpyException("Unknown Response: " + str(response_json))
 
@@ -199,18 +199,30 @@ class BaseApi(object):
         :param response_json: 
         """
         response_objects = defaultdict(list)
+
+        combined_objects = (
+            ('ticket', 'audit'),
+        )
+        for a, b in combined_objects:
+            if a in response_json and b in response_json:
+                object_type = "{}_{}".format(a, b)
+                response_objects[object_type].append(
+                    object_from_json(self, object_type, response_json)
+                )
+
         for object_type in self.KNOWN_OBJECTS:
             if object_type in response_json:
                 response_objects[object_type].append(
                     object_from_json(self, object_type, response_json[object_type])
                 )
+
         for key in response_json:
             object_type = as_singular(key)
             if object_type in self.KNOWN_OBJECTS:
                 for object_json in response_json[key]:
-                    response_objects[object_type].append(
-                        object_from_json(self, object_type, object_json)
-                    )
+                    zenpy_object = object_from_json(self, object_type, object_json)
+                    if zenpy_object:
+                        response_objects[object_type].append(zenpy_object)
         return response_objects
 
     def _query_zendesk(self, endpoint, object_type, *endpoint_args, **endpoint_kwargs):
