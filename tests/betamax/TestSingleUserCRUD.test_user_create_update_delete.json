@@ -1,0 +1,170 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2017-04-18T17:27:32",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"user\": {\"email\": \"examplethings@example.com\", \"name\": \"Fred\"}}"
+        },
+        "headers": {
+          "Accept": "*/*",
+          "Accept-Encoding": "gzip, deflate",
+          "Authorization": "Basic ZmFjZXRvZUBmYWNldG9lLmNvbS5hdS90b2tlbjpkbWZIVnh6ak90b0ZsVlhJNnMzeFE2YmQ1dXZ1RG5Sb0kydkZWWW85",
+          "Connection": "keep-alive",
+          "Content-Length": "64",
+          "Content-type": "application/json",
+          "User-Agent": "Zenpy/1.1"
+        },
+        "method": "POST",
+        "uri": "https://facetoe1.zendesk.com/api/v2/users.json?&include=organizations,abilities,roles,identities,groups"
+      },
+      "response": {
+        "body": {
+          "encoding": "UTF-8",
+          "string": "{\"user\":{\"id\":21362376107,\"url\":\"https://facetoe1.zendesk.com/api/v2/users/21362376107.json\",\"name\":\"Fred\",\"email\":\"examplethings@example.com\",\"created_at\":\"2017-04-18T17:27:37Z\",\"updated_at\":\"2017-04-18T17:27:37Z\",\"time_zone\":\"Bangkok\",\"phone\":null,\"shared_phone_number\":null,\"photo\":null,\"locale_id\":1,\"locale\":\"en-US\",\"organization_id\":null,\"role\":\"end-user\",\"verified\":false,\"external_id\":null,\"tags\":[],\"alias\":null,\"active\":true,\"shared\":false,\"shared_agent\":false,\"last_login_at\":null,\"two_factor_auth_enabled\":false,\"signature\":null,\"details\":null,\"notes\":null,\"custom_role_id\":null,\"moderator\":false,\"ticket_restriction\":\"requested\",\"only_private_comments\":false,\"restricted_agent\":true,\"suspended\":false,\"chat_only\":false,\"user_fields\":{},\"abilities\":{\"url\":\"https://facetoe1.zendesk.com/api/v2/users/21362376107.json\",\"user_id\":21362376107,\"can_edit\":true,\"can_edit_password\":false,\"can_manage_identities_of\":true,\"can_verify_identities\":true,\"can_reset_password\":true,\"can_set_password\":false,\"can_create_password\":false,\"can_change_password\":false,\"can_set_alias\":false,\"can_send_verification_email\":true,\"can_verify_now\":true,\"can_make_comment_private\":true,\"can_edit_agent_forwarding\":false,\"can_modify_user_tags\":true,\"can_assume\":true,\"can_delete\":true,\"can_view_views\":false,\"can_view_reports\":true,\"can_export\":false,\"can_use_voice_console\":false,\"can_use_voice\":false,\"can_view_voice_dashboard\":false}},\"identities\":[{\"url\":\"https://facetoe1.zendesk.com/api/v2/users/21362376107/identities/6844980467.json\",\"id\":6844980467,\"user_id\":21362376107,\"type\":\"email\",\"value\":\"examplethings@example.com\",\"verified\":false,\"primary\":true,\"created_at\":\"2017-04-18T17:27:37Z\",\"updated_at\":\"2017-04-18T17:27:37Z\",\"undeliverable_count\":0,\"deliverable_state\":\"reserved_example\"}],\"organizations\":[],\"roles\":[{\"id\":null,\"description\":null,\"created_at\":null,\"updated_at\":null,\"name\":\"end-user\",\"configuration\":{\"chat_access\":false,\"manage_business_rules\":false,\"manage_dynamic_content\":false,\"manage_extensions_and_channels\":false,\"manage_facebook\":false,\"organization_editing\":false,\"organization_notes_editing\":false,\"ticket_deletion\":false,\"view_deleted_tickets\":false,\"ticket_tag_editing\":false,\"twitter_search_access\":false,\"forum_access_restricted_content\":false,\"end_user_list_access\":\"none\",\"ticket_access\":null,\"ticket_comment_access\":\"public\",\"voice_access\":false,\"moderate_forums\":false,\"group_access\":false,\"light_agent\":false,\"end_user_profile_access\":\"readonly\",\"forum_access\":\"readonly\",\"macro_access\":\"manage-personal\",\"report_access\":\"readonly\",\"ticket_editing\":true,\"ticket_merge\":false,\"view_access\":\"manage-personal\",\"user_view_access\":\"none\"}}],\"groups\":[]}"
+        },
+        "headers": {
+          "Cache-Control": "max-age=0, private, must-revalidate",
+          "Connection": "keep-alive",
+          "Content-Length": "2681",
+          "Content-Type": "application/json; charset=UTF-8",
+          "Date": "Tue, 18 Apr 2017 17:27:37 GMT",
+          "ETag": "\"37c88ca04a3df8f877a38a36f5cd3b20\"",
+          "Location": "https://facetoe1.zendesk.com/api/v2/users/21362376107.json",
+          "Server": "nginx",
+          "Strict-Transport-Security": "max-age=31536000;",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "SAMEORIGIN",
+          "X-Rack-Cache": "invalidate, pass",
+          "X-Rate-Limit": "400",
+          "X-Rate-Limit-Remaining": "398",
+          "X-Request-Id": "cac33a08-8a09-46eb-c66d-ecf4bbdf5265",
+          "X-Runtime": "0.326227",
+          "X-UA-Compatible": "IE=Edge,chrome=1",
+          "X-Zendesk-API-Version": "v2",
+          "X-Zendesk-Application-Version": "v19.30-3-g6a132e0",
+          "X-Zendesk-Origin-Server": "app39.pod5.iad1.zdsys.com",
+          "X-Zendesk-Request-Id": "d6209d2f91656fca8958"
+        },
+        "status": {
+          "code": 201,
+          "message": "Created"
+        },
+        "url": "https://facetoe1.zendesk.com/api/v2/users.json?&include=organizations,abilities,roles,identities,groups"
+      }
+    },
+    {
+      "recorded_at": "2017-04-18T17:27:33",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"user\": {\"active\": true, \"chat_only\": false, \"created_at\": \"2017-04-18T17:27:37Z\", \"email\": \"examplethings@example.com\", \"id\": 21362376107, \"locale\": \"en-US\", \"locale_id\": 1, \"moderator\": false, \"name\": \"Not Fred Anymore\", \"only_private_comments\": false, \"restricted_agent\": true, \"role\": \"end-user\", \"shared\": false, \"shared_agent\": false, \"suspended\": false, \"tags\": [], \"ticket_restriction\": \"requested\", \"time_zone\": \"Bangkok\", \"two_factor_auth_enabled\": false, \"updated_at\": \"2017-04-18T17:27:37Z\", \"url\": \"https://facetoe1.zendesk.com/api/v2/users/21362376107.json\", \"verified\": false, \"abilities\": {\"url\": \"https://facetoe1.zendesk.com/api/v2/users/21362376107.json\", \"user_id\": 21362376107, \"can_edit\": true, \"can_edit_password\": false, \"can_manage_identities_of\": true, \"can_verify_identities\": true, \"can_reset_password\": true, \"can_set_password\": false, \"can_create_password\": false, \"can_change_password\": false, \"can_set_alias\": false, \"can_send_verification_email\": true, \"can_verify_now\": true, \"can_make_comment_private\": true, \"can_edit_agent_forwarding\": false, \"can_modify_user_tags\": true, \"can_assume\": true, \"can_delete\": true, \"can_view_views\": false, \"can_view_reports\": true, \"can_export\": false, \"can_use_voice_console\": false, \"can_use_voice\": false, \"can_view_voice_dashboard\": false}}}"
+        },
+        "headers": {
+          "Accept": "*/*",
+          "Accept-Encoding": "gzip, deflate",
+          "Authorization": "Basic ZmFjZXRvZUBmYWNldG9lLmNvbS5hdS90b2tlbjpkbWZIVnh6ak90b0ZsVlhJNnMzeFE2YmQ1dXZ1RG5Sb0kydkZWWW85",
+          "Connection": "keep-alive",
+          "Content-Length": "1315",
+          "Content-type": "application/json",
+          "User-Agent": "Zenpy/1.1"
+        },
+        "method": "PUT",
+        "uri": "https://facetoe1.zendesk.com/api/v2/users/21362376107.json&include=organizations,abilities,roles,identities,groups"
+      },
+      "response": {
+        "body": {
+          "base64_string": "H4sIAAAAAAAAA31SwZLTMAz9lR2f06ZJmc1OTsCBIxfgAsN4tImamNpysOWy207/HTnJlp64WfLTk96TLipFDKq9KNOrtq72j/W+eax2TaFSsKpVI/MU27I8QIfssdqekXqMx23nXQmTKU91mSlieVe8/RU9qUIROBSOz54fPgXsHz7Qq/MB5QcdmEyPL+AmizwaGuL7NcrcgukCAmOvgQVY76pms3u3qZ6+Vk1bN+2++S6YNPX/wzxlDBuH+uwpj/IRaDj6o2Sncc5QsrZQcQSZT885Tck9Z0+WL8mxfwus78Cizl5VhVqirII2374Ipw8DkDkDG08zaKEI3ubeYtxmdrtQJwzmYFAQB7ARxY8XxkBg76oYhqjaHz8LBdaAPBcy6NichI5Dkrpl8BvNqgMGJDFt5bYQWVs/GJqtXGj4j9eyU/ZBQ+JRI8GzvRsomoGAkyxrLeiRZWW3Mcgz3oIuRfZOZ513ApzvMYB0uE3Cpjsi64CRgxEdciStCvg7SUJ6i4FkX/UUzEmWquUKnOiQLquQt7p8E4vC1YQUp3yV/+zsRmCdyW612Xgtltte+C7X6/UvsLenKfoCAAA=",
+          "encoding": "UTF-8",
+          "string": ""
+        },
+        "headers": {
+          "Cache-Control": "max-age=0, private, must-revalidate",
+          "Connection": "keep-alive",
+          "Content-Encoding": "gzip",
+          "Content-Type": "application/json; charset=UTF-8",
+          "Date": "Tue, 18 Apr 2017 17:27:38 GMT",
+          "ETag": "W/\"35603f5e64e3bfcfa603211f2b6cea44\"",
+          "Server": "nginx",
+          "Strict-Transport-Security": "max-age=31536000;",
+          "Transfer-Encoding": "chunked",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "SAMEORIGIN",
+          "X-Rack-Cache": "invalidate, pass",
+          "X-Rate-Limit": "400",
+          "X-Rate-Limit-Remaining": "397",
+          "X-Request-Id": "e7d1dd66-1a99-4837-c8a3-ecf4bbdf5265",
+          "X-Runtime": "0.339841",
+          "X-UA-Compatible": "IE=Edge,chrome=1",
+          "X-Zendesk-API-Version": "v2",
+          "X-Zendesk-API-Warn": "Removed restricted keys [\"active\", \"chat_only\", \"created_at\", \"locale\", \"restricted_agent\", \"shared\", \"shared_agent\", \"two_factor_auth_enabled\", \"updated_at\", \"url\", \"url\", \"user_id\", \"can_edit\", \"can_edit_password\", \"can_manage_identities_of\", \"can_verify_identities\", \"can_reset_password\", \"can_set_password\", \"can_create_password\", \"can_change_password\", \"can_set_alias\", \"can_send_verification_email\", \"can_verify_now\", \"can_make_comment_private\", \"can_edit_agent_forwarding\", \"can_modify_user_tags\", \"can_assume\", \"can_delete\", \"can_view_views\", \"can_view_reports\", \"can_export\", \"can_use_voice_console\", \"can_use_voice\", \"can_view_voice_dashboard\", \"abilities\"] from parameters according to whitelist",
+          "X-Zendesk-Application-Version": "v19.30-3-g6a132e0",
+          "X-Zendesk-Origin-Server": "app5.pod5.iad1.zdsys.com",
+          "X-Zendesk-Request-Id": "5406568c4a903776201e"
+        },
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "url": "https://facetoe1.zendesk.com/api/v2/users/21362376107.json&include=organizations,abilities,roles,identities,groups"
+      }
+    },
+    {
+      "recorded_at": "2017-04-18T17:27:34",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": ""
+        },
+        "headers": {
+          "Accept": "*/*",
+          "Accept-Encoding": "gzip, deflate",
+          "Authorization": "Basic ZmFjZXRvZUBmYWNldG9lLmNvbS5hdS90b2tlbjpkbWZIVnh6ak90b0ZsVlhJNnMzeFE2YmQ1dXZ1RG5Sb0kydkZWWW85",
+          "Connection": "keep-alive",
+          "Content-Length": "0",
+          "Content-type": "application/json",
+          "User-Agent": "Zenpy/1.1"
+        },
+        "method": "DELETE",
+        "uri": "https://facetoe1.zendesk.com/api/v2/users/21362376107.json&include=organizations,abilities,roles,identities,groups"
+      },
+      "response": {
+        "body": {
+          "base64_string": "H4sIAAAAAAAAA31SsXLbMAz9lRxn2bLkXtRqa4eOXZou6fV4iARLrElCIUGnsc//XlByHF+HbgSI94D3gJNKEYNqT8r0qq2r7X29be6rTVOoFKxq1cg8xbYsd9AhE1brI/oe437dkSthMuWhLjNFLG/A69+RvCqUB4fC8Y347mvA/u6zf3UUUH7QgRF6n6wtVBcQGHsNLMX1pmpWmw+r6uND1bR1026bRwGkqf9fzadcw8ahPpLPPb+AH/a0l+w0zpmlVRxBBtFzTvvknrL45UtyTG+BpQ4s6mxKVaglElb0qx/fhZPCAN4cgQ35uWihCGRzb3FoNdtaqAMGszMoFTuwEUX4H8bgwd6gGIao2p+/CgXWgDwXMujYHITuAlwm/yfUMKAX1y41FiJrS4Pxs5cLD7+Qlu0xBQ2JR40enuzNRNEMHjjJWi6AHlmWc53DE+M16FJkcjoLvVHgqMcA0uE6CZtuj6wDRg5GhMg5tCrgc5KE9BYHvX3VUzAH2aqWW3KiQ7pchLzh8lEsCjkkcS+mOOX7e/ezG4F1Jrtis/NaPLe98J3O5/NfOtcQIeQCAAA=",
+          "encoding": "UTF-8",
+          "string": ""
+        },
+        "headers": {
+          "Cache-Control": "max-age=0, private, must-revalidate",
+          "Connection": "keep-alive",
+          "Content-Encoding": "gzip",
+          "Content-Type": "application/json; charset=UTF-8",
+          "Date": "Tue, 18 Apr 2017 17:27:39 GMT",
+          "ETag": "W/\"bbe565d57c9427d23a62a411b2bd938a\"",
+          "Server": "nginx",
+          "Strict-Transport-Security": "max-age=31536000;",
+          "Transfer-Encoding": "chunked",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "SAMEORIGIN",
+          "X-Rack-Cache": "invalidate, pass",
+          "X-Rate-Limit": "400",
+          "X-Rate-Limit-Remaining": "396",
+          "X-Request-Id": "f517ce57-722f-4bd8-cba1-ecf4bbdf5265",
+          "X-Runtime": "0.455202",
+          "X-UA-Compatible": "IE=Edge,chrome=1",
+          "X-Zendesk-API-Version": "v2",
+          "X-Zendesk-Application-Version": "v19.30-3-g6a132e0",
+          "X-Zendesk-Origin-Server": "app7.pod5.iad1.zdsys.com",
+          "X-Zendesk-Request-Id": "adcb9bbda0a1df635515"
+        },
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "url": "https://facetoe1.zendesk.com/api/v2/users/21362376107.json&include=organizations,abilities,roles,identities,groups"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.8.0"
+}
