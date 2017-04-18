@@ -10,6 +10,8 @@ Zenpy supports both Python2 and Python3.
 
 Please report bugs!
 
+Note: I'm currently performing a fairly major refactor of Zenpy. If you have issues with the master branch, please submit an issue and try using the latest stable version. 
+
 * [Quickstart](#quickstart)
 * [Examples](#examples)
     * [Creating a ticket with a different requester](#creating-a-ticket-with-a-different-requester)
