@@ -2,6 +2,7 @@ import json
 import logging
 
 import os
+from collections import defaultdict
 from datetime import datetime, date
 from json import JSONEncoder
 from time import sleep, time
@@ -11,9 +12,9 @@ from zenpy.lib.cache import query_cache, delete_from_cache
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import APIException, RecordNotFoundException
 from zenpy.lib.exception import ZenpyException
-from zenpy.lib.generator import ResultGenerator
+from zenpy.lib.generator import SearchResultGenerator, ResultGenerator
 from zenpy.lib.object_manager import class_for_type, object_from_json, CLASS_MAPPING
-from zenpy.lib.util import to_snake_case, is_iterable_but_not_string, as_singular
+from zenpy.lib.util import to_snake_case, is_iterable_but_not_string, as_plural, as_singular
 
 __author__ = 'facetoe'
 
@@ -62,16 +63,22 @@ class BaseApi(object):
                                   data=data,
                                   headers=headers,
                                   timeout=self.timeout)
-        return response
+        return self._process_response(response)
 
     def _put(self, url, payload):
-        return self._call_api(self.session.put, url, json=self._serialize(payload), timeout=self.timeout)
+        response = self._call_api(self.session.put, url, json=self._serialize(payload), timeout=self.timeout)
+        return self._process_response(response)
 
     def _delete(self, url, payload=None):
         return self._call_api(self.session.delete, url, json=payload, timeout=self.timeout)
 
-    def _get(self, url):
-        return self._call_api(self.session.get, url, timeout=self.timeout)
+    def _get(self, url, raw_response=False):
+        response = self._call_api(self.session.get, url, timeout=self.timeout)
+        # return self._handle_response(response)
+        if raw_response:
+            return response
+        else:
+            return self._process_response(response)
 
     def _call_api(self, http_method, url, **kwargs):
         """
@@ -103,10 +110,7 @@ class BaseApi(object):
 
         self._check_response(response)
         self._update_callsafety(response)
-        if http_method.__name__ == "delete":
-            return response
-        else:
-            return self._deserialize(response)
+        return response
 
     def _ratelimit(self, http_method, url, **kwargs):
         """ Ensure we do not hit the rate limit. """
@@ -147,36 +151,67 @@ class BaseApi(object):
         """ Serialize a Zenpy object to JSON """
         return json.loads(json.dumps(zenpy_object, cls=ZenpyObjectEncoder))
 
-    def _deserialize(self, response):
+    def _process_response(self, response):
         """
         Deserialize the JSON returned by Zendesk into either a Zenpy object (in the case of a single result),
         or a ResultGenerator (in the case of multiple results).
 
-        :param response_json: the JSON returned by Zendesk.
+        :param response: the requests Response object.
         """
         response_json = response.json()
-        # TicketAudit and tags are special cases.
-        if 'ticket' and 'audit' in response_json:
-            return object_from_json(self, 'ticket_audit', response_json)
-        elif 'tags' in response_json:
-            return response_json['tags']
-
-        # A single object, eg "user"
-        for object_type in self.KNOWN_OBJECTS:
-            if object_type in response_json:
-                return object_from_json(self, object_type, response_json[object_type])
-
-        # Multiple of a single object, eg "users"
-        for key in response_json:
-            singular_key = as_singular(key)
-            if singular_key in self.KNOWN_OBJECTS:
-                return ResultGenerator(self, key, response_json)
 
         # Search result
         if 'results' in response_json:
-            return ResultGenerator(self, 'results', response_json)
+            return SearchResultGenerator(self, response_json)
+
+        # Maybe a collection?
+        plural_object_type = as_plural(self.object_type)
+        if plural_object_type in response_json:
+            return ResultGenerator(self, response_json)
+
+        response_objects = self._deserialize_objects(response_json)
+        # TicketAudit and tags are special cases.
+        if 'ticket' and 'audit' in response_objects:
+            return response_objects['ticket_audit']
+        # TODO: figure out what to do with tags
+        # elif 'tags' in response_json:
+        #     return response_json['tags']
+
+        # Check if a single object has been returned.
+        if self.object_type in response_json:
+            if len(response_objects) > 1:
+                raise ZenpyException("Expected single result but found: {}".format(len(response_objects)))
+            return response_objects[self.object_type][0]
+
+        # No idea, just see if we know how to handle this sort of object
+        if 'job_status' in response_json:
+            if len(response_objects) > 1:
+                raise ZenpyException("Expected single result but found: {}".format(len(response_objects)))
+            return response_objects['job_status'][0]
 
         raise ZenpyException("Unknown Response: " + str(response_json))
+
+    def _deserialize_objects(self, response_json):
+        """
+        Locate and deserialize all objects in the returned JSON. 
+        
+        Return a dict keyed by object_type containing a list of deserialized objects of that type.
+        :param response_json: 
+        """
+        response_objects = defaultdict(list)
+        for object_type in self.KNOWN_OBJECTS:
+            if object_type in response_json:
+                response_objects[object_type].append(
+                    object_from_json(self, object_type, response_json[object_type])
+                )
+        for key in response_json:
+            object_type = as_singular(key)
+            if object_type in self.KNOWN_OBJECTS:
+                for object_json in response_json[key]:
+                    response_objects[object_type].append(
+                        object_from_json(self, object_type, object_json)
+                    )
+        return response_objects
 
     def _query_zendesk(self, endpoint, object_type, *endpoint_args, **endpoint_kwargs):
         """
