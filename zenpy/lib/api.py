@@ -176,7 +176,9 @@ class BaseApi(object):
         # Collection of objects (eg, users/tickets)
         plural_object_type = as_plural(self.object_type)
         if plural_object_type in response_json:
-            return ResultGenerator(self, response_json)
+            return ResultGenerator(self, response_json,
+                                   object_type=plural_object_type,
+                                   zenpy_objects=zenpy_objects[plural_object_type])
 
         # Here the response matches the API object_type, seems legit.
         if self.object_type in response_json:
@@ -186,6 +188,14 @@ class BaseApi(object):
         for zenpy_object_name in self.KNOWN_OBJECTS:
             if zenpy_object_name in response_json:
                 return zenpy_objects[zenpy_object_name]
+
+        # Maybe a collection of known objects?
+        for zenpy_object_name in self.KNOWN_OBJECTS:
+            plural_zenpy_object_name = as_plural(zenpy_object_name)
+            if plural_zenpy_object_name in response_json:
+                return ResultGenerator(self, response_json,
+                                       object_type=plural_zenpy_object_name,
+                                       zenpy_objects=zenpy_objects[plural_zenpy_object_name])
 
         # Bummer, bail out with an informative message.
         raise ZenpyException("Unknown Response: " + str(response_json))

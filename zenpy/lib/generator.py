@@ -18,18 +18,20 @@ class BaseResultGenerator(object):
     def __init__(self, api, response_json):
         self.api = api
         self._response_json = response_json
+        self.update_attrs()
         self.values = []
         self.position = 0
-        self.process_page()
 
     def process_page(self):
-        """ Subclasses should do whatever processing is necessary and add the results to the values array. """
+        """ Subclasses should do whatever processing is necessary and return a list of the results. """
         raise NotImplemented("You must implement process page when subclassing BaseGenerator.")
 
     def next(self):
+        if self.values is None:
+            self.values = self.process_page()
         if self.position >= len(self.values):
             self.handle_pagination()
-        elif len(self.values) < 1:
+        if len(self.values) < 1:
             raise StopIteration()
         zenpy_object = self.values[self.position]
         self.position += 1
@@ -41,7 +43,7 @@ class BaseResultGenerator(object):
         self.update_attrs()
         del self.values[:]
         self.position = 0
-        self.process_page()
+        self.values = self.process_page()
 
     def update_attrs(self):
         """ Add attributes such as count/end_time that can be present """
@@ -71,9 +73,14 @@ class BaseResultGenerator(object):
 class ResultGenerator(BaseResultGenerator):
     """ Generic result generator. """
 
+    def __init__(self, api, response_json, object_type=None, zenpy_objects=None):
+        super(ResultGenerator, self).__init__(api, response_json)
+        self.values = zenpy_objects or None
+        self.object_type = object_type or self.api.object_type
+
     def process_page(self):
         response_objects = self.api._deserialize(self._response_json)
-        self.values = response_objects[as_plural(self.api.object_type)]
+        return response_objects[as_plural(self.object_type)]
 
     def get_next_page(self):
         end_time = self._response_json.get('end_time', None)
@@ -96,6 +103,8 @@ class SearchResultGenerator(BaseResultGenerator):
     """ Result generator for search queries. """
 
     def process_page(self):
+        search_results = list()
         for object_json in self._response_json['results']:
             object_type = object_json.pop('result_type')
-            self.values.append(object_from_json(self.api, object_type, object_json))
+            search_results.append(object_from_json(self.api, object_type, object_json))
+        return search_results
