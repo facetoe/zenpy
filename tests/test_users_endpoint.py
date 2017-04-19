@@ -1,4 +1,4 @@
-from test_fixtures import ZenpyApiTestCase, chunker
+from test_fixtures import ZenpyApiTestCase, chunk_action
 from zenpy.lib.api_objects import User
 
 
@@ -18,12 +18,7 @@ class UserAPITestCase(ZenpyApiTestCase):
         super(UserAPITestCase, self).setUp()
         cassette_name = '{0}-tearDown'.format(self.__class__.__name__)
         with self.recorder.use_cassette(cassette_name=cassette_name, serialize_with='prettyjson'):
-            to_delete = list()
-            for user in self.zenpy_client.users():
-                if user.role != "admin" and user.name != "Mailer-daemon":
-                    to_delete.append(user)
-            for users in chunker(to_delete, 100):
-                self.zenpy_client.users.delete(users)
+            chunk_action(self.zenpy_client.users(), action=self.zenpy_client.users.delete)
 
 
 class TestSingleUserCRUD(UserAPITestCase):

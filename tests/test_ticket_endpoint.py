@@ -1,4 +1,4 @@
-from test_fixtures import ZenpyApiTestCase, chunker
+from test_fixtures import ZenpyApiTestCase, chunk_action
 from zenpy.lib.api_objects import Ticket, TicketAudit, Audit, Comment
 from zenpy.lib.exception import RecordNotFoundException, ZenpyException
 
@@ -18,10 +18,8 @@ class TicketAPITestCase(ZenpyApiTestCase):
         super(TicketAPITestCase, self).setUp()
         cassette_name = '{0}-tearDown'.format(self.__class__.__name__)
         with self.recorder.use_cassette(cassette_name=cassette_name, serialize_with='prettyjson'):
-            to_delete = [t for t in self.zenpy_client.tickets()]
-            for tickets in chunker(to_delete, 100):
-                self.zenpy_client.tickets.delete(tickets)
-
+            chunk_action(self.zenpy_client.tickets(),
+                         action=self.zenpy_client.tickets.delete)
 
 class TestSingleTicketCRUD(TicketAPITestCase):
     def test_ticket_create_update_delete(self):

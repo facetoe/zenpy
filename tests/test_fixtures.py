@@ -26,9 +26,32 @@ else:
     }
 
 
-# https://stackoverflow.com/questions/434287/what-is-the-most-pythonic-way-to-iterate-over-a-list-in-chunks
-def chunker(seq, size):
-    return (seq[pos:pos + size] for pos in range(0, len(seq), size))
+def chunk_action(iterable, action, wait_action=None, batch_size=100):
+    """
+    Ensure action is executed on chunks not greater than batch_size elements.
+    If the callable wait_action is not None, it will be passed the results of 
+    executing action. 
+    """
+    batch = list()
+
+    def process_batch():
+        batch_len = len(batch)
+        result = action(batch)
+        if wait_action:
+            wait_action(result)
+        del batch[:]
+        return batch_len
+
+    count = 0
+    for n, item in enumerate(iterable, start=1):
+        if n % batch_size == 0:
+            batch.append(item)
+            count += process_batch()
+        else:
+            batch.append(item)
+    if batch:
+        count += process_batch()
+    return count
 
 
 class ZenpyApiTestCase(BetamaxTestCase):
