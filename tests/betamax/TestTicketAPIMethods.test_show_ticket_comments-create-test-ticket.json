@@ -1,0 +1,59 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2017-04-19T11:14:20",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"ticket\": {\"subject\": \"subject\", \"comment\": {\"body\": \"I am comment\"}}}"
+        },
+        "headers": {
+          "Accept": "*/*",
+          "Accept-Encoding": "gzip, deflate",
+          "Authorization": "Basic ZmFjZXRvZUBmYWNldG9lLmNvbS5hdS90b2tlbjpkbWZIVnh6ak90b0ZsVlhJNnMzeFE2YmQ1dXZ1RG5Sb0kydkZWWW85",
+          "Connection": "keep-alive",
+          "Content-Length": "71",
+          "Content-type": "application/json",
+          "User-Agent": "Zenpy/1.1"
+        },
+        "method": "POST",
+        "uri": "https://facetoe1.zendesk.com/api/v2/tickets.json?&include=users,groups,organizations"
+      },
+      "response": {
+        "body": {
+          "encoding": "UTF-8",
+          "string": "{\"ticket\":{\"url\":\"https://facetoe1.zendesk.com/api/v2/tickets/4634.json\",\"id\":4634,\"external_id\":null,\"via\":{\"channel\":\"api\",\"source\":{\"from\":{},\"to\":{},\"rel\":null}},\"created_at\":\"2017-04-19T11:14:25Z\",\"updated_at\":\"2017-04-19T11:14:25Z\",\"type\":null,\"subject\":\"subject\",\"raw_subject\":\"subject\",\"description\":\"I am comment\",\"priority\":null,\"status\":\"open\",\"recipient\":null,\"requester_id\":21311632247,\"submitter_id\":21311632247,\"assignee_id\":21311632247,\"organization_id\":16180288347,\"group_id\":41661887,\"collaborator_ids\":[],\"forum_topic_id\":null,\"problem_id\":null,\"has_incidents\":false,\"is_public\":true,\"due_at\":null,\"tags\":[],\"custom_fields\":[],\"satisfaction_rating\":null,\"sharing_agreement_ids\":[],\"fields\":[],\"brand_id\":7159727,\"allow_channelback\":false},\"users\":[{\"id\":21311632247,\"url\":\"https://facetoe1.zendesk.com/api/v2/users/21311632247.json\",\"name\":\"Facetoe\",\"email\":\"stupiddumb@facetoe.com.au\",\"created_at\":\"2017-04-17T18:11:10Z\",\"updated_at\":\"2017-04-19T11:00:31Z\",\"time_zone\":\"Bangkok\",\"phone\":null,\"shared_phone_number\":null,\"photo\":null,\"locale_id\":1,\"locale\":\"en-US\",\"organization_id\":16180288347,\"role\":\"admin\",\"verified\":true,\"external_id\":null,\"tags\":[],\"alias\":null,\"active\":true,\"shared\":false,\"shared_agent\":false,\"last_login_at\":\"2017-04-19T11:00:31Z\",\"two_factor_auth_enabled\":null,\"signature\":null,\"details\":null,\"notes\":null,\"custom_role_id\":null,\"moderator\":true,\"ticket_restriction\":null,\"only_private_comments\":false,\"restricted_agent\":false,\"suspended\":false,\"chat_only\":false,\"user_fields\":{}}],\"groups\":[{\"url\":\"https://facetoe1.zendesk.com/api/v2/groups/41661887.json\",\"id\":41661887,\"name\":\"Support\",\"deleted\":false,\"created_at\":\"2017-04-17T18:11:10Z\",\"updated_at\":\"2017-04-17T18:11:12Z\"}],\"organizations\":[{\"url\":\"https://facetoe1.zendesk.com/api/v2/organizations/16180288347.json\",\"id\":16180288347,\"name\":\"zenpytestapi\",\"shared_tickets\":false,\"shared_comments\":false,\"external_id\":null,\"created_at\":\"2017-04-17T18:11:10Z\",\"updated_at\":\"2017-04-17T18:11:12Z\",\"domain_names\":[],\"details\":null,\"notes\":null,\"group_id\":null,\"tags\":[],\"organization_fields\":{}}],\"audit\":{\"id\":288845689508,\"ticket_id\":4634,\"created_at\":\"2017-04-19T11:14:25Z\",\"author_id\":21311632247,\"via\":{\"channel\":\"api\",\"source\":{\"from\":{},\"to\":{},\"rel\":null}},\"metadata\":{\"system\":{\"client\":\"Zenpy/1.1\",\"ip_address\":\"223.24.130.123\",\"location\":\"Huai Khwang, 40, Thailand\",\"latitude\":13.776800000000009,\"longitude\":100.57900000000001},\"custom\":{}},\"events\":[{\"id\":288845689548,\"type\":\"Comment\",\"author_id\":21311632247,\"body\":\"I am comment\",\"html_body\":\"<div class=\\\"zd-comment\\\"><p dir=\\\"auto\\\">I am comment</p></div>\",\"plain_body\":\"I am comment\",\"public\":true,\"attachments\":[],\"audit_id\":288845689508},{\"id\":288845689588,\"type\":\"Create\",\"value\":\"subject\",\"field_name\":\"subject\"},{\"id\":288845689608,\"type\":\"Create\",\"value\":\"21311632247\",\"field_name\":\"requester_id\"},{\"id\":288845689628,\"type\":\"Create\",\"value\":\"open\",\"field_name\":\"status\"},{\"id\":288845689648,\"type\":\"Create\",\"value\":null,\"field_name\":\"priority\"},{\"id\":288845689688,\"type\":\"Create\",\"value\":null,\"field_name\":\"type\"},{\"id\":288845689728,\"type\":\"Create\",\"value\":\"21311632247\",\"field_name\":\"assignee_id\"},{\"id\":288845689748,\"type\":\"Create\",\"value\":\"41661887\",\"field_name\":\"group_id\"},{\"id\":288845689768,\"type\":\"Create\",\"value\":\"16180288347\",\"field_name\":\"organization_id\"},{\"id\":288845689788,\"type\":\"Notification\",\"via\":{\"channel\":\"rule\",\"source\":{\"to\":{},\"from\":{\"id\":304221247,\"title\":\"Notify requester of received request\"},\"rel\":\"trigger\"}},\"subject\":\"[Request received] {{ticket.title}}\",\"body\":\"Your request ({{ticket.id}}) has been received and is being reviewed by our support staff.\\n\\nTo add additional comments, reply to this email.\\n\\n{{ticket.comments_formatted}}\",\"recipients\":[21311632247]},{\"id\":288845689808,\"type\":\"Notification\",\"via\":{\"channel\":\"rule\",\"source\":{\"to\":{},\"from\":{\"id\":304221367,\"title\":\"Notify all agents of received request\"},\"rel\":\"trigger\"}},\"subject\":\"[{{ticket.account}}] {{ticket.title}}\",\"body\":\"A ticket (#{{ticket.id}}) by {{ticket.requester.name}} has been received. It is unassigned.\\n\\n{{ticket.comments_formatted}}\",\"recipients\":[21311632247]}]}}"
+        },
+        "headers": {
+          "Cache-Control": "max-age=0, private, must-revalidate",
+          "Connection": "keep-alive",
+          "Content-Length": "4153",
+          "Content-Type": "application/json; charset=UTF-8",
+          "Date": "Wed, 19 Apr 2017 11:14:26 GMT",
+          "ETag": "\"9a1eb58e3b6da2d1539d2c397fdc31f2\"",
+          "Location": "https://facetoe1.zendesk.com/api/v2/tickets/4634.json",
+          "Server": "nginx",
+          "Strict-Transport-Security": "max-age=31536000;",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "SAMEORIGIN",
+          "X-Rack-Cache": "invalidate, pass",
+          "X-Rate-Limit": "400",
+          "X-Rate-Limit-Remaining": "392",
+          "X-Request-Id": "64358043-8022-46ac-c690-b8ca3a6bb978",
+          "X-Runtime": "0.772319",
+          "X-UA-Compatible": "IE=Edge,chrome=1",
+          "X-Zendesk-API-Version": "v2",
+          "X-Zendesk-Application-Version": "v19.30-3-g6a132e0",
+          "X-Zendesk-Origin-Server": "app1.pod5.iad1.zdsys.com",
+          "X-Zendesk-Request-Id": "aa64deb3dc6cbf0cf791"
+        },
+        "status": {
+          "code": 201,
+          "message": "Created"
+        },
+        "url": "https://facetoe1.zendesk.com/api/v2/tickets.json?&include=users,groups,organizations"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.8.0"
+}

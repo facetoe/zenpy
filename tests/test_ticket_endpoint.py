@@ -1,5 +1,5 @@
 from test_fixtures import ZenpyApiTestCase, chunker
-from zenpy.lib.api_objects import Ticket, TicketAudit, Audit
+from zenpy.lib.api_objects import Ticket, TicketAudit, Audit, Comment
 from zenpy.lib.exception import RecordNotFoundException, ZenpyException
 
 
@@ -181,20 +181,37 @@ class TestTicketGenerator(TicketAPITestCase):
 
 
 class TestTicketAPIMethods(TicketAPITestCase):
+    def setUp(self):
+        super(TestTicketAPIMethods, self).setUp()
+        cassette_name = "{}-create-test-ticket".format(self.generate_cassette_name())
+        with self.recorder.use_cassette(cassette_name=cassette_name, serialize_with='prettyjson'):
+            self.subject = "subject"
+            self.comment = Comment(body="I am comment")
+            ticket_audit = self.zenpy_client.tickets.create(Ticket(subject=self.subject, comment=self.comment))
+            self.test_ticket = ticket_audit.ticket
+
     def test_show_ticket(self):
         with self.recorder.use_cassette(cassette_name=self.generate_cassette_name(), serialize_with='prettyjson'):
-            subject = "subject"
-            ticket = Ticket(subject=subject, description='show')
-            ticket_audit = self.zenpy_client.tickets.create(ticket)
-            created_ticket = ticket_audit.ticket
-            self.assertEqual(created_ticket.subject, ticket.subject)
-
             # Be sure it's no longer cached.
             self.zenpy_client.purge_cache("ticket")
-            self.assertNotInCache(created_ticket)
+            self.assertNotInCache(self.test_ticket)
 
-            show_ticket = self.zenpy_client.tickets(id=created_ticket.id)
+            show_ticket = self.zenpy_client.tickets(id=self.test_ticket.id)
+            self.assertEqual(show_ticket.subject, self.test_ticket.subject)
             self.assertInCache(show_ticket)
-            self.assertEqual(show_ticket.subject, ticket.subject)
 
+    def test_show_ticket_audit(self):
+        with self.recorder.use_cassette(cassette_name=self.generate_cassette_name(), serialize_with='prettyjson'):
+            audit_generator = self.zenpy_client.tickets.audits(ticket_id=self.test_ticket.id)
+            self.assertNotEqual(len(audit_generator), 0)
+            audit = next(audit_generator)
+            self.assertIsInstance(audit, Audit)
+
+    def test_show_ticket_comments(self):
+        with self.recorder.use_cassette(cassette_name=self.generate_cassette_name(), serialize_with='prettyjson'):
+            comment_generator = self.zenpy_client.tickets.comments(ticket_id=self.test_ticket.id)
+            self.assertNotEqual(len(comment_generator), 0)
+            comment = next(comment_generator)
+            self.assertIsInstance(comment, Comment)
+            self.assertEqual(comment.body, self.comment.body)
 
