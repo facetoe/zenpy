@@ -5,7 +5,7 @@ from requests.adapters import HTTPAdapter
 
 from zenpy.lib.api import UserApi, Api, TicketApi, OrganizationApi, SuspendedTicketApi, EndUserApi, TicketImportAPI, \
     RequestAPI, OrganizationMembershipApi, AttachmentApi, SharingAgreementAPI, SatisfactionRatingApi, MacroApi
-from zenpy.lib.cache import ZenpyCache
+from zenpy.lib.cache import ZenpyCache, cache_mapping, purge_cache
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.object_manager import CLASS_MAPPING
@@ -324,6 +324,12 @@ class Zenpy(object):
         Deletes the named cache
         """
         del cache_mapping[cache_name]
+
+    def purge_cache(self, cache_name):
+        """
+        Purges the named cache. 
+        """
+        purge_cache(cache_name)
 
     def _get_cache(self, cache_name):
         if cache_name not in cache_mapping:
