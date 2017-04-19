@@ -1,5 +1,3 @@
-from time import sleep
-
 from test_fixtures import ZenpyApiTestCase, chunker
 from zenpy.lib.api_objects import Ticket, TicketAudit, Audit
 from zenpy.lib.exception import RecordNotFoundException, ZenpyException
@@ -180,3 +178,23 @@ class TestTicketGenerator(TicketAPITestCase):
         tickets = [Ticket(subject=str(i), description=str(i)) for i in range(num_tickets)]
         job_status = self.zenpy_client.tickets.create(tickets)
         self.wait_for_job_status(job_status)
+
+
+class TestTicketAPIMethods(TicketAPITestCase):
+    def test_show_ticket(self):
+        with self.recorder.use_cassette(cassette_name=self.generate_cassette_name(), serialize_with='prettyjson'):
+            subject = "subject"
+            ticket = Ticket(subject=subject, description='show')
+            ticket_audit = self.zenpy_client.tickets.create(ticket)
+            created_ticket = ticket_audit.ticket
+            self.assertEqual(created_ticket.subject, ticket.subject)
+
+            # Be sure it's no longer cached.
+            self.zenpy_client.purge_cache("ticket")
+            self.assertNotInCache(created_ticket)
+
+            show_ticket = self.zenpy_client.tickets(id=created_ticket.id)
+            self.assertInCache(show_ticket)
+            self.assertEqual(show_ticket.subject, ticket.subject)
+
+

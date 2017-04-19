@@ -79,7 +79,6 @@ class ZenpyApiTestCase(BetamaxTestCase):
         else:
             return True
 
-    # TODO: make this run fast on Travis (as testing against betamax files)
     def wait_for_job_status(self, job_status, max_attempts=30):
         """ Wait until a background job has completed. """
 
