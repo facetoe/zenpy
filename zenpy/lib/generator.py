@@ -41,7 +41,6 @@ class BaseResultGenerator(object):
         """ Handle retrieving and processing the next page of results. """
         self._response_json = self.get_next_page()
         self.update_attrs()
-        del self.values[:]
         self.position = 0
         self.values = self.process_page()
 
