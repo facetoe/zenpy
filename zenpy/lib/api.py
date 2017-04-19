@@ -1,3 +1,4 @@
+import collections
 import json
 import logging
 
@@ -13,7 +14,7 @@ from zenpy.lib.exception import APIException, RecordNotFoundException
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.generator import SearchResultGenerator, ResultGenerator
 from zenpy.lib.object_manager import class_for_type, object_from_json, CLASS_MAPPING
-from zenpy.lib.util import to_snake_case, is_iterable_but_not_string, as_plural, as_singular
+from zenpy.lib.util import is_iterable_but_not_string, as_plural, as_singular
 
 __author__ = 'facetoe'
 
@@ -407,29 +408,24 @@ class ModifiableApi(Api):
     ModifiableApi contains helper methods for modifying an API
     """
 
-    def _get_type_and_payload(self, items):
-        self._check_type(items)
-        if is_iterable_but_not_string(items):
-            if len(items) < 1:
-                raise ZenpyException("At least one item is required to perform this action!")
-            first_obj = next((x for x in items))
-            # Object name needs to be plural when targeting many
-            object_type = "%ss" % to_snake_case(first_obj.__class__.__name__)
-            payload = {object_type: [json.loads(json.dumps(i, cls=ZenpyObjectEncoder)) for i in items]}
+    def _build_payload(self, api_objects):
+        self._check_type(api_objects)
+        if isinstance(api_objects, collections.Iterable):
+            payload_key = as_plural(self.object_type)
         else:
-            object_type = to_snake_case(items.__class__.__name__)
-            payload = {object_type: json.loads(json.dumps(items, cls=ZenpyObjectEncoder))}
-        return object_type, payload
+            payload_key = self.object_type
+        return {payload_key: json.loads(json.dumps(api_objects, cls=ZenpyObjectEncoder))}
 
-    def _check_type(self, items):
-        # We don't want people passing, for example, a Group object to a Ticket endpoint.
-        expected_class = class_for_type(self.object_type)
-        if is_iterable_but_not_string(items):
-            if any((o.__class__ is not expected_class for o in items)):
-                raise ZenpyException("Invalid type - expected %(expected_class)s" % locals())
-        else:
-            if items.__class__ is not expected_class:
-                raise ZenpyException("Invalid type {} - expected {}".format(items.__class__, expected_class))
+    def _check_type(self, zenpy_objects):
+        """ Ensure the passed type matches this API's object_type. """
+        expected_type = class_for_type(self.object_type)
+        if not is_iterable_but_not_string(zenpy_objects):
+            zenpy_objects = [zenpy_objects]
+        for zenpy_object in zenpy_objects:
+            if type(zenpy_object) is not expected_type:
+                raise ZenpyException(
+                    "Invalid type - expected {} found {}".format(expected_type, type(zenpy_object))
+                )
 
     def _do(self, action, endpoint_kwargs, endpoint_args=None, endpoint=None, **kwargs):
         if not endpoint:
@@ -452,40 +448,40 @@ class CRUDApi(ModifiableApi):
 
         :param api_objects: object or objects to create
         """
-        object_type, payload = self._get_type_and_payload(api_objects)
-        if object_type.endswith('s'):
-            return self._do(self._post, dict(create_many=True, **kwargs), payload=payload)
-        else:
-            return self._do(self._post, dict(**kwargs), payload=payload)
+        if isinstance(api_objects, collections.Iterable):
+            kwargs['create_many'] = True
+        payload = self._build_payload(api_objects)
+        return self._do(self._post, kwargs, payload=payload)
 
-    def update(self, items):
+    def update(self, api_objects, **kwargs):
         """
         Update (PUT) one or more API objects. Before being submitted to Zendesk the object or objects
         will be serialized to JSON.
 
-        :param items: object or objects to update
+        :param api_objects: object or objects to update
         """
-        object_type, payload = self._get_type_and_payload(items)
-        if object_type.endswith('s'):
-            response = self._do(self._put, dict(update_many=True), payload=payload)
+        if isinstance(api_objects, collections.Iterable):
+            kwargs['update_many'] = True
         else:
-            response = self._do(self._put, dict(id=items.id), payload=payload)
-        return response
+            kwargs['id'] = api_objects.id
+        payload = self._build_payload(api_objects)
+        return self._do(self._put, kwargs, payload=payload)
 
-    def delete(self, items):
+    def delete(self, api_objects, **kwargs):
         """
         Delete (DELETE) one or more API objects. After successfully deleting the objects from the API
         they will also be removed from the relevant Zenpy caches.
 
-        :param items: object or objects to delete
+        :param api_objects: object or objects to delete
         """
 
-        object_type, payload = self._get_type_and_payload(items)
-        if object_type.endswith('s'):
-            response = self._do(self._delete, dict(destroy_ids=[i.id for i in items]))
+        if isinstance(api_objects, collections.Iterable):
+            kwargs['destroy_ids'] = [i.id for i in api_objects]
         else:
-            response = self._do(self._delete, dict(id=items.id))
-        delete_from_cache(items)
+            kwargs['id'] = api_objects.id
+        payload = self._build_payload(api_objects)
+        response = self._do(self._delete, kwargs, payload=payload)
+        delete_from_cache(api_objects)
         return response
 
 
@@ -500,15 +496,15 @@ class SuspendedTicketApi(ModifiableApi):
 
         :param tickets: one or more SuspendedTickets to recover
         """
-        object_type, payload = self._get_type_and_payload(tickets)
-        if object_type.endswith('s'):
-            return self._do(self._put,
-                            dict(recover_ids=[i.id for i in tickets]),
-                            endpoint=self.endpoint, payload=payload)
+        payload = self._build_payload(tickets)
+        endpoint_kwargs = dict()
+        if isinstance(tickets, collections.Iterable):
+            endpoint_kwargs['recover_ids'] = [i.id for i in tickets]
+            endpoint = self.endpoint
         else:
-            return self._do(self._put, dict(id=tickets.id),
-                            endpoint=self.endpoint.recover,
-                            payload=payload)
+            endpoint_kwargs['id'] = tickets.id
+            endpoint = self.endpoint.recover
+        return self._do(self._put, endpoint_kwargs, endpoint=endpoint, payload=payload)
 
     def delete(self, tickets):
         """
@@ -516,11 +512,14 @@ class SuspendedTicketApi(ModifiableApi):
 
         :param tickets: one or more SuspendedTickets to delete
         """
-        object_type, payload = self._get_type_and_payload(tickets)
-        if object_type.endswith('s'):
-            response = self._do(self._delete, dict(destroy_ids=[i.id for i in tickets]))
+        endpoint_kwargs = dict()
+        if isinstance(tickets, collections.Iterable):
+            endpoint_kwargs['destroy_ids'] = [i.id for i in tickets]
         else:
-            response = self._do(self._delete, dict(id=tickets.id))
+            endpoint_kwargs['id'] = tickets.id
+        payload = self._build_payload(tickets)
+        response = self._do(self._delete, endpoint_kwargs, payload=payload)
+        delete_from_cache(tickets)
         return response
 
 
@@ -640,7 +639,7 @@ class UserApi(IncrementalApi, CRUDApi):
                 raise ZenpyException("You must pass an Identity object to this endpoint!")
             if isinstance(user, User):
                 user = user.id
-            object_type, payload = self._get_type_and_payload(identity)
+            payload = self._build_payload(identity)
             return self._do(self._post, dict(id=user), payload=payload)
 
         def update(self, user, identity):
@@ -655,9 +654,9 @@ class UserApi(IncrementalApi, CRUDApi):
                 raise ZenpyException("You must pass an Identity object to this endpoint!")
             if isinstance(user, User):
                 user = user.id
-            object_type, payload = self._get_type_and_payload(identity)
+            payload = self._build_payload(identity)
             return self._do(self._put,
-                            {},
+                            endpoint_kwargs=dict(),
                             endpoint=self.endpoint.update,
                             endpoint_args=(user, identity.id),
                             payload=payload)
@@ -816,13 +815,10 @@ class UserApi(IncrementalApi, CRUDApi):
             dest_user = dict(id=dest_user.id)
         else:
             dest_user = dict(id=dest_user)
-
-        response = self._do(self._put,
-                            endpoint_kwargs=dict(id=source_user),
-                            payload=dict(user=dest_user),
-                            endpoint=self.endpoint.merge)
-
-        return self._build_response(response_json=response.json())
+        return self._do(self._put,
+                        endpoint_kwargs=dict(id=source_user),
+                        payload=dict(user=dest_user),
+                        endpoint=self.endpoint.merge)
 
     def user_fields(self, user_id):
         """
@@ -849,17 +845,12 @@ class UserApi(IncrementalApi, CRUDApi):
         :return: the created/updated User or a  JobStatus object if a list was passed
         """
 
-        object_type, payload = self._get_type_and_payload(users)
-        if object_type.endswith('s'):
-            return self._do(self._post,
-                            dict(create_or_update_many=True),
-                            payload=payload,
-                            endpoint=self.endpoint.create_or_update_many)
-        else:
-            return self._do(self._post,
-                            dict(),
-                            payload=payload,
-                            endpoint=self.endpoint.create_or_update)
+        payload = self._build_payload(users)
+        endpoint_kwargs = dict()
+        if isinstance(users, collections.Iterable):
+            endpoint_kwargs['create_or_update_many'] = True
+        return self._do(self._post, endpoint_kwargs, payload=payload,
+                        endpoint=self.endpoint.create_or_update_many)
 
 
 class AttachmentApi(Api):
@@ -918,10 +909,10 @@ class EndUserApi(CRUDApi):
     def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
         Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='user', ratelimit=ratelimit)
 
-    def delete(self, items):
+    def delete(self, api_objects, **kwargs):
         raise ZenpyException("EndUsers cannot delete!")
 
-    def create(self, api_objects):
+    def create(self, api_objects, **kwargs):
         raise ZenpyException("EndUsers cannot create!")
 
 
@@ -966,7 +957,7 @@ class OrganizationApi(TaggableApi, IncrementalApi, CRUDApi):
         :return: the created/updated Organization
         """
 
-        object_type, payload = self._get_type_and_payload(organization)
+        object_type, payload = self._build_payload(organization)
         return self._do(self._post,
                         dict(),
                         payload=payload,
@@ -982,7 +973,7 @@ class OrganizationMembershipApi(CRUDApi):
         Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='organization_membership',
                      ratelimit=ratelimit)
 
-    def update(self, items):
+    def update(self, items, **kwargs):
         raise ZenpyException("You cannot update Organization Memberships!")
 
 
@@ -1000,7 +991,7 @@ class SatisfactionRatingApi(ModifiableApi):
         """
 
         self._check_type(satisfaction_rating)
-        object_type, payload = self._get_type_and_payload(satisfaction_rating)
+        payload = self._build_payload(satisfaction_rating)
         return self._do(self._post,
                         payload=payload,
                         endpoint=Endpoint.satisfaction_ratings.create,
@@ -1085,7 +1076,7 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         Apply macro to ticket. Returns what it *would* do, does not alter the ticket.
 
         :param ticket: Ticket or ticket id to target
-        :param macro_id: Macro or macro id to use
+        :param macro: Macro or macro id to use
         """
 
         if isinstance(ticket, Ticket):
@@ -1136,10 +1127,10 @@ class TicketImportAPI(CRUDApi):
     def __call__(self, *args, **kwargs):
         raise ZenpyException("You must pass ticket objects to this endpoint!")
 
-    def update(self, items):
+    def update(self, items, **kwargs):
         raise ZenpyException("You cannot update objects using ticket_import endpoint!")
 
-    def delete(self, items):
+    def delete(self, api_objects, **kwargs):
         raise ZenpyException("You cannot delete objects using the ticket_import endpoint!")
 
 
@@ -1171,7 +1162,7 @@ class RequestAPI(CRUDApi):
         """
         return self._query_zendesk(self.endpoint.comments, 'comment', id=request_id)
 
-    def delete(self, items):
+    def delete(self, api_objects, **kwargs):
         raise ZenpyException("You cannot delete requests!")
 
     def search(self, *args, **kwargs):
