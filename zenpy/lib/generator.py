@@ -87,7 +87,6 @@ class ResultGenerator(BaseResultGenerator):
 
             # We can't request updates from an incremental api if the
             # start_time value is less than 5 minutes in the future.
-            # (end_time is added as start_time to the next_page URL)
             if (datetime.fromtimestamp(int(end_time)) + timedelta(minutes=5)) > datetime.now():
                 raise StopIteration
         return super(ResultGenerator, self).get_next_page()

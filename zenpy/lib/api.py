@@ -73,7 +73,6 @@ class BaseApi(object):
 
     def _get(self, url, raw_response=False):
         response = self._call_api(self.session.get, url, timeout=self.timeout)
-        # return self._handle_response(response)
         if raw_response:
             return response
         else:
@@ -146,10 +145,6 @@ class BaseApi(object):
             self.callsafety['lastcalltime'] = time()
             self.callsafety['lastlimitremaining'] = int(response.headers['X-Rate-Limit-Remaining'])
 
-    def _serialize(self, zenpy_object):
-        """ Serialize a Zenpy object to JSON """
-        return json.loads(json.dumps(zenpy_object, cls=ZenpyObjectEncoder))
-
     def _process_response(self, response):
         """
         Deserialize the returned objects and return either a single Zenpy object, or a ResultGenerator in 
@@ -194,6 +189,10 @@ class BaseApi(object):
 
         # Bummer, bail out with an informative message.
         raise ZenpyException("Unknown Response: " + str(response_json))
+
+    def _serialize(self, zenpy_object):
+        """ Serialize a Zenpy object to JSON """
+        return json.loads(json.dumps(zenpy_object, cls=ZenpyObjectEncoder))
 
     def _deserialize(self, response_json):
         """
@@ -436,7 +435,7 @@ class CRUDApi(ModifiableApi):
     CRUDApi supports create/update/delete operations
     """
 
-    def create(self, api_objects):
+    def create(self, api_objects, **kwargs):
         """
         Create (POST) one or more API objects. Before being submitted to Zendesk the object or objects
         will be serialized to JSON.
@@ -445,9 +444,9 @@ class CRUDApi(ModifiableApi):
         """
         object_type, payload = self._get_type_and_payload(api_objects)
         if object_type.endswith('s'):
-            return self._do(self._post, dict(create_many=True), payload=payload)
+            return self._do(self._post, dict(create_many=True, **kwargs), payload=payload)
         else:
-            return self._do(self._post, dict(), payload=payload)
+            return self._do(self._post, dict(**kwargs), payload=payload)
 
     def update(self, items):
         """
@@ -466,8 +465,7 @@ class CRUDApi(ModifiableApi):
     def delete(self, items):
         """
         Delete (DELETE) one or more API objects. After successfully deleting the objects from the API
-        they will also be removed from the relevant Zenpy caches. It is important that only this method
-        is used when deleting items from Zendesk as otherwise they may not be purged from the cache.
+        they will also be removed from the relevant Zenpy caches.
 
         :param items: object or objects to delete
         """

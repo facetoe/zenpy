@@ -94,6 +94,8 @@ class PrimaryEndpoint(BaseEndpoint):
                     modifiers.append(('role[]', role))
             elif key == 'since':
                 modifiers.append((key, value.strftime(self.ISO_8601_FORMAT)))
+            elif key == 'async':
+                modifiers.append(('async', str(value).lower()))
 
         if modifiers:
             query += '&' + "&".join(["%s=%s" % (k, v) for k, v in modifiers])
