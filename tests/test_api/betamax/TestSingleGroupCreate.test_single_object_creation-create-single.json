@@ -1,0 +1,59 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2017-04-20T17:19:25",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"group\": {\"name\": \"testGroup\"}}"
+        },
+        "headers": {
+          "Accept": "*/*",
+          "Accept-Encoding": "gzip, deflate",
+          "Authorization": "Basic ZmFjZXRvZUBmYWNldG9lLmNvbS5hdS90b2tlbjpkbWZIVnh6ak90b0ZsVlhJNnMzeFE2YmQ1dXZ1RG5Sb0kydkZWWW85",
+          "Connection": "keep-alive",
+          "Content-Length": "32",
+          "Content-type": "application/json",
+          "User-Agent": "Zenpy/1.1"
+        },
+        "method": "POST",
+        "uri": "https://facetoe1.zendesk.com/api/v2/groups.json?&include=users"
+      },
+      "response": {
+        "body": {
+          "encoding": "UTF-8",
+          "string": "{\"group\":{\"url\":\"https://facetoe1.zendesk.com/api/v2/groups/41730067.json\",\"id\":41730067,\"name\":\"testGroup\",\"deleted\":false,\"created_at\":\"2017-04-20T17:19:32Z\",\"updated_at\":\"2017-04-20T17:19:32Z\",\"user_ids\":[]},\"users\":[]}"
+        },
+        "headers": {
+          "Cache-Control": "max-age=0, private, must-revalidate",
+          "Connection": "keep-alive",
+          "Content-Length": "222",
+          "Content-Type": "application/json; charset=UTF-8",
+          "Date": "Thu, 20 Apr 2017 17:19:32 GMT",
+          "ETag": "\"d9f0e3642394891dec1f29c650767c2c\"",
+          "Location": "https://facetoe1.zendesk.com/api/v2/groups/41730067.json",
+          "Server": "nginx",
+          "Strict-Transport-Security": "max-age=31536000;",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "SAMEORIGIN",
+          "X-Rack-Cache": "invalidate, pass",
+          "X-Rate-Limit": "400",
+          "X-Rate-Limit-Remaining": "399",
+          "X-Request-Id": "c23c374f-6e92-4f7c-cfb5-ecf4bbdf5265",
+          "X-Runtime": "0.236253",
+          "X-UA-Compatible": "IE=Edge,chrome=1",
+          "X-Zendesk-API-Version": "v2",
+          "X-Zendesk-Application-Version": "v19.33",
+          "X-Zendesk-Origin-Server": "app30.pod5.iad1.zdsys.com",
+          "X-Zendesk-Request-Id": "ba0c203343d7d5653455"
+        },
+        "status": {
+          "code": 201,
+          "message": "Created"
+        },
+        "url": "https://facetoe1.zendesk.com/api/v2/groups.json?&include=users"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.8.0"
+}

@@ -109,15 +109,62 @@ class CRUDApiTestCase(ZenpyApiTestCase):
     @property
     def create_method(self):
         """ Return the method used for creating objects. """
-        api = getattr(self.zenpy_client, self.api_name)
-        if not hasattr(api, 'create'):
-            raise Exception("Api has not create method - {}".format(api))
-        return api.create
+        if not hasattr(self.api, 'create'):
+            raise Exception("Api has not create method - {}".format(self.api))
+        return self.api.create
+
+    @property
+    def api(self):
+        """ Return the current Api under test. """
+        if not hasattr(self.zenpy_client, self.api_name):
+            raise Exception("Zenpy has not Api named: {}".format(self.api_name))
+        return getattr(self.zenpy_client, self.api_name)
 
     @property
     def single_response_type(self):
         """ Return the expected response type when creating a single object. """
         return self.expected_single_result_type or self.ZenpyType
+
+    def create_and_verify_single_object_creation(self, dummy=False):
+        """ Generate a single Zenpy object and ensure it is created correctly.  """
+        zenpy_object = self.create_single_zenpy_object(dummy=dummy)
+        self.assertIsInstance(zenpy_object, self.single_response_type)
+        self.assertInCache(zenpy_object)
+        self.recursively_call_properties(zenpy_object)
+
+    def create_single_zenpy_object(self, dummy=False):
+        """ Helper method for creating single Zenpy object. """
+        with self.recorder.use_cassette("{}-create-single".format(self.generate_cassette_name()),
+                                        serialize_with='prettyjson'):
+            zenpy_object = self.instantiate_zenpy_object(dummy=dummy)
+            return self.create_method(zenpy_object)
+
+    def create_and_verify_objects_creation(self, num_objects):
+        """ Generate Zenpy objects and ensure they are created correctly. """
+        job_status = self.create_multiple_zenpy_objects(
+            create_func=self.create_method,
+            num_objects=num_objects,
+            wait_on_job_status=True
+        )
+        self.assertEqual(len(job_status.results), num_objects)
+        for zenpy_object in self.api(ids=[r['id'] for r in job_status.results]):
+            self.assertIsInstance(zenpy_object, self.ZenpyType)
+            self.assertInCache(zenpy_object)
+            self.recursively_call_properties(zenpy_object)
+
+    def create_multiple_zenpy_objects(self, create_func, num_objects, wait_on_job_status=True, dummy=False):
+        """ Helper method for creating multiple Zenpy objects. """
+        with self.recorder.use_cassette(cassette_name="{}-create-multiple".format(self.generate_cassette_name()),
+                                        serialize_with='prettyjson'):
+            to_create = list()
+            for i in range(num_objects):
+                zenpy_object = self.instantiate_zenpy_object(i, dummy=dummy)
+                to_create.append(zenpy_object)
+            result = create_func(to_create)
+            if wait_on_job_status:
+                return self.wait_for_job_status(result)
+            else:
+                return result
 
     def instantiate_zenpy_object(self, format_val=None, dummy=False):
         """ 
@@ -135,36 +182,6 @@ class CRUDApiTestCase(ZenpyApiTestCase):
                 obj_kwargs[key] = value.format(format_val)
 
         return self.ZenpyType(**obj_kwargs) if not dummy else object()
-
-    def create_multiple_zenpy_objects(self, create_func, num_objects, wait_on_job_status=True, dummy=False):
-        """ Helper method for creating multiple Zenpy objects. """
-        with self.recorder.use_cassette(cassette_name="{}-create-multiple".format(self.generate_cassette_name()),
-                                        serialize_with='prettyjson'):
-            to_create = list()
-            for i in range(num_objects):
-                zenpy_object = self.instantiate_zenpy_object(i, dummy=dummy)
-                to_create.append(zenpy_object)
-            result = create_func(to_create)
-            if wait_on_job_status:
-                return self.wait_for_job_status(result)
-            else:
-                return result
-
-    def create_single_zenpy_object(self):
-        """ Helper method for creating single Zenpy object. """
-        with self.recorder.use_cassette("{}-create-single".format(self.generate_cassette_name()),
-                                        serialize_with='prettyjson'):
-            zenpy_object = self.instantiate_zenpy_object()
-            return self.create_method(zenpy_object)
-
-    def create_and_verify_objects_creation(self, num_objects):
-        """ Generate Zenpy objects and ensure they are created. """
-        job_status = self.create_multiple_zenpy_objects(
-            create_func=self.create_method,
-            num_objects=num_objects,
-            wait_on_job_status=True
-        )
-        self.assertEqual(len(job_status.results), num_objects)
 
     def create_dummy_objects(self):
         """ Create some dummy objects for checking invalid types. """
@@ -200,10 +217,9 @@ class MultipleCreateApiTestCase(CRUDApiTestCase):
 class SingleCreateApiTestCase(CRUDApiTestCase):
     """ Base class for testing passing a single object to the create_method. """
 
-    def test_object_creation(self):
-        zenpy_object = self.create_single_zenpy_object()
-        self.assertIsInstance(zenpy_object, self.single_response_type)
-        self.assertInCache(zenpy_object)
+    def test_single_object_creation(self):
+        self.create_and_verify_single_object_creation()
 
     def test_zenpyexception_raised_on_invalid_type(self):
-        pass
+        with self.assertRaises(ZenpyException):
+            self.create_and_verify_single_object_creation(dummy=True)
