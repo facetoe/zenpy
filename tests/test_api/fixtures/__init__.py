@@ -2,7 +2,7 @@ from test_api import configure
 from time import sleep
 from unittest import TestCase
 
-from zenpy.lib.api_objects import BaseObject, JobStatus
+from zenpy.lib.api_objects import BaseObject
 from zenpy.lib.cache import should_cache, in_cache, query_cache_by_object
 from zenpy.lib.exception import TooManyValuesException, ZenpyException
 from zenpy.lib.generator import BaseResultGenerator
@@ -80,15 +80,27 @@ class ZenpyApiTestCase(TestCase):
 
 
 class CRUDApiTestCase(ZenpyApiTestCase):
-    ZenpyClass = None
+    # The type of object the API under test expects.
+    ZenpyType = None
+
+    # Any kwargs that should be passed to the __init__ method.
+    # If a format placeholder is detected it will be replaced
+    # with the object number when generating many objects.
     object_kwargs = None
+
+    # Name of the api such that getattr(Zenpy, api_name) returns
+    # the Api under test.
     api_name = None
+
+    # The expected return type when creating a single Zenpy object
+    # This is only necessary when the expected return type differs
+    # from the ZenpyType.
     expected_single_result_type = None
 
     def __init__(self, *args, **kwargs):
         super(CRUDApiTestCase, self).__init__(*args, **kwargs)
-        if not issubclass(self.ZenpyClass, BaseObject):
-            raise Exception("ZenpyClass must be a subclass of BaseObject!")
+        if not issubclass(self.ZenpyType, BaseObject):
+            raise Exception("ZenpyType must be a subclass of BaseObject!")
         elif self.object_kwargs is None:
             raise Exception("object_kwargs cannot be None!")
         elif self.api_name is None:
@@ -96,6 +108,7 @@ class CRUDApiTestCase(ZenpyApiTestCase):
 
     @property
     def create_method(self):
+        """ Return the method used for creating objects. """
         api = getattr(self.zenpy_client, self.api_name)
         if not hasattr(api, 'create'):
             raise Exception("Api has not create method - {}".format(api))
@@ -103,11 +116,12 @@ class CRUDApiTestCase(ZenpyApiTestCase):
 
     @property
     def single_response_type(self):
-        return self.expected_single_result_type or self.ZenpyClass
+        """ Return the expected response type when creating a single object. """
+        return self.expected_single_result_type or self.ZenpyType
 
     def instantiate_zenpy_object(self, format_val=None, dummy=False):
         """ 
-        Create a Zenpy object of type zenpy_class with obj_kwargs passed to __init__. 
+        Create a Zenpy object of type ZenpyType with obj_kwargs passed to __init__. 
         Any values with the formatter "{}" will be replaced with format_val. 
         
         If dummy is True, simply return object (for testing type checking).
@@ -120,10 +134,11 @@ class CRUDApiTestCase(ZenpyApiTestCase):
                     raise Exception("Formatter found in object_kwargs but format_val is None!")
                 obj_kwargs[key] = value.format(format_val)
 
-        return self.ZenpyClass(**obj_kwargs) if not dummy else object()
+        return self.ZenpyType(**obj_kwargs) if not dummy else object()
 
-    def create_zenpy_objects(self, create_func, num_objects, wait_on_job_status=True, dummy=False):
-        with self.recorder.use_cassette("{}-create-multiple".format(self.generate_cassette_name()),
+    def create_multiple_zenpy_objects(self, create_func, num_objects, wait_on_job_status=True, dummy=False):
+        """ Helper method for creating multiple Zenpy objects. """
+        with self.recorder.use_cassette(cassette_name="{}-create-multiple".format(self.generate_cassette_name()),
                                         serialize_with='prettyjson'):
             to_create = list()
             for i in range(num_objects):
@@ -136,21 +151,24 @@ class CRUDApiTestCase(ZenpyApiTestCase):
                 return result
 
     def create_single_zenpy_object(self):
+        """ Helper method for creating single Zenpy object. """
         with self.recorder.use_cassette("{}-create-single".format(self.generate_cassette_name()),
                                         serialize_with='prettyjson'):
             zenpy_object = self.instantiate_zenpy_object()
             return self.create_method(zenpy_object)
 
-    def create_and_verify_objects_creation(self, num_tickets):
-        job_status = self.create_zenpy_objects(
+    def create_and_verify_objects_creation(self, num_objects):
+        """ Generate Zenpy objects and ensure they are created. """
+        job_status = self.create_multiple_zenpy_objects(
             create_func=self.create_method,
-            num_objects=num_tickets,
+            num_objects=num_objects,
             wait_on_job_status=True
         )
-        self.assertEqual(len(job_status.results), num_tickets)
+        self.assertEqual(len(job_status.results), num_objects)
 
     def create_dummy_objects(self):
-        self.create_zenpy_objects(
+        """ Create some dummy objects for checking invalid types. """
+        self.create_multiple_zenpy_objects(
             create_func=self.create_method,
             num_objects=10,
             wait_on_job_status=True,
@@ -159,6 +177,8 @@ class CRUDApiTestCase(ZenpyApiTestCase):
 
 
 class MultipleCreateApiTestCase(CRUDApiTestCase):
+    """ Base class for testing passing multiple objects to the create_method. """
+
     def test_single_object_create(self):
         self.create_and_verify_objects_creation(1)
 
@@ -178,6 +198,8 @@ class MultipleCreateApiTestCase(CRUDApiTestCase):
 
 
 class SingleCreateApiTestCase(CRUDApiTestCase):
+    """ Base class for testing passing a single object to the create_method. """
+
     def test_object_creation(self):
         zenpy_object = self.create_single_zenpy_object()
         self.assertIsInstance(zenpy_object, self.single_response_type)
