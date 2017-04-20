@@ -4,7 +4,7 @@ import requests
 from requests.adapters import HTTPAdapter
 
 from zenpy.lib.api import UserApi, Api, TicketApi, OrganizationApi, SuspendedTicketApi, EndUserApi, TicketImportAPI, \
-    RequestAPI, OrganizationMembershipApi, AttachmentApi, SharingAgreementAPI, SatisfactionRatingApi, MacroApi
+    RequestAPI, OrganizationMembershipApi, AttachmentApi, SharingAgreementAPI, SatisfactionRatingApi, MacroApi, GroupApi
 from zenpy.lib.cache import ZenpyCache, cache_mapping, purge_cache
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import ZenpyException
@@ -75,12 +75,11 @@ class Zenpy(object):
             ratelimit=ratelimit
         )
 
-        self.groups = Api(
+        self.groups = GroupApi(
             subdomain=subdomain,
             session=session,
             timeout=timeout,
             endpoint=endpoint.groups,
-            object_type='group',
             ratelimit=ratelimit
         )
 

@@ -113,6 +113,7 @@ CLASS_MAPPING = {
 
 
 def class_for_type(object_type):
+    """ Given an object_type return the class associated with it. """
     if object_type not in CLASS_MAPPING:
         raise ZenpyException("Unknown object_type: " + str(object_type))
     else:
@@ -120,6 +121,10 @@ def class_for_type(object_type):
 
 
 def object_from_json(api, object_type, object_json):
+    """ 
+    Given a blob of JSON representing a Zenpy object, recursively deserialize it and 
+     any nested objects it contains. 
+    """
     if not isinstance(object_json, dict):
         return
     ZenpyClass = class_for_type(object_type)

@@ -10,7 +10,7 @@ from time import sleep, time
 from zenpy.lib.api_objects import User, Ticket, Macro, Identity
 from zenpy.lib.cache import query_cache, delete_from_cache
 from zenpy.lib.endpoint import Endpoint
-from zenpy.lib.exception import APIException, RecordNotFoundException
+from zenpy.lib.exception import APIException, RecordNotFoundException, TooManyValuesException
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.generator import SearchResultGenerator, ResultGenerator
 from zenpy.lib.object_manager import class_for_type, object_from_json, CLASS_MAPPING
@@ -273,18 +273,18 @@ class BaseApi(object):
 
     def _check_response(self, response):
         """
-        Check the response code returned by Zendesk. If it is outside the 200 range, raise an exception.
-        If the response includes a JSON error response from Zendesk, an APIException or RecordNotFoundException
-        will be raised, if not, the requests Exception for the received HTTP status code will be raised.
-
+        Check the response code returned by Zendesk. If it is outside the 200 range, raise an exception of the correct type.
         :param response: requests Response object.
         """
         if response.status_code > 299 or response.status_code < 200:
             log.debug("Received response code [%s] - headers: %s" % (response.status_code, str(response.headers)))
             try:
                 _json = response.json()
-                if _json.get("error", '') == 'RecordNotFound':
+                err_type = _json.get("error", '')
+                if err_type == 'RecordNotFound':
                     raise RecordNotFoundException(json.dumps(_json))
+                elif err_type == "TooManyValues":
+                    raise TooManyValuesException(json.dumps(_json))
                 else:
                     raise APIException(json.dumps(_json))
             except ValueError:
@@ -401,6 +401,10 @@ class Api(BaseApi):
 
     def _get_child_events(self, child_events):
         return child_events
+
+    # JobStatus results
+    def _get_results(self, results):
+        return results
 
 
 class ModifiableApi(Api):
@@ -990,7 +994,6 @@ class SatisfactionRatingApi(ModifiableApi):
         :param satisfaction_rating: SatisfactionRating object.
         """
 
-        self._check_type(satisfaction_rating)
         payload = self._build_payload(satisfaction_rating)
         return self._do(self._post,
                         payload=payload,
@@ -1175,5 +1178,15 @@ class RequestAPI(CRUDApi):
 
 class SharingAgreementAPI(CRUDApi):
     def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
-        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='sharing_agreement',
+        Api.__init__(self, subdomain, session, endpoint,
+                     timeout=timeout,
+                     object_type='sharing_agreement',
+                     ratelimit=ratelimit)
+
+
+class GroupApi(CRUDApi):
+    def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
+        Api.__init__(self, subdomain, session, endpoint,
+                     timeout=timeout,
+                     object_type='group',
                      ratelimit=ratelimit)
