@@ -2,6 +2,7 @@ import logging
 
 import cachetools
 from threading import RLock
+from zenpy.lib.api_objects import BaseObject
 
 from zenpy.lib.exception import ZenpyCacheException
 from zenpy.lib.util import get_object_type
@@ -86,6 +87,8 @@ class ZenpyCache(object):
         return self.cache[item]
 
     def __setitem__(self, key, value):
+        if not issubclass(type(value), BaseObject):
+            raise ZenpyCacheException("{} is not a subclass of BaseObject!")
         self.cache[key] = value
 
     def __delitem__(self, key):
@@ -93,6 +96,9 @@ class ZenpyCache(object):
 
     def __contains__(self, item):
         return item in self.cache
+
+    def __len__(self):
+        return len(self.cache)
 
 
 # Global dictionary for managing default object caches
@@ -129,14 +135,13 @@ def query_cache_by_object(zenpy_object):
     """ Convenience method for testing. Given an object, return the cached version """
     object_type = get_object_type(zenpy_object)
     cache_key = _cache_key_attribute(object_type)
-    return query_cache(object_type, cache_key)
+    return query_cache(object_type, getattr(zenpy_object, cache_key))
 
 
 def query_cache(object_type, cache_key):
     """ Query the cache for a Zenpy object """
     if object_type not in cache_mapping:
         return None
-
     cache = cache_mapping[object_type]
     if cache_key in cache:
         log.debug("Cache HIT: [%s %s]" % (object_type.capitalize(), cache_key))
@@ -159,15 +164,16 @@ def add_to_cache(zenpy_object):
 def purge_cache(object_type):
     """ Purge the named cache of all values. If no cache exists for object_type, nothing is done """
     if object_type in cache_mapping:
-        log.debug("Purging [{}] cache".format(object_type))
-        cache_mapping[object_type].purge()
+        cache = cache_mapping[object_type]
+        log.debug("Purging [{}] cache of {} values.".format(object_type, len(cache)))
+        cache.purge()
 
 
 def in_cache(zenpy_object):
     """ Determine whether or not this object is in the cache """
     object_type = get_object_type(zenpy_object)
     cache_key_attr = _cache_key_attribute(object_type)
-    return query_cache(object_type, getattr(zenpy_object, cache_key_attr)) is None
+    return query_cache(object_type, getattr(zenpy_object, cache_key_attr)) is not None
 
 
 def should_cache(zenpy_object):

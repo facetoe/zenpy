@@ -23,6 +23,8 @@ class BaseObject(object):
             return "[%s(id=%s)]" % (self.__class__.__name__, self.id)
         elif hasattr(self, 'token'):
             return "[%s(token='%s')]" % (self.__class__.__name__, self.token)
+        elif hasattr(self, 'key'):
+            return "[%s(key='%s')]" % (self.__class__.__name__, self.key)
         else:
             return "[%s()]" % self.__class__.__name__
 
