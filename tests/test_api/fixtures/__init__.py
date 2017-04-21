@@ -7,7 +7,6 @@ from zenpy.lib.api_objects import BaseObject
 from zenpy.lib.cache import should_cache, in_cache, query_cache_by_object
 from zenpy.lib.exception import TooManyValuesException, ZenpyException
 from zenpy.lib.generator import BaseResultGenerator
-from zenpy.lib.util import get_object_type
 
 
 class ZenpyApiTestCase(TestCase):
@@ -108,10 +107,12 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
 
     @property
     def update_method(self):
+        """ Return the method used for updating objects. """
         return self.get_api_method('update')
 
     @property
     def delete_method(self):
+        """ Return the method used for deleting objects. """
         return self.get_api_method('delete')
 
     def get_api_method(self, method_name):
@@ -152,9 +153,6 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
         zenpy_object = self.instantiate_zenpy_object(dummy=dummy)
         return self.create_method(zenpy_object)
 
-    def update_single_zenpy_object(self, zenpy_object):
-        return self.update_method(zenpy_object)
-
     def create_multiple_zenpy_objects(self, num_objects, wait_on_job_status=True, dummy=False):
         """ Helper method for creating multiple Zenpy objects. """
         to_create = list()
@@ -183,6 +181,30 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
                 obj_kwargs[key] = value.format(format_val)
 
         return self.ZenpyType(**obj_kwargs) if not dummy else object()
+
+    def modify_object(self, zenpy_object):
+        """ 
+        Given a Zenpy object, modify it by hashing it's kwargs and appending the result to the 
+        existing values.
+        """
+
+        def hash_of(to_hash):
+            return hashlib.sha1(to_hash.encode()).hexdigest()
+
+        new_kwargs = self.object_kwargs.copy()
+        for attr_name in new_kwargs:
+            new_kwargs[attr_name] += hash_of(new_kwargs[attr_name])
+            setattr(zenpy_object, attr_name, new_kwargs[attr_name])
+        return zenpy_object, new_kwargs
+
+    def verify_object_updated(self, new_kwargs, zenpy_object):
+        """ Given a dict of updated kwargs and a Zenpy object, verify it was correctly updated. """
+        updated_object = self.unpack_object(zenpy_object)
+        self.assertIsInstance(updated_object, self.ZenpyType)
+        self.assertInCache(updated_object)
+        for attr_name, attr in new_kwargs.items():
+            self.assertEqual(getattr(updated_object, attr_name), new_kwargs[attr_name])
+            self.assertCacheUpdated(updated_object, attr_name, attr)
 
     def create_dummy_objects(self):
         """ Create some dummy objects for checking invalid types. """
@@ -254,31 +276,45 @@ class SingleUpdateApiTestCase(ModifiableApiTestCase):
         cassette_name = "{}-update-single".format(self.generate_cassette_name())
         with self.recorder.use_cassette(cassette_name=cassette_name, serialize_with='prettyjson'):
             zenpy_object = self.create_single_zenpy_object()
-
             zenpy_object = self.unpack_object(zenpy_object)
+            zenpy_object, new_kwargs = self.modify_object(zenpy_object)
 
-            new_kwargs = self.modify_kwargs()
-            for attr_name, attr in new_kwargs.items():
-                setattr(zenpy_object, attr_name, attr)
-            updated_object = self.update_single_zenpy_object(zenpy_object)
+            updated_object = self.update_method(zenpy_object)
             self.assertIsInstance(updated_object, self.single_response_type)
 
-            updated_object = self.unpack_object(zenpy_object)
-            self.assertIsInstance(updated_object, self.ZenpyType)
-            self.assertInCache(updated_object)
-            for attr_name, attr in new_kwargs.items():
-                self.assertEqual(getattr(updated_object, attr_name), new_kwargs[attr_name])
-                self.assertCacheUpdated(updated_object, attr_name, attr)
-
-    def modify_kwargs(self):
-        def hash_string(to_hash):
-            return hashlib.sha1(str.encode(to_hash)).hexdigest()
-
-        new_kwargs = self.object_kwargs.copy()
-        for attr_name in new_kwargs:
-            new_kwargs[attr_name] += hash_string(new_kwargs[attr_name])
-        return new_kwargs
+            self.verify_object_updated(new_kwargs, zenpy_object)
 
 
-class CRUDApiTestCase(SingleCreateApiTestCase, MultipleCreateApiTestCase, SingleUpdateApiTestCase):
+class MultipleUpdateApiTestCase(ModifiableApiTestCase):
+    def test_create_and_update_single_object(self):
+        self.create_and_verify_multiple_object_update(1)
+
+    def test_create_and_update_half_full_objects(self):
+        self.create_and_verify_multiple_object_update(50)
+
+    def test_create_and_update_full_objects(self):
+        self.create_and_verify_multiple_object_update(100)
+
+    def test_raises_toomanyvaluesexception(self):
+        with self.assertRaises(TooManyValuesException):
+            self.create_and_verify_multiple_object_update(150)
+
+    def create_and_verify_multiple_object_update(self, num_objects):
+        cassette_name = "{}-update-many".format(self.generate_cassette_name())
+        with self.recorder.use_cassette(cassette_name=cassette_name, serialize_with='prettyjson'):
+            job_status = self.create_multiple_zenpy_objects(num_objects)
+            self.assertEqual(len(job_status.results), num_objects)
+            updated_objects = list()
+            for zenpy_object in self.api(ids=[r['id'] for r in job_status.results]):
+                modified_object, new_kwargs = self.modify_object(zenpy_object)
+                updated_objects.append((modified_object, new_kwargs))
+            self.create_method([m[0] for m in updated_objects])
+            for modified_object, new_kwargs in updated_objects:
+                self.verify_object_updated(new_kwargs, modified_object)
+
+
+class CRUDApiTestCase(SingleCreateApiTestCase,
+                      SingleUpdateApiTestCase,
+                      MultipleCreateApiTestCase,
+                      MultipleUpdateApiTestCase):
     pass

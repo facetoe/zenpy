@@ -88,7 +88,7 @@ class ZenpyCache(object):
 
     def __setitem__(self, key, value):
         if not issubclass(type(value), BaseObject):
-            raise ZenpyCacheException("{} is not a subclass of BaseObject!")
+            raise ZenpyCacheException("{} is not a subclass of BaseObject!".format(type(value)))
         self.cache[key] = value
 
     def __delitem__(self, key):
