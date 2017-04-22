@@ -3,10 +3,10 @@ from test_api import configure
 from time import sleep
 from unittest import TestCase
 
-from zenpy.lib.endpoint import basestring
 from zenpy.lib.api_objects import BaseObject
 from zenpy.lib.cache import should_cache, in_cache, query_cache_by_object
-from zenpy.lib.exception import TooManyValuesException, ZenpyException
+from zenpy.lib.endpoint import basestring
+from zenpy.lib.exception import TooManyValuesException, ZenpyException, RecordNotFoundException
 from zenpy.lib.generator import BaseResultGenerator
 
 
@@ -161,11 +161,6 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
             self.created_objects.append(obj)
         return obj
 
-    def test_zenpyexception_raised_on_invalid_type(self):
-        """ Test that a single object can be created correctly. """
-        with self.assertRaises(ZenpyException):
-            self.create_single_zenpy_object(dummy=True)
-
     def create_single_zenpy_object(self, dummy=False):
         """ Helper method for creating single Zenpy object. """
         zenpy_object = self.instantiate_zenpy_object(dummy=dummy)
@@ -271,16 +266,21 @@ class MultipleCreateApiTestCase(ModifiableApiTestCase):
 
 
 class SingleCreateApiTestCase(ModifiableApiTestCase):
-    """ Base class for testing passing a single object to the create_method. """
+    """ Test passing a single object to the create_method. """
 
     def test_single_object_creation(self):
         self.create_and_verify_single_object_creation()
 
-    def create_and_verify_single_object_creation(self, dummy=False):
+    def test_raises_zenpyexception_on_invalid_type(self):
+        """ Test that a single object can be created correctly. """
+        with self.assertRaises(ZenpyException):
+            self.create_method(None)
+
+    def create_and_verify_single_object_creation(self):
         """ Generate a single Zenpy object and ensure it is created correctly.  """
         with self.recorder.use_cassette("{}-create-single".format(self.generate_cassette_name()),
                                         serialize_with='prettyjson'):
-            zenpy_object = self.create_single_zenpy_object(dummy=dummy)
+            zenpy_object = self.create_single_zenpy_object()
             self.assertIsInstance(zenpy_object, self.single_response_type)
             zenpy_object = self.unpack_object(zenpy_object)
             self.assertIsInstance(zenpy_object, self.ZenpyType)
@@ -288,9 +288,51 @@ class SingleCreateApiTestCase(ModifiableApiTestCase):
             self.recursively_call_properties(zenpy_object)
 
 
+class SingleDeleteApiTestCase(ModifiableApiTestCase):
+    """ Test passing a single object to the create_method. """
+
+    def test_single_object_deletion(self):
+        self.create_and_verify_single_object_deletion()
+
+    def test_zenpyexception_raised_on_invalid_type(self):
+        """ Test that a single object can be created correctly. """
+        with self.assertRaises(ZenpyException):
+            self.delete_method(None)
+
+    def test_recordnotfoundexception_raised_delete(self):
+        cassette_name = "{}-recordnotfound-delete".format(self.generate_cassette_name())
+        with self.recorder.use_cassette(cassette_name, serialize_with='prettyjson'):
+            hopefully_not_real_id = 9223372036854775807  # This is the largest id that Zendesk will accept.
+            with self.assertRaises(RecordNotFoundException):
+                self.delete_method(self.ZenpyType(id=hopefully_not_real_id))
+
+    def create_and_verify_single_object_deletion(self):
+        """ Generate a single Zenpy object and ensure it is deleted correctly.  """
+        cassette_name = "{}-delete-single".format(self.generate_cassette_name())
+        with self.recorder.use_cassette(cassette_name, serialize_with='prettyjson'):
+            zenpy_object = self.create_single_zenpy_object()
+            zenpy_object = self.unpack_object(zenpy_object)
+            self.delete_method(zenpy_object)
+            self.created_objects.remove(zenpy_object)
+
+
 class SingleUpdateApiTestCase(ModifiableApiTestCase):
     def test_single_object_update(self):
         self.create_and_verify_single_object_update()
+
+    def test_raises_zenpyexception_on_invalid_type(self):
+        """ Test that a single object can be created correctly. """
+        with self.assertRaises(ZenpyException):
+            self.update_method(None)
+
+    def test_recordnotfoundexception_raised_update(self):
+        cassette_name = "{}-recordnotfound-update".format(self.generate_cassette_name())
+        with self.recorder.use_cassette(cassette_name, serialize_with='prettyjson'):
+            with self.assertRaises(RecordNotFoundException):
+                zenpy_object = self.instantiate_zenpy_object()
+                hopefully_not_real_id = 9223372036854775807  # This is the largest id that Zendesk will accept.
+                zenpy_object.id = hopefully_not_real_id
+                self.update_method(zenpy_object)
 
     def create_and_verify_single_object_update(self):
         cassette_name = "{}-update-single".format(self.generate_cassette_name())
@@ -335,6 +377,7 @@ class MultipleUpdateApiTestCase(ModifiableApiTestCase):
 
 class CRUDApiTestCase(SingleCreateApiTestCase,
                       SingleUpdateApiTestCase,
+                      SingleDeleteApiTestCase,
                       MultipleCreateApiTestCase,
                       MultipleUpdateApiTestCase):
     pass

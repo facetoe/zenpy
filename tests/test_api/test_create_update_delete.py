@@ -1,6 +1,6 @@
 from test_api.fixtures.__init__ import SingleCreateApiTestCase, CRUDApiTestCase, \
-    SingleUpdateApiTestCase
-from zenpy.lib.api_objects import Ticket, TicketAudit, Group, User, Organization, Macro, SharingAgreement
+    SingleUpdateApiTestCase, SingleDeleteApiTestCase
+from zenpy.lib.api_objects import Ticket, TicketAudit, Group, User, Organization, Macro
 
 
 class TestTicketCreateUpdateDelete(CRUDApiTestCase):
@@ -11,14 +11,18 @@ class TestTicketCreateUpdateDelete(CRUDApiTestCase):
     expected_single_result_type = TicketAudit
 
 
-class TestGroupCreateUpdateDelete(SingleCreateApiTestCase, SingleUpdateApiTestCase):
+class TestGroupCreateUpdateDelete(SingleCreateApiTestCase,
+                                  SingleUpdateApiTestCase,
+                                  SingleDeleteApiTestCase):
     __test__ = True
     ZenpyType = Group
     object_kwargs = dict(name='testGroup')
     api_name = 'groups'
 
 
-class TestUserCreateUpdateDelete(SingleCreateApiTestCase, SingleUpdateApiTestCase):
+class TestUserCreateUpdateDelete(SingleCreateApiTestCase,
+                                 SingleUpdateApiTestCase,
+                                 SingleDeleteApiTestCase):
     __test__ = True
     ZenpyType = User
     object_kwargs = dict(name='testUser')
@@ -37,5 +41,3 @@ class TestMacrosCreateUpdateDelete(SingleUpdateApiTestCase, SingleCreateApiTestC
     ZenpyType = Macro
     object_kwargs = dict(title='TestMacro', actions=[{"field": "status", "value": "solved"}])
     api_name = 'macros'
-
-

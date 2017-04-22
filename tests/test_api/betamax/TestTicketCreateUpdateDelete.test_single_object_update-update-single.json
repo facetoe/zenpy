@@ -1,7 +1,7 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2017-04-22T09:46:46",
+      "recorded_at": "2017-04-22T17:04:57",
       "request": {
         "body": {
           "encoding": "utf-8",
@@ -22,30 +22,30 @@
       "response": {
         "body": {
           "encoding": "UTF-8",
-          "string": "{\"ticket\":{\"url\":\"https://facetoe1.zendesk.com/api/v2/tickets/8917.json\",\"id\":8917,\"external_id\":null,\"via\":{\"channel\":\"api\",\"source\":{\"from\":{},\"to\":{},\"rel\":null}},\"created_at\":\"2017-04-22T09:46:54Z\",\"updated_at\":\"2017-04-22T09:46:54Z\",\"type\":null,\"subject\":\"test\",\"raw_subject\":\"test\",\"description\":\"test\",\"priority\":null,\"status\":\"open\",\"recipient\":null,\"requester_id\":21311632247,\"submitter_id\":21311632247,\"assignee_id\":21311632247,\"organization_id\":null,\"group_id\":41661887,\"collaborator_ids\":[],\"forum_topic_id\":null,\"problem_id\":null,\"has_incidents\":false,\"is_public\":true,\"due_at\":null,\"tags\":[],\"custom_fields\":[],\"satisfaction_rating\":null,\"sharing_agreement_ids\":[],\"fields\":[],\"brand_id\":7159727,\"allow_channelback\":false},\"users\":[{\"id\":21311632247,\"url\":\"https://facetoe1.zendesk.com/api/v2/users/21311632247.json\",\"name\":\"Facetoe\",\"email\":\"stupiddumb@facetoe.com.au\",\"created_at\":\"2017-04-17T18:11:10Z\",\"updated_at\":\"2017-04-22T09:38:29Z\",\"time_zone\":\"Bangkok\",\"phone\":null,\"shared_phone_number\":null,\"photo\":null,\"locale_id\":1,\"locale\":\"en-US\",\"organization_id\":null,\"role\":\"admin\",\"verified\":true,\"external_id\":null,\"tags\":[],\"alias\":null,\"active\":true,\"shared\":false,\"shared_agent\":false,\"last_login_at\":\"2017-04-22T09:38:29Z\",\"two_factor_auth_enabled\":null,\"signature\":null,\"details\":null,\"notes\":null,\"custom_role_id\":null,\"moderator\":true,\"ticket_restriction\":null,\"only_private_comments\":false,\"restricted_agent\":false,\"suspended\":false,\"chat_only\":false,\"user_fields\":{}}],\"groups\":[{\"url\":\"https://facetoe1.zendesk.com/api/v2/groups/41661887.json\",\"id\":41661887,\"name\":\"Support\",\"deleted\":false,\"created_at\":\"2017-04-17T18:11:10Z\",\"updated_at\":\"2017-04-17T18:11:12Z\"}],\"organizations\":[],\"audit\":{\"id\":290759155328,\"ticket_id\":8917,\"created_at\":\"2017-04-22T09:46:54Z\",\"author_id\":21311632247,\"via\":{\"channel\":\"api\",\"source\":{\"from\":{},\"to\":{},\"rel\":null}},\"metadata\":{\"system\":{\"client\":\"Zenpy/1.1\",\"ip_address\":\"27.55.12.218\",\"location\":\"Huai Khwang, 40, Thailand\",\"latitude\":13.776800000000009,\"longitude\":100.57900000000001},\"custom\":{}},\"events\":[{\"id\":290759155348,\"type\":\"Comment\",\"author_id\":21311632247,\"body\":\"test\",\"html_body\":\"<div class=\\\"zd-comment\\\"><p dir=\\\"auto\\\">test</p></div>\",\"plain_body\":\"test\",\"public\":true,\"attachments\":[],\"audit_id\":290759155328},{\"id\":290759155368,\"type\":\"Create\",\"value\":\"test\",\"field_name\":\"subject\"},{\"id\":290759155388,\"type\":\"Create\",\"value\":\"21311632247\",\"field_name\":\"requester_id\"},{\"id\":290759155408,\"type\":\"Create\",\"value\":\"open\",\"field_name\":\"status\"},{\"id\":290759155428,\"type\":\"Create\",\"value\":null,\"field_name\":\"priority\"},{\"id\":290759155448,\"type\":\"Create\",\"value\":null,\"field_name\":\"type\"},{\"id\":290759155468,\"type\":\"Create\",\"value\":\"21311632247\",\"field_name\":\"assignee_id\"},{\"id\":290759155488,\"type\":\"Create\",\"value\":\"41661887\",\"field_name\":\"group_id\"},{\"id\":290759155508,\"type\":\"Notification\",\"via\":{\"channel\":\"rule\",\"source\":{\"to\":{},\"from\":{\"id\":304221247,\"title\":\"Notify requester of received request\"},\"rel\":\"trigger\"}},\"subject\":\"[Request received] {{ticket.title}}\",\"body\":\"Your request ({{ticket.id}}) has been received and is being reviewed by our support staff.\\n\\nTo add additional comments, reply to this email.\\n\\n{{ticket.comments_formatted}}\",\"recipients\":[21311632247]},{\"id\":290759155568,\"type\":\"Notification\",\"via\":{\"channel\":\"rule\",\"source\":{\"to\":{},\"from\":{\"id\":304221367,\"title\":\"Notify all agents of received request\"},\"rel\":\"trigger\"}},\"subject\":\"[{{ticket.account}}] {{ticket.title}}\",\"body\":\"A ticket (#{{ticket.id}}) by {{ticket.requester.name}} has been received. It is unassigned.\\n\\n{{ticket.comments_formatted}}\",\"recipients\":[21311632247]}]}}"
+          "string": "{\"ticket\":{\"url\":\"https://facetoe1.zendesk.com/api/v2/tickets/10287.json\",\"id\":10287,\"external_id\":null,\"via\":{\"channel\":\"api\",\"source\":{\"from\":{},\"to\":{},\"rel\":null}},\"created_at\":\"2017-04-22T17:05:05Z\",\"updated_at\":\"2017-04-22T17:05:05Z\",\"type\":null,\"subject\":\"test\",\"raw_subject\":\"test\",\"description\":\"test\",\"priority\":null,\"status\":\"open\",\"recipient\":null,\"requester_id\":21311632247,\"submitter_id\":21311632247,\"assignee_id\":21311632247,\"organization_id\":null,\"group_id\":41661887,\"collaborator_ids\":[],\"forum_topic_id\":null,\"problem_id\":null,\"has_incidents\":false,\"is_public\":true,\"due_at\":null,\"tags\":[],\"custom_fields\":[],\"satisfaction_rating\":null,\"sharing_agreement_ids\":[],\"fields\":[],\"brand_id\":7159727,\"allow_channelback\":false},\"users\":[{\"id\":21311632247,\"url\":\"https://facetoe1.zendesk.com/api/v2/users/21311632247.json\",\"name\":\"Facetoe\",\"email\":\"stupiddumb@facetoe.com.au\",\"created_at\":\"2017-04-17T18:11:10Z\",\"updated_at\":\"2017-04-22T16:48:29Z\",\"time_zone\":\"Bangkok\",\"phone\":null,\"shared_phone_number\":null,\"photo\":null,\"locale_id\":1,\"locale\":\"en-US\",\"organization_id\":null,\"role\":\"admin\",\"verified\":true,\"external_id\":null,\"tags\":[],\"alias\":null,\"active\":true,\"shared\":false,\"shared_agent\":false,\"last_login_at\":\"2017-04-22T16:48:29Z\",\"two_factor_auth_enabled\":null,\"signature\":null,\"details\":null,\"notes\":null,\"custom_role_id\":null,\"moderator\":true,\"ticket_restriction\":null,\"only_private_comments\":false,\"restricted_agent\":false,\"suspended\":false,\"chat_only\":false,\"user_fields\":{}}],\"groups\":[{\"url\":\"https://facetoe1.zendesk.com/api/v2/groups/41661887.json\",\"id\":41661887,\"name\":\"Support\",\"deleted\":false,\"created_at\":\"2017-04-17T18:11:10Z\",\"updated_at\":\"2017-04-17T18:11:12Z\"}],\"organizations\":[],\"audit\":{\"id\":290574229247,\"ticket_id\":10287,\"created_at\":\"2017-04-22T17:05:05Z\",\"author_id\":21311632247,\"via\":{\"channel\":\"api\",\"source\":{\"from\":{},\"to\":{},\"rel\":null}},\"metadata\":{\"system\":{\"client\":\"Zenpy/1.1\",\"ip_address\":\"27.55.114.187\",\"location\":\"Bangkok, 40, Thailand\",\"latitude\":13.7594,\"longitude\":100.4889},\"custom\":{}},\"events\":[{\"id\":290574229347,\"type\":\"Comment\",\"author_id\":21311632247,\"body\":\"test\",\"html_body\":\"<div class=\\\"zd-comment\\\"><p dir=\\\"auto\\\">test</p></div>\",\"plain_body\":\"test\",\"public\":true,\"attachments\":[],\"audit_id\":290574229247},{\"id\":290574229527,\"type\":\"Create\",\"value\":\"test\",\"field_name\":\"subject\"},{\"id\":290574229587,\"type\":\"Create\",\"value\":\"21311632247\",\"field_name\":\"requester_id\"},{\"id\":290574229627,\"type\":\"Create\",\"value\":\"open\",\"field_name\":\"status\"},{\"id\":290574229667,\"type\":\"Create\",\"value\":null,\"field_name\":\"priority\"},{\"id\":290574229687,\"type\":\"Create\",\"value\":null,\"field_name\":\"type\"},{\"id\":290574229707,\"type\":\"Create\",\"value\":\"21311632247\",\"field_name\":\"assignee_id\"},{\"id\":290574229727,\"type\":\"Create\",\"value\":\"41661887\",\"field_name\":\"group_id\"},{\"id\":290574229767,\"type\":\"Notification\",\"via\":{\"channel\":\"rule\",\"source\":{\"to\":{},\"from\":{\"id\":304221247,\"title\":\"Notify requester of received request\"},\"rel\":\"trigger\"}},\"subject\":\"[Request received] {{ticket.title}}\",\"body\":\"Your request ({{ticket.id}}) has been received and is being reviewed by our support staff.\\n\\nTo add additional comments, reply to this email.\\n\\n{{ticket.comments_formatted}}\",\"recipients\":[21311632247]},{\"id\":290574229827,\"type\":\"Notification\",\"via\":{\"channel\":\"rule\",\"source\":{\"to\":{},\"from\":{\"id\":304221367,\"title\":\"Notify all agents of received request\"},\"rel\":\"trigger\"}},\"subject\":\"[{{ticket.account}}] {{ticket.title}}\",\"body\":\"A ticket (#{{ticket.id}}) by {{ticket.requester.name}} has been received. It is unassigned.\\n\\n{{ticket.comments_formatted}}\",\"recipients\":[21311632247]}]}}"
         },
         "headers": {
           "Cache-Control": "max-age=0, private, must-revalidate",
           "Connection": "keep-alive",
-          "Content-Length": "3657",
+          "Content-Length": "3636",
           "Content-Type": "application/json; charset=UTF-8",
-          "Date": "Sat, 22 Apr 2017 09:46:55 GMT",
-          "ETag": "\"0b9dbfaf5288c74920875ed910d4aa48\"",
-          "Location": "https://facetoe1.zendesk.com/api/v2/tickets/8917.json",
+          "Date": "Sat, 22 Apr 2017 17:05:05 GMT",
+          "ETag": "\"f7b07a026b3d3af84d96e4b5964b7d49\"",
+          "Location": "https://facetoe1.zendesk.com/api/v2/tickets/10287.json",
           "Server": "nginx",
           "Strict-Transport-Security": "max-age=31536000;",
           "X-Content-Type-Options": "nosniff",
           "X-Frame-Options": "SAMEORIGIN",
           "X-Rack-Cache": "invalidate, pass",
           "X-Rate-Limit": "400",
-          "X-Rate-Limit-Remaining": "370",
-          "X-Request-Id": "a83dee5b-07c3-417e-c1a9-b8ca3a6b1a08",
-          "X-Runtime": "0.648858",
+          "X-Rate-Limit-Remaining": "393",
+          "X-Request-Id": "2785224a-5147-4bc7-cb2c-b8ca3a6bb7d1",
+          "X-Runtime": "0.580153",
           "X-UA-Compatible": "IE=Edge,chrome=1",
           "X-Zendesk-API-Version": "v2",
           "X-Zendesk-Application-Version": "v20.24",
-          "X-Zendesk-Origin-Server": "app2.pod5.iad1.zdsys.com",
-          "X-Zendesk-Request-Id": "025ef73535a95bc78fc2"
+          "X-Zendesk-Origin-Server": "app44.pod5.iad1.zdsys.com",
+          "X-Zendesk-Request-Id": "30b21296e855d931714d"
         },
         "status": {
           "code": 201,
@@ -55,27 +55,27 @@
       }
     },
     {
-      "recorded_at": "2017-04-22T09:46:47",
+      "recorded_at": "2017-04-22T17:04:58",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"ticket\": {\"assignee_id\": 21311632247, \"brand_id\": 7159727, \"collaborator_ids\": [], \"created_at\": \"2017-04-22T09:46:54Z\", \"description\": \"testa94a8fe5ccb19ba61c4c0873d391e987982fbbd3\", \"group_id\": 41661887, \"has_incidents\": false, \"id\": 8917, \"raw_subject\": \"test\", \"requester_id\": 21311632247, \"sharing_agreement_ids\": [], \"subject\": \"testa94a8fe5ccb19ba61c4c0873d391e987982fbbd3\", \"submitter_id\": 21311632247, \"tags\": [], \"updated_at\": \"2017-04-22T09:46:54Z\", \"url\": \"https://facetoe1.zendesk.com/api/v2/tickets/8917.json\", \"is_public\": true, \"allow_channelback\": false, \"via\": {\"channel\": \"api\", \"source\": {\"to\": {}, \"from\": {}}}}}"
+          "string": "{\"ticket\": {\"assignee_id\": 21311632247, \"brand_id\": 7159727, \"collaborator_ids\": [], \"created_at\": \"2017-04-22T17:05:05Z\", \"description\": \"testa94a8fe5ccb19ba61c4c0873d391e987982fbbd3\", \"group_id\": 41661887, \"has_incidents\": false, \"id\": 10287, \"raw_subject\": \"test\", \"requester_id\": 21311632247, \"sharing_agreement_ids\": [], \"subject\": \"testa94a8fe5ccb19ba61c4c0873d391e987982fbbd3\", \"submitter_id\": 21311632247, \"tags\": [], \"updated_at\": \"2017-04-22T17:05:05Z\", \"url\": \"https://facetoe1.zendesk.com/api/v2/tickets/10287.json\", \"is_public\": true, \"allow_channelback\": false, \"via\": {\"channel\": \"api\", \"source\": {\"to\": {}, \"from\": {}}}}}"
         },
         "headers": {
           "Accept": "*/*",
           "Accept-Encoding": "gzip, deflate",
           "Authorization": "Basic ZmFjZXRvZUBmYWNldG9lLmNvbS5hdS90b2tlbjpkbWZIVnh6ak90b0ZsVlhJNnMzeFE2YmQ1dXZ1RG5Sb0kydkZWWW85",
           "Connection": "keep-alive",
-          "Content-Length": "635",
+          "Content-Length": "637",
           "Content-type": "application/json",
           "User-Agent": "Zenpy/1.1"
         },
         "method": "PUT",
-        "uri": "https://facetoe1.zendesk.com/api/v2/tickets/8917.json&include=users,groups,organizations"
+        "uri": "https://facetoe1.zendesk.com/api/v2/tickets/10287.json&include=users,groups,organizations"
       },
       "response": {
         "body": {
-          "base64_string": "H4sIAAAAAAAAA61V227jNhD9FYJ92QKOLMl3Iw1Q9KVFgT4UeekmgUBTtMwNRaq8OHUM/XuH1CWKtetddBsgMDTknBnOnDNzxpbTZ2bx9oydFniLD9ZWZjud7gllVrEkemUyZ+Y5oqqckopPj+m08THT9SZZRZ+MkniCeY63/nuC2T+WaUlE5k3SCTHBR058BHogUjIfBYDAxyinKfMne61K+K0n2KrmV/t73rsGI9WMWJZnBBLFaZysbuL5TZrex5vtfLldzD8CmKvyr96xpwrCNTkZt/vEqAe0zFgA0OQlGxnh6VTzynJ4ZH+z0lxpbk89lCXWGThXFfO10IzyijMJ4E0szf52EITpUJM0mSXJcpamc6gWRCy5/ewRMYYXkrGxk9IFkfyV+LQGZS60clX4nifLZbJeAz5VQpCd0sQqHx2yfHia4L3Srsysqjgd+Fda7QQrB5YDMRmXlOfwGHDdE2EY9NpkldsJTvHWageG3LHQm+a1lhRtGOqMVWW250x0kQ0kbYBcIXXIisuiL+OBaPjMSKEZKyHiIN8Bwk4TmYccV8lis0rhkUQI9ZK19NoR+tymCtQhLueQ2TkQNN3Eq8UmWSxm6RqoFqgfkBrmfgvNiLOHUMmLPn4vxUtmCRA46MScgCteD5iKhkb4I5PVaZpEiZdalZE818x4yqWraLGIkjRKkzWcCUUDK+DkV0c4+v3wQmQxQfN4gu4PhAuonb8Gl6zLQQzJLFqtluu4/9t4EFl0x3EcLVabt+PEyzG01esUPtix4cbDZYnnvsRBcPgXVfp+QuAvlW+ncpBTJ8WDLUXWmm5zfkRUgBh+esSv+Q3MIY/1iO9uK5RzDVYAVfDtdXw7re5up+ByB8EqQbjscFqVvycusZbQg8drGRvo0nR3wJV6cvm45eBxYThBuCMRzr+2jRRYn0lSels3WMZI6ytIg0kB+O8A342UEeo8voLaTqn3+TUjbAwUhNJ28eKhjdrfwfSTcQw0pMPXgULIMci1sl8p1nCSjkGvdaAbpJfl70ftCG4xKP0fyvI9bxX5mTWonfDEeduD3fZr92EYWrN4nqZJWBYgWnDY4oB7Qj0HkNrDB2X8yPLOCtWDReSXrdW8KJjGXq1vC+7hz2Yp9Y5P6HxuRmIU4tQ1pNaK8C/Y1B0w+tDf43ld/4hgSaAdY/ItBRgyiHsjjHOwHjl7gcR2J+RhjKsqpS0yluz30aN8lPcKwUDz/9zPLiJQK3IzAe9KnJBVyB4AkZUwwoJPn0N3NYOdVoKeGeQEifc72At7QI2nccMGpPofGzZbjhsGewqRwk+b/9Sx/s2EUuWkretrPfsZNd1EH364aBg0orf0HIr8pKrrcTcj9Jv13XSylVH+nQ14qut/AfCRJ0d4CgAA",
+          "base64_string": "H4sIAAAAAAAAA61V227jNhD9FYJ92QKObMl3Iw2w26e+9KHISzcJBJqiZa4pUuXFqRPo33dIXSJbiVt0CyQwOOKcGc6cOfOKLacHZvHmFTst8AbvrS3NZjzeEcqsYnH0wmTGzCGiqhiTko+Pybj2MeN4kqyW0TejJB5hnuFNMIww+9syLYlIvU06IUb4yImPQfdESubjABQ4GeU0Zf7LTqsCfqsRtqr+1f6e967ASDUjlmUpgVRxMomXN5PZTZLcx8vNZA5/XwHMldk/3rGnEsLVORm3/caoB7TMWADQ5DkdGOHxVPPScnhld7PUXGluTx2UJdYZ+K5K5ouhGeUlZxLA61ia/eUgCNOhJkk8jePFNElmUC2IWHD77idiDM8lY0MnpXMi+QvxafXKnGvlynCexYtFvPLdoEoIslWaWOWjQ5YPTyO8U9oVqVUlpz3/UqutYEXPsicm5ZLyDB4DrjsiDINmm7R0W8Ep3ljtwJA5FnpTv9aSvAlDnbGqSHeciTaygaQN0CukDllxmXdl3BMNx5TkmrECIvby7SFsNZFZyHEZz9fLBB5JhFDPaUOvLaGHJlWgDnEZh8xeA0OT9WS+nCXJOpS+JnJAaqj7b3hGnN2HUl408kc5XjBLgMFhUMwJyOIHAlNR8wh/ZbI8jeMo9sNWpiTLNDOec8kyms+jOJ5F8WoJH4WigRfw6QuR+UEdRmg2GaH7PeECKuevwAXrMhiFeBot5+uZ95J5a5tMotlqtfZzF/rnBxIO7FiT4OGiltNQyzBZ+FdV+MZBjI/KtFUZzE07c3tbiLQx3Wb8iKgA1v/yiF+yG5Acj/WI725LlHENVgBVcPYDezsu727H4HIHwUpBuGxxmnE+ZyixltC9x2uoGXhRd7FHimp08bi5p1f7uKBCEO5IhPOvbSIFeqeSFN7WKsgQyU/jR0g9SQD8M8Az7RigLq7l18jReX61Vg2BFh+nV4/1GUwngUOgK+98ByhUZACynHycDb5SrL5kDkGv1apVzMvyd5o6hOtV7Hdl+Y43g/fOvtNOeOK8Lbx2zTWLL6jTdALSFDfSZMFhgwPuCXUcQGoHB8r4kWWtFaoHG8dvVat5njON/bS+bbKHP+rt0zk+odfXWvsi0AHBqgpSa4bwT1jJLTD61N3jWVX9jGAboC1j8i0F0BPEvRF0G6xHzp4hse0JeRjjylJpi4wlu130KB/lvUIgXP6fe4kiAjVDbkbgXYoTsgrZPSCyAtQq+HQ5tFdTWF4FzDODnCDxbtn6we5R42nQsFWv//9jw6aBB76Qbw2DhYRI7tXmP3WsezOhVDlpq+pazz6jupvo008XDYNGdJaOQ5FXqqoadjNCv1nfTSebMcp+sAFPVfUdyELuF2MKAAA=",
           "encoding": "UTF-8",
           "string": ""
         },
@@ -84,8 +84,8 @@
           "Connection": "keep-alive",
           "Content-Encoding": "gzip",
           "Content-Type": "application/json; charset=UTF-8",
-          "Date": "Sat, 22 Apr 2017 09:46:56 GMT",
-          "ETag": "W/\"cfbd630d5bd00bfb84f99d888a243bdc\"",
+          "Date": "Sat, 22 Apr 2017 17:05:06 GMT",
+          "ETag": "W/\"8d5c150c348ff78ee03c2a2009e0cbb3\"",
           "Server": "nginx",
           "Strict-Transport-Security": "max-age=31536000;",
           "Transfer-Encoding": "chunked",
@@ -93,21 +93,21 @@
           "X-Frame-Options": "SAMEORIGIN",
           "X-Rack-Cache": "invalidate, pass",
           "X-Rate-Limit": "400",
-          "X-Rate-Limit-Remaining": "369",
-          "X-Request-Id": "da93ed5e-df20-433c-c3b0-b8ca3a6b1a08",
-          "X-Runtime": "0.378942",
+          "X-Rate-Limit-Remaining": "392",
+          "X-Request-Id": "05dbbff3-3e44-4d8c-cde4-b8ca3a6bb7d1",
+          "X-Runtime": "0.337340",
           "X-UA-Compatible": "IE=Edge,chrome=1",
           "X-Zendesk-API-Version": "v2",
           "X-Zendesk-API-Warn": "Removed restricted keys [\"created_at\", \"has_incidents\", \"updated_at\", \"is_public\", \"allow_channelback\"] from parameters according to whitelist",
           "X-Zendesk-Application-Version": "v20.24",
-          "X-Zendesk-Origin-Server": "app4.pod5.iad1.zdsys.com",
-          "X-Zendesk-Request-Id": "c149a231facb621a66af"
+          "X-Zendesk-Origin-Server": "app44.pod5.iad1.zdsys.com",
+          "X-Zendesk-Request-Id": "978bbf45daddd4f0674a"
         },
         "status": {
           "code": 200,
           "message": "OK"
         },
-        "url": "https://facetoe1.zendesk.com/api/v2/tickets/8917.json&include=users,groups,organizations"
+        "url": "https://facetoe1.zendesk.com/api/v2/tickets/10287.json&include=users,groups,organizations"
       }
     }
   ],

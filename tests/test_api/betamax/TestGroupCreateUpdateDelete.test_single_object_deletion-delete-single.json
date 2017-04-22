@@ -1,7 +1,7 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2017-04-22T17:01:51",
+      "recorded_at": "2017-04-22T17:01:50",
       "request": {
         "body": {
           "encoding": "utf-8",
@@ -22,30 +22,30 @@
       "response": {
         "body": {
           "encoding": "UTF-8",
-          "string": "{\"group\":{\"url\":\"https://facetoe1.zendesk.com/api/v2/groups/41798868.json\",\"id\":41798868,\"name\":\"testGroup\",\"deleted\":false,\"created_at\":\"2017-04-22T17:01:59Z\",\"updated_at\":\"2017-04-22T17:01:59Z\",\"user_ids\":[]},\"users\":[]}"
+          "string": "{\"group\":{\"url\":\"https://facetoe1.zendesk.com/api/v2/groups/41798848.json\",\"id\":41798848,\"name\":\"testGroup\",\"deleted\":false,\"created_at\":\"2017-04-22T17:01:58Z\",\"updated_at\":\"2017-04-22T17:01:58Z\",\"user_ids\":[]},\"users\":[]}"
         },
         "headers": {
           "Cache-Control": "max-age=0, private, must-revalidate",
           "Connection": "keep-alive",
           "Content-Length": "222",
           "Content-Type": "application/json; charset=UTF-8",
-          "Date": "Sat, 22 Apr 2017 17:01:59 GMT",
-          "ETag": "\"58b47f1daa3424a60e110c307967d79d\"",
-          "Location": "https://facetoe1.zendesk.com/api/v2/groups/41798868.json",
+          "Date": "Sat, 22 Apr 2017 17:01:58 GMT",
+          "ETag": "\"e72fbb19040f8c8cf75c24b805f9a58f\"",
+          "Location": "https://facetoe1.zendesk.com/api/v2/groups/41798848.json",
           "Server": "nginx",
           "Strict-Transport-Security": "max-age=31536000;",
           "X-Content-Type-Options": "nosniff",
           "X-Frame-Options": "SAMEORIGIN",
           "X-Rack-Cache": "invalidate, pass",
           "X-Rate-Limit": "400",
-          "X-Rate-Limit-Remaining": "391",
-          "X-Request-Id": "e8706785-c72e-414f-c1b7-b8ca3a6bdb19",
-          "X-Runtime": "0.193103",
+          "X-Rate-Limit-Remaining": "393",
+          "X-Request-Id": "94ecedfe-b499-4114-c14c-b8ca3a6bdb19",
+          "X-Runtime": "0.177709",
           "X-UA-Compatible": "IE=Edge,chrome=1",
           "X-Zendesk-API-Version": "v2",
           "X-Zendesk-Application-Version": "v20.24",
-          "X-Zendesk-Origin-Server": "app16.pod5.iad1.zdsys.com",
-          "X-Zendesk-Request-Id": "553e3e1a9f24d17ced02"
+          "X-Zendesk-Origin-Server": "app24.pod5.iad1.zdsys.com",
+          "X-Zendesk-Request-Id": "762494347a1372db7b07"
         },
         "status": {
           "code": 201,
@@ -55,59 +55,54 @@
       }
     },
     {
-      "recorded_at": "2017-04-22T17:01:51",
+      "recorded_at": "2017-04-22T17:01:50",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"group\": {\"created_at\": \"2017-04-22T17:01:59Z\", \"deleted\": false, \"id\": 41798868, \"name\": \"testGroupbfc937463906e5db7a02a37c6060c62f9086c548\", \"updated_at\": \"2017-04-22T17:01:59Z\", \"url\": \"https://facetoe1.zendesk.com/api/v2/groups/41798868.json\", \"user_ids\": []}}"
+          "string": "{\"group\": {\"created_at\": \"2017-04-22T17:01:58Z\", \"deleted\": false, \"id\": 41798848, \"name\": \"testGroup\", \"updated_at\": \"2017-04-22T17:01:58Z\", \"url\": \"https://facetoe1.zendesk.com/api/v2/groups/41798848.json\", \"user_ids\": []}}"
         },
         "headers": {
           "Accept": "*/*",
           "Accept-Encoding": "gzip, deflate",
           "Authorization": "Basic ZmFjZXRvZUBmYWNldG9lLmNvbS5hdS90b2tlbjpkbWZIVnh6ak90b0ZsVlhJNnMzeFE2YmQ1dXZ1RG5Sb0kydkZWWW85",
           "Connection": "keep-alive",
-          "Content-Length": "265",
+          "Content-Length": "225",
           "Content-type": "application/json",
           "User-Agent": "Zenpy/1.1"
         },
-        "method": "PUT",
-        "uri": "https://facetoe1.zendesk.com/api/v2/groups/41798868.json&include=users"
+        "method": "DELETE",
+        "uri": "https://facetoe1.zendesk.com/api/v2/groups/41798848.json&include=users"
       },
       "response": {
         "body": {
-          "base64_string": "H4sIAAAAAAAAA3WMOQ7CMBBF7zJ1iMdO4u0CXICKBjn2hC2bYocClLtjkCgp/9d77wXnZVpnsC9Ylx4sXFKao2Wsc57SRLx80hgo3ks/DczNV/YQ7KtEVnNltJa6vMVphAKuAezvK2B0A+Veopj2H77tvKlULSuDkprQKofCVcpLlOil6Axq6Zta51CgnhLlWuf6SAX4hVzeJ5dyUCBXO6x3Qhy4sshtY47ZWefwlxEW8Qjb9gZg966E7QAAAA==",
-          "encoding": "UTF-8",
+          "encoding": null,
           "string": ""
         },
         "headers": {
-          "Cache-Control": "max-age=0, private, must-revalidate",
+          "Cache-Control": "no-cache",
           "Connection": "keep-alive",
-          "Content-Encoding": "gzip",
-          "Content-Type": "application/json; charset=UTF-8",
-          "Date": "Sat, 22 Apr 2017 17:02:00 GMT",
-          "ETag": "W/\"77feaf443470d5cb170939dae9f416af\"",
+          "Date": "Sat, 22 Apr 2017 17:01:59 GMT",
           "Server": "nginx",
           "Strict-Transport-Security": "max-age=31536000;",
-          "Transfer-Encoding": "chunked",
           "X-Content-Type-Options": "nosniff",
           "X-Frame-Options": "SAMEORIGIN",
           "X-Rack-Cache": "invalidate, pass",
           "X-Rate-Limit": "400",
-          "X-Rate-Limit-Remaining": "399",
-          "X-Request-Id": "8d5e5b85-b4f6-4b44-cb65-b8ca3a6bdb19",
-          "X-Runtime": "0.191986",
+          "X-Rate-Limit-Remaining": "392",
+          "X-Request-Id": "dd371f9d-5e4e-419d-c19e-b8ca3a6bdb19",
+          "X-Runtime": "0.176930",
           "X-UA-Compatible": "IE=Edge,chrome=1",
           "X-Zendesk-API-Version": "v2",
-          "X-Zendesk-API-Warn": "Removed restricted keys [\"created_at\", \"deleted\", \"updated_at\", \"url\", \"user_ids\"] from parameters according to whitelist",
+          "X-Zendesk-API-Warn": "Removed restricted keys [\"created_at\", \"deleted\", \"name\", \"updated_at\", \"url\", \"user_ids\", \"group\"] from parameters according to whitelist",
           "X-Zendesk-Application-Version": "v20.24",
-          "X-Zendesk-Origin-Server": "app5.pod5.iad1.zdsys.com",
-          "X-Zendesk-Request-Id": "991dae4cb5cb4705aa93"
+          "X-Zendesk-Origin-Server": "app27.pod5.iad1.zdsys.com",
+          "X-Zendesk-Request-Id": "ba3fc2dc61337df0eb85"
         },
         "status": {
-          "code": 200,
-          "message": "OK"
+          "code": 204,
+          "message": "No Content"
         },
-        "url": "https://facetoe1.zendesk.com/api/v2/groups/41798868.json&include=users"
+        "url": "https://facetoe1.zendesk.com/api/v2/groups/41798848.json&include=users"
       }
     }
   ],

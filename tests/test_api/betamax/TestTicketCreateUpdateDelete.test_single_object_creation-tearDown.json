@@ -1,23 +1,23 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2017-04-22T09:46:45",
+      "recorded_at": "2017-04-22T17:04:54",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"ticket\": {\"assignee_id\": 21311632247, \"brand_id\": 7159727, \"collaborator_ids\": [], \"created_at\": \"2017-04-22T09:46:53Z\", \"description\": \"test\", \"group_id\": 41661887, \"has_incidents\": false, \"id\": 8916, \"raw_subject\": \"test\", \"requester_id\": 21311632247, \"sharing_agreement_ids\": [], \"subject\": \"test\", \"submitter_id\": 21311632247, \"tags\": [], \"updated_at\": \"2017-04-22T09:46:53Z\", \"url\": \"https://facetoe1.zendesk.com/api/v2/tickets/8916.json\", \"is_public\": true, \"allow_channelback\": false, \"via\": {\"channel\": \"api\", \"source\": {\"to\": {}, \"from\": {}}}}}"
+          "string": "{\"ticket\": {\"assignee_id\": 21311632247, \"brand_id\": 7159727, \"collaborator_ids\": [], \"created_at\": \"2017-04-22T17:05:02Z\", \"description\": \"test\", \"group_id\": 41661887, \"has_incidents\": false, \"id\": 10285, \"raw_subject\": \"test\", \"requester_id\": 21311632247, \"sharing_agreement_ids\": [], \"subject\": \"test\", \"submitter_id\": 21311632247, \"tags\": [], \"updated_at\": \"2017-04-22T17:05:02Z\", \"url\": \"https://facetoe1.zendesk.com/api/v2/tickets/10285.json\", \"is_public\": true, \"allow_channelback\": false, \"via\": {\"channel\": \"api\", \"source\": {\"to\": {}, \"from\": {}}}}}"
         },
         "headers": {
           "Accept": "*/*",
           "Accept-Encoding": "gzip, deflate",
           "Authorization": "Basic ZmFjZXRvZUBmYWNldG9lLmNvbS5hdS90b2tlbjpkbWZIVnh6ak90b0ZsVlhJNnMzeFE2YmQ1dXZ1RG5Sb0kydkZWWW85",
           "Connection": "keep-alive",
-          "Content-Length": "555",
+          "Content-Length": "557",
           "Content-type": "application/json",
           "User-Agent": "Zenpy/1.1"
         },
         "method": "DELETE",
-        "uri": "https://facetoe1.zendesk.com/api/v2/tickets/8916.json&include=users,groups,organizations"
+        "uri": "https://facetoe1.zendesk.com/api/v2/tickets/10285.json&include=users,groups,organizations"
       },
       "response": {
         "body": {
@@ -27,28 +27,28 @@
         "headers": {
           "Cache-Control": "no-cache",
           "Connection": "keep-alive",
-          "Date": "Sat, 22 Apr 2017 09:46:54 GMT",
+          "Date": "Sat, 22 Apr 2017 17:05:03 GMT",
           "Server": "nginx",
           "Strict-Transport-Security": "max-age=31536000;",
           "X-Content-Type-Options": "nosniff",
           "X-Frame-Options": "SAMEORIGIN",
           "X-Rack-Cache": "invalidate, pass",
           "X-Rate-Limit": "400",
-          "X-Rate-Limit-Remaining": "371",
-          "X-Request-Id": "43f917ae-65fe-4181-c144-b8ca3a6b1a08",
-          "X-Runtime": "0.228386",
+          "X-Rate-Limit-Remaining": "396",
+          "X-Request-Id": "198651dd-a0aa-4811-c82f-b8ca3a6bb7d1",
+          "X-Runtime": "0.304320",
           "X-UA-Compatible": "IE=Edge,chrome=1",
           "X-Zendesk-API-Version": "v2",
           "X-Zendesk-API-Warn": "Removed restricted keys [\"assignee_id\", \"brand_id\", \"collaborator_ids\", \"created_at\", \"description\", \"group_id\", \"has_incidents\", \"raw_subject\", \"requester_id\", \"sharing_agreement_ids\", \"subject\", \"submitter_id\", \"tags\", \"updated_at\", \"url\", \"is_public\", \"allow_channelback\", \"channel\", \"to\", \"from\", \"source\", \"via\", \"ticket\"] from parameters according to whitelist",
           "X-Zendesk-Application-Version": "v20.24",
-          "X-Zendesk-Origin-Server": "app39.pod5.iad1.zdsys.com",
-          "X-Zendesk-Request-Id": "e391d6c08a3cd32c124d"
+          "X-Zendesk-Origin-Server": "app10.pod5.iad1.zdsys.com",
+          "X-Zendesk-Request-Id": "cd65e00e1537d341a8ae"
         },
         "status": {
           "code": 204,
           "message": "No Content"
         },
-        "url": "https://facetoe1.zendesk.com/api/v2/tickets/8916.json&include=users,groups,organizations"
+        "url": "https://facetoe1.zendesk.com/api/v2/tickets/10285.json&include=users,groups,organizations"
       }
     }
   ],

@@ -1,11 +1,11 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2017-04-22T09:44:35",
+      "recorded_at": "2017-04-22T17:02:26",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"organization\": {\"created_at\": \"2017-04-22T09:44:43Z\", \"id\": 16385663787, \"name\": \"testOrganization\", \"shared_comments\": false, \"shared_tickets\": false, \"tags\": [], \"updated_at\": \"2017-04-22T09:44:43Z\", \"url\": \"https://facetoe1.zendesk.com/api/v2/organizations/16385663787.json\", \"domain_names\": []}}"
+          "string": "{\"organization\": {\"created_at\": \"2017-04-22T17:02:34Z\", \"id\": 16394110167, \"name\": \"testOrganization\", \"shared_comments\": false, \"shared_tickets\": false, \"tags\": [], \"updated_at\": \"2017-04-22T17:02:34Z\", \"url\": \"https://facetoe1.zendesk.com/api/v2/organizations/16394110167.json\", \"domain_names\": []}}"
         },
         "headers": {
           "Accept": "*/*",
@@ -17,7 +17,7 @@
           "User-Agent": "Zenpy/1.1"
         },
         "method": "DELETE",
-        "uri": "https://facetoe1.zendesk.com/api/v2/organizations/16385663787.json&include="
+        "uri": "https://facetoe1.zendesk.com/api/v2/organizations/16394110167.json&include="
       },
       "response": {
         "body": {
@@ -27,7 +27,7 @@
         "headers": {
           "Cache-Control": "no-cache",
           "Connection": "keep-alive",
-          "Date": "Sat, 22 Apr 2017 09:44:43 GMT",
+          "Date": "Sat, 22 Apr 2017 17:02:34 GMT",
           "Server": "nginx",
           "Strict-Transport-Security": "max-age=31536000;",
           "X-Content-Type-Options": "nosniff",
@@ -35,20 +35,20 @@
           "X-Rack-Cache": "invalidate, pass",
           "X-Rate-Limit": "400",
           "X-Rate-Limit-Remaining": "391",
-          "X-Request-Id": "da44045b-0b69-446e-c411-b8ca3a6b1a08",
-          "X-Runtime": "0.179487",
+          "X-Request-Id": "bb09645d-ea73-4205-c2ca-ecf4bbdf6efc",
+          "X-Runtime": "0.204025",
           "X-UA-Compatible": "IE=Edge,chrome=1",
           "X-Zendesk-API-Version": "v2",
           "X-Zendesk-API-Warn": "Removed restricted keys [\"created_at\", \"name\", \"shared_comments\", \"shared_tickets\", \"tags\", \"updated_at\", \"url\", \"domain_names\", \"organization\"] from parameters according to whitelist",
           "X-Zendesk-Application-Version": "v20.24",
           "X-Zendesk-Origin-Server": "app26.pod5.iad1.zdsys.com",
-          "X-Zendesk-Request-Id": "53328ee0d7862960e135"
+          "X-Zendesk-Request-Id": "167745efa5943ac6b3fd"
         },
         "status": {
           "code": 204,
           "message": "No Content"
         },
-        "url": "https://facetoe1.zendesk.com/api/v2/organizations/16385663787.json&include="
+        "url": "https://facetoe1.zendesk.com/api/v2/organizations/16394110167.json&include="
       }
     }
   ],
