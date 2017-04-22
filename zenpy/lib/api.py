@@ -452,9 +452,9 @@ class CRUDApi(ModifiableApi):
 
         :param api_objects: object or objects to create
         """
+        payload = self._build_payload(api_objects)
         if isinstance(api_objects, collections.Iterable):
             kwargs['create_many'] = True
-        payload = self._build_payload(api_objects)
         return self._do(self._post, kwargs, payload=payload)
 
     def update(self, api_objects, **kwargs):
@@ -464,11 +464,11 @@ class CRUDApi(ModifiableApi):
 
         :param api_objects: object or objects to update
         """
+        payload = self._build_payload(api_objects)
         if isinstance(api_objects, collections.Iterable):
             kwargs['update_many'] = True
         else:
             kwargs['id'] = api_objects.id
-        payload = self._build_payload(api_objects)
         return self._do(self._put, kwargs, payload=payload)
 
     def delete(self, api_objects, **kwargs):
@@ -478,12 +478,11 @@ class CRUDApi(ModifiableApi):
 
         :param api_objects: object or objects to delete
         """
-
+        payload = self._build_payload(api_objects)
         if isinstance(api_objects, collections.Iterable):
             kwargs['destroy_ids'] = [i.id for i in api_objects]
         else:
             kwargs['id'] = api_objects.id
-        payload = self._build_payload(api_objects)
         response = self._do(self._delete, kwargs, payload=payload)
         delete_from_cache(api_objects)
         return response
