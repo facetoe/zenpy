@@ -3,6 +3,7 @@ from test_api import configure
 from time import sleep
 from unittest import TestCase
 
+from zenpy.lib.endpoint import basestring
 from zenpy.lib.api_objects import BaseObject
 from zenpy.lib.cache import should_cache, in_cache, query_cache_by_object
 from zenpy.lib.exception import TooManyValuesException, ZenpyException
@@ -91,6 +92,20 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
     # from the ZenpyType.
     expected_single_result_type = None
 
+    def setUp(self):
+        super(ModifiableApiTestCase, self).setUp()
+        self.created_objects = []
+
+    def tearDown(self):
+        super(ModifiableApiTestCase, self).tearDown()
+        if self.created_objects:
+            cassette_name = "{}-tearDown".format(self.generate_cassette_name())
+            with self.recorder.use_cassette(cassette_name=cassette_name, serialize_with='prettyjson'):
+                if len(self.created_objects) == 1:
+                    self.delete_method(self.created_objects[0])
+                else:
+                    self.delete_method(self.created_objects)
+
     def __init__(self, *args, **kwargs):
         super(ModifiableApiTestCase, self).__init__(*args, **kwargs)
         if not issubclass(self.ZenpyType, BaseObject):
@@ -139,9 +154,12 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
         Otherwise just return the passed object. 
         """
         if hasattr(zenpy_object, self.api.object_type):
-            return getattr(zenpy_object, self.api.object_type)
+            obj = getattr(zenpy_object, self.api.object_type)
         else:
-            return zenpy_object
+            obj = zenpy_object
+        if obj is not None and obj not in self.created_objects:
+            self.created_objects.append(obj)
+        return obj
 
     def test_zenpyexception_raised_on_invalid_type(self):
         """ Test that a single object can be created correctly. """
@@ -180,7 +198,7 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
                     raise Exception("Formatter found in object_kwargs but format_val is None!")
                 obj_kwargs[key] = value.format(format_val)
 
-        return self.ZenpyType(**obj_kwargs) if not dummy else object()
+        return self.ZenpyType(**obj_kwargs) if not dummy else None
 
     def modify_object(self, zenpy_object):
         """ 
@@ -193,8 +211,9 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
 
         new_kwargs = self.object_kwargs.copy()
         for attr_name in new_kwargs:
-            new_kwargs[attr_name] += hash_of(new_kwargs[attr_name])
-            setattr(zenpy_object, attr_name, new_kwargs[attr_name])
+            if isinstance(new_kwargs[attr_name], basestring):
+                new_kwargs[attr_name] += hash_of(new_kwargs[attr_name])
+                setattr(zenpy_object, attr_name, new_kwargs[attr_name])
         return zenpy_object, new_kwargs
 
     def verify_object_updated(self, new_kwargs, zenpy_object):
@@ -203,8 +222,9 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
         self.assertIsInstance(updated_object, self.ZenpyType)
         self.assertInCache(updated_object)
         for attr_name, attr in new_kwargs.items():
-            self.assertEqual(getattr(updated_object, attr_name), new_kwargs[attr_name])
-            self.assertCacheUpdated(updated_object, attr_name, attr)
+            if isinstance(attr, basestring):
+                self.assertEqual(getattr(updated_object, attr_name), new_kwargs[attr_name])
+                self.assertCacheUpdated(updated_object, attr_name, attr)
 
     def create_dummy_objects(self):
         """ Create some dummy objects for checking invalid types. """

@@ -1,0 +1,56 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2017-04-22T09:44:32",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"group\": {\"created_at\": \"2017-04-22T09:44:39Z\", \"deleted\": false, \"id\": 41795968, \"name\": \"testGroup\", \"updated_at\": \"2017-04-22T09:44:39Z\", \"url\": \"https://facetoe1.zendesk.com/api/v2/groups/41795968.json\", \"user_ids\": []}}"
+        },
+        "headers": {
+          "Accept": "*/*",
+          "Accept-Encoding": "gzip, deflate",
+          "Authorization": "Basic ZmFjZXRvZUBmYWNldG9lLmNvbS5hdS90b2tlbjpkbWZIVnh6ak90b0ZsVlhJNnMzeFE2YmQ1dXZ1RG5Sb0kydkZWWW85",
+          "Connection": "keep-alive",
+          "Content-Length": "225",
+          "Content-type": "application/json",
+          "User-Agent": "Zenpy/1.1"
+        },
+        "method": "DELETE",
+        "uri": "https://facetoe1.zendesk.com/api/v2/groups/41795968.json&include=users"
+      },
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": ""
+        },
+        "headers": {
+          "Cache-Control": "no-cache",
+          "Connection": "keep-alive",
+          "Date": "Sat, 22 Apr 2017 09:44:40 GMT",
+          "Server": "nginx",
+          "Strict-Transport-Security": "max-age=31536000;",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "SAMEORIGIN",
+          "X-Rack-Cache": "invalidate, pass",
+          "X-Rate-Limit": "400",
+          "X-Rate-Limit-Remaining": "396",
+          "X-Request-Id": "8ac0a391-5a4d-4d9a-cd90-b8ca3a6bbacc",
+          "X-Runtime": "0.165978",
+          "X-UA-Compatible": "IE=Edge,chrome=1",
+          "X-Zendesk-API-Version": "v2",
+          "X-Zendesk-API-Warn": "Removed restricted keys [\"created_at\", \"deleted\", \"name\", \"updated_at\", \"url\", \"user_ids\", \"group\"] from parameters according to whitelist",
+          "X-Zendesk-Application-Version": "v20.24",
+          "X-Zendesk-Origin-Server": "app37.pod5.iad1.zdsys.com",
+          "X-Zendesk-Request-Id": "3fb8d9d10d1a5fca187d"
+        },
+        "status": {
+          "code": 204,
+          "message": "No Content"
+        },
+        "url": "https://facetoe1.zendesk.com/api/v2/groups/41795968.json&include=users"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.8.0"
+}
