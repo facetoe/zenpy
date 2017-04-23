@@ -14,7 +14,7 @@ from zenpy.lib.exception import APIException, RecordNotFoundException, TooManyVa
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.generator import SearchResultGenerator, ResultGenerator
 from zenpy.lib.object_manager import class_for_type, object_from_json, CLASS_MAPPING
-from zenpy.lib.util import is_iterable_but_not_string, as_plural, as_singular
+from zenpy.lib.util import as_plural, as_singular
 
 __author__ = 'facetoe'
 
@@ -423,7 +423,7 @@ class ModifiableApi(Api):
     def _check_type(self, zenpy_objects):
         """ Ensure the passed type matches this API's object_type. """
         expected_type = class_for_type(self.object_type)
-        if not is_iterable_but_not_string(zenpy_objects):
+        if not isinstance(zenpy_objects, collections.Iterable):
             zenpy_objects = [zenpy_objects]
         for zenpy_object in zenpy_objects:
             if type(zenpy_object) is not expected_type:
@@ -478,6 +478,7 @@ class CRUDApi(ModifiableApi):
 
         :param api_objects: object or objects to delete
         """
+
         payload = self._build_payload(api_objects)
         if isinstance(api_objects, collections.Iterable):
             kwargs['destroy_ids'] = [i.id for i in api_objects]
