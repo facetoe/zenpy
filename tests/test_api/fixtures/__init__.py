@@ -271,7 +271,7 @@ class SingleCreateApiTestCase(ModifiableApiTestCase):
     def test_single_object_creation(self):
         self.create_and_verify_single_object_creation()
 
-    def test_raises_zenpyexception_on_invalid_type(self):
+    def test_single_create_raises_zenpyexception_on_invalid_type(self):
         """ Test that a single object can be created correctly. """
         with self.assertRaises(ZenpyException):
             self.create_method(None)
@@ -294,12 +294,12 @@ class SingleDeleteApiTestCase(ModifiableApiTestCase):
     def test_single_object_deletion(self):
         self.create_and_verify_single_object_deletion()
 
-    def test_zenpyexception_raised_on_invalid_type(self):
+    def test_single_delete_raises_zenpyexception_on_invalid_type(self):
         """ Test that a single object can be created correctly. """
         with self.assertRaises(ZenpyException):
             self.delete_method(None)
 
-    def test_recordnotfoundexception_raised_delete(self):
+    def test_single_delete_raises_recordnotfoundexception(self):
         cassette_name = "{}-recordnotfound-delete".format(self.generate_cassette_name())
         with self.recorder.use_cassette(cassette_name, serialize_with='prettyjson'):
             hopefully_not_real_id = 9223372036854775807  # This is the largest id that Zendesk will accept.
@@ -320,12 +320,12 @@ class SingleUpdateApiTestCase(ModifiableApiTestCase):
     def test_single_object_update(self):
         self.create_and_verify_single_object_update()
 
-    def test_raises_zenpyexception_on_invalid_type(self):
+    def test_single_update_raises_zenpyexception_on_invalid_type(self):
         """ Test that a single object can be created correctly. """
         with self.assertRaises(ZenpyException):
             self.update_method(None)
 
-    def test_recordnotfoundexception_raised_update(self):
+    def test_single_update_raises_recordnotfoundexception(self):
         cassette_name = "{}-recordnotfound-update".format(self.generate_cassette_name())
         with self.recorder.use_cassette(cassette_name, serialize_with='prettyjson'):
             with self.assertRaises(RecordNotFoundException):
@@ -348,18 +348,22 @@ class SingleUpdateApiTestCase(ModifiableApiTestCase):
 
 
 class MultipleUpdateApiTestCase(ModifiableApiTestCase):
-    def test_create_and_update_single_object(self):
+    def test_multiple_update_single_object(self):
         self.create_and_verify_multiple_object_update(1)
 
-    def test_create_and_update_half_full_objects(self):
+    def test_multiple_update_half_full_objects(self):
         self.create_and_verify_multiple_object_update(50)
 
-    def test_create_and_update_full_objects(self):
+    def test_multiple_update_full_objects(self):
         self.create_and_verify_multiple_object_update(100)
 
-    def test_raises_toomanyvaluesexception(self):
+    def test_raises_multiple_update_raises_toomanyvaluesexception(self):
         with self.assertRaises(TooManyValuesException):
             self.create_and_verify_multiple_object_update(150)
+
+    def test_multiple_update_raises_zenpyexception_on_invalid_type(self):
+        with self.assertRaises(ZenpyException):
+            self.delete_method([None])
 
     def create_and_verify_multiple_object_update(self, num_objects):
         cassette_name = "{}-update-many".format(self.generate_cassette_name())
@@ -375,9 +379,38 @@ class MultipleUpdateApiTestCase(ModifiableApiTestCase):
                 self.verify_object_updated(new_kwargs, modified_object)
 
 
+class MultipleDeleteApiTestCase(ModifiableApiTestCase):
+    def test_multiple_delete_single_object(self):
+        self.create_and_verify_multiple_object_delete(1)
+
+    def test_multiple_delete_half_full_objects(self):
+        self.create_and_verify_multiple_object_delete(50)
+
+    def test_multiple_delete_full_objects(self):
+        self.create_and_verify_multiple_object_delete(100)
+
+    def test_multiple_delete_raises_zenpyexception_on_invalid_type(self):
+        with self.assertRaises(ZenpyException):
+            self.delete_method([None])
+
+    def test_multiple_delete_raises_toomanyvaluesexception(self):
+        with self.assertRaises(TooManyValuesException):
+            self.create_and_verify_multiple_object_delete(150)
+
+    def create_and_verify_multiple_object_delete(self, num_objects):
+        cassette_name = "{}-delete-many".format(self.generate_cassette_name())
+        with self.recorder.use_cassette(cassette_name=cassette_name, serialize_with='prettyjson'):
+            job_status = self.create_multiple_zenpy_objects(num_objects)
+            self.assertEqual(len(job_status.results), num_objects)
+            returned_objects = self.api(ids=[r['id'] for r in job_status.results])
+            self.delete_method(list(returned_objects))
+            [self.created_objects.remove(obj) for obj in returned_objects]
+
+
 class CRUDApiTestCase(SingleCreateApiTestCase,
                       SingleUpdateApiTestCase,
                       SingleDeleteApiTestCase,
                       MultipleCreateApiTestCase,
-                      MultipleUpdateApiTestCase):
+                      MultipleUpdateApiTestCase,
+                      MultipleDeleteApiTestCase):
     pass
