@@ -1,3 +1,4 @@
+import collections
 from datetime import datetime, timedelta
 
 from zenpy.lib.util import as_plural
@@ -10,7 +11,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class BaseResultGenerator(object):
+class BaseResultGenerator(collections.Iterable):
     """
     Base class for result generators. Subclasses should implement process_page() to populate the values array. 
     """
