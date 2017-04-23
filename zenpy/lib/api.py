@@ -294,6 +294,28 @@ class BaseApi(object):
         """ Build complete URL """
         return "/".join((self.base_url, endpoint))
 
+    def get_sideloads(self, method_name=None):
+        """
+        Return the list of sideloads for this API. If method_name is passed,
+        return the list of sideloads available to that method. For example:
+            zenpy_client.tickets.get_sideloads(method_name='incremental')
+        will return the sideloads for the incremental method.
+        """
+        if method_name:
+            if not hasattr(self.endpoint, method_name):
+                raise ZenpyException("{} has no method named '{}'".format(self.endpoint, method_name))
+            return getattr(self.endpoint, method_name).sideload
+        else:
+            return self.endpoint.sideload
+
+    def append_sideload(self, sideload, method_name=None):
+        """ Append a sideload to the list of sideloads. """
+        self.get_sideloads(method_name).append(sideload)
+
+    def remove_sideload(self, sideload, method_name=None):
+        """ Remove a sideload from the list of sideloads. """
+        self.get_sideloads(method_name).remove(sideload)
+
 
 class Api(BaseApi):
     """
