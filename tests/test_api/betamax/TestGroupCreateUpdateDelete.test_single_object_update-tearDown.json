@@ -1,11 +1,11 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2017-04-22T17:01:52",
+      "recorded_at": "2017-04-23T13:52:06",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"group\": {\"created_at\": \"2017-04-22T17:01:59Z\", \"deleted\": false, \"id\": 41798868, \"name\": \"testGroupbfc937463906e5db7a02a37c6060c62f9086c548\", \"updated_at\": \"2017-04-22T17:01:59Z\", \"url\": \"https://facetoe1.zendesk.com/api/v2/groups/41798868.json\", \"user_ids\": []}}"
+          "string": "{\"group\": {\"created_at\": \"2017-04-23T13:52:14Z\", \"deleted\": false, \"id\": 41772327, \"name\": \"testGroupbfc937463906e5db7a02a37c6060c62f9086c548\", \"updated_at\": \"2017-04-23T13:52:14Z\", \"url\": \"https://facetoe1.zendesk.com/api/v2/groups/41772327.json\", \"user_ids\": []}}"
         },
         "headers": {
           "Accept": "*/*",
@@ -17,7 +17,7 @@
           "User-Agent": "Zenpy/1.1"
         },
         "method": "DELETE",
-        "uri": "https://facetoe1.zendesk.com/api/v2/groups/41798868.json&include=users"
+        "uri": "https://facetoe1.zendesk.com/api/v2/groups/41772327.json&include=users"
       },
       "response": {
         "body": {
@@ -27,28 +27,28 @@
         "headers": {
           "Cache-Control": "no-cache",
           "Connection": "keep-alive",
-          "Date": "Sat, 22 Apr 2017 17:02:00 GMT",
+          "Date": "Sun, 23 Apr 2017 13:52:15 GMT",
           "Server": "nginx",
           "Strict-Transport-Security": "max-age=31536000;",
           "X-Content-Type-Options": "nosniff",
           "X-Frame-Options": "SAMEORIGIN",
           "X-Rack-Cache": "invalidate, pass",
           "X-Rate-Limit": "400",
-          "X-Rate-Limit-Remaining": "398",
-          "X-Request-Id": "fbce9c7b-69de-4548-c595-b8ca3a6bdb19",
-          "X-Runtime": "0.189620",
+          "X-Rate-Limit-Remaining": "390",
+          "X-Request-Id": "e6a1001d-8d1d-4b74-cbbd-ecf4bbdf5265",
+          "X-Runtime": "0.176924",
           "X-UA-Compatible": "IE=Edge,chrome=1",
           "X-Zendesk-API-Version": "v2",
           "X-Zendesk-API-Warn": "Removed restricted keys [\"created_at\", \"deleted\", \"name\", \"updated_at\", \"url\", \"user_ids\", \"group\"] from parameters according to whitelist",
           "X-Zendesk-Application-Version": "v20.24",
-          "X-Zendesk-Origin-Server": "app1.pod5.iad1.zdsys.com",
-          "X-Zendesk-Request-Id": "01bd784eb1b9c3dad10f"
+          "X-Zendesk-Origin-Server": "app41.pod5.iad1.zdsys.com",
+          "X-Zendesk-Request-Id": "b2e353b8f3c6d53c93a1"
         },
         "status": {
           "code": 204,
           "message": "No Content"
         },
-        "url": "https://facetoe1.zendesk.com/api/v2/groups/41798868.json&include=users"
+        "url": "https://facetoe1.zendesk.com/api/v2/groups/41772327.json&include=users"
       }
     }
   ],

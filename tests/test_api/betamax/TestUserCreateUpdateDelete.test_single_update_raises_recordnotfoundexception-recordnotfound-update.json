@@ -1,7 +1,7 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2017-04-23T09:56:16",
+      "recorded_at": "2017-04-23T13:57:29",
       "request": {
         "body": {
           "encoding": "utf-8",
@@ -17,7 +17,7 @@
           "User-Agent": "Zenpy/1.1"
         },
         "method": "PUT",
-        "uri": "https://facetoe1.zendesk.com/api/v2/users/9223372036854775807.json&include=organizations,abilities,roles,identities,groups"
+        "uri": "https://facetoe1.zendesk.com/api/v2/users/9223372036854775807.json&include=organizations,abilities,roles,identities,groups,open_ticket_count"
       },
       "response": {
         "body": {
@@ -30,27 +30,27 @@
           "Connection": "keep-alive",
           "Content-Encoding": "gzip",
           "Content-Type": "application/json; charset=UTF-8",
-          "Date": "Sun, 23 Apr 2017 09:56:24 GMT",
+          "Date": "Sun, 23 Apr 2017 13:57:37 GMT",
           "Server": "nginx",
           "Strict-Transport-Security": "max-age=31536000;",
           "Transfer-Encoding": "chunked",
           "X-Frame-Options": "SAMEORIGIN",
           "X-Rack-Cache": "invalidate, pass",
           "X-Rate-Limit": "400",
-          "X-Rate-Limit-Remaining": "385",
-          "X-Request-Id": "8320212a-b609-4a12-ca13-b8ca3a6bb7d1",
-          "X-Runtime": "0.157150",
+          "X-Rate-Limit-Remaining": "376",
+          "X-Request-Id": "4822f8c0-ebe8-41da-c191-b8ca3a6b1f90",
+          "X-Runtime": "0.137514",
           "X-UA-Compatible": "IE=Edge,chrome=1",
           "X-Zendesk-API-Version": "v2",
           "X-Zendesk-Application-Version": "v20.24",
-          "X-Zendesk-Origin-Server": "app13.pod5.iad1.zdsys.com",
-          "X-Zendesk-Request-Id": "c6ec76f186e972b0ad97"
+          "X-Zendesk-Origin-Server": "app50.pod5.iad1.zdsys.com",
+          "X-Zendesk-Request-Id": "a2889529749d87544f76"
         },
         "status": {
           "code": 404,
           "message": "Not Found"
         },
-        "url": "https://facetoe1.zendesk.com/api/v2/users/9223372036854775807.json&include=organizations,abilities,roles,identities,groups"
+        "url": "https://facetoe1.zendesk.com/api/v2/users/9223372036854775807.json&include=organizations,abilities,roles,identities,groups,open_ticket_count"
       }
     }
   ],

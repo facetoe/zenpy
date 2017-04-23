@@ -1,7 +1,7 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2017-04-23T09:56:14",
+      "recorded_at": "2017-04-23T13:57:17",
       "request": {
         "body": {
           "encoding": "utf-8",
@@ -17,7 +17,7 @@
           "User-Agent": "Zenpy/1.1"
         },
         "method": "PUT",
-        "uri": "https://facetoe1.zendesk.com/api/v2/tickets/9223372036854775807.json&include=users,groups,organizations"
+        "uri": "https://facetoe1.zendesk.com/api/v2/tickets/9223372036854775807.json&include=users,groups,organizations,last_audits,metric_sets,dates,sharing_agreements,comment_count,incident_counts,ticket_forms,metric_events,slas"
       },
       "response": {
         "body": {
@@ -30,27 +30,27 @@
           "Connection": "keep-alive",
           "Content-Encoding": "gzip",
           "Content-Type": "application/json; charset=UTF-8",
-          "Date": "Sun, 23 Apr 2017 09:56:22 GMT",
+          "Date": "Sun, 23 Apr 2017 13:57:26 GMT",
           "Server": "nginx",
           "Strict-Transport-Security": "max-age=31536000;",
           "Transfer-Encoding": "chunked",
           "X-Frame-Options": "SAMEORIGIN",
           "X-Rack-Cache": "invalidate, pass",
           "X-Rate-Limit": "400",
-          "X-Rate-Limit-Remaining": "386",
-          "X-Request-Id": "9bc46099-b0f8-4e3d-ce6f-b8ca3a6bb978",
-          "X-Runtime": "0.149305",
+          "X-Rate-Limit-Remaining": "385",
+          "X-Request-Id": "4cbe0318-6c19-4b3f-cb2c-b8ca3a6bb7d1",
+          "X-Runtime": "0.136994",
           "X-UA-Compatible": "IE=Edge,chrome=1",
           "X-Zendesk-API-Version": "v2",
           "X-Zendesk-Application-Version": "v20.24",
-          "X-Zendesk-Origin-Server": "app42.pod5.iad1.zdsys.com",
-          "X-Zendesk-Request-Id": "ea314a84455ece0541f9"
+          "X-Zendesk-Origin-Server": "app35.pod5.iad1.zdsys.com",
+          "X-Zendesk-Request-Id": "9b2cc9330fb7c3f11a31"
         },
         "status": {
           "code": 404,
           "message": "Not Found"
         },
-        "url": "https://facetoe1.zendesk.com/api/v2/tickets/9223372036854775807.json&include=users,groups,organizations"
+        "url": "https://facetoe1.zendesk.com/api/v2/tickets/9223372036854775807.json&include=users,groups,organizations,last_audits,metric_sets,dates,sharing_agreements,comment_count,incident_counts,ticket_forms,metric_events,slas"
       }
     }
   ],
