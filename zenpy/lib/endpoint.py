@@ -338,13 +338,14 @@ class Endpoint(object):
     attachments.upload = AttachmentEndpoint('uploads.json?')
     brands = PrimaryEndpoint('brands')
     end_user = SecondaryEndpoint('end_users/%(id)s.json')
-    group_memberships = PrimaryEndpoint('group_memberships')
+    group_memberships = PrimaryEndpoint('group_memberships', sideload=['users', ' groups'])
     groups = PrimaryEndpoint('groups', ['users'])
     job_statuses = PrimaryEndpoint('job_statuses')
-    macros = MacroEndpoint('macros')
+    macros = MacroEndpoint('macros', sideload=['app_installation', 'categories', 'permissions', 'usage_1h', 'usage_24h',
+                                               'usage_7d', 'usage_30d'])
     macros.apply = SecondaryEndpoint('macros/%(id)s/apply.json')
     organization_memberships = PrimaryEndpoint('organization_memberships')
-    organizations = PrimaryEndpoint('organizations')
+    organizations = PrimaryEndpoint('organizations', 'abilities')
     organizations.external = SecondaryEndpoint('organizations/search.json?external_id=%(id)s')
     organizations.incremental = IncrementalEndpoint('incremental/organizations.json?')
     organizations.organization_fields = PrimaryEndpoint('organization_fields')
@@ -368,12 +369,20 @@ class Endpoint(object):
     ticket_fields = PrimaryEndpoint('ticket_fields')
     ticket_import = PrimaryEndpoint('imports/tickets')
     ticket_metrics = PrimaryEndpoint('ticket_metrics')
-    tickets = PrimaryEndpoint('tickets', ['users', 'groups', 'organizations'])
-    tickets.audits = SecondaryEndpoint('tickets/%(id)s/audits.json')
+    tickets = PrimaryEndpoint('tickets',
+                              ['users', 'groups', 'organizations', 'last_audits', 'metric_sets', 'dates',
+                               'sharing_agreements', 'comment_count', 'incident_counts', 'ticket_forms',
+                               'metric_events', 'slas'])
+    tickets.audits = SecondaryEndpoint('tickets/%(id)s/audits.json',
+                                       sideload=['users', 'organizations', 'groups', 'tickets'])
     tickets.comments = SecondaryEndpoint('tickets/%(id)s/comments.json')
     tickets.events = IncrementalEndpoint('incremental/ticket_events.json?', sideload=['comment_events'])
     tickets.incremental = IncrementalEndpoint('incremental/tickets.json?',
-                                              sideload=['users', 'groups', 'organizations'])
+                                              sideload=['users', 'groups', 'organizations', 'last_audits',
+                                                        'metric_sets', 'dates',
+                                                        'sharing_agreements', 'comment_count', 'incident_counts',
+                                                        'ticket_forms',
+                                                        'metric_events', 'slas'])
     tickets.metrics = SecondaryEndpoint('tickets/%(id)s/metrics.json')
     tickets.metrics.incremental = IncrementalEndpoint('incremental/ticket_metric_events.json?')
     tickets.organizations = SecondaryEndpoint('organizations/%(id)s/tickets.json')
@@ -384,7 +393,8 @@ class Endpoint(object):
     topics = PrimaryEndpoint('topics')
     topics.tags = SecondaryEndpoint('topics/%(id)s/tags.json')
     user_fields = PrimaryEndpoint('user_fields')
-    users = PrimaryEndpoint('users', ['organizations', 'abilities', 'roles', 'identities', 'groups'])
+    users = PrimaryEndpoint('users',
+                            ['organizations', 'abilities', 'roles', 'identities', 'groups', 'open_ticket_count'])
     users.assigned = SecondaryEndpoint('users/%(id)s/tickets/assigned.json')
     users.cced = SecondaryEndpoint('users/%(id)s/tickets/ccd.json')
     users.create_or_update = PrimaryEndpoint('users/create_or_update')
@@ -398,7 +408,7 @@ class Endpoint(object):
     users.organizations = SecondaryEndpoint('users/%(id)s/organizations.json')
     users.related = SecondaryEndpoint('users/%(id)s/related.json')
     users.requested = SecondaryEndpoint('users/%(id)s/tickets/requested.json')
-    users.requests = SecondaryEndpoint('users/%(id)s/requests.json')
+    users.requests = SecondaryEndpoint('users/%(id)s/requests.json', sideload=['users', 'organizations'])
     users.tags = SecondaryEndpoint('users/%(id)s/tags.json')
     users.identities = SecondaryEndpoint('users/%(id)s/identities.json')
     users.identities.show = MutlipleIDEndpoint('users/{0}/identities/{1}.json')
