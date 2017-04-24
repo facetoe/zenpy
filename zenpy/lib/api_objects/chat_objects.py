@@ -25,6 +25,11 @@ class BaseObject(object):
             return "[%s(token='%s')]" % (self.__class__.__name__, self.token)
         elif hasattr(self, 'key'):
             return "[%s(key='%s')]" % (self.__class__.__name__, self.key)
+        elif hasattr(self, 'name'):
+            return "[%s(name='%s')]" % (self.__class__.__name__, self.name)
+        elif hasattr(self, 'account_key'):
+            return "[%s(account_key='%s')]" % (self.__class__.__name__,
+                                               self.account_key)
         else:
             return "[%s()]" % self.__class__.__name__
 
@@ -36,6 +41,25 @@ class ResponseTime(BaseObject):
         self.avg = avg
         self.first = first
         self.max = max
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+
+class Shortcut(BaseObject):
+    def __init__(self,
+                 api=None,
+                 message=None,
+                 name=None,
+                 options=None,
+                 tags=None,
+                 **kwargs):
+
+        self.api = api
+        self.message = message
+        self.name = name
+        self.options = options
+        self.tags = tags
 
         for key, value in kwargs.items():
             setattr(self, key, value)
@@ -100,6 +124,87 @@ class Visitor(BaseObject):
             setattr(self, key, value)
 
 
+class Definition(BaseObject):
+    def __init__(self, api=None, event=None, **kwargs):
+
+        self.api = api
+
+        self._actions = None
+
+        self._condition = None
+        self.event = event
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+
+class Plan(BaseObject):
+    def __init__(self,
+                 api=None,
+                 agent_leaderboard=None,
+                 agent_reports=None,
+                 analytics=None,
+                 chat_reports=None,
+                 daily_reports=None,
+                 email_reports=None,
+                 file_upload=None,
+                 goals=None,
+                 high_load=None,
+                 integrations=None,
+                 ip_restriction=None,
+                 long_desc=None,
+                 max_advanced_triggers=None,
+                 max_agents=None,
+                 max_basic_triggers=None,
+                 max_concurrent_chats=None,
+                 max_departments=None,
+                 max_history_search_days=None,
+                 monitoring=None,
+                 name=None,
+                 operating_hours=None,
+                 price=None,
+                 rest_api=None,
+                 short_desc=None,
+                 sla=None,
+                 support=None,
+                 unbranding=None,
+                 widget_customization=None,
+                 **kwargs):
+
+        self.api = api
+        self.agent_leaderboard = agent_leaderboard
+        self.agent_reports = agent_reports
+        self.analytics = analytics
+        self.chat_reports = chat_reports
+        self.daily_reports = daily_reports
+        self.email_reports = email_reports
+        self.file_upload = file_upload
+        self.goals = goals
+        self.high_load = high_load
+        self.integrations = integrations
+        self.ip_restriction = ip_restriction
+        self.long_desc = long_desc
+        self.max_advanced_triggers = max_advanced_triggers
+        self.max_agents = max_agents
+        self.max_basic_triggers = max_basic_triggers
+        self.max_concurrent_chats = max_concurrent_chats
+        self.max_departments = max_departments
+        self.max_history_search_days = max_history_search_days
+        self.monitoring = monitoring
+        self.name = name
+        self.operating_hours = operating_hours
+        self.price = price
+        self.rest_api = rest_api
+        self.short_desc = short_desc
+        self.sla = sla
+        self.support = support
+        self.unbranding = unbranding
+        self.widget_customization = widget_customization
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+
 class Webpath(BaseObject):
     def __init__(self, api=None, from_=None, title=None, to=None, **kwargs):
 
@@ -123,6 +228,51 @@ class Webpath(BaseObject):
     def timestamp(self, timestamp):
         if timestamp:
             self._timestamp = timestamp
+
+
+class Account(BaseObject):
+    def __init__(self,
+                 api=None,
+                 account_key=None,
+                 create_date=None,
+                 status=None,
+                 **kwargs):
+
+        self.api = api
+
+        self._billing = None
+
+        self._plan = None
+        self.account_key = account_key
+        self.create_date = create_date
+        self.status = status
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+
+class Ban(BaseObject):
+    def __init__(self, api=None, **kwargs):
+
+        self.api = api
+
+        self._ip_address = None
+
+        self._visitor = None
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def ip_address(self):
+
+        if self.api and self._ip_address:
+            return self.api._get_ip_address(self._ip_address)
+
+    @ip_address.setter
+    def ip_address(self, ip_address):
+        if ip_address:
+            self._ip_address = ip_address
 
 
 class Count(BaseObject):
@@ -182,6 +332,58 @@ class OfflineMessage(BaseObject):
     def timestamp(self, timestamp):
         if timestamp:
             self._timestamp = timestamp
+
+
+class Trigger(BaseObject):
+    def __init__(self,
+                 api=None,
+                 description=None,
+                 enabled=None,
+                 name=None,
+                 **kwargs):
+
+        self.api = api
+
+        self._definition = None
+        self.description = description
+        self.enabled = enabled
+        self.name = name
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+
+class Billing(BaseObject):
+    def __init__(self,
+                 api=None,
+                 additional_info=None,
+                 address1=None,
+                 address2=None,
+                 city=None,
+                 company=None,
+                 country_code=None,
+                 email=None,
+                 first_name=None,
+                 last_name=None,
+                 postal_code=None,
+                 state=None,
+                 **kwargs):
+
+        self.api = api
+        self.additional_info = additional_info
+        self.address1 = address1
+        self.address2 = address2
+        self.city = city
+        self.company = company
+        self.country_code = country_code
+        self.email = email
+        self.first_name = first_name
+        self.last_name = last_name
+        self.postal_code = postal_code
+        self.state = state
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
 
 class Chat(BaseObject):

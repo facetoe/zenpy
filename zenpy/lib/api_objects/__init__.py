@@ -25,6 +25,11 @@ class BaseObject(object):
             return "[%s(token='%s')]" % (self.__class__.__name__, self.token)
         elif hasattr(self, 'key'):
             return "[%s(key='%s')]" % (self.__class__.__name__, self.key)
+        elif hasattr(self, 'name'):
+            return "[%s(name='%s')]" % (self.__class__.__name__, self.name)
+        elif hasattr(self, 'account_key'):
+            return "[%s(account_key='%s')]" % (self.__class__.__name__,
+                                               self.account_key)
         else:
             return "[%s()]" % self.__class__.__name__
 
@@ -1138,19 +1143,6 @@ class Macro(BaseObject):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
-
-    @property
-    def actions(self):
-        """
-        |  Comment: An object describing what the macro will do
-        """
-        if self.api and self._actions:
-            return self.api._get_actions(self._actions)
-
-    @actions.setter
-    def actions(self, actions):
-        if actions:
-            self._actions = actions
 
     @property
     def created(self):

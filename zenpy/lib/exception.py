@@ -20,7 +20,7 @@ class APIException(Exception):
 
     def __init__(self, *args, **kwargs):
         self.response = kwargs.pop('response', None)
-        super(APIException, self).__init__(*args, *kwargs)
+        super(APIException, self).__init__(*args, **kwargs)
 
 
 class RecordNotFoundException(APIException):

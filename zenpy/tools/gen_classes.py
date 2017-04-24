@@ -228,7 +228,12 @@ class Attribute(object):
             'session',
             'visitor',
             'agent_names',
-            'count'
+            'count',
+            'definition',
+            'actions',
+            'condition',
+            'billing',
+            'plan'
         )
         if attr_name in not_properties:
             return False
@@ -286,6 +291,10 @@ class BaseObject(object):
             return "[%s(token='%s')]" % (self.__class__.__name__, self.token)
         elif hasattr(self, 'key'):
             return "[%s(key='%s')]" % (self.__class__.__name__, self.key)
+        elif hasattr(self, 'name'):
+            return "[%s(name='%s')]" % (self.__class__.__name__, self.name)
+        elif hasattr(self, 'account_key'):
+            return "[%s(account_key='%s')]" % (self.__class__.__name__, self.account_key)
         else:
             return "[%s()]" % self.__class__.__name__
 """

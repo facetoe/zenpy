@@ -333,11 +333,16 @@ class ChatEndpoint(object):
         self.endpoint = endpoint
 
     def __call__(self, **kwargs):
+        if len(kwargs) > 1:
+            raise ZenpyException("Only expect a single keyword to the ChatEndpoint")
         endpoint_path = self.endpoint
-        if 'id' in kwargs:
-            endpoint_path = "{}/{}".format(self.endpoint, kwargs['id'])
-        elif 'ids' in kwargs:
+        if 'ids' in kwargs:
             endpoint_path = "{}?ids={}".format(self.endpoint, ','.join(kwargs['ids']))
+        else:
+            for key, value in kwargs.items():
+                endpoint_path = "{}/{}".format(self.endpoint, value)
+                break
+
         return endpoint_path
 
 
@@ -351,7 +356,12 @@ class Endpoint(object):
     attachments.upload = AttachmentEndpoint('uploads.json?')
     brands = PrimaryEndpoint('brands')
     chats = ChatEndpoint('chats')
-    chats.me = ChatEndpoint("agents/me")
+    chats.account = ChatEndpoint('account')
+    chats.agents = ChatEndpoint('agents')
+    chats.agents.me = ChatEndpoint("agents/me")
+    chats.bans = ChatEndpoint('bans')
+    chats.triggers = ChatEndpoint('triggers')
+    chats.shortcuts = ChatEndpoint('shortcuts')
     end_user = SecondaryEndpoint('end_users/%(id)s.json')
     group_memberships = PrimaryEndpoint('group_memberships', sideload=['users', ' groups'])
     groups = PrimaryEndpoint('groups', ['users'])
