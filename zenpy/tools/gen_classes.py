@@ -7,12 +7,15 @@ import glob
 import os
 import re
 import sys
+from yapf.yapflib.yapf_api import FormatCode
 
 __author__ = 'facetoe'
 from jinja2 import Template
 
 
 class TemplateObject(object):
+    OBJECT_TEMPLATE = None
+
     def render(self):
         return Template(self.OBJECT_TEMPLATE).render(object=self)
 
@@ -40,7 +43,6 @@ class {{object.name}}(BaseObject):
                 for key, value in sorted(attr_docs.items()):
                     doc_strings.append("%s: %s" % (key.capitalize(), value.replace('*', '')))
                 attribute.attr_docs = doc_strings
-
             attributes.append(attribute)
 
         attributes = sorted(attributes, key=lambda x: x.attr_name)
@@ -309,16 +311,22 @@ def process_file(path, output):
     class_name = os.path.basename(os.path.splitext(path)[0]).capitalize()
     class_name = "".join([w.capitalize() for w in class_name.split('_')])
     class_code = Class(class_name, json.load(open(path)), doc_json).render()
+    print("Processed: %s -> %s" % (os.path.basename(path), class_name))
+    return class_code
 
-    print("Processing: %s -> %s" % (os.path.basename(path), class_name))
-    output.write(class_code)
+
+def process_specification_directory(glob_pattern, outfile_name):
+    with open(os.path.join(options.out_path, outfile_name), 'w+') as out_file:
+        classes = [BASE_CLASSS]
+        for file_path in glob.glob(os.path.join(options.spec_path, glob_pattern)):
+            if options.target_file is not None and os.path.basename(file_path) == options.target_file:
+                class_code = process_file(file_path, out_file)
+            else:
+                class_code = process_file(file_path, out_file)
+            classes.append(class_code)
+        print("Formatting...")
+        formatted_code = FormatCode("\n".join(classes))[0]
+        out_file.write(formatted_code)
 
 
-with open(os.path.join(options.out_path, 'api_objects.py'), 'w+') as out_file:
-    out_file.write(BASE_CLASSS)
-    for file_path in glob.glob(os.path.join(options.spec_path, '*.json')):
-        if options.target_file is not None:
-            if os.path.basename(file_path) == options.target_file:
-                process_file(file_path, out_file)
-        else:
-            process_file(file_path, out_file)
+process_specification_directory('zendesk/*.json', 'api_objects/__init__.py')
