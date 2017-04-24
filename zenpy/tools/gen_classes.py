@@ -315,9 +315,12 @@ def process_file(path, output):
     return class_code
 
 
-def process_specification_directory(glob_pattern, outfile_name):
+def process_specification_directory(glob_pattern, outfile_name, write_baseclass=True):
     with open(os.path.join(options.out_path, outfile_name), 'w+') as out_file:
-        classes = [BASE_CLASSS]
+        if write_baseclass:
+            classes = [BASE_CLASSS]
+        else:
+            classes = ["from zenpy.lib.api_objects import BaseObject"]
         for file_path in glob.glob(os.path.join(options.spec_path, glob_pattern)):
             if options.target_file is not None and os.path.basename(file_path) == options.target_file:
                 class_code = process_file(file_path, out_file)
@@ -330,3 +333,4 @@ def process_specification_directory(glob_pattern, outfile_name):
 
 
 process_specification_directory('zendesk/*.json', 'api_objects/__init__.py')
+process_specification_directory('chat/*.json', 'api_objects/chat_objects.py')
