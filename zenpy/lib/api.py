@@ -12,7 +12,7 @@ from zenpy.lib.cache import query_cache, delete_from_cache
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import APIException, RecordNotFoundException, TooManyValuesException
 from zenpy.lib.exception import ZenpyException
-from zenpy.lib.generator import SearchResultGenerator, ResultGenerator
+from zenpy.lib.generator import SearchResultGenerator, ResultGenerator, ChatResultGenerator
 from zenpy.lib.object_manager import class_for_type, object_from_json, ZENDESK_CLASS_MAPPING, CHAT_CLASS_MAPPING
 from zenpy.lib.util import as_plural, as_singular
 
@@ -160,46 +160,49 @@ class BaseApi(object):
         :param response: the requests Response object.
         """
         response_json = response.json()
-
         # Search result
         if 'results' in response_json:
             return SearchResultGenerator(self, response_json)
 
-        # JobStatus responses also include a ticket key so treat it specially.
         zenpy_objects = self._deserialize(response_json)
-        if 'job_status' in response_json:
-            return zenpy_objects['job_status']
 
-        # TicketAudit responses are another special case containing both
-        # a ticket and audit key.
-        if 'ticket' and 'audit' in response_json:
-            return zenpy_objects['ticket_audit']
+        if isinstance(self, ChatApi):
+            if 'docs' in response_json:
+                return ChatResultGenerator(self, response_json)
+        else:
+            # JobStatus responses also include a ticket key so treat it specially.
+            if 'job_status' in zenpy_objects:
+                return zenpy_objects['job_status']
+
+            # TicketAudit responses are another special case containing both
+            # a ticket and audit key.
+            if 'ticket' and 'audit' in zenpy_objects:
+                return zenpy_objects['ticket_audit']
 
         # Collection of objects (eg, users/tickets)
         plural_object_type = as_plural(self.object_type)
-        if plural_object_type in response_json:
+        if plural_object_type in zenpy_objects:
             return ResultGenerator(self, response_json,
                                    object_type=plural_object_type,
                                    zenpy_objects=zenpy_objects[plural_object_type])
 
         # Here the response matches the API object_type, seems legit.
-        if self.object_type in response_json:
+        if self.object_type in zenpy_objects:
             return zenpy_objects[self.object_type]
 
         # Could be anything, if we know of this object then return it.
         for zenpy_object_name in self.KNOWN_OBJECTS:
-            if zenpy_object_name in response_json:
+            if zenpy_object_name in zenpy_objects:
                 return zenpy_objects[zenpy_object_name]
 
         # Maybe a collection of known objects?
         for zenpy_object_name in self.KNOWN_OBJECTS:
             plural_zenpy_object_name = as_plural(zenpy_object_name)
-            if plural_zenpy_object_name in response_json:
+            if plural_zenpy_object_name in zenpy_objects:
                 return ResultGenerator(self, response_json,
                                        object_type=plural_zenpy_object_name,
                                        zenpy_objects=zenpy_objects[plural_zenpy_object_name])
 
-        print(self.KNOWN_OBJECTS)
         # Bummer, bail out with an informative message.
         raise ZenpyException("Unknown Response: " + str(response_json))
 
@@ -215,8 +218,16 @@ class BaseApi(object):
         if it is singular, the value will be an object of that type. 
         :param response_json: 
         """
-        response_objects = dict()
         is_chat_api = isinstance(self, ChatApi)
+
+        # The Chat API is nice in that it tells us the type of response we have.
+        # Just return it keyed by it's object name, no need to locate other objects
+        # in the returned JSON.
+        chat_object_type = response_json.get('type', None)
+        if is_chat_api and chat_object_type:
+            return {chat_object_type: object_from_json(self, chat_object_type, response_json, is_chat_api=True)}
+
+        response_objects = dict()
         if all((t in response_json for t in ('ticket', 'audit'))):
             response_objects["ticket_audit"] = object_from_json(self,
                                                                 "ticket_audit",
@@ -287,19 +298,17 @@ class BaseApi(object):
         Check the response code returned by Zendesk. If it is outside the 200 range, raise an exception of the correct type.
         :param response: requests Response object.
         """
-        print(response.headers)
-        print(response.json())
         if response.status_code > 299 or response.status_code < 200:
             log.debug("Received response code [%s] - headers: %s" % (response.status_code, str(response.headers)))
             try:
                 _json = response.json()
                 err_type = _json.get("error", '')
                 if err_type == 'RecordNotFound':
-                    raise RecordNotFoundException(json.dumps(_json))
+                    raise RecordNotFoundException(json.dumps(_json), response=response)
                 elif err_type == "TooManyValues":
-                    raise TooManyValuesException(json.dumps(_json))
+                    raise TooManyValuesException(json.dumps(_json), response=response)
                 else:
-                    raise APIException(json.dumps(_json))
+                    raise APIException(json.dumps(_json), response=response)
             except ValueError:
                 response.raise_for_status()
 
@@ -453,7 +462,7 @@ class ModifiableApi(Api):
             payload_key = as_plural(self.object_type)
         else:
             payload_key = self.object_type
-        return {payload_key: json.loads(json.dumps(api_objects, cls=ZenpyObjectEncoder))}
+        return {payload_key: self._serialize(api_objects)}
 
     def _check_type(self, zenpy_objects):
         """ Ensure the passed type matches this API's object_type. """
@@ -466,11 +475,13 @@ class ModifiableApi(Api):
                     "Invalid type - expected {} found {}".format(expected_type, type(zenpy_object))
                 )
 
-    def _do(self, action, endpoint_kwargs, endpoint_args=None, endpoint=None, **kwargs):
+    def _do(self, action, endpoint_kwargs=None, endpoint_args=None, endpoint=None, **kwargs):
         if not endpoint:
             endpoint = self.endpoint
         if not endpoint_args:
             endpoint_args = tuple()
+        if not endpoint_kwargs:
+            endpoint_kwargs = dict()
         url = self._build_url(endpoint=endpoint(*endpoint_args, **endpoint_kwargs))
         return action(url, **kwargs)
 
@@ -1227,15 +1238,51 @@ class GroupApi(CRUDApi):
                      ratelimit=ratelimit)
 
 
-class ChatApi(CRUDApi):
+class ChatApi(ModifiableApi):
     KNOWN_OBJECTS = CHAT_CLASS_MAPPING
 
     def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
-        CRUDApi.__init__(self, subdomain, session, endpoint,
-                         timeout=timeout,
-                         object_type='chat',
-                         ratelimit=ratelimit)
+        ModifiableApi.__init__(self, subdomain, session, endpoint,
+                               timeout=timeout,
+                               object_type='chat',
+                               ratelimit=ratelimit)
         self.url_template = "%(protocol)s://www.zopim.com/api/%(version)s"
+
+    def update(self, chat_object):
+        payload = self._build_update_payload(chat_object)
+        id = payload.pop('id')
+        return self._do(self._put,
+                        endpoint=self.endpoint,
+                        endpoint_kwargs=dict(id=id),
+                        payload=payload)
+
+    def create(self, chat_object):
+        payload = self._build_payload(chat_object)
+        return self._do(self._post,
+                        endpoint=self.endpoint,
+                        payload=payload)
+
+    def delete(self, chat_object):
+        self._check_type(chat_object)
+        return self._do(self._delete, endpoint_kwargs=dict(id=chat_object.id))
+
+    def _build_update_payload(self, chat_objects):
+        self._check_type(chat_objects)
+        return self.flatten_chat_object(self._serialize(chat_objects))
+
+    def _build_payload(self, chat_objects):
+        self._check_type(chat_objects)
+        return self._serialize(chat_objects)
+
+    def flatten_chat_object(self, chat_object, parent_key=''):
+        items = []
+        for key, value in chat_object.items():
+            new_key = "{}.{}".format(parent_key, key) if parent_key else key
+            if isinstance(value, collections.MutableMapping):
+                items.extend(self.flatten_chat_object(value, new_key).items())
+            else:
+                items.append((new_key, value))
+        return dict(items)
 
     def _get_webpath(self, webpaths):
         for webpath in webpaths:

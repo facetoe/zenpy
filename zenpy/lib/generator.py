@@ -1,8 +1,9 @@
 import collections
+
 from datetime import datetime, timedelta
 
-from zenpy.lib.util import as_plural
 from zenpy.lib.object_manager import object_from_json
+from zenpy.lib.util import as_plural
 
 __author__ = 'facetoe'
 
@@ -20,7 +21,7 @@ class BaseResultGenerator(collections.Iterable):
         self.api = api
         self._response_json = response_json
         self.update_attrs()
-        self.values = []
+        self.values = None
         self.position = 0
 
     def process_page(self):
@@ -97,6 +98,17 @@ class ResultGenerator(BaseResultGenerator):
             if (datetime.fromtimestamp(int(end_time)) + timedelta(minutes=5)) > datetime.now():
                 raise StopIteration
         return super(ResultGenerator, self).get_next_page()
+
+
+class ChatResultGenerator(BaseResultGenerator):
+    """ Result generator for show many ChatApi queries. """
+
+    def process_page(self):
+        chats = list()
+        for chat_object in self._response_json['docs'].values():
+            if chat_object:
+                chats.append(object_from_json(self.api, 'chat', chat_object, is_chat_api=True))
+        return chats
 
 
 class SearchResultGenerator(BaseResultGenerator):

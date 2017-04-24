@@ -1,6 +1,5 @@
 import logging
 
-from lib.api_objects.chat_objects import Chat, Session, ResponseTime, Visitor, Webpath
 from zenpy.lib.api_objects import Activity, Request, UserRelated, OrganizationMembership, Upload, SharingAgreement, \
     Macro, Action, MacroResult, AgentMacroReference, Identity
 from zenpy.lib.api_objects import Attachment
@@ -46,6 +45,7 @@ from zenpy.lib.api_objects import User
 from zenpy.lib.api_objects import UserField
 from zenpy.lib.api_objects import Via
 from zenpy.lib.api_objects import VoiceCommentEvent
+from zenpy.lib.api_objects.chat_objects import Chat, Session, ResponseTime, Visitor, Webpath, Count, OfflineMessage
 from zenpy.lib.cache import add_to_cache
 from zenpy.lib.exception import ZenpyException
 
@@ -114,10 +114,12 @@ ZENDESK_CLASS_MAPPING = {
 
 CHAT_CLASS_MAPPING = {
     'chat': Chat,
+    'offline_msg': OfflineMessage,
     'session': Session,
     'response_time': ResponseTime,
     'visitor': Visitor,
     'webpath': Webpath,
+    'count': Count
 
 }
 

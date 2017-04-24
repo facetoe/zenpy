@@ -4353,7 +4353,6 @@ class TicketEvent(BaseObject):
                  api=None,
                  id=None,
                  ticket_id=None,
-                 timestamp=None,
                  updater_id=None,
                  via=None,
                  **kwargs):
@@ -4361,9 +4360,10 @@ class TicketEvent(BaseObject):
         self.api = api
 
         self._child_events = None
+
+        self._timestamp = None
         self.id = id
         self.ticket_id = ticket_id
-        self.timestamp = timestamp
         self.updater_id = updater_id
         self.via = via
 
@@ -4380,6 +4380,17 @@ class TicketEvent(BaseObject):
     def child_events(self, child_events):
         if child_events:
             self._child_events = child_events
+
+    @property
+    def timestamp(self):
+
+        if self._timestamp:
+            return dateutil.parser.parse(self._timestamp)
+
+    @timestamp.setter
+    def timestamp(self, timestamp):
+        if timestamp:
+            self._timestamp = timestamp
 
     @property
     def ticket(self):

@@ -329,11 +329,16 @@ class MacroEndpoint(BaseEndpoint):
 
 
 class ChatEndpoint(object):
-    def __init__(self, *args):
-        self.endpoint = "/".join(args)
+    def __init__(self, endpoint):
+        self.endpoint = endpoint
 
     def __call__(self, **kwargs):
-        return self.endpoint.format(kwargs)
+        endpoint_path = self.endpoint
+        if 'id' in kwargs:
+            endpoint_path = "{}/{}".format(self.endpoint, kwargs['id'])
+        elif 'ids' in kwargs:
+            endpoint_path = "{}?ids={}".format(self.endpoint, ','.join(kwargs['ids']))
+        return endpoint_path
 
 
 class Endpoint(object):
@@ -345,8 +350,8 @@ class Endpoint(object):
     attachments = PrimaryEndpoint('attachments')
     attachments.upload = AttachmentEndpoint('uploads.json?')
     brands = PrimaryEndpoint('brands')
-    chat = ChatEndpoint('chats')
-    chat.me = ChatEndpoint("agents/me")
+    chats = ChatEndpoint('chats')
+    chats.me = ChatEndpoint("agents/me")
     end_user = SecondaryEndpoint('end_users/%(id)s.json')
     group_memberships = PrimaryEndpoint('group_memberships', sideload=['users', ' groups'])
     groups = PrimaryEndpoint('groups', ['users'])
