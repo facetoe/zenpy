@@ -1,0 +1,20 @@
+{
+  "body": "Your request ({{ticket.id}}) has been received and is being reviewed by our support staff.\n\nTo add additional comments, reply to this email.\n\n{{ticket.comments_formatted}}",
+  "via": {
+    "source": {
+      "to": {},
+      "from": {
+        "id": 61351077,
+        "title": "Notify requester of received request"
+      },
+      "rel": "trigger"
+    },
+    "channel": "rule"
+  },
+  "recipients": [
+    1276936927
+  ],
+  "type": "Notification",
+  "id": 55882825957,
+  "subject": "[Request received] {{ticket.title}}"
+}

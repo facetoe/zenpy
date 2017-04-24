@@ -1,0 +1,104 @@
+{
+  "via": {
+    "source": {
+      "to": {},
+      "from": {},
+      "rel": null
+    },
+    "channel": "api"
+  },
+  "created_at": "2015-08-29T03:45:36Z",
+  "events": [
+    {
+      "body": "THIS IS MY FUNCY COMMENT",
+      "attachments": [],
+      "audit_id": 55882825727,
+      "id": 55882825747,
+      "author_id": 1276936927,
+      "type": "Comment",
+      "public": true,
+      "html_body": "<div class=\"zd-comment\"><p>THIS IS MY FUNCY COMMENT</p></div>"
+    },
+    {
+      "field_name": "subject",
+      "type": "Create",
+      "id": 55882825847,
+      "value": "OMG I MADE A TICKET"
+    },
+    {
+      "field_name": "requester_id",
+      "type": "Create",
+      "id": 55882825867,
+      "value": "1276936927"
+    },
+    {
+      "field_name": "priority",
+      "type": "Create",
+      "id": 55882825877,
+      "value": null
+    },
+    {
+      "field_name": "type",
+      "type": "Create",
+      "id": 55882825897,
+      "value": null
+    },
+    {
+      "field_name": "assignee_id",
+      "type": "Create",
+      "id": 55882825907,
+      "value": "1276936927"
+    },
+    {
+      "field_name": "group_id",
+      "type": "Create",
+      "id": 55882825927,
+      "value": "26425647"
+    },
+    {
+      "field_name": "organization_id",
+      "type": "Create",
+      "id": 55882825937,
+      "value": "472989027"
+    },
+    {
+      "field_name": "status",
+      "type": "Create",
+      "id": 55882825947,
+      "value": "open"
+    },
+    {
+      "body": "Your request ({{ticket.id}}) has been received and is being reviewed by our support staff.\n\nTo add additional comments, reply to this email.\n\n{{ticket.comments_formatted}}",
+      "via": {
+        "source": {
+          "to": {},
+          "from": {
+            "id": 61351077,
+            "title": "Notify requester of received request"
+          },
+          "rel": "trigger"
+        },
+        "channel": "rule"
+      },
+      "recipients": [
+        1276936927
+      ],
+      "type": "Notification",
+      "id": 55882825957,
+      "subject": "[Request received] {{ticket.title}}"
+    }
+  ],
+  "ticket_id": 7,
+  "author_id": 1276936927,
+  "id": 55882825727,
+  "metadata": {
+    "system": {
+      "latitude": 1.2931000000000097,
+      "client": "python-requests/2.5.1 CPython/2.7.10 Linux/4.1.6-1-ARCH",
+      "ip_address": "52.74.122.226",
+      "location": "Singapore, 00, Singapore",
+      "longitude": 103.85579999999999
+    },
+    "custom": {}
+  }
+}

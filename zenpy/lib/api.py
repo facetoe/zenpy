@@ -13,7 +13,7 @@ from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import APIException, RecordNotFoundException, TooManyValuesException
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.generator import SearchResultGenerator, ResultGenerator
-from zenpy.lib.object_manager import class_for_type, object_from_json, CLASS_MAPPING
+from zenpy.lib.object_manager import class_for_type, object_from_json, ZENDESK_CLASS_MAPPING, CHAT_CLASS_MAPPING
 from zenpy.lib.util import as_plural, as_singular
 
 __author__ = 'facetoe'
@@ -39,7 +39,7 @@ class BaseApi(object):
     rate limiting and deserializing responses.
     """
 
-    KNOWN_OBJECTS = CLASS_MAPPING.keys()
+    KNOWN_OBJECTS = ZENDESK_CLASS_MAPPING
 
     def __init__(self, subdomain, session, endpoint, object_type, timeout, ratelimit):
         self.subdomain = subdomain
@@ -50,7 +50,7 @@ class BaseApi(object):
         self.object_type = object_type
         self.protocol = 'https'
         self.version = 'v2'
-        self.base_url = "%(protocol)s://%(subdomain)s.zendesk.com/api/%(version)s" % vars(self)
+        self.url_template = "%(protocol)s://%(subdomain)s.zendesk.com/api/%(version)s"
         self.callsafety = {
             'lastcalltime': None,
             'lastlimitremaining': None
@@ -97,15 +97,16 @@ class BaseApi(object):
             response = http_method(url, **kwargs)
 
         # If we are being rate-limited, wait the required period before trying again.
-        while 'retry-after' in response.headers and int(response.headers['retry-after']) > 0:
-            retry_after_seconds = int(response.headers['retry-after'])
-            log.warn(
-                "Waiting for requested retry-after period: %s seconds" % retry_after_seconds)
-            while retry_after_seconds > 0:
-                retry_after_seconds -= 1
-                log.debug("    -> sleeping: %s more seconds" % retry_after_seconds)
-                sleep(1)
-            response = http_method(url, **kwargs)
+        if response.status_code == 429:
+            while 'retry-after' in response.headers and int(response.headers['retry-after']) > 0:
+                retry_after_seconds = int(response.headers['retry-after'])
+                log.warn(
+                    "Waiting for requested retry-after period: %s seconds" % retry_after_seconds)
+                while retry_after_seconds > 0:
+                    retry_after_seconds -= 1
+                    log.debug("    -> sleeping: %s more seconds" % retry_after_seconds)
+                    sleep(1)
+                response = http_method(url, **kwargs)
 
         self._check_response(response)
         self._update_callsafety(response)
@@ -144,7 +145,7 @@ class BaseApi(object):
         """ Update the callsafety data structure """
         if self.ratelimit is not None:
             self.callsafety['lastcalltime'] = time()
-            self.callsafety['lastlimitremaining'] = int(response.headers['X-Rate-Limit-Remaining'])
+            self.callsafety['lastlimitremaining'] = int(response.headers.get('X-Rate-Limit-Remaining', 0))
 
     def _process_response(self, response):
         """
@@ -198,6 +199,7 @@ class BaseApi(object):
                                        object_type=plural_zenpy_object_name,
                                        zenpy_objects=zenpy_objects[plural_zenpy_object_name])
 
+        print(self.KNOWN_OBJECTS)
         # Bummer, bail out with an informative message.
         raise ZenpyException("Unknown Response: " + str(response_json))
 
@@ -214,14 +216,20 @@ class BaseApi(object):
         :param response_json: 
         """
         response_objects = dict()
-
+        is_chat_api = isinstance(self, ChatApi)
         if all((t in response_json for t in ('ticket', 'audit'))):
-            response_objects["ticket_audit"] = object_from_json(self, "ticket_audit", response_json)
+            response_objects["ticket_audit"] = object_from_json(self,
+                                                                "ticket_audit",
+                                                                response_json,
+                                                                is_chat_api=is_chat_api)
 
         # Locate and store the single objects.
         for zenpy_object_name in self.KNOWN_OBJECTS:
             if zenpy_object_name in response_json:
-                zenpy_object = object_from_json(self, zenpy_object_name, response_json[zenpy_object_name])
+                zenpy_object = object_from_json(self,
+                                                zenpy_object_name,
+                                                response_json[zenpy_object_name],
+                                                is_chat_api=is_chat_api)
                 response_objects[zenpy_object_name] = zenpy_object
 
         # Locate and store the collections of objects.
@@ -231,7 +239,10 @@ class BaseApi(object):
                 if zenpy_object_name in self.KNOWN_OBJECTS:
                     response_objects[key] = []
                     for object_json in response_json[key]:
-                        zenpy_object = object_from_json(self, zenpy_object_name, object_json)
+                        zenpy_object = object_from_json(self,
+                                                        zenpy_object_name,
+                                                        object_json,
+                                                        is_chat_api=is_chat_api)
                         response_objects[key].append(zenpy_object)
         return response_objects
 
@@ -276,6 +287,8 @@ class BaseApi(object):
         Check the response code returned by Zendesk. If it is outside the 200 range, raise an exception of the correct type.
         :param response: requests Response object.
         """
+        print(response.headers)
+        print(response.json())
         if response.status_code > 299 or response.status_code < 200:
             log.debug("Received response code [%s] - headers: %s" % (response.status_code, str(response.headers)))
             try:
@@ -292,7 +305,7 @@ class BaseApi(object):
 
     def _build_url(self, endpoint=''):
         """ Build complete URL """
-        return "/".join((self.base_url, endpoint))
+        return "/".join((self.url_template % vars(self), endpoint))
 
     def get_sideloads(self, method_name=None):
         """
@@ -444,7 +457,7 @@ class ModifiableApi(Api):
 
     def _check_type(self, zenpy_objects):
         """ Ensure the passed type matches this API's object_type. """
-        expected_type = class_for_type(self.object_type)
+        expected_type = class_for_type(self.object_type, is_chat_api=isinstance(self, ChatApi))
         if not isinstance(zenpy_objects, collections.Iterable):
             zenpy_objects = [zenpy_objects]
         for zenpy_object in zenpy_objects:
@@ -1212,3 +1225,18 @@ class GroupApi(CRUDApi):
                      timeout=timeout,
                      object_type='group',
                      ratelimit=ratelimit)
+
+
+class ChatApi(CRUDApi):
+    KNOWN_OBJECTS = CHAT_CLASS_MAPPING
+
+    def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
+        CRUDApi.__init__(self, subdomain, session, endpoint,
+                         timeout=timeout,
+                         object_type='chat',
+                         ratelimit=ratelimit)
+        self.url_template = "%(protocol)s://www.zopim.com/api/%(version)s"
+
+    def _get_webpath(self, webpaths):
+        for webpath in webpaths:
+            yield object_from_json(self, 'webpath', webpath, is_chat_api=True)

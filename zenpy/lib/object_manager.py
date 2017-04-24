@@ -1,5 +1,6 @@
 import logging
 
+from lib.api_objects.chat_objects import Chat, Session, ResponseTime, Visitor, Webpath
 from zenpy.lib.api_objects import Activity, Request, UserRelated, OrganizationMembership, Upload, SharingAgreement, \
     Macro, Action, MacroResult, AgentMacroReference, Identity
 from zenpy.lib.api_objects import Attachment
@@ -53,7 +54,7 @@ log = logging.getLogger(__name__)
 __author__ = 'facetoe'
 
 # Dictionary for mapping object types to Python classes
-CLASS_MAPPING = {
+ZENDESK_CLASS_MAPPING = {
     'ticket': Ticket,
     'user': User,
     'organization': Organization,
@@ -111,29 +112,56 @@ CLASS_MAPPING = {
     'identity': Identity
 }
 
+CHAT_CLASS_MAPPING = {
+    'chat': Chat,
+    'session': Session,
+    'response_time': ResponseTime,
+    'visitor': Visitor,
+    'webpath': Webpath,
 
-def class_for_type(object_type):
+}
+
+
+def class_for_type(object_type, is_chat_api=False):
     """ Given an object_type return the class associated with it. """
-    if object_type not in CLASS_MAPPING:
+    class_mapping = _get_class_mapping(is_chat_api)
+    if object_type not in class_mapping:
         raise ZenpyException("Unknown object_type: " + str(object_type))
     else:
-        return CLASS_MAPPING[object_type]
+        return class_mapping[object_type]
 
 
-def object_from_json(api, object_type, object_json):
+def object_from_json(api, object_type, object_json, is_chat_api=False):
     """ 
     Given a blob of JSON representing a Zenpy object, recursively deserialize it and 
      any nested objects it contains. 
     """
     if not isinstance(object_json, dict):
         return
-    ZenpyClass = class_for_type(object_type)
+    ZenpyClass = class_for_type(object_type, is_chat_api=is_chat_api)
     obj = ZenpyClass(api=api)
     for key, value in object_json.items():
-        if key in ('metadata', 'from', 'system', 'photo', 'thumbnails'):
-            key = '_%s' % key
-        if key in CLASS_MAPPING:
-            value = object_from_json(api, key, value)
+        key = format_key(key, is_chat_api)
+        if key in _get_class_mapping(is_chat_api):
+            print(key, value)
+            value = object_from_json(api, key, value, is_chat_api=is_chat_api)
         setattr(obj, key, value)
     add_to_cache(obj)
     return obj
+
+
+def format_key(key, is_chat_api):
+    if is_chat_api:
+        if key in ('webpath',):
+            key = '_{}'.format(key)
+    elif key in ('metadata', 'from', 'system', 'photo', 'thumbnails'):
+        key = '{}'.format(key)
+    return key
+
+
+def _get_class_mapping(is_chat_api):
+    """ Return the correct class mapping for the current API. """
+    class_mapping = ZENDESK_CLASS_MAPPING
+    if is_chat_api:
+        class_mapping = CHAT_CLASS_MAPPING
+    return class_mapping
