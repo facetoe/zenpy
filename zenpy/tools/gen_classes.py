@@ -162,7 +162,7 @@ class Attribute(object):
         if attr_name == 'from':
             attr_name = 'from_'
 
-        self.key = attr_name
+        self.key = '_{}'.format(attr_name) if attr_name == 'timestamp' else attr_name
         self.attr_docs = attr_docs
         self.object_type = self.get_object_type(attr_name)
         self.object_name = self.get_object_name(attr_name, attr_value)
@@ -181,24 +181,17 @@ class Attribute(object):
             object_type = 'users'
         elif attr_name in ('forum_topic_id',):
             object_type = 'topic'
-        elif attr_name.endswith('_at'):
+        elif attr_name.endswith('_at') or attr_name.endswith('timestamp'):
             object_type = 'date'
-        elif attr_name == 'id':
-            object_type = 'id'
         else:
             object_type = attr_name.replace('_id', '')
         return object_type
 
     def get_attr_name(self, object_name, attr_name, attr_value):
-        if isinstance(attr_value, bool):
-            return attr_name
-        elif isinstance(attr_value, dict) and object_name not in ('ticket', 'audit'):
-            return "_%s" % attr_name
-        elif attr_name == 'id' or attr_name.endswith('_ids') or attr_name in ('tags',):
-            return attr_name
-        elif attr_name.endswith('_id') or attr_name.endswith('_at'):
-            return attr_name
-        elif object_name == attr_name and isinstance(attr_value, list):
+        should_modify = attr_name.endswith('timestamp') \
+                        or (isinstance(attr_value, dict) and object_name not in ('ticket', 'audit')) \
+                        or (object_name == attr_name and isinstance(attr_value, list) and attr_name not in ('tags',))
+        if should_modify:
             return "_%s" % attr_name
         else:
             return attr_name
@@ -218,11 +211,30 @@ class Attribute(object):
         return attr_name
 
     def get_is_property(self, attr_name, attr_value):
-        if attr_name in ('author', 'to', 'from', 'locale', 'locale_id', 'tags', 'domain_names', 'ticket', 'audit'):
+        not_properties = (
+            'author',
+            'to',
+            'from',
+            'locale',
+            'locale_id',
+            'tags',
+            'domain_names',
+            'ticket',
+            'audit',
+            # ChatApi
+            'agent_names',
+            'count',
+            'response_time',
+            'session',
+            'visitor',
+            'agent_names',
+            'count'
+        )
+        if attr_name in not_properties:
             return False
         elif any([isinstance(attr_value, t) for t in (dict, list)]):
             return True
-        elif attr_name.endswith('_at'):
+        elif self.object_type == 'date':
             return True
         elif attr_name.endswith('_id') and isinstance(attr_value, int):
             return True
