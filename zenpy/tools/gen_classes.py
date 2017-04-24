@@ -7,6 +7,7 @@ import glob
 import os
 import re
 import sys
+from yapf.yapflib.yapf_api import FormatCode
 
 __author__ = 'facetoe'
 from jinja2 import Template
@@ -309,16 +310,18 @@ def process_file(path, output):
     class_name = os.path.basename(os.path.splitext(path)[0]).capitalize()
     class_name = "".join([w.capitalize() for w in class_name.split('_')])
     class_code = Class(class_name, json.load(open(path)), doc_json).render()
-
-    print("Processing: %s -> %s" % (os.path.basename(path), class_name))
-    output.write(class_code)
+    print("Processed: %s -> %s" % (os.path.basename(path), class_name))
+    return class_code
 
 
 with open(os.path.join(options.out_path, 'api_objects.py'), 'w+') as out_file:
-    out_file.write(BASE_CLASSS)
+    classes = [BASE_CLASSS]
     for file_path in glob.glob(os.path.join(options.spec_path, '*.json')):
-        if options.target_file is not None:
-            if os.path.basename(file_path) == options.target_file:
-                process_file(file_path, out_file)
+        if options.target_file is not None and os.path.basename(file_path) == options.target_file:
+            class_code = process_file(file_path, out_file)
         else:
-            process_file(file_path, out_file)
+            class_code = process_file(file_path, out_file)
+        classes.append(class_code)
+    print("Formatting...")
+    formatted_code = FormatCode("\n".join(classes))[0]
+    out_file.write(formatted_code)
