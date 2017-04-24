@@ -141,10 +141,10 @@ def object_from_json(api, object_type, object_json, is_chat_api=False):
     ZenpyClass = class_for_type(object_type, is_chat_api=is_chat_api)
     obj = ZenpyClass(api=api)
     for key, value in object_json.items():
-        key = format_key(key, is_chat_api)
-        if key in _get_class_mapping(is_chat_api):
-            print(key, value)
-            value = object_from_json(api, key, value, is_chat_api=is_chat_api)
+        if isinstance(value, dict):
+            key = format_key(key, is_chat_api)
+            if key in _get_class_mapping(is_chat_api):
+                value = object_from_json(api, key, value, is_chat_api=is_chat_api)
         setattr(obj, key, value)
     add_to_cache(obj)
     return obj
