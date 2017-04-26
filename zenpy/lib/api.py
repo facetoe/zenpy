@@ -4,7 +4,6 @@ import logging
 from datetime import datetime, date
 from time import sleep, time
 
-import os
 from json import JSONEncoder
 
 from zenpy.lib.api_objects import User, Ticket, Macro, Identity
@@ -13,7 +12,8 @@ from zenpy.lib.deserializer import ZendeskDeserializer
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import APIException, RecordNotFoundException, TooManyValuesException
 from zenpy.lib.exception import ZenpyException
-from zenpy.lib.request import GenericCRUDRequest, SuspendedTicketRequest, TagRequest, RateRequest, UserIdentityRequest
+from zenpy.lib.request import CRUDRequest, SuspendedTicketRequest, TagRequest, RateRequest, UserIdentityRequest, \
+    UploadRequest, UserMergeRequest, TicketMergeRequest, SatisfactionRatingRequest
 from zenpy.lib.response import GenericResponseHandler, SearchResponseHandler, CombinationResponseHandler, \
     TagResponseHandler, DeleteResponseHandler, HTTPOKResponseHandler
 from zenpy.lib.util import as_plural
@@ -369,42 +369,7 @@ class Api(BaseApi):
         return results
 
 
-class ModifiableApi(Api):
-    """
-    ModifiableApi contains helper methods for modifying an API
-    """
-
-    def _build_payload(self, api_objects):
-        self._check_type(api_objects)
-        if isinstance(api_objects, collections.Iterable):
-            payload_key = as_plural(self.object_type)
-        else:
-            payload_key = self.object_type
-        return {payload_key: self._serialize(api_objects)}
-
-    def _check_type(self, zenpy_objects):
-        """ Ensure the passed type matches this API's object_type. """
-        expected_type = self._deserializer.class_for_type(self.object_type)
-        if not isinstance(zenpy_objects, collections.Iterable):
-            zenpy_objects = [zenpy_objects]
-        for zenpy_object in zenpy_objects:
-            if type(zenpy_object) is not expected_type:
-                raise ZenpyException(
-                    "Invalid type - expected {} found {}".format(expected_type, type(zenpy_object))
-                )
-
-    def _do(self, action, endpoint_kwargs=None, endpoint_args=None, endpoint=None, **kwargs):
-        if not endpoint:
-            endpoint = self.endpoint
-        if not endpoint_args:
-            endpoint_args = tuple()
-        if not endpoint_kwargs:
-            endpoint_kwargs = dict()
-        url = self._build_url(endpoint=endpoint(*endpoint_args, **endpoint_kwargs))
-        return action(url, **kwargs)
-
-
-class CRUDApi(ModifiableApi):
+class CRUDApi(Api):
     """
     CRUDApi supports create/update/delete operations
     """
@@ -416,7 +381,7 @@ class CRUDApi(ModifiableApi):
 
         :param api_objects: object or objects to create
         """
-        return GenericCRUDRequest(self).perform("POST", api_objects)
+        return CRUDRequest(self).perform("POST", api_objects)
 
     def update(self, api_objects, **kwargs):
         """
@@ -425,7 +390,7 @@ class CRUDApi(ModifiableApi):
 
         :param api_objects: object or objects to update
         """
-        return GenericCRUDRequest(self).perform("PUT", api_objects)
+        return CRUDRequest(self).perform("PUT", api_objects)
 
     def delete(self, api_objects, **kwargs):
         """
@@ -435,10 +400,10 @@ class CRUDApi(ModifiableApi):
         :param api_objects: object or objects to delete
         """
 
-        return GenericCRUDRequest(self).perform("DELETE", api_objects)
+        return CRUDRequest(self).perform("DELETE", api_objects)
 
 
-class SuspendedTicketApi(ModifiableApi):
+class SuspendedTicketApi(Api):
     """
     The SuspendedTicketApi adds some SuspendedTicket specific functionality
     """
@@ -533,7 +498,7 @@ class UserApi(IncrementalApi, CRUDApi):
     The UserApi adds some User specific functionality
     """
 
-    class UserIdentityApi(ModifiableApi):
+    class UserIdentityApi(Api):
         def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
             Api.__init__(self, subdomain, session, endpoint.identities,
                          object_type='identity',
@@ -720,16 +685,7 @@ class UserApi(IncrementalApi, CRUDApi):
         :param dest_user: User object or id to merge into
         :return: The merged User
         """
-        if isinstance(source_user, User):
-            source_user = source_user.id
-        if isinstance(dest_user, User):
-            dest_user = dict(id=dest_user.id)
-        else:
-            dest_user = dict(id=dest_user)
-        return self._do(self._put,
-                        endpoint_kwargs=dict(id=source_user),
-                        payload=dict(user=dest_user),
-                        endpoint=self.endpoint.merge)
+        return UserMergeRequest(self).perform("PUT", source_user, dest_user)
 
     def user_fields(self, user_id):
         """
@@ -756,12 +712,7 @@ class UserApi(IncrementalApi, CRUDApi):
         :return: the created/updated User or a  JobStatus object if a list was passed
         """
 
-        payload = self._build_payload(users)
-        endpoint_kwargs = dict()
-        if isinstance(users, collections.Iterable):
-            endpoint_kwargs['create_or_update_many'] = True
-        return self._do(self._post, endpoint_kwargs, payload=payload,
-                        endpoint=self.endpoint.create_or_update_many)
+        return CRUDRequest(self).perform("POST", users, create_or_update=True)
 
 
 class AttachmentApi(Api):
@@ -784,32 +735,7 @@ class AttachmentApi(Api):
         :return: :class:`Upload` object containing a token and other information
                     (see https://developer.zendesk.com/rest_api/docs/core/attachments#uploading-files)
         """
-
-        if hasattr(fp, 'read'):
-            # File-like objects such as:
-            #   PY3: io.StringIO, io.TextIOBase, io.BufferedIOBase
-            #   PY2: file, io.StringIO, StringIO.StringIO, cStringIO.StringIO
-
-            if not hasattr(fp, 'name') and not target_name:
-                raise ZenpyException("upload requires a target file name")
-            else:
-                target_name = target_name or fp.name
-
-        elif isinstance(fp, str):
-            if os.path.isfile(fp):
-                fp = open(fp, 'rb')
-                target_name = target_name or fp.name
-            elif not target_name:
-                # Valid string, which is not a path, and without a target name
-                raise ZenpyException("upload requires a target file name")
-
-        elif not target_name:
-            # Other serializable types accepted by requests (like dict)
-            raise ZenpyException("upload requires a target file name")
-
-        return self._post(self._build_url(self.endpoint.upload(filename=target_name, token=token)),
-                          data=fp,
-                          payload={})
+        return UploadRequest(self).perform("POST", fp, token=token, target_name=target_name)
 
 
 class EndUserApi(CRUDApi):
@@ -868,11 +794,7 @@ class OrganizationApi(TaggableApi, IncrementalApi, CRUDApi):
         :return: the created/updated Organization
         """
 
-        object_type, payload = self._build_payload(organization)
-        return self._do(self._post,
-                        dict(),
-                        payload=payload,
-                        endpoint=self.endpoint.create_or_update)
+        return CRUDRequest(self).perform("POST", organization, create_or_update=True)
 
 
 class OrganizationMembershipApi(CRUDApi):
@@ -888,7 +810,7 @@ class OrganizationMembershipApi(CRUDApi):
         raise ZenpyException("You cannot update Organization Memberships!")
 
 
-class SatisfactionRatingApi(ModifiableApi):
+class SatisfactionRatingApi(Api):
     def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
         Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='satisfaction_rating',
                      ratelimit=ratelimit)
@@ -900,12 +822,7 @@ class SatisfactionRatingApi(ModifiableApi):
         :param ticket_id: id of Ticket to rate
         :param satisfaction_rating: SatisfactionRating object.
         """
-
-        payload = self._build_payload(satisfaction_rating)
-        return self._do(self._post,
-                        payload=payload,
-                        endpoint=Endpoint.satisfaction_ratings.create,
-                        endpoint_kwargs=dict(id=ticket_id))
+        return SatisfactionRatingRequest(self).perform("POST", ticket_id, satisfaction_rating)
 
 
 class MacroApi(CRUDApi):
@@ -993,11 +910,8 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
             ticket = ticket.id
         if isinstance(macro, Macro):
             macro = macro.id
-
-        return self._do(self._get,
-                        endpoint_kwargs={},
-                        endpoint_args=(ticket, macro),
-                        endpoint=self.endpoint.macro)
+        url = self._build_url(self.endpoint.macro(ticket, macro))
+        return self._get(url)
 
     def merge(self, target, source,
               target_comment=None, source_comment=None):
@@ -1011,23 +925,9 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
 
         :return: a JobStatus object
         """
-        if isinstance(target, Ticket):
-            target = target.id
-        if isinstance(source, Ticket):
-            source_ids = [source.id]
-        else:
-            source_ids = [t.id if isinstance(t, Ticket) else t for t in source]
-
-        payload = dict(
-            ids=source_ids,
-            target_comment=target_comment,
-            source_comment=source_comment
-        )
-
-        return self._do(self._post,
-                        endpoint_kwargs=dict(id=target),
-                        payload=payload,
-                        endpoint=self.endpoint.merge)
+        return TicketMergeRequest(self).perform("POST", target, source,
+                                                target_comment=target_comment,
+                                                source_comment=source_comment)
 
 
 class TicketImportAPI(CRUDApi):
