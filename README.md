@@ -2,15 +2,13 @@
 
 # Zenpy
 
-Zenpy is a Python wrapper for the Zendesk API. The goal of the project is to make it possible to write clean, fast, Pythonic code when interacting with Zendesk progmatically. The wrapper tries to keep API calls to a minimum. Wherever it makes sense objects are cached, and attributes of objects that would trigger an API call are evaluated lazily. 
-
-The wrapper supports both reading and writing from the API.
+Zenpy is a Python wrapper for the Zendesk and Chat APIs. The goal of the project is to make it possible to write clean, fast, Pythonic code when interacting with Zendesk progmatically. The wrapper tries to keep API calls to a minimum. Wherever it makes sense objects are cached, and attributes of objects that would trigger an API call are evaluated lazily. 
 
 Zenpy supports both Python2 and Python3. 
 
 Please report bugs!
 
-Note: I'm currently performing a fairly major refactor of Zenpy. If you have issues with the master branch, please submit an issue and try using the latest stable version. 
+**Note:** I'm currently performing a fairly major refactor of Zenpy. If you have issues with the master branch, please submit an issue and try using the latest stable version. 
 
 * [Quickstart](#quickstart)
 * [Examples](#examples)
@@ -115,6 +113,7 @@ zenpy_client.tickets.update(macro_result.ticket)
 Check out the [documentation](http://docs.facetoe.com.au/) for more info.
 
 ### Contributions
-Contributions are very welcome. 
+Contributions are very welcome. I've written an explanation of the core ideas of the wrapper in the [Contributors Guide](https://github.com/facetoe/zenpy/wiki/Contributors-Guide).
+ 
 
 
