@@ -1,79 +1,77 @@
-import collections
-
 from zenpy.lib.api import Api
-from zenpy.lib.deserializer import ChatDeserializer
-from zenpy.lib.request import AccountRequest
-from zenpy.lib.api_objects.chat_objects import Shortcut, Trigger
-from zenpy.lib.response import ChatResponseHandler, AccountResponseHandler
+from zenpy.lib.object_manager import ChatObjectManager
+from zenpy.lib.request import (
+    AccountRequest,
+    AgentRequest,
+    ChatApiRequest,
+    VisitorRequest
+)
+from zenpy.lib.response import (
+    ChatResponseHandler,
+    AccountResponseHandler,
+    AgentResponseHandler,
+    DeleteResponseHandler,
+    VisitorResponseHandler,
+    ChatSearchResponseHandler,
+    ShortcutResponseHandler,
+    TriggerResponseHandler,
+    BanResponseHandler,
+    GoalResponseHandler,
+    DepartmentResponseHandler
+)
 
 
 class ChatApiBase(Api):
-    def __init__(self, subdomain, session, endpoint, timeout, ratelimit, response_handlers=None):
+    """
+    Implements most generic ChatApi functionality. Most if the actual work is delegated to 
+    Request and Response handlers. 
+    """
+
+    def __init__(self, subdomain, session, endpoint, timeout, ratelimit, request_handler=None):
         super(Api, self).__init__(subdomain, session, endpoint,
-                                            timeout=timeout,
-                                            ratelimit=ratelimit,
-                                            object_type='chat')  # TODO: figure out what to do with object_type
-        self._deserializer = ChatDeserializer(self)
+                                  timeout=timeout,
+                                  ratelimit=ratelimit,
+                                  object_type='chat')
+        self._request_handler = request_handler or ChatApiRequest
+        self._object_manager = ChatObjectManager(self)
         self._url_template = "%(protocol)s://www.zopim.com/%(api_prefix)s"
-        self._response_handlers = response_handlers or (ChatResponseHandler,)
+        self._response_handlers = (
+            DeleteResponseHandler,
+            ChatSearchResponseHandler,
+            ChatResponseHandler,
+            AccountResponseHandler,
+            AgentResponseHandler,
+            VisitorResponseHandler,
+            ShortcutResponseHandler,
+            TriggerResponseHandler,
+            BanResponseHandler,
+            DepartmentResponseHandler,
+            GoalResponseHandler
+        )
 
-    # def update(self, chat_object):
-    #     payload = self._build_update_payload(chat_object)
-    #     identifier = self._get_chat_object_identifier(chat_object)
-    #     return self._do(self._put,
-    #                     endpoint=self.endpoint,
-    #                     endpoint_kwargs={identifier: getattr(chat_object, identifier)},
-    #                     payload=payload)
-    #
-    # def create(self, chat_object):
-    #     payload = self._build_payload(chat_object)
-    #     return self._do(self._post,
-    #                     endpoint=self.endpoint,
-    #                     payload=payload)
-    #
-    # def delete(self, chat_object):
-    #     self._check_type(chat_object)
-    #     identifier = self._get_chat_object_identifier(chat_object)
-    #     return self._do(self._delete, endpoint_kwargs={identifier: getattr(chat_object, identifier)})
-    #
-    # def _get_chat_object_identifier(self, chat_object):
-    #     identifier = 'id'
-    #     for chat_type in (Shortcut, Trigger):
-    #         if isinstance(chat_object, chat_type):
-    #             identifier = 'name'
-    #     return identifier
-    #
-    # def _build_update_payload(self, chat_objects):
-    #     self._check_type(chat_objects)
-    #     return self._flatten_chat_object(self._serialize(chat_objects))
-    #
-    # def _build_payload(self, chat_objects):
-    #     self._check_type(chat_objects)
-    #     return self._serialize(chat_objects)
-    #
-    # def _flatten_chat_object(self, chat_object, parent_key=''):
-    #     items = []
-    #     for key, value in chat_object.items():
-    #         new_key = "{}.{}".format(parent_key, key) if parent_key else key
-    #         if isinstance(value, collections.MutableMapping):
-    #             items.extend(self._flatten_chat_object(value, new_key).items())
-    #         else:
-    #             items.append((new_key, value))
-    #     return dict(items)
-    #
-    # def _get_webpath(self, webpaths):
-    #     for webpath in webpaths:
-    #         yield self._deserializer.object_from_json('webpath', webpath)
+    def create(self, *args, **kwargs):
+        return self._request_handler(self).perform("POST", *args, **kwargs)
+
+    def update(self, *args, **kwargs):
+        return self._request_handler(self).perform("PUT", *args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        return self._request_handler(self).perform("DELETE", *args, **kwargs)
+
+    def _get_ip_address(self, ips):
+        for ip in ips:
+            yield self._object_manager.object_from_json('ip_address', ip)
 
 
-class AccountApi(ChatApiBase):
+class AgentApi(ChatApiBase):
     def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
-        super(AccountApi, self).__init__(subdomain, session, endpoint,
-                                         timeout=timeout,
-                                         ratelimit=ratelimit, response_handlers=(AccountResponseHandler,))
+        super(AgentApi, self).__init__(subdomain, session, endpoint,
+                                       timeout=timeout,
+                                       ratelimit=ratelimit,
+                                       request_handler=AgentRequest)
 
-    def update(self, chat_object):
-        return AccountRequest(self).perform("PUT", chat_object)
+    def me(self):
+        return self._get(self._build_url(self.endpoint.me()))
 
 
 class ChatApi(ChatApiBase):
@@ -81,4 +79,18 @@ class ChatApi(ChatApiBase):
         super(ChatApi, self).__init__(subdomain, session, endpoint,
                                       timeout=timeout,
                                       ratelimit=ratelimit)
-        self.account = AccountApi(subdomain, session, endpoint.account, timeout, ratelimit)
+        self.accounts = ChatApiBase(subdomain, session, endpoint.account, timeout, ratelimit,
+                                    request_handler=AccountRequest)
+        self.agents = AgentApi(subdomain, session, endpoint.agents, timeout, ratelimit)
+        self.visitors = ChatApiBase(subdomain, session, endpoint.visitors, timeout, ratelimit,
+                                    request_handler=VisitorRequest)
+        self.shortcuts = ChatApiBase(subdomain, session, endpoint.shortcuts, timeout, ratelimit)
+        self.triggers = ChatApiBase(subdomain, session, endpoint.triggers, timeout, ratelimit)
+        self.bans = ChatApiBase(subdomain, session, endpoint.bans, timeout, ratelimit)
+        self.departments = ChatApiBase(subdomain, session, endpoint.departments, timeout, ratelimit)
+        self.goals = ChatApiBase(subdomain, session, endpoint.goals, timeout, ratelimit)
+        self.stream = ChatApiBase(subdomain, session, endpoint.stream, timeout, ratelimit)
+
+    def search(self, *args, **kwargs):
+        url = self._build_url(self.endpoint.search(*args, **kwargs))
+        return self._get(url)

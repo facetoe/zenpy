@@ -4,14 +4,20 @@ from abc import abstractmethod
 import os
 
 from zenpy.lib.api_objects import BaseObject, Ticket
-from zenpy.lib.api_objects.chat_objects import Billing, Plan
+from zenpy.lib.api_objects.chat_objects import Shortcut, Trigger
 from zenpy.lib.cache import delete_from_cache
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.util import get_object_type, as_plural
 
 
-class Request(object):
+class RequestHandler(object):
+    """
+    Abstraction of a request to either the Zendesk API or the Chat API. Only POST, PUT and
+    DELETE are handled. Subclasses implement the logic needed to correctly serialize the request
+    to JSON and send off to the relevant API. 
+    """
+
     def __init__(self, api):
         self.api = api
 
@@ -38,7 +44,11 @@ class Request(object):
         pass
 
 
-class ZendeskRequest(Request):
+class BaseZendeskRequest(RequestHandler):
+    """
+    Base class for Zendesk requests. Provides a few handy methods. 
+    """
+
     def build_payload(self, api_objects):
         if isinstance(api_objects, collections.Iterable):
             payload_key = as_plural(self.api.object_type)
@@ -48,7 +58,7 @@ class ZendeskRequest(Request):
 
     def check_type(self, zenpy_objects):
         """ Ensure the passed type matches this API's object_type. """
-        expected_type = self.api._deserializer.class_for_type(self.api.object_type)
+        expected_type = self.api._object_manager.class_for_type(self.api.object_type)
         if not isinstance(zenpy_objects, collections.Iterable):
             zenpy_objects = [zenpy_objects]
         for zenpy_object in zenpy_objects:
@@ -58,7 +68,11 @@ class ZendeskRequest(Request):
                 )
 
 
-class CRUDRequest(ZendeskRequest):
+class CRUDRequest(BaseZendeskRequest):
+    """
+    Generic CRUD request. Most CRUD operations are handled by this class. 
+    """
+
     def post(self, api_objects, *args, **kwargs):
         self.check_type(api_objects)
 
@@ -102,7 +116,11 @@ class CRUDRequest(ZendeskRequest):
         return response
 
 
-class SuspendedTicketRequest(ZendeskRequest):
+class SuspendedTicketRequest(BaseZendeskRequest):
+    """
+    Handle updating and deleting SuspendedTickets. 
+    """
+
     def post(self, api_objects, *args, **kwargs):
         raise NotImplementedError("POST is not implemented for suspended tickets!")
 
@@ -133,7 +151,11 @@ class SuspendedTicketRequest(ZendeskRequest):
         return response
 
 
-class TagRequest(Request):
+class TagRequest(RequestHandler):
+    """
+    Handle tag operations.
+    """
+
     def post(self, tags, *args, **kwargs):
         return self.modify_tags(self.api._post, tags, *args)
 
@@ -149,7 +171,9 @@ class TagRequest(Request):
         return http_method(url, payload=payload)
 
 
-class RateRequest(Request):
+class RateRequest(RequestHandler):
+    """ Handles submitting ratings. """
+
     def post(self, rating, *args, **kwargs):
         url = self.api._build_url(self.api.endpoint.satisfaction_ratings(*args))
         payload = {get_object_type(rating): self.api._serialize(rating)}
@@ -162,7 +186,9 @@ class RateRequest(Request):
         raise NotImplementedError("DELETE is not implemented for RateRequest!")
 
 
-class UserIdentityRequest(ZendeskRequest):
+class UserIdentityRequest(BaseZendeskRequest):
+    """ Handle CRUD operations on UserIdentities. """
+
     def post(self, user, identity):
         payload = self.build_payload(identity)
         url = self.api._build_url(self.api.endpoint(id=user))
@@ -179,7 +205,9 @@ class UserIdentityRequest(ZendeskRequest):
         return self.api._delete(url, payload=payload)
 
 
-class UploadRequest(Request):
+class UploadRequest(RequestHandler):
+    """ Handles uploading files to Zendesk. """
+
     def post(self, fp, token=None, target_name=None):
         if hasattr(fp, 'read'):
             # File-like objects such as:
@@ -213,7 +241,9 @@ class UploadRequest(Request):
         raise NotImplementedError("DELETE is not implemented fpr UploadRequest!")
 
 
-class UserMergeRequest(ZendeskRequest):
+class UserMergeRequest(BaseZendeskRequest):
+    """ Handles merging two users. """
+
     def put(self, source, destination):
         self.check_type(destination)
         if issubclass(type(source), BaseObject):
@@ -232,24 +262,9 @@ class UserMergeRequest(ZendeskRequest):
         raise NotImplementedError("DELETE is not implemented for UserMergeRequest!")
 
 
-class AccountRequest(Request):
-    def put(self, chat_object, *args, **kwargs):
-        return self.create_or_update(self.api._put, chat_object)
+class TicketMergeRequest(RequestHandler):
+    """ Handles merging one or more tickets.  """
 
-    def post(self, chat_object, *args, **kwargs):
-        return self.create_or_update(self.api._post, chat_object)
-
-    def delete(self, chat_object, *args, **kwargs):
-        raise NotImplementedError("Cannot delete accounts!")
-
-    def create_or_update(self, http_method, chat_object):
-        if type(chat_object) not in (Billing, Plan):
-            raise ZenpyException("Invalid type - expected either Billing or Plan, found: {}".format(chat_object))
-        payload = {get_object_type(chat_object): self.api._serialize(chat_object)}
-        return http_method(self.api._build_url(self.api.endpoint()), payload=payload)
-
-
-class TicketMergeRequest(Request):
     def post(self, target, source, target_comment=None, source_comment=None):
         if isinstance(target, Ticket):
             target = target.id
@@ -273,7 +288,9 @@ class TicketMergeRequest(Request):
         raise NotImplementedError("DELETE is not implemented fpr TicketMergeRequest!")
 
 
-class SatisfactionRatingRequest(ZendeskRequest):
+class SatisfactionRatingRequest(BaseZendeskRequest):
+    """ Handle rating a ticket.  """
+
     def post(self, ticket_id, satisfaction_rating):
         payload = self.build_payload(satisfaction_rating)
         url = self.api._build_url(Endpoint.satisfaction_ratings.create(id=ticket_id))
@@ -284,3 +301,88 @@ class SatisfactionRatingRequest(ZendeskRequest):
 
     def delete(self, api_objects, *args, **kwargs):
         raise NotImplementedError("DELETE is not implemented fpr SatisfactionRequest!")
+
+
+class ChatApiRequest(RequestHandler):
+    """
+    Generic Chat API request. Most CRUD operations on Chat API endpoints are handled by this class.
+    """
+
+    def put(self, chat_object):
+        identifier = self.get_object_identifier(chat_object)
+        value = getattr(chat_object, identifier)
+        setattr(chat_object, identifier, None)  # The API freaks out when a identifier is in the JSON
+        payload = self.flatten_chat_object(self.api._serialize(chat_object))
+        url = self.api._build_url(self.api.endpoint(**{identifier: value}))
+        return self.api._put(url, payload=payload)
+
+    def post(self, chat_object):
+        payload = self.api._serialize(chat_object)
+        return self.api._post(self.api._build_url(self.api.endpoint()), payload=payload)
+
+    def delete(self, chat_object, *args, **kwargs):
+        identifier = self.get_object_identifier(chat_object)
+        value = getattr(chat_object, identifier)
+        url = self.api._build_url(self.api.endpoint(**{identifier: value}))
+        return self.api._delete(url)
+
+    def flatten_chat_object(self, chat_object, parent_key=''):
+        items = []
+        for key, value in chat_object.items():
+            new_key = "{}.{}".format(parent_key, key) if parent_key else key
+            if isinstance(value, dict):
+                items.extend(self.flatten_chat_object(value, new_key).items())
+            else:
+                items.append((new_key, value))
+        return dict(items)
+
+    def get_object_identifier(self, chat_object):
+        if type(chat_object) in (Shortcut, Trigger):
+            return 'name'
+        else:
+            return 'id'
+
+
+class AccountRequest(RequestHandler):
+    """ Handle creating and updating Accounts.  """
+
+    def put(self, account):
+        payload = self.build_payload(account)
+        return self.api._put(self.api._build_url(self.api.endpoint()), payload=payload)
+
+    def post(self, account):
+        payload = self.build_payload(account)
+        return self.api._post(self.api._build_url(self.api.endpoint()), payload=payload)
+
+    def delete(self, chat_object, *args, **kwargs):
+        raise NotImplementedError("Cannot delete accounts!")
+
+    def build_payload(self, account):
+        return {get_object_type(account): self.api._serialize(account)}
+
+
+class PersonRequest(RequestHandler):
+    """ Handle CRUD operations on Chat API objects representing people. """
+
+    def put(self, chat_object):
+        agent_id = chat_object.id
+        chat_object.id = None  # The API freaks out if id is included.
+        payload = self.api._serialize(chat_object)
+        url = self.api._build_url(self.api.endpoint(id=agent_id))
+        return self.api._put(url, payload=payload)
+
+    def post(self, account):
+        payload = self.api._serialize(account)
+        return self.api._post(self.api._build_url(self.api.endpoint()), payload=payload)
+
+    def delete(self, chat_object):
+        url = self.api._build_url(self.api.endpoint(id=chat_object.id))
+        return self.api._delete(url)
+
+
+class AgentRequest(PersonRequest):
+    pass
+
+
+class VisitorRequest(PersonRequest):
+    pass

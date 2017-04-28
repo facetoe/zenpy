@@ -46,7 +46,7 @@ from zenpy.lib.api_objects import UserField
 from zenpy.lib.api_objects import Via
 from zenpy.lib.api_objects import VoiceCommentEvent
 from zenpy.lib.api_objects.chat_objects import Chat, Session, ResponseTime, Visitor, Webpath, Count, OfflineMessage, \
-    Shortcut, Trigger, Ban, Account, Plan, Billing
+    Shortcut, Trigger, Ban, Account, Plan, Billing, Roles, Agent, SearchResult, IpAddress, Department, Goal
 from zenpy.lib.cache import add_to_cache
 from zenpy.lib.exception import ZenpyException
 
@@ -55,7 +55,10 @@ log = logging.getLogger(__name__)
 __author__ = 'facetoe'
 
 
-class ZendeskDeserializer(object):
+class ZendeskObjectManager(object):
+    """
+    Handle converting Zendesk JSON objects to Python ones.
+    """
     class_mapping = {
         'ticket': Ticket,
         'user': User,
@@ -120,7 +123,8 @@ class ZendeskDeserializer(object):
     def object_from_json(self, object_type, object_json):
         """ 
         Given a blob of JSON representing a Zenpy object, recursively deserialize it and 
-         any nested objects it contains. 
+         any nested objects it contains. This method also adds the deserialized object
+         to the relevant cache if applicable. 
         """
         if not isinstance(object_json, dict):
             return
@@ -148,7 +152,11 @@ class ZendeskDeserializer(object):
         return key
 
 
-class ChatDeserializer(ZendeskDeserializer):
+class ChatObjectManager(ZendeskObjectManager):
+    """
+    Handle converting Chat API objects to Python ones. This class exists
+    mainly to prevent namespace collisions between the two APIs. 
+    """
     class_mapping = {
         'chat': Chat,
         'offline_msg': OfflineMessage,
@@ -162,11 +170,17 @@ class ChatDeserializer(ZendeskDeserializer):
         'ban': Ban,
         'account': Account,
         'plan': Plan,
-        'billing': Billing
+        'billing': Billing,
+        'agent': Agent,
+        'roles': Roles,
+        'search_result': SearchResult,
+        'ip_address': IpAddress,
+        'department': Department,
+        'goal': Goal
     }
 
     def __init__(self, api):
-        super(ChatDeserializer, self).__init__(api)
+        super(ChatObjectManager, self).__init__(api)
 
     def format_key(self, key):
         if key in ('webpath',):

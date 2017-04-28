@@ -1,4 +1,3 @@
-import collections
 import json
 import logging
 from datetime import datetime, date
@@ -8,15 +7,14 @@ from json import JSONEncoder
 
 from zenpy.lib.api_objects import User, Ticket, Macro, Identity
 from zenpy.lib.cache import query_cache
-from zenpy.lib.deserializer import ZendeskDeserializer
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import APIException, RecordNotFoundException, TooManyValuesException
 from zenpy.lib.exception import ZenpyException
+from zenpy.lib.object_manager import ZendeskObjectManager
 from zenpy.lib.request import CRUDRequest, SuspendedTicketRequest, TagRequest, RateRequest, UserIdentityRequest, \
     UploadRequest, UserMergeRequest, TicketMergeRequest, SatisfactionRatingRequest
-from zenpy.lib.response import GenericResponseHandler, SearchResponseHandler, CombinationResponseHandler, \
+from zenpy.lib.response import GenericZendeskResponseHandler, SearchResponseHandler, CombinationResponseHandler, \
     TagResponseHandler, DeleteResponseHandler, HTTPOKResponseHandler
-from zenpy.lib.util import as_plural
 
 __author__ = 'facetoe'
 
@@ -60,7 +58,7 @@ class BaseApi(object):
             TagResponseHandler,
             SearchResponseHandler,
             CombinationResponseHandler,
-            GenericResponseHandler,
+            GenericZendeskResponseHandler,
             HTTPOKResponseHandler,
         )
 
@@ -157,6 +155,10 @@ class BaseApi(object):
             self.callsafety['lastlimitremaining'] = int(response.headers.get('X-Rate-Limit-Remaining', 0))
 
     def _process_response(self, response):
+        """
+        Attempt to find a ResponseHandler that knows how to process this response. 
+        If no handler can be found, raise an Exception. 
+        """
         try:
             pretty_response = response.json()
         except ValueError:
@@ -230,6 +232,14 @@ class BaseApi(object):
         """ Build complete URL """
         return "/".join((self._url_template % vars(self), endpoint))
 
+    def append_sideload(self, sideload, method_name=None):
+        """ Append a sideload to the list of sideloads. """
+        self.get_sideloads(method_name).append(sideload)
+
+    def remove_sideload(self, sideload, method_name=None):
+        """ Remove a sideload from the list of sideloads. """
+        self.get_sideloads(method_name).remove(sideload)
+
     def get_sideloads(self, method_name=None):
         """
         Return the list of sideloads for this API. If method_name is passed,
@@ -244,14 +254,6 @@ class BaseApi(object):
         else:
             return self.endpoint.sideload
 
-    def append_sideload(self, sideload, method_name=None):
-        """ Append a sideload to the list of sideloads. """
-        self.get_sideloads(method_name).append(sideload)
-
-    def remove_sideload(self, sideload, method_name=None):
-        """ Remove a sideload from the list of sideloads. """
-        self.get_sideloads(method_name).remove(sideload)
-
 
 class Api(BaseApi):
     """
@@ -264,7 +266,7 @@ class Api(BaseApi):
 
     def __init__(self, subdomain, session, endpoint, object_type, timeout, ratelimit):
         super(Api, self).__init__(subdomain, session, endpoint, object_type, timeout, ratelimit)
-        self._deserializer = ZendeskDeserializer(self)
+        self._object_manager = ZendeskObjectManager(self)
 
     def __call__(self, *args, **kwargs):
         return self._query_zendesk(self.endpoint, self.object_type, *args, **kwargs)
@@ -292,28 +294,28 @@ class Api(BaseApi):
 
     def _get_actions(self, actions):
         for action in actions:
-            yield self._deserializer.object_from_json('action', action)
+            yield self._object_manager.object_from_json('action', action)
 
     def _get_events(self, events):
         for event in events:
-            yield self._deserializer.object_from_json(event['type'].lower(), event)
+            yield self._object_manager.object_from_json(event['type'].lower(), event)
 
     def _get_via(self, via):
-        return self._deserializer.object_from_json('via', via)
+        return self._object_manager.object_from_json('via', via)
 
     def _get_source(self, source):
-        return self._deserializer.object_from_json('source', source)
+        return self._object_manager.object_from_json('source', source)
 
     def _get_attachments(self, attachments):
         for attachment in attachments:
-            yield self._deserializer.object_from_json('attachment', attachment)
+            yield self._object_manager.object_from_json('attachment', attachment)
 
     def _get_thumbnails(self, thumbnails):
         for thumbnail in thumbnails:
-            yield self._deserializer.object_from_json('thumbnail', thumbnail)
+            yield self._object_manager.object_from_json('thumbnail', thumbnail)
 
     def _get_satisfaction_rating(self, satisfaction_rating):
-        return self._deserializer.object_from_json('satisfaction_rating', satisfaction_rating)
+        return self._object_manager.object_from_json('satisfaction_rating', satisfaction_rating)
 
     def _get_sharing_agreements(self, sharing_agreement_ids):
         sharing_agreements = []
@@ -326,13 +328,13 @@ class Api(BaseApi):
         return sharing_agreements
 
     def _get_ticket_metric_item(self, metric_item):
-        return self._deserializer.object_from_json('ticket_metric_item', metric_item)
+        return self._object_manager.object_from_json('ticket_metric_item', metric_item)
 
     def _get_metadata(self, metadata):
-        return self._deserializer.object_from_json('metadata', metadata)
+        return self._object_manager.object_from_json('metadata', metadata)
 
     def _get_system(self, system):
-        return self._deserializer.object_from_json('system', system)
+        return self._object_manager.object_from_json('system', system)
 
     def _get_problem(self, problem_id):
         return self._query_zendesk(Endpoint.tickets, 'ticket', id=problem_id)
@@ -356,10 +358,10 @@ class Api(BaseApi):
         return fields
 
     def _get_upload(self, upload):
-        return self._deserializer.object_from_json('upload', upload)
+        return self._object_manager.object_from_json('upload', upload)
 
     def _get_attachment(self, attachment):
-        return self._deserializer.object_from_json('attachment', attachment)
+        return self._object_manager.object_from_json('attachment', attachment)
 
     def _get_child_events(self, child_events):
         return child_events

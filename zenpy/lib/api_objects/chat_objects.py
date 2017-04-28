@@ -19,8 +19,12 @@ class BaseObject(object):
         return copy_dict
 
     def __repr__(self):
+        def stringify(item):
+            return item if isinstance(item, int) else "'{}'".format(item)
+
         if hasattr(self, 'id'):
-            return "[%s(id=%s)]" % (self.__class__.__name__, self.id)
+            return "[%s(id=%s)]" % (self.__class__.__name__,
+                                    stringify(self.id))
         elif hasattr(self, 'token'):
             return "[%s(token='%s')]" % (self.__class__.__name__, self.token)
         elif hasattr(self, 'key'):
@@ -41,6 +45,25 @@ class ResponseTime(BaseObject):
         self.avg = avg
         self.first = first
         self.max = max
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+
+class IpAddress(BaseObject):
+    def __init__(self,
+                 api=None,
+                 id=None,
+                 ip_address=None,
+                 reason=None,
+                 type=None,
+                 **kwargs):
+
+        self.api = api
+        self.id = id
+        self.ip_address = ip_address
+        self.reason = reason
+        self.type = type
 
         for key, value in kwargs.items():
             setattr(self, key, value)
@@ -103,6 +126,17 @@ class Session(BaseObject):
             setattr(self, key, value)
 
 
+class Roles(BaseObject):
+    def __init__(self, api=None, administrator=None, owner=None, **kwargs):
+
+        self.api = api
+        self.administrator = administrator
+        self.owner = owner
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+
 class Visitor(BaseObject):
     def __init__(self,
                  api=None,
@@ -124,6 +158,38 @@ class Visitor(BaseObject):
             setattr(self, key, value)
 
 
+class SearchResult(BaseObject):
+    def __init__(self,
+                 api=None,
+                 id=None,
+                 preview=None,
+                 type=None,
+                 url=None,
+                 **kwargs):
+
+        self.api = api
+
+        self._timestamp = None
+        self.id = id
+        self.preview = preview
+        self.type = type
+        self.url = url
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def timestamp(self):
+
+        if self._timestamp:
+            return dateutil.parser.parse(self._timestamp)
+
+    @timestamp.setter
+    def timestamp(self, timestamp):
+        if timestamp:
+            self._timestamp = timestamp
+
+
 class Definition(BaseObject):
     def __init__(self, api=None, event=None, **kwargs):
 
@@ -136,6 +202,40 @@ class Definition(BaseObject):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+
+class Department(BaseObject):
+    def __init__(self,
+                 api=None,
+                 description=None,
+                 enabled=None,
+                 id=None,
+                 name=None,
+                 **kwargs):
+
+        self.api = api
+
+        self._members = None
+
+        self._settings = None
+        self.description = description
+        self.enabled = enabled
+        self.id = id
+        self.name = name
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def settings(self):
+
+        if self.api and self._settings:
+            return self.api._get_settings(self._settings)
+
+    @settings.setter
+    def settings(self, settings):
+        if settings:
+            self._settings = settings
 
 
 class Plan(BaseObject):
@@ -332,6 +432,86 @@ class OfflineMessage(BaseObject):
     def timestamp(self, timestamp):
         if timestamp:
             self._timestamp = timestamp
+
+
+class Goal(BaseObject):
+    def __init__(self,
+                 api=None,
+                 attribution_model=None,
+                 attribution_period=None,
+                 description=None,
+                 enabled=None,
+                 id=None,
+                 name=None,
+                 **kwargs):
+
+        self.api = api
+
+        self._settings = None
+        self.attribution_model = attribution_model
+        self.attribution_period = attribution_period
+        self.description = description
+        self.enabled = enabled
+        self.id = id
+        self.name = name
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def settings(self):
+
+        if self.api and self._settings:
+            return self.api._get_settings(self._settings)
+
+    @settings.setter
+    def settings(self, settings):
+        if settings:
+            self._settings = settings
+
+
+class Agent(BaseObject):
+    def __init__(self,
+                 api=None,
+                 create_date=None,
+                 display_name=None,
+                 email=None,
+                 enabled=None,
+                 first_name=None,
+                 id=None,
+                 last_login=None,
+                 last_name=None,
+                 login_count=None,
+                 **kwargs):
+
+        self.api = api
+
+        self._departments = None
+
+        self._roles = None
+        self.create_date = create_date
+        self.display_name = display_name
+        self.email = email
+        self.enabled = enabled
+        self.first_name = first_name
+        self.id = id
+        self.last_login = last_login
+        self.last_name = last_name
+        self.login_count = login_count
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def departments(self):
+
+        if self.api and self._departments:
+            return self.api._get_departments(self._departments)
+
+    @departments.setter
+    def departments(self, departments):
+        if departments:
+            self._departments = departments
 
 
 class Trigger(BaseObject):

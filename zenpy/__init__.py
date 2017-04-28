@@ -3,7 +3,6 @@ import logging
 import requests
 from requests.adapters import HTTPAdapter
 
-from zenpy.lib.deserializer import ZendeskDeserializer
 from zenpy.lib.api import UserApi, Api, TicketApi, OrganizationApi, SuspendedTicketApi, EndUserApi, TicketImportAPI, \
     RequestAPI, OrganizationMembershipApi, AttachmentApi, SharingAgreementAPI, SatisfactionRatingApi, MacroApi, \
     GroupApi
@@ -11,6 +10,7 @@ from zenpy.lib.cache import ZenpyCache, cache_mapping, purge_cache
 from zenpy.lib.chat_api import ChatApi
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import ZenpyException
+from zenpy.lib.object_manager import ZendeskObjectManager
 
 log = logging.getLogger()
 
@@ -324,7 +324,7 @@ class Zenpy(object):
         """
         Add a new cache for the named object type and cache implementation
         """
-        if object_type not in ZendeskDeserializer.class_mapping:
+        if object_type not in ZendeskObjectManager.class_mapping:
             raise ZenpyException("No such object type: %s" % object_type)
         cache_mapping[object_type] = ZenpyCache(cache_impl_name, maxsize, **kwargs)
 

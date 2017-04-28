@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
-import json
-from optparse import OptionParser
-
 import glob
-import os
+import json
 import re
 import sys
+from optparse import OptionParser
+
+import os
 from yapf.yapflib.yapf_api import FormatCode
 
 __author__ = 'facetoe'
@@ -233,7 +233,11 @@ class Attribute(object):
             'actions',
             'condition',
             'billing',
-            'plan'
+            'plan',
+            'agent',
+            'roles',
+            'department',
+            'members'
         )
         if attr_name in not_properties:
             return False
@@ -285,8 +289,10 @@ class BaseObject(object):
         return copy_dict
 
     def __repr__(self):
+        def stringify(item):
+            return item if isinstance(item, int) else "'{}'".format(item)
         if hasattr(self, 'id'):
-            return "[%s(id=%s)]" % (self.__class__.__name__, self.id)
+            return "[%s(id=%s)]" % (self.__class__.__name__, stringify(self.id))
         elif hasattr(self, 'token'):
             return "[%s(token='%s')]" % (self.__class__.__name__, self.token)
         elif hasattr(self, 'key'):

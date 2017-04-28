@@ -1,5 +1,5 @@
 import collections
-
+from abc import abstractmethod
 from datetime import datetime, timedelta
 
 from zenpy.lib.util import as_plural
@@ -13,7 +13,8 @@ log = logging.getLogger(__name__)
 
 class BaseResultGenerator(collections.Iterable):
     """
-    Base class for result generators. Subclasses should implement process_page() to populate the values array. 
+    Base class for result generators. Subclasses should implement process_page()
+    and return a list of results. 
     """
 
     def __init__(self, response_handler, response_json):
@@ -23,9 +24,9 @@ class BaseResultGenerator(collections.Iterable):
         self.values = None
         self.position = 0
 
+    @abstractmethod
     def process_page(self):
         """ Subclasses should do whatever processing is necessary and return a list of the results. """
-        pass
 
     def next(self):
         if self.values is None:
@@ -94,7 +95,6 @@ class ZendeskResultGenerator(BaseResultGenerator):
         return super(ZendeskResultGenerator, self).get_next_page()
 
 
-#TODO refactor this to have a handler
 class SearchResultGenerator(BaseResultGenerator):
     """ Result generator for search queries. """
 
@@ -107,5 +107,9 @@ class SearchResultGenerator(BaseResultGenerator):
 
 
 class ChatResultGenerator(BaseResultGenerator):
+    """
+    Generator for ChatApi objects 
+    """
+
     def process_page(self):
         return self.response_handler.deserialize(self._response_json)
