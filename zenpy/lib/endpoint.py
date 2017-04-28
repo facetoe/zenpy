@@ -1,7 +1,7 @@
 import logging
-
 import time
 from datetime import datetime
+
 from dateutil.tz import tzutc
 
 from zenpy.lib.exception import ZenpyException
@@ -328,6 +328,41 @@ class MacroEndpoint(BaseEndpoint):
         return url_out
 
 
+class ChatEndpoint(object):
+    def __init__(self, endpoint):
+        self.endpoint = endpoint
+
+    def __call__(self, **kwargs):
+        if len(kwargs) > 1:
+            raise ZenpyException("Only expect a single keyword to the ChatEndpoint")
+        endpoint_path = self.endpoint
+        if 'ids' in kwargs:
+            endpoint_path = "{}?ids={}".format(self.endpoint, ','.join(kwargs['ids']))
+        else:
+            for key, value in kwargs.items():
+                if key == 'email':
+                    endpoint_path = '{}/email/{}'.format(self.endpoint, value)
+                elif self.endpoint == 'departments' and key == 'name':
+                    endpoint_path = '{}/name/{}'.format(self.endpoint, value)
+                else:
+                    endpoint_path = "{}/{}".format(self.endpoint, value)
+                break
+        return endpoint_path
+
+
+class ChatSearchEndpoint(object):
+    def __init__(self, endpoint):
+        self.endpoint = endpoint
+
+    def __call__(self, *args, **kwargs):
+        conditions = list()
+        if args:
+            conditions.append(' '.join(args))
+
+        conditions.extend(["{}:{}".format(k, v) for k, v in kwargs.items()])
+        return self.endpoint + " AND ".join(conditions)
+
+
 class Endpoint(object):
     """
     The Endpoint object ties it all together.
@@ -337,6 +372,18 @@ class Endpoint(object):
     attachments = PrimaryEndpoint('attachments')
     attachments.upload = AttachmentEndpoint('uploads.json?')
     brands = PrimaryEndpoint('brands')
+    chats = ChatEndpoint('chats')
+    chats.account = ChatEndpoint('account')
+    chats.agents = ChatEndpoint('agents')
+    chats.agents.me = ChatEndpoint("agents/me")
+    chats.bans = ChatEndpoint('bans')
+    chats.departments = ChatEndpoint('departments')
+    chats.goals = ChatEndpoint('goals')
+    chats.triggers = ChatEndpoint('triggers')
+    chats.shortcuts = ChatEndpoint('shortcuts')
+    chats.visitors = ChatEndpoint('visitors')
+    chats.search = ChatSearchEndpoint('chats/search?q=')
+    chats.stream = ChatSearchEndpoint('stream/chats')
     end_user = SecondaryEndpoint('end_users/%(id)s.json')
     group_memberships = PrimaryEndpoint('group_memberships', sideload=['users', ' groups'])
     groups = PrimaryEndpoint('groups', ['users'])

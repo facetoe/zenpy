@@ -1,9 +1,9 @@
 import logging
+from threading import RLock
 
 import cachetools
-from threading import RLock
-from zenpy.lib.api_objects import BaseObject
 
+from zenpy.lib.api_objects import BaseObject
 from zenpy.lib.exception import ZenpyCacheException
 from zenpy.lib.util import get_object_type
 

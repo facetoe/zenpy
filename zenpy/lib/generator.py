@@ -1,8 +1,8 @@
 import collections
+from abc import abstractmethod
 from datetime import datetime, timedelta
 
 from zenpy.lib.util import as_plural
-from zenpy.lib.object_manager import object_from_json
 
 __author__ = 'facetoe'
 
@@ -13,19 +13,20 @@ log = logging.getLogger(__name__)
 
 class BaseResultGenerator(collections.Iterable):
     """
-    Base class for result generators. Subclasses should implement process_page() to populate the values array. 
+    Base class for result generators. Subclasses should implement process_page()
+    and return a list of results. 
     """
 
-    def __init__(self, api, response_json):
-        self.api = api
+    def __init__(self, response_handler, response_json):
+        self.response_handler = response_handler
         self._response_json = response_json
         self.update_attrs()
-        self.values = []
+        self.values = None
         self.position = 0
 
+    @abstractmethod
     def process_page(self):
         """ Subclasses should do whatever processing is necessary and return a list of the results. """
-        raise NotImplemented("You must implement process page when subclassing BaseGenerator.")
 
     def next(self):
         if self.values is None:
@@ -57,7 +58,7 @@ class BaseResultGenerator(collections.Iterable):
         if url is None:
             raise StopIteration()
         log.debug("GENERATOR: " + url)
-        response = self.api._get(url, raw_response=True)
+        response = self.response_handler.api._get(url, raw_response=True)
         return response.json()
 
     def __iter__(self):
@@ -70,17 +71,12 @@ class BaseResultGenerator(collections.Iterable):
         return self.next()
 
 
-class ResultGenerator(BaseResultGenerator):
+class ZendeskResultGenerator(BaseResultGenerator):
     """ Generic result generator. """
 
-    def __init__(self, api, response_json, object_type=None, zenpy_objects=None):
-        super(ResultGenerator, self).__init__(api, response_json)
-        self.values = zenpy_objects or None
-        self.object_type = object_type or self.api.object_type
-
     def process_page(self):
-        response_objects = self.api._deserialize(self._response_json)
-        return response_objects[as_plural(self.object_type)]
+        response_objects = self.response_handler.deserialize(self._response_json)
+        return response_objects[as_plural(self.response_handler.api.object_type)]
 
     def get_next_page(self):
         end_time = self._response_json.get('end_time', None)
@@ -96,7 +92,7 @@ class ResultGenerator(BaseResultGenerator):
             # start_time value is less than 5 minutes in the future.
             if (datetime.fromtimestamp(int(end_time)) + timedelta(minutes=5)) > datetime.now():
                 raise StopIteration
-        return super(ResultGenerator, self).get_next_page()
+        return super(ZendeskResultGenerator, self).get_next_page()
 
 
 class SearchResultGenerator(BaseResultGenerator):
@@ -106,5 +102,14 @@ class SearchResultGenerator(BaseResultGenerator):
         search_results = list()
         for object_json in self._response_json['results']:
             object_type = object_json.pop('result_type')
-            search_results.append(object_from_json(self.api, object_type, object_json))
+            search_results.append(self.response_handler.api.deserializer.object_from_json(object_type, object_json))
         return search_results
+
+
+class ChatResultGenerator(BaseResultGenerator):
+    """
+    Generator for ChatApi objects 
+    """
+
+    def process_page(self):
+        return self.response_handler.deserialize(self._response_json)

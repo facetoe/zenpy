@@ -19,18 +19,34 @@ class BaseObject(object):
         return copy_dict
 
     def __repr__(self):
+        def stringify(item):
+            return item if isinstance(item, int) else "'{}'".format(item)
+
         if hasattr(self, 'id'):
-            return "[%s(id=%s)]" % (self.__class__.__name__, self.id)
+            return "[%s(id=%s)]" % (self.__class__.__name__,
+                                    stringify(self.id))
         elif hasattr(self, 'token'):
             return "[%s(token='%s')]" % (self.__class__.__name__, self.token)
         elif hasattr(self, 'key'):
             return "[%s(key='%s')]" % (self.__class__.__name__, self.key)
+        elif hasattr(self, 'name'):
+            return "[%s(name='%s')]" % (self.__class__.__name__, self.name)
+        elif hasattr(self, 'account_key'):
+            return "[%s(account_key='%s')]" % (self.__class__.__name__,
+                                               self.account_key)
         else:
             return "[%s()]" % self.__class__.__name__
 
 
 class PushEvent(BaseObject):
-    def __init__(self, api=None, id=None, type=None, value=None, value_reference=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 id=None,
+                 type=None,
+                 value=None,
+                 value_reference=None,
+                 **kwargs):
+
         self.api = api
         self.id = id
         self.type = type
@@ -42,8 +58,19 @@ class PushEvent(BaseObject):
 
 
 class VoiceCommentEvent(BaseObject):
-    def __init__(self, api=None, author_id=None, body=None, formatted_from=None, formatted_to=None, html_body=None,
-                 id=None, public=None, transcription_visible=None, trusted=None, type=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 author_id=None,
+                 body=None,
+                 formatted_from=None,
+                 formatted_to=None,
+                 html_body=None,
+                 id=None,
+                 public=None,
+                 transcription_visible=None,
+                 trusted=None,
+                 type=None,
+                 **kwargs):
 
         self.api = api
 
@@ -137,9 +164,20 @@ class CcEvent(BaseObject):
 
 
 class UserRelated(BaseObject):
-    def __init__(self, api=None, assigned_tickets=None, ccd_tickets=None, entry_subscriptions=None,
-                 forum_subscriptions=None, organization_subscriptions=None, requested_tickets=None, subscriptions=None,
-                 topic_comments=None, topics=None, votes=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 assigned_tickets=None,
+                 ccd_tickets=None,
+                 entry_subscriptions=None,
+                 forum_subscriptions=None,
+                 organization_subscriptions=None,
+                 requested_tickets=None,
+                 subscriptions=None,
+                 topic_comments=None,
+                 topics=None,
+                 votes=None,
+                 **kwargs):
+
         self.api = api
         self.assigned_tickets = assigned_tickets
         self.ccd_tickets = ccd_tickets
@@ -157,7 +195,13 @@ class UserRelated(BaseObject):
 
 
 class TicketSharingEvent(BaseObject):
-    def __init__(self, api=None, action=None, agreement_id=None, id=None, type=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 action=None,
+                 agreement_id=None,
+                 id=None,
+                 type=None,
+                 **kwargs):
 
         self.api = api
         self.action = action
@@ -183,6 +227,7 @@ class TicketSharingEvent(BaseObject):
 
 class TicketAudit(BaseObject):
     def __init__(self, api=None, audit=None, ticket=None, **kwargs):
+
         self.api = api
         self.audit = audit
         self.ticket = ticket
@@ -192,7 +237,13 @@ class TicketAudit(BaseObject):
 
 
 class AgentMacroReference(BaseObject):
-    def __init__(self, api=None, id=None, macro_id=None, macro_title=None, type=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 id=None,
+                 macro_id=None,
+                 macro_title=None,
+                 type=None,
+                 **kwargs):
 
         self.api = api
 
@@ -218,8 +269,17 @@ class AgentMacroReference(BaseObject):
 
 
 class FacebookCommentEvent(BaseObject):
-    def __init__(self, api=None, author_id=None, body=None, graph_object_id=None, html_body=None, id=None, public=None,
-                 trusted=None, type=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 author_id=None,
+                 body=None,
+                 graph_object_id=None,
+                 html_body=None,
+                 id=None,
+                 public=None,
+                 trusted=None,
+                 type=None,
+                 **kwargs):
 
         self.api = api
 
@@ -274,10 +334,24 @@ class FacebookCommentEvent(BaseObject):
 
 
 class TicketMetric(BaseObject):
-    def __init__(self, api=None, assigned_at=None, assignee_stations=None, assignee_updated_at=None, created_at=None,
-                 group_stations=None, id=None, initially_assigned_at=None, latest_comment_added_at=None, reopens=None,
-                 replies=None, requester_updated_at=None, solved_at=None, status_updated_at=None, ticket_id=None,
-                 updated_at=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 assigned_at=None,
+                 assignee_stations=None,
+                 assignee_updated_at=None,
+                 created_at=None,
+                 group_stations=None,
+                 id=None,
+                 initially_assigned_at=None,
+                 latest_comment_added_at=None,
+                 reopens=None,
+                 replies=None,
+                 requester_updated_at=None,
+                 solved_at=None,
+                 status_updated_at=None,
+                 ticket_id=None,
+                 updated_at=None,
+                 **kwargs):
 
         self.api = api
 
@@ -417,7 +491,8 @@ class TicketMetric(BaseObject):
         |  Comment: Number of minutes the agent spent waiting inside and out of business hours
         """
         if self.api and self._agent_wait_time_in_minutes:
-            return self.api._get_ticket_metric_item(self._agent_wait_time_in_minutes)
+            return self.api._get_ticket_metric_item(
+                self._agent_wait_time_in_minutes)
 
     @agent_wait_time_in_minutes.setter
     def agent_wait_time_in_minutes(self, agent_wait_time_in_minutes):
@@ -430,10 +505,12 @@ class TicketMetric(BaseObject):
         |  Comment: Number of minutes to the first resolution time inside and out of business hours
         """
         if self.api and self._first_resolution_time_in_minutes:
-            return self.api._get_ticket_metric_item(self._first_resolution_time_in_minutes)
+            return self.api._get_ticket_metric_item(
+                self._first_resolution_time_in_minutes)
 
     @first_resolution_time_in_minutes.setter
-    def first_resolution_time_in_minutes(self, first_resolution_time_in_minutes):
+    def first_resolution_time_in_minutes(self,
+                                         first_resolution_time_in_minutes):
         if first_resolution_time_in_minutes:
             self._first_resolution_time_in_minutes = first_resolution_time_in_minutes
 
@@ -443,7 +520,8 @@ class TicketMetric(BaseObject):
         |  Comment: Number of minutes to the full resolution inside and out of business hours
         """
         if self.api and self._full_resolution_time_in_minutes:
-            return self.api._get_ticket_metric_item(self._full_resolution_time_in_minutes)
+            return self.api._get_ticket_metric_item(
+                self._full_resolution_time_in_minutes)
 
     @full_resolution_time_in_minutes.setter
     def full_resolution_time_in_minutes(self, full_resolution_time_in_minutes):
@@ -454,7 +532,8 @@ class TicketMetric(BaseObject):
     def on_hold_time_in_minutes(self):
 
         if self.api and self._on_hold_time_in_minutes:
-            return self.api._get_ticket_metric_item(self._on_hold_time_in_minutes)
+            return self.api._get_ticket_metric_item(
+                self._on_hold_time_in_minutes)
 
     @on_hold_time_in_minutes.setter
     def on_hold_time_in_minutes(self, on_hold_time_in_minutes):
@@ -467,7 +546,8 @@ class TicketMetric(BaseObject):
         |  Comment: Number of minutes to the first reply inside and out of business hours
         """
         if self.api and self._reply_time_in_minutes:
-            return self.api._get_ticket_metric_item(self._reply_time_in_minutes)
+            return self.api._get_ticket_metric_item(
+                self._reply_time_in_minutes)
 
     @reply_time_in_minutes.setter
     def reply_time_in_minutes(self, reply_time_in_minutes):
@@ -480,7 +560,8 @@ class TicketMetric(BaseObject):
         |  Comment: Number of minutes the requester spent waiting inside and out of business hours
         """
         if self.api and self._requester_wait_time_in_minutes:
-            return self.api._get_ticket_metric_item(self._requester_wait_time_in_minutes)
+            return self.api._get_ticket_metric_item(
+                self._requester_wait_time_in_minutes)
 
     @requester_wait_time_in_minutes.setter
     def requester_wait_time_in_minutes(self, requester_wait_time_in_minutes):
@@ -704,6 +785,7 @@ class Upload(BaseObject):
 
 class Tag(BaseObject):
     def __init__(self, api=None, count=None, name=None, **kwargs):
+
         self.api = api
         self.count = count
         self.name = name
@@ -713,8 +795,18 @@ class Tag(BaseObject):
 
 
 class SatisfactionRating(BaseObject):
-    def __init__(self, api=None, assignee_id=None, created_at=None, group_id=None, id=None, requester_id=None,
-                 score=None, ticket_id=None, updated_at=None, url=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 assignee_id=None,
+                 created_at=None,
+                 group_id=None,
+                 id=None,
+                 requester_id=None,
+                 score=None,
+                 ticket_id=None,
+                 updated_at=None,
+                 url=None,
+                 **kwargs):
 
         self.api = api
 
@@ -860,6 +952,7 @@ class SatisfactionRating(BaseObject):
 
 class TicketMetricItem(BaseObject):
     def __init__(self, api=None, business=None, calendar=None, **kwargs):
+
         self.api = api
         self.business = business
         self.calendar = calendar
@@ -869,7 +962,14 @@ class TicketMetricItem(BaseObject):
 
 
 class ExternalEvent(BaseObject):
-    def __init__(self, api=None, body=None, id=None, resource=None, type=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 body=None,
+                 id=None,
+                 resource=None,
+                 type=None,
+                 **kwargs):
+
         self.api = api
         self.body = body
         self.id = id
@@ -881,7 +981,13 @@ class ExternalEvent(BaseObject):
 
 
 class TweetEvent(BaseObject):
-    def __init__(self, api=None, body=None, direct_message=None, id=None, type=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 body=None,
+                 direct_message=None,
+                 id=None,
+                 type=None,
+                 **kwargs):
 
         self.api = api
 
@@ -907,7 +1013,14 @@ class TweetEvent(BaseObject):
 
 
 class Group(BaseObject):
-    def __init__(self, api=None, created_at=None, deleted=None, id=None, name=None, updated_at=None, url=None,
+    def __init__(self,
+                 api=None,
+                 created_at=None,
+                 deleted=None,
+                 id=None,
+                 name=None,
+                 updated_at=None,
+                 url=None,
                  **kwargs):
 
         self.api = api
@@ -979,8 +1092,18 @@ class Group(BaseObject):
 
 
 class Macro(BaseObject):
-    def __init__(self, api=None, active=None, created_at=None, description=None, id=None, position=None,
-                 restriction=None, title=None, updated_at=None, url=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 active=None,
+                 created_at=None,
+                 description=None,
+                 id=None,
+                 position=None,
+                 restriction=None,
+                 title=None,
+                 updated_at=None,
+                 url=None,
+                 **kwargs):
 
         self.api = api
 
@@ -1026,19 +1149,6 @@ class Macro(BaseObject):
             setattr(self, key, value)
 
     @property
-    def actions(self):
-        """
-        |  Comment: An object describing what the macro will do
-        """
-        if self.api and self._actions:
-            return self.api._get_actions(self._actions)
-
-    @actions.setter
-    def actions(self, actions):
-        if actions:
-            self._actions = actions
-
-    @property
     def created(self):
         """
         |  Comment: The time the macro was created
@@ -1067,6 +1177,7 @@ class Macro(BaseObject):
 
 class CustomField(BaseObject):
     def __init__(self, api=None, id=None, value=None, **kwargs):
+
         self.api = api
         self.id = id
         self.value = value
@@ -1076,7 +1187,14 @@ class CustomField(BaseObject):
 
 
 class CreateEvent(BaseObject):
-    def __init__(self, api=None, field_name=None, id=None, type=None, value=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 field_name=None,
+                 id=None,
+                 type=None,
+                 value=None,
+                 **kwargs):
+
         self.api = api
         self.field_name = field_name
         self.id = id
@@ -1088,7 +1206,15 @@ class CreateEvent(BaseObject):
 
 
 class Thumbnail(BaseObject):
-    def __init__(self, api=None, content_type=None, content_url=None, file_name=None, id=None, size=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 content_type=None,
+                 content_url=None,
+                 file_name=None,
+                 id=None,
+                 size=None,
+                 **kwargs):
+
         self.api = api
         self.content_type = content_type
         self.content_url = content_url
@@ -1126,9 +1252,22 @@ class Source(BaseObject):
 
 
 class UserField(BaseObject):
-    def __init__(self, api=None, active=None, created_at=None, description=None, id=None, key=None, position=None,
-                 raw_description=None, raw_title=None, regexp_for_validation=None, title=None, type=None,
-                 updated_at=None, url=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 active=None,
+                 created_at=None,
+                 description=None,
+                 id=None,
+                 key=None,
+                 position=None,
+                 raw_description=None,
+                 raw_title=None,
+                 regexp_for_validation=None,
+                 title=None,
+                 type=None,
+                 updated_at=None,
+                 url=None,
+                 **kwargs):
 
         self.api = api
 
@@ -1242,6 +1381,7 @@ class UserField(BaseObject):
 
 class Action(BaseObject):
     def __init__(self, api=None, field=None, value=None, **kwargs):
+
         self.api = api
         self.field = field
         self.value = value
@@ -1251,7 +1391,13 @@ class Action(BaseObject):
 
 
 class NotificationEvent(BaseObject):
-    def __init__(self, api=None, body=None, id=None, subject=None, type=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 body=None,
+                 id=None,
+                 subject=None,
+                 type=None,
+                 **kwargs):
 
         self.api = api
 
@@ -1290,9 +1436,23 @@ class NotificationEvent(BaseObject):
 
 
 class Forum(BaseObject):
-    def __init__(self, api=None, access=None, category_id=None, created_at=None, description=None, forum_type=None,
-                 id=None, locale_id=None, locked=None, name=None, organization_id=None, position=None, tags=None,
-                 updated_at=None, url=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 access=None,
+                 category_id=None,
+                 created_at=None,
+                 description=None,
+                 forum_type=None,
+                 id=None,
+                 locale_id=None,
+                 locked=None,
+                 name=None,
+                 organization_id=None,
+                 position=None,
+                 tags=None,
+                 updated_at=None,
+                 url=None,
+                 **kwargs):
 
         self.api = api
         self.access = access
@@ -1361,9 +1521,22 @@ class Forum(BaseObject):
 
 
 class OrganizationField(BaseObject):
-    def __init__(self, api=None, active=None, created_at=None, description=None, id=None, key=None, position=None,
-                 raw_description=None, raw_title=None, regexp_for_validation=None, title=None, type=None,
-                 updated_at=None, url=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 active=None,
+                 created_at=None,
+                 description=None,
+                 id=None,
+                 key=None,
+                 position=None,
+                 raw_description=None,
+                 raw_title=None,
+                 regexp_for_validation=None,
+                 title=None,
+                 type=None,
+                 updated_at=None,
+                 url=None,
+                 **kwargs):
 
         self.api = api
 
@@ -1476,8 +1649,16 @@ class OrganizationField(BaseObject):
 
 
 class OrganizationMembership(BaseObject):
-    def __init__(self, api=None, created_at=None, default=None, id=None, organization_id=None, updated_at=None,
-                 url=None, user_id=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 created_at=None,
+                 default=None,
+                 id=None,
+                 organization_id=None,
+                 updated_at=None,
+                 url=None,
+                 user_id=None,
+                 **kwargs):
 
         self.api = api
 
@@ -1582,8 +1763,19 @@ class OrganizationMembership(BaseObject):
 
 
 class Identity(BaseObject):
-    def __init__(self, api=None, created_at=None, deliverable_state=None, id=None, primary=None, type=None,
-                 undeliverable_count=None, updated_at=None, url=None, user_id=None, value=None, verified=None,
+    def __init__(self,
+                 api=None,
+                 created_at=None,
+                 deliverable_state=None,
+                 id=None,
+                 primary=None,
+                 type=None,
+                 undeliverable_count=None,
+                 updated_at=None,
+                 url=None,
+                 user_id=None,
+                 value=None,
+                 verified=None,
                  **kwargs):
 
         self.api = api
@@ -1638,7 +1830,14 @@ class Identity(BaseObject):
 
 
 class Attachment(BaseObject):
-    def __init__(self, api=None, content_type=None, content_url=None, file_name=None, id=None, size=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 content_type=None,
+                 content_url=None,
+                 file_name=None,
+                 id=None,
+                 size=None,
+                 **kwargs):
 
         self.api = api
 
@@ -1692,6 +1891,7 @@ class Attachment(BaseObject):
 
 class MacroResult(BaseObject):
     def __init__(self, api=None, ticket=None, **kwargs):
+
         self.api = api
         self.ticket = ticket
 
@@ -1700,7 +1900,13 @@ class MacroResult(BaseObject):
 
 
 class OrganizationActivityEvent(BaseObject):
-    def __init__(self, api=None, body=None, id=None, subject=None, type=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 body=None,
+                 id=None,
+                 subject=None,
+                 type=None,
+                 **kwargs):
 
         self.api = api
 
@@ -1739,12 +1945,41 @@ class OrganizationActivityEvent(BaseObject):
 
 
 class User(BaseObject):
-    def __init__(self, api=None, active=None, alias=None, chat_only=None, created_at=None, custom_role_id=None,
-                 details=None, email=None, external_id=None, id=None, last_login_at=None, locale=None, locale_id=None,
-                 moderator=None, name=None, notes=None, only_private_comments=None, organization_id=None, phone=None,
-                 photo=None, restricted_agent=None, role=None, shared=None, shared_agent=None, signature=None,
-                 suspended=None, tags=None, ticket_restriction=None, time_zone=None, two_factor_auth_enabled=None,
-                 updated_at=None, url=None, verified=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 active=None,
+                 alias=None,
+                 chat_only=None,
+                 created_at=None,
+                 custom_role_id=None,
+                 details=None,
+                 email=None,
+                 external_id=None,
+                 id=None,
+                 last_login_at=None,
+                 locale=None,
+                 locale_id=None,
+                 moderator=None,
+                 name=None,
+                 notes=None,
+                 only_private_comments=None,
+                 organization_id=None,
+                 phone=None,
+                 photo=None,
+                 restricted_agent=None,
+                 role=None,
+                 shared=None,
+                 shared_agent=None,
+                 signature=None,
+                 suspended=None,
+                 tags=None,
+                 ticket_restriction=None,
+                 time_zone=None,
+                 two_factor_auth_enabled=None,
+                 updated_at=None,
+                 url=None,
+                 verified=None,
+                 **kwargs):
 
         self.api = api
 
@@ -2032,9 +2267,21 @@ class User(BaseObject):
 
 
 class Brand(BaseObject):
-    def __init__(self, api=None, active=None, brand_url=None, created_at=None, default=None, has_help_center=None,
-                 help_center_state=None, host_mapping=None, id=None, name=None, subdomain=None, updated_at=None,
-                 url=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 active=None,
+                 brand_url=None,
+                 created_at=None,
+                 default=None,
+                 has_help_center=None,
+                 help_center_state=None,
+                 host_mapping=None,
+                 id=None,
+                 name=None,
+                 subdomain=None,
+                 updated_at=None,
+                 url=None,
+                 **kwargs):
 
         self.api = api
 
@@ -2161,8 +2408,19 @@ class Brand(BaseObject):
 
 
 class SuspendedTicket(BaseObject):
-    def __init__(self, api=None, brand_id=None, cause=None, content=None, created_at=None, id=None, recipient=None,
-                 subject=None, ticket_id=None, updated_at=None, url=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 brand_id=None,
+                 cause=None,
+                 content=None,
+                 created_at=None,
+                 id=None,
+                 recipient=None,
+                 subject=None,
+                 ticket_id=None,
+                 updated_at=None,
+                 url=None,
+                 **kwargs):
 
         self.api = api
 
@@ -2312,7 +2570,13 @@ class SuspendedTicket(BaseObject):
 
 
 class CommentPrivacyChangeEvent(BaseObject):
-    def __init__(self, api=None, comment_id=None, id=None, public=None, type=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 comment_id=None,
+                 id=None,
+                 public=None,
+                 type=None,
+                 **kwargs):
 
         self.api = api
         self.comment_id = comment_id
@@ -2337,8 +2601,17 @@ class CommentPrivacyChangeEvent(BaseObject):
 
 
 class Activity(BaseObject):
-    def __init__(self, api=None, actor=None, created_at=None, id=None, title=None, updated_at=None, url=None, user=None,
-                 verb=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 actor=None,
+                 created_at=None,
+                 id=None,
+                 title=None,
+                 updated_at=None,
+                 url=None,
+                 user=None,
+                 verb=None,
+                 **kwargs):
 
         self.api = api
         self.actor = actor
@@ -2377,7 +2650,15 @@ class Activity(BaseObject):
 
 
 class JobStatus(BaseObject):
-    def __init__(self, api=None, id=None, message=None, progress=None, status=None, total=None, url=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 id=None,
+                 message=None,
+                 progress=None,
+                 status=None,
+                 total=None,
+                 url=None,
+                 **kwargs):
 
         self.api = api
 
@@ -2405,9 +2686,23 @@ class JobStatus(BaseObject):
 
 
 class Topic(BaseObject):
-    def __init__(self, api=None, body=None, created_at=None, forum_id=None, id=None, locked=None, pinned=None,
-                 position=None, submitter_id=None, tags=None, title=None, topic_type=None, updated_at=None,
-                 updater_id=None, url=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 body=None,
+                 created_at=None,
+                 forum_id=None,
+                 id=None,
+                 locked=None,
+                 pinned=None,
+                 position=None,
+                 submitter_id=None,
+                 tags=None,
+                 title=None,
+                 topic_type=None,
+                 updated_at=None,
+                 updater_id=None,
+                 url=None,
+                 **kwargs):
 
         self.api = api
 
@@ -2502,6 +2797,7 @@ class Topic(BaseObject):
 
 class ErrorEvent(BaseObject):
     def __init__(self, api=None, id=None, message=None, type=None, **kwargs):
+
         self.api = api
         self.id = id
         self.message = message
@@ -2512,7 +2808,15 @@ class ErrorEvent(BaseObject):
 
 
 class Comment(BaseObject):
-    def __init__(self, api=None, author_id=None, body=None, created_at=None, id=None, public=None, type=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 author_id=None,
+                 body=None,
+                 created_at=None,
+                 id=None,
+                 public=None,
+                 type=None,
+                 **kwargs):
 
         self.api = api
 
@@ -2589,11 +2893,34 @@ class Comment(BaseObject):
 
 
 class Ticket(BaseObject):
-    def __init__(self, api=None, assignee_id=None, brand_id=None, collaborator_ids=None, created_at=None,
-                 description=None, due_at=None, external_id=None, forum_topic_id=None, group_id=None,
-                 has_incidents=None, id=None, organization_id=None, priority=None, problem_id=None, raw_subject=None,
-                 recipient=None, requester_id=None, sharing_agreement_ids=None, status=None, subject=None,
-                 submitter_id=None, tags=None, type=None, updated_at=None, url=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 assignee_id=None,
+                 brand_id=None,
+                 collaborator_ids=None,
+                 created_at=None,
+                 description=None,
+                 due_at=None,
+                 external_id=None,
+                 forum_topic_id=None,
+                 group_id=None,
+                 has_incidents=None,
+                 id=None,
+                 organization_id=None,
+                 priority=None,
+                 problem_id=None,
+                 raw_subject=None,
+                 recipient=None,
+                 requester_id=None,
+                 sharing_agreement_ids=None,
+                 status=None,
+                 subject=None,
+                 submitter_id=None,
+                 tags=None,
+                 type=None,
+                 updated_at=None,
+                 url=None,
+                 **kwargs):
 
         self.api = api
 
@@ -3004,7 +3331,14 @@ class Ticket(BaseObject):
 
 
 class SatisfactionRatingEvent(BaseObject):
-    def __init__(self, api=None, assignee_id=None, body=None, id=None, score=None, type=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 assignee_id=None,
+                 body=None,
+                 id=None,
+                 score=None,
+                 type=None,
+                 **kwargs):
 
         self.api = api
         self.assignee_id = assignee_id
@@ -3030,8 +3364,16 @@ class SatisfactionRatingEvent(BaseObject):
 
 
 class GroupMembership(BaseObject):
-    def __init__(self, api=None, created_at=None, default=None, group_id=None, id=None, updated_at=None, url=None,
-                 user_id=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 created_at=None,
+                 default=None,
+                 group_id=None,
+                 id=None,
+                 updated_at=None,
+                 url=None,
+                 user_id=None,
+                 **kwargs):
 
         self.api = api
 
@@ -3136,9 +3478,24 @@ class GroupMembership(BaseObject):
 
 
 class Request(BaseObject):
-    def __init__(self, api=None, assignee_id=None, can_be_solved_by_me=None, collaborator_ids=None, created_at=None,
-                 description=None, due_at=None, id=None, organization_id=None, priority=None, requester_id=None,
-                 status=None, subject=None, type=None, updated_at=None, url=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 assignee_id=None,
+                 can_be_solved_by_me=None,
+                 collaborator_ids=None,
+                 created_at=None,
+                 description=None,
+                 due_at=None,
+                 id=None,
+                 organization_id=None,
+                 priority=None,
+                 requester_id=None,
+                 status=None,
+                 subject=None,
+                 type=None,
+                 updated_at=None,
+                 url=None,
+                 **kwargs):
 
         self.api = api
 
@@ -3385,8 +3742,16 @@ class Request(BaseObject):
 
 
 class SharingAgreement(BaseObject):
-    def __init__(self, api=None, created_at=None, id=None, name=None, partner_name=None, remote_subdomain=None,
-                 status=None, type=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 created_at=None,
+                 id=None,
+                 name=None,
+                 partner_name=None,
+                 remote_subdomain=None,
+                 status=None,
+                 type=None,
+                 **kwargs):
 
         self.api = api
 
@@ -3436,7 +3801,16 @@ class SharingAgreement(BaseObject):
 
 
 class Status(BaseObject):
-    def __init__(self, api=None, action=None, errors=None, id=None, status=None, success=None, title=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 action=None,
+                 errors=None,
+                 id=None,
+                 status=None,
+                 success=None,
+                 title=None,
+                 **kwargs):
+
         self.api = api
         self.action = action
         self.errors = errors
@@ -3450,7 +3824,15 @@ class Status(BaseObject):
 
 
 class ChangeEvent(BaseObject):
-    def __init__(self, api=None, field_name=None, id=None, previous_value=None, type=None, value=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 field_name=None,
+                 id=None,
+                 previous_value=None,
+                 type=None,
+                 value=None,
+                 **kwargs):
+
         self.api = api
         self.field_name = field_name
         self.id = id
@@ -3464,6 +3846,7 @@ class ChangeEvent(BaseObject):
 
 class LogmeinTranscriptEvent(BaseObject):
     def __init__(self, api=None, body=None, id=None, type=None, **kwargs):
+
         self.api = api
         self.body = body
         self.id = id
@@ -3474,7 +3857,13 @@ class LogmeinTranscriptEvent(BaseObject):
 
 
 class Audit(BaseObject):
-    def __init__(self, api=None, author_id=None, created_at=None, id=None, ticket_id=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 author_id=None,
+                 created_at=None,
+                 id=None,
+                 ticket_id=None,
+                 **kwargs):
 
         self.api = api
 
@@ -3583,8 +3972,21 @@ class Via(BaseObject):
 
 
 class Organization(BaseObject):
-    def __init__(self, api=None, created_at=None, details=None, external_id=None, group_id=None, id=None, name=None,
-                 notes=None, shared_comments=None, shared_tickets=None, tags=None, updated_at=None, url=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 created_at=None,
+                 details=None,
+                 external_id=None,
+                 group_id=None,
+                 id=None,
+                 name=None,
+                 notes=None,
+                 shared_comments=None,
+                 shared_tickets=None,
+                 tags=None,
+                 updated_at=None,
+                 url=None,
+                 **kwargs):
 
         self.api = api
 
@@ -3732,7 +4134,14 @@ class Organization(BaseObject):
 
 
 class FacebookEvent(BaseObject):
-    def __init__(self, api=None, body=None, communication=None, id=None, ticket_via=None, type=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 body=None,
+                 communication=None,
+                 id=None,
+                 ticket_via=None,
+                 type=None,
+                 **kwargs):
 
         self.api = api
 
@@ -3759,10 +4168,28 @@ class FacebookEvent(BaseObject):
 
 
 class TicketField(BaseObject):
-    def __init__(self, api=None, active=None, collapsed_for_agents=None, created_at=None, description=None,
-                 editable_in_portal=None, id=None, position=None, raw_description=None, raw_title=None,
-                 raw_title_in_portal=None, regexp_for_validation=None, required=None, required_in_portal=None, tag=None,
-                 title=None, title_in_portal=None, type=None, updated_at=None, url=None, visible_in_portal=None,
+    def __init__(self,
+                 api=None,
+                 active=None,
+                 collapsed_for_agents=None,
+                 created_at=None,
+                 description=None,
+                 editable_in_portal=None,
+                 id=None,
+                 position=None,
+                 raw_description=None,
+                 raw_title=None,
+                 raw_title_in_portal=None,
+                 regexp_for_validation=None,
+                 required=None,
+                 required_in_portal=None,
+                 tag=None,
+                 title=None,
+                 title_in_portal=None,
+                 type=None,
+                 updated_at=None,
+                 url=None,
+                 visible_in_portal=None,
                  **kwargs):
 
         self.api = api
@@ -3918,14 +4345,21 @@ class TicketField(BaseObject):
 
 
 class TicketEvent(BaseObject):
-    def __init__(self, api=None, id=None, ticket_id=None, timestamp=None, updater_id=None, via=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 id=None,
+                 ticket_id=None,
+                 updater_id=None,
+                 via=None,
+                 **kwargs):
 
         self.api = api
 
         self._child_events = None
+
+        self._timestamp = None
         self.id = id
         self.ticket_id = ticket_id
-        self.timestamp = timestamp
         self.updater_id = updater_id
         self.via = via
 
@@ -3942,6 +4376,17 @@ class TicketEvent(BaseObject):
     def child_events(self, child_events):
         if child_events:
             self._child_events = child_events
+
+    @property
+    def timestamp(self):
+
+        if self._timestamp:
+            return dateutil.parser.parse(self._timestamp)
+
+    @timestamp.setter
+    def timestamp(self, timestamp):
+        if timestamp:
+            self._timestamp = timestamp
 
     @property
     def ticket(self):
@@ -3969,7 +4414,15 @@ class TicketEvent(BaseObject):
 
 
 class System(BaseObject):
-    def __init__(self, api=None, client=None, ip_address=None, latitude=None, location=None, longitude=None, **kwargs):
+    def __init__(self,
+                 api=None,
+                 client=None,
+                 ip_address=None,
+                 latitude=None,
+                 location=None,
+                 longitude=None,
+                 **kwargs):
+
         self.api = api
         self.client = client
         self.ip_address = ip_address

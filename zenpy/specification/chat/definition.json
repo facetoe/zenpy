@@ -1,0 +1,40 @@
+{
+  "actions": [
+    [
+      "setTriggered",
+      true
+    ],
+    [
+      "sendMessageToVisitor",
+      "Customer Service",
+      "We apologize for keeping you waiting. Our operators are busy at the moment, please leave us a message with your email address and we'll get back to you shortly."
+    ]
+  ],
+  "event": "chat_requested",
+  "condition": [
+    "and",
+    [
+      "not",
+      [
+        "firedBefore"
+      ]
+    ],
+    [
+      "and",
+      [
+        "neq",
+        "@account_status",
+        "offline"
+      ],
+      [
+        "stillOnSite",
+        60
+      ],
+      [
+        "eq",
+        "@visitor_served",
+        false
+      ]
+    ]
+  ]
+}

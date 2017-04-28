@@ -1,18 +1,21 @@
 #!/usr/bin/env python
 
-import json
-from optparse import OptionParser
-
 import glob
-import os
+import json
 import re
 import sys
+from optparse import OptionParser
+
+import os
+from yapf.yapflib.yapf_api import FormatCode
 
 __author__ = 'facetoe'
 from jinja2 import Template
 
 
 class TemplateObject(object):
+    OBJECT_TEMPLATE = None
+
     def render(self):
         return Template(self.OBJECT_TEMPLATE).render(object=self)
 
@@ -40,7 +43,6 @@ class {{object.name}}(BaseObject):
                 for key, value in sorted(attr_docs.items()):
                     doc_strings.append("%s: %s" % (key.capitalize(), value.replace('*', '')))
                 attribute.attr_docs = doc_strings
-
             attributes.append(attribute)
 
         attributes = sorted(attributes, key=lambda x: x.attr_name)
@@ -160,7 +162,7 @@ class Attribute(object):
         if attr_name == 'from':
             attr_name = 'from_'
 
-        self.key = attr_name
+        self.key = '_{}'.format(attr_name) if attr_name == 'timestamp' else attr_name
         self.attr_docs = attr_docs
         self.object_type = self.get_object_type(attr_name)
         self.object_name = self.get_object_name(attr_name, attr_value)
@@ -179,24 +181,17 @@ class Attribute(object):
             object_type = 'users'
         elif attr_name in ('forum_topic_id',):
             object_type = 'topic'
-        elif attr_name.endswith('_at'):
+        elif attr_name.endswith('_at') or attr_name.endswith('timestamp'):
             object_type = 'date'
-        elif attr_name == 'id':
-            object_type = 'id'
         else:
             object_type = attr_name.replace('_id', '')
         return object_type
 
     def get_attr_name(self, object_name, attr_name, attr_value):
-        if isinstance(attr_value, bool):
-            return attr_name
-        elif isinstance(attr_value, dict) and object_name not in ('ticket', 'audit'):
-            return "_%s" % attr_name
-        elif attr_name == 'id' or attr_name.endswith('_ids') or attr_name in ('tags',):
-            return attr_name
-        elif attr_name.endswith('_id') or attr_name.endswith('_at'):
-            return attr_name
-        elif object_name == attr_name and isinstance(attr_value, list):
+        should_modify = attr_name.endswith('timestamp') \
+                        or (isinstance(attr_value, dict) and object_name not in ('ticket', 'audit')) \
+                        or (object_name == attr_name and isinstance(attr_value, list) and attr_name not in ('tags',))
+        if should_modify:
             return "_%s" % attr_name
         else:
             return attr_name
@@ -216,11 +211,39 @@ class Attribute(object):
         return attr_name
 
     def get_is_property(self, attr_name, attr_value):
-        if attr_name in ('author', 'to', 'from', 'locale', 'locale_id', 'tags', 'domain_names', 'ticket', 'audit'):
+        not_properties = (
+            'author',
+            'to',
+            'from',
+            'locale',
+            'locale_id',
+            'tags',
+            'domain_names',
+            'ticket',
+            'audit',
+            # ChatApi
+            'agent_names',
+            'count',
+            'response_time',
+            'session',
+            'visitor',
+            'agent_names',
+            'count',
+            'definition',
+            'actions',
+            'condition',
+            'billing',
+            'plan',
+            'agent',
+            'roles',
+            'department',
+            'members'
+        )
+        if attr_name in not_properties:
             return False
         elif any([isinstance(attr_value, t) for t in (dict, list)]):
             return True
-        elif attr_name.endswith('_at'):
+        elif self.object_type == 'date':
             return True
         elif attr_name.endswith('_id') and isinstance(attr_value, int):
             return True
@@ -266,12 +289,18 @@ class BaseObject(object):
         return copy_dict
 
     def __repr__(self):
+        def stringify(item):
+            return item if isinstance(item, int) else "'{}'".format(item)
         if hasattr(self, 'id'):
-            return "[%s(id=%s)]" % (self.__class__.__name__, self.id)
+            return "[%s(id=%s)]" % (self.__class__.__name__, stringify(self.id))
         elif hasattr(self, 'token'):
             return "[%s(token='%s')]" % (self.__class__.__name__, self.token)
         elif hasattr(self, 'key'):
             return "[%s(key='%s')]" % (self.__class__.__name__, self.key)
+        elif hasattr(self, 'name'):
+            return "[%s(name='%s')]" % (self.__class__.__name__, self.name)
+        elif hasattr(self, 'account_key'):
+            return "[%s(account_key='%s')]" % (self.__class__.__name__, self.account_key)
         else:
             return "[%s()]" % self.__class__.__name__
 """
@@ -309,16 +338,26 @@ def process_file(path, output):
     class_name = os.path.basename(os.path.splitext(path)[0]).capitalize()
     class_name = "".join([w.capitalize() for w in class_name.split('_')])
     class_code = Class(class_name, json.load(open(path)), doc_json).render()
+    print("Processed: %s -> %s" % (os.path.basename(path), class_name))
+    return class_code
 
-    print("Processing: %s -> %s" % (os.path.basename(path), class_name))
-    output.write(class_code)
 
-
-with open(os.path.join(options.out_path, 'api_objects.py'), 'w+') as out_file:
-    out_file.write(BASE_CLASSS)
-    for file_path in glob.glob(os.path.join(options.spec_path, '*.json')):
-        if options.target_file is not None:
-            if os.path.basename(file_path) == options.target_file:
-                process_file(file_path, out_file)
+def process_specification_directory(glob_pattern, outfile_name, write_baseclass=True):
+    with open(os.path.join(options.out_path, outfile_name), 'w+') as out_file:
+        if write_baseclass:
+            classes = [BASE_CLASSS]
         else:
-            process_file(file_path, out_file)
+            classes = ["from zenpy.lib.api_objects import BaseObject"]
+        for file_path in glob.glob(os.path.join(options.spec_path, glob_pattern)):
+            if options.target_file is not None and os.path.basename(file_path) == options.target_file:
+                class_code = process_file(file_path, out_file)
+            else:
+                class_code = process_file(file_path, out_file)
+            classes.append(class_code)
+        print("Formatting...")
+        formatted_code = FormatCode("\n".join(classes))[0]
+        out_file.write(formatted_code)
+
+
+process_specification_directory('zendesk/*.json', 'api_objects/__init__.py')
+process_specification_directory('chat/*.json', 'api_objects/chat_objects.py')
