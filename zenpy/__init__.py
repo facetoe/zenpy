@@ -33,8 +33,15 @@ class Zenpy(object):
             max_retries=3
         )
 
-    def __init__(self, subdomain, email=None, token=None, oauth_token=None, password=None, session=None, timeout=None,
-                 ratelimit=None):
+    def __init__(self, subdomain,
+                 email=None,
+                 token=None,
+                 oauth_token=None,
+                 password=None,
+                 session=None,
+                 timeout=None,
+                 ratelimit=None,
+                 ratelimit_budget=None):
         """
         Python Wrapper for the Zendesk API.
 
@@ -64,6 +71,7 @@ class Zenpy(object):
             session=session,
             timeout=timeout,
             ratelimit=ratelimit,
+            ratelimit_budget=ratelimit_budget
         )
 
         self.users = UserApi(config)

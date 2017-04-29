@@ -9,7 +9,7 @@ from json import JSONEncoder
 from zenpy.lib.api_objects import User, Ticket, Macro, Identity, View
 from zenpy.lib.cache import query_cache
 from zenpy.lib.endpoint import EndpointFactory
-from zenpy.lib.exception import APIException, RecordNotFoundException, TooManyValuesException
+from zenpy.lib.exception import APIException, RecordNotFoundException, TooManyValuesException, RatelimitBudgetExceeded
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.object_manager import ZendeskObjectManager
 from zenpy.lib.request import CRUDRequest, SuspendedTicketRequest, TagRequest, RateRequest, UserIdentityRequest, \
@@ -41,11 +41,12 @@ class BaseApi(object):
     rate limiting and deserializing responses.
     """
 
-    def __init__(self, subdomain, session, timeout, ratelimit):
+    def __init__(self, subdomain, session, timeout, ratelimit, ratelimit_budget):
         self.subdomain = subdomain
         self.session = session
         self.timeout = timeout
         self.ratelimit = ratelimit
+        self.ratelimit_budget = ratelimit_budget
         self.protocol = 'https'
         self.api_prefix = 'api/v2'
         self._url_template = "%(protocol)s://%(subdomain)s.zendesk.com/%(api_prefix)s"
@@ -109,9 +110,11 @@ class BaseApi(object):
             while 'retry-after' in response.headers and int(response.headers['retry-after']) > 0:
                 retry_after_seconds = int(response.headers['retry-after'])
                 log.warn(
-                    "Waiting for requested retry-after period: %s seconds" % retry_after_seconds)
+                    "Waiting for requested retry-after period: %s seconds" % retry_after_seconds
+                )
                 while retry_after_seconds > 0:
                     retry_after_seconds -= 1
+                    self.check_ratelimit_budget(1)
                     log.debug("    -> sleeping: %s more seconds" % retry_after_seconds)
                     sleep(1)
                 response = http_method(url, **kwargs)
@@ -119,6 +122,13 @@ class BaseApi(object):
         self._check_response(response)
         self._update_callsafety(response)
         return response
+
+    def check_ratelimit_budget(self, seconds_waited):
+        """ If we have a ratelimit_budget, ensure it is not exceeded. """
+        if self.ratelimit_budget is not None:
+            self.ratelimit_budget -= seconds_waited
+            if self.ratelimit_budget < 1:
+                raise RatelimitBudgetExceeded("Rate limit budget exceeded!")
 
     def _ratelimit(self, http_method, url, **kwargs):
         """ Ensure we do not hit the rate limit. """

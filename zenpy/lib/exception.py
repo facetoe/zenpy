@@ -13,6 +13,12 @@ class ZenpyCacheException(ZenpyException):
     """
 
 
+class RatelimitBudgetExceeded(ZenpyException):
+    """
+    Raised when the ratelimit_budget has been spent. 
+    """
+
+
 class APIException(Exception):
     """
     An APIException is raised when the API rejects a query.
@@ -20,7 +26,7 @@ class APIException(Exception):
 
     def __init__(self, *args, **kwargs):
         self.response = kwargs.pop('response', None)
-        super(APIException, self).__init__(*args, **kwargs)
+        super(APIException, self).__init__(*args)
 
 
 class RecordNotFoundException(APIException):
