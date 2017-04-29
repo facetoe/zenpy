@@ -58,7 +58,7 @@ class BaseZendeskRequest(RequestHandler):
 
     def check_type(self, zenpy_objects):
         """ Ensure the passed type matches this API's object_type. """
-        expected_type = self.api._object_manager.class_for_type(self.api.object_type)
+        expected_type = self.api._object_mapping.class_for_type(self.api.object_type)
         if not isinstance(zenpy_objects, collections.Iterable):
             zenpy_objects = [zenpy_objects]
         for zenpy_object in zenpy_objects:

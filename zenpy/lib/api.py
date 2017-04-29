@@ -11,7 +11,7 @@ from zenpy.lib.cache import query_cache
 from zenpy.lib.endpoint import EndpointFactory
 from zenpy.lib.exception import APIException, RecordNotFoundException, TooManyValuesException, RatelimitBudgetExceeded
 from zenpy.lib.exception import ZenpyException
-from zenpy.lib.object_manager import ZendeskObjectManager
+from zenpy.lib.mapping import ZendeskObjectMapping
 from zenpy.lib.request import CRUDRequest, SuspendedTicketRequest, TagRequest, RateRequest, UserIdentityRequest, \
     UploadRequest, UserMergeRequest, TicketMergeRequest, SatisfactionRatingRequest
 from zenpy.lib.response import GenericZendeskResponseHandler, SearchResponseHandler, CombinationResponseHandler, \
@@ -257,7 +257,7 @@ class Api(BaseApi):
         self.object_type = object_type
         self.endpoint = endpoint or EndpointFactory(as_plural(object_type))
         super(Api, self).__init__(**config)
-        self._object_manager = ZendeskObjectManager(self)
+        self._object_mapping = ZendeskObjectMapping(self)
 
     def append_sideload(self, sideload, method_name=None):
         """ Append a sideload to the list of sideloads. """
@@ -308,28 +308,28 @@ class Api(BaseApi):
 
     def _get_actions(self, actions):
         for action in actions:
-            yield self._object_manager.object_from_json('action', action)
+            yield self._object_mapping.object_from_json('action', action)
 
     def _get_events(self, events):
         for event in events:
-            yield self._object_manager.object_from_json(event['type'].lower(), event)
+            yield self._object_mapping.object_from_json(event['type'].lower(), event)
 
     def _get_via(self, via):
-        return self._object_manager.object_from_json('via', via)
+        return self._object_mapping.object_from_json('via', via)
 
     def _get_source(self, source):
-        return self._object_manager.object_from_json('source', source)
+        return self._object_mapping.object_from_json('source', source)
 
     def _get_attachments(self, attachments):
         for attachment in attachments:
-            yield self._object_manager.object_from_json('attachment', attachment)
+            yield self._object_mapping.object_from_json('attachment', attachment)
 
     def _get_thumbnails(self, thumbnails):
         for thumbnail in thumbnails:
-            yield self._object_manager.object_from_json('thumbnail', thumbnail)
+            yield self._object_mapping.object_from_json('thumbnail', thumbnail)
 
     def _get_satisfaction_rating(self, satisfaction_rating):
-        return self._object_manager.object_from_json('satisfaction_rating', satisfaction_rating)
+        return self._object_mapping.object_from_json('satisfaction_rating', satisfaction_rating)
 
     def _get_sharing_agreements(self, sharing_agreement_ids):
         sharing_agreements = []
@@ -342,13 +342,13 @@ class Api(BaseApi):
         return sharing_agreements
 
     def _get_ticket_metric_item(self, metric_item):
-        return self._object_manager.object_from_json('ticket_metric_item', metric_item)
+        return self._object_mapping.object_from_json('ticket_metric_item', metric_item)
 
     def _get_metadata(self, metadata):
-        return self._object_manager.object_from_json('metadata', metadata)
+        return self._object_mapping.object_from_json('metadata', metadata)
 
     def _get_system(self, system):
-        return self._object_manager.object_from_json('system', system)
+        return self._object_mapping.object_from_json('system', system)
 
     def _get_problem(self, problem_id):
         return self._query_zendesk(EndpointFactory.tickets, 'ticket', id=problem_id)
@@ -372,10 +372,10 @@ class Api(BaseApi):
         return fields
 
     def _get_upload(self, upload):
-        return self._object_manager.object_from_json('upload', upload)
+        return self._object_mapping.object_from_json('upload', upload)
 
     def _get_attachment(self, attachment):
-        return self._object_manager.object_from_json('attachment', attachment)
+        return self._object_mapping.object_from_json('attachment', attachment)
 
     def _get_child_events(self, child_events):
         return child_events

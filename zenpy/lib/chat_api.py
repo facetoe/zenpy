@@ -1,5 +1,5 @@
 from zenpy.lib.api import Api
-from zenpy.lib.object_manager import ChatObjectManager
+from zenpy.lib.mapping import ChatObjectMapping
 from zenpy.lib.request import (
     AccountRequest,
     AgentRequest,
@@ -32,7 +32,7 @@ class ChatApiBase(Api):
                                           object_type='chat',
                                           endpoint=endpoint)
         self._request_handler = request_handler or ChatApiRequest
-        self._object_manager = ChatObjectManager(self)
+        self._object_manager = ChatObjectMapping(self)
         self._url_template = "%(protocol)s://www.zopim.com/%(api_prefix)s"
         self._response_handlers = (
             DeleteResponseHandler,

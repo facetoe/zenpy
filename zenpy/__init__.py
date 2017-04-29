@@ -10,7 +10,7 @@ from zenpy.lib.cache import ZenpyCache, cache_mapping, purge_cache
 from zenpy.lib.chat_api import ChatApi
 from zenpy.lib.endpoint import EndpointFactory
 from zenpy.lib.exception import ZenpyException
-from zenpy.lib.object_manager import ZendeskObjectManager
+from zenpy.lib.mapping import ZendeskObjectMapping
 
 log = logging.getLogger()
 
@@ -186,7 +186,7 @@ class Zenpy(object):
         """
         Add a new cache for the named object type and cache implementation
         """
-        if object_type not in ZendeskObjectManager.class_mapping:
+        if object_type not in ZendeskObjectMapping.class_mapping:
             raise ZenpyException("No such object type: %s" % object_type)
         cache_mapping[object_type] = ZenpyCache(cache_impl_name, maxsize, **kwargs)
 

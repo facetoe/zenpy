@@ -10,7 +10,7 @@ log = logging.getLogger(__name__)
 __author__ = 'facetoe'
 
 
-class ZendeskObjectManager(object):
+class ZendeskObjectMapping(object):
     """
     Handle converting Zendesk JSON objects to Python ones.
     """
@@ -112,7 +112,7 @@ class ZendeskObjectManager(object):
         return key
 
 
-class ChatObjectManager(ZendeskObjectManager):
+class ChatObjectMapping(ZendeskObjectMapping):
     """
     Handle converting Chat API objects to Python ones. This class exists
     mainly to prevent namespace collisions between the two APIs. 
@@ -140,7 +140,7 @@ class ChatObjectManager(ZendeskObjectManager):
     }
 
     def __init__(self, api):
-        super(ChatObjectManager, self).__init__(api)
+        super(ChatObjectMapping, self).__init__(api)
 
     def format_key(self, key):
         if key in ('webpath',):
