@@ -8,7 +8,7 @@ from zenpy.lib.api import UserApi, Api, TicketApi, OrganizationApi, SuspendedTic
     GroupApi, ViewApi
 from zenpy.lib.cache import ZenpyCache, cache_mapping, purge_cache
 from zenpy.lib.chat_api import ChatApi
-from zenpy.lib.endpoint import Endpoint
+from zenpy.lib.endpoint import EndpointFactory
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.object_manager import ZendeskObjectManager
 
@@ -58,217 +58,63 @@ class Zenpy(object):
         session = self._init_session(email, token, oauth_token, password, session)
 
         timeout = timeout or self.DEFAULT_TIMEOUT
-        endpoint = Endpoint()
 
-        self.users = UserApi(
+        config = dict(
             subdomain=subdomain,
             session=session,
             timeout=timeout,
-            endpoint=endpoint.users,
-            ratelimit=ratelimit
+            ratelimit=ratelimit,
         )
 
-        self.user_fields = Api(
-            subdomain=subdomain,
-            session=session,
-            timeout=timeout,
-            endpoint=endpoint.user_fields,
-            object_type='user_field',
-            ratelimit=ratelimit
-        )
+        self.users = UserApi(config)
 
-        self.groups = GroupApi(
-            subdomain=subdomain,
-            session=session,
-            timeout=timeout,
-            endpoint=endpoint.groups,
-            ratelimit=ratelimit
-        )
+        self.user_fields = Api(config, object_type='user_field')
 
-        self.macros = MacroApi(
-            subdomain=subdomain,
-            session=session,
-            timeout=timeout,
-            ratelimit=ratelimit
-        )
+        self.groups = GroupApi(config)
 
-        self.organizations = OrganizationApi(
-            subdomain=subdomain,
-            session=session,
-            timeout=timeout,
-            endpoint=endpoint.organizations,
-            ratelimit=ratelimit
-        )
+        self.macros = MacroApi(config)
 
-        self.organization_memberships = OrganizationMembershipApi(
-            subdomain=subdomain,
-            session=session,
-            timeout=timeout,
-            endpoint=endpoint.organization_memberships,
-            ratelimit=ratelimit
-        )
+        self.organizations = OrganizationApi(config)
 
-        self.tickets = TicketApi(
-            subdomain=subdomain,
-            session=session,
-            timeout=timeout,
-            endpoint=endpoint.tickets,
-            ratelimit=ratelimit
-        )
+        self.organization_memberships = OrganizationMembershipApi(config)
 
-        self.suspended_tickets = SuspendedTicketApi(
-            subdomain=subdomain,
-            session=session,
-            timeout=timeout,
-            object_type='suspended_ticket',
-            endpoint=endpoint.suspended_tickets,
-            ratelimit=ratelimit
-        )
+        self.tickets = TicketApi(config)
 
-        self.search = Api(
-            subdomain=subdomain,
-            session=session,
-            timeout=timeout,
-            endpoint=endpoint.search,
-            object_type='results',
-            ratelimit=ratelimit
-        )
+        self.suspended_tickets = SuspendedTicketApi(config, object_type='suspended_ticket')
 
-        self.topics = Api(
-            subdomain=subdomain,
-            session=session,
-            timeout=timeout,
-            endpoint=endpoint.topics,
-            object_type='topic',
-            ratelimit=ratelimit
-        )
+        self.search = Api(config, object_type='results', endpoint=EndpointFactory('search'))
 
-        self.attachments = AttachmentApi(
-            subdomain=subdomain,
-            session=session,
-            timeout=timeout,
-            endpoint=endpoint.attachments,
-            ratelimit=ratelimit
-        )
+        self.topics = Api(config, object_type='topic')
 
-        self.brands = Api(
-            subdomain=subdomain,
-            session=session,
-            timeout=timeout,
-            endpoint=endpoint.brands,
-            object_type='brand',
-            ratelimit=ratelimit
-        )
+        self.attachments = AttachmentApi(config)
 
-        self.job_status = Api(
-            subdomain=subdomain,
-            session=session,
-            timeout=timeout,
-            endpoint=endpoint.job_statuses,
-            object_type='job_status',
-            ratelimit=ratelimit
-        )
+        self.brands = Api(config, object_type='brand')
 
-        self.tags = Api(
-            subdomain=subdomain,
-            session=session,
-            timeout=timeout,
-            endpoint=endpoint.tags,
-            object_type='tag',
-            ratelimit=ratelimit
-        )
+        self.job_status = Api(config, object_type='job_status', endpoint=EndpointFactory('job_statuses'))
 
-        self.satisfaction_ratings = SatisfactionRatingApi(
-            subdomain=subdomain,
-            session=session,
-            timeout=timeout,
-            endpoint=endpoint.satisfaction_ratings,
-            ratelimit=ratelimit
-        )
+        self.tags = Api(config, object_type='tag')
 
-        self.sharing_agreements = SharingAgreementAPI(
-            subdomain=subdomain,
-            session=session,
-            timeout=timeout,
-            endpoint=endpoint.sharing_agreements,
-            ratelimit=ratelimit
-        )
+        self.satisfaction_ratings = SatisfactionRatingApi(config)
 
-        self.activities = Api(
-            subdomain=subdomain,
-            session=session,
-            timeout=timeout,
-            endpoint=endpoint.activities,
-            object_type='activity',
-            ratelimit=ratelimit
-        )
+        self.sharing_agreements = SharingAgreementAPI(config)
 
-        self.group_memberships = Api(
-            subdomain=subdomain,
-            session=session,
-            timeout=timeout,
-            endpoint=endpoint.group_memberships,
-            object_type='group_membership',
-            ratelimit=ratelimit
-        )
+        self.activities = Api(config, object_type='activity')
 
-        self.end_user = EndUserApi(
-            subdomain=subdomain,
-            session=session,
-            timeout=timeout,
-            endpoint=endpoint.end_user,
-            ratelimit=ratelimit
-        )
+        self.group_memberships = Api(config, object_type='group_membership')
 
-        self.ticket_metrics = Api(
-            subdomain=subdomain,
-            session=session,
-            timeout=timeout,
-            endpoint=endpoint.ticket_metrics,
-            object_type='ticket_metric',
-            ratelimit=ratelimit
-        )
+        self.end_user = EndUserApi(config)
 
-        self.ticket_fields = Api(
-            subdomain=subdomain,
-            session=session,
-            timeout=timeout,
-            endpoint=endpoint.ticket_fields,
-            object_type='ticket_field',
-            ratelimit=ratelimit
-        )
+        self.ticket_metrics = Api(config, object_type='ticket_metric')
 
-        self.ticket_import = TicketImportAPI(
-            subdomain=subdomain,
-            session=session,
-            timeout=timeout,
-            endpoint=endpoint.ticket_import,
-            ratelimit=ratelimit
-        )
+        self.ticket_fields = Api(config, object_type='ticket_field')
 
-        self.requests = RequestAPI(
-            subdomain=subdomain,
-            session=session,
-            timeout=timeout,
-            endpoint=endpoint.requests,
-            ratelimit=ratelimit
-        )
+        self.ticket_import = TicketImportAPI(config)
 
-        self.chats = ChatApi(
-            subdomain=subdomain,
-            session=session,
-            timeout=timeout,
-            endpoint=endpoint.chats,
-            ratelimit=ratelimit
-        )
+        self.requests = RequestAPI(config)
 
-        self.views = ViewApi(
-            subdomain=subdomain,
-            session=session,
-            timeout=timeout,
-            endpoint=endpoint.views,
-            ratelimit=ratelimit
-        )
+        self.chats = ChatApi(config, endpoint=EndpointFactory('chats'))
+
+        self.views = ViewApi(config)
 
     def _init_session(self, email, token, oath_token, password, session):
         if not session:
