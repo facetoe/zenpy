@@ -83,10 +83,11 @@ def configure():
     config.default_cassette_options['record_mode'] = 'once'
     config.default_cassette_options['match_requests_on'] = ['method', 'uri']
     if credentials:
+        auth_key = 'token' if 'token' in credentials else 'password'
         config.define_cassette_placeholder(
             '<ZENPY-CREDENTIALS>',
             str(base64.b64encode(
-                "{}/token:{}".format(credentials['email'], credentials['token']).encode('utf-8')
+                "{}/token:{}".format(credentials['email'], credentials[auth_key]).encode('utf-8')
             ))
         )
     session = requests.Session()

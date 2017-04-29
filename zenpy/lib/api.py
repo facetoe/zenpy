@@ -8,7 +8,7 @@ from json import JSONEncoder
 
 from zenpy.lib.api_objects import User, Ticket, Macro, Identity, View
 from zenpy.lib.cache import query_cache
-from zenpy.lib.endpoint import Endpoint
+from zenpy.lib.endpoint import EndpointFactory
 from zenpy.lib.exception import APIException, RecordNotFoundException, TooManyValuesException
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.object_manager import ZendeskObjectManager
@@ -16,6 +16,7 @@ from zenpy.lib.request import CRUDRequest, SuspendedTicketRequest, TagRequest, R
     UploadRequest, UserMergeRequest, TicketMergeRequest, SatisfactionRatingRequest
 from zenpy.lib.response import GenericZendeskResponseHandler, SearchResponseHandler, CombinationResponseHandler, \
     TagResponseHandler, DeleteResponseHandler, HTTPOKResponseHandler, ViewResponseHandler
+from zenpy.lib.util import as_plural
 
 __author__ = 'facetoe'
 
@@ -40,13 +41,11 @@ class BaseApi(object):
     rate limiting and deserializing responses.
     """
 
-    def __init__(self, subdomain, session, endpoint, object_type, timeout, ratelimit):
+    def __init__(self, subdomain, session, timeout, ratelimit):
         self.subdomain = subdomain
         self.session = session
         self.timeout = timeout
         self.ratelimit = ratelimit
-        self.endpoint = endpoint
-        self.object_type = object_type
         self.protocol = 'https'
         self.api_prefix = 'api/v2'
         self._url_template = "%(protocol)s://%(subdomain)s.zendesk.com/%(api_prefix)s"
@@ -234,6 +233,22 @@ class BaseApi(object):
         """ Build complete URL """
         return "/".join((self._url_template % vars(self), endpoint))
 
+
+class Api(BaseApi):
+    """
+    Most general API class. It is callable, and is suitable for basic API endpoints that can
+    only be called with no arguments to return a collection, or an id to return a single item.
+
+    This class also contains many methods for retrieving specific objects or collections of objects.
+    These methods are called by the classes found in zenpy.lib.api_objects.
+    """
+
+    def __init__(self, config, object_type, endpoint=None):
+        self.object_type = object_type
+        self.endpoint = endpoint or EndpointFactory(as_plural(object_type))
+        super(Api, self).__init__(**config)
+        self._object_manager = ZendeskObjectManager(self)
+
     def append_sideload(self, sideload, method_name=None):
         """ Append a sideload to the list of sideloads. """
         self.get_sideloads(method_name).append(sideload)
@@ -256,43 +271,30 @@ class BaseApi(object):
         else:
             return self.endpoint.sideload
 
-
-class Api(BaseApi):
-    """
-    Most general API class. It is callable, and is suitable for basic API endpoints that can
-    only be called with no arguments to return a collection, or an id to return a single item.
-
-    This class also contains many methods for retrieving specific objects or collections of objects.
-    These methods are called by the classes found in zenpy.lib.api_objects.
-    """
-
-    def __init__(self, subdomain, session, endpoint, object_type, timeout, ratelimit):
-        super(Api, self).__init__(subdomain, session, endpoint, object_type, timeout, ratelimit)
-        self._object_manager = ZendeskObjectManager(self)
-
     def __call__(self, *args, **kwargs):
         return self._query_zendesk(self.endpoint, self.object_type, *args, **kwargs)
 
     def _get_user(self, user_id):
-        return self._query_zendesk(Endpoint.users, 'user', id=user_id)
+        return self._query_zendesk(EndpointFactory.users, 'user', id=user_id)
 
     def _get_users(self, user_ids):
-        return self._query_zendesk(endpoint=Endpoint.users, object_type='user', ids=user_ids)
+        return self._query_zendesk(endpoint=EndpointFactory.users, object_type='user', ids=user_ids)
 
     def _get_comment(self, comment_id):
-        return self._query_zendesk(endpoint=Endpoint.tickets.comments, object_type='comment', id=comment_id)
+        return self._query_zendesk(endpoint=EndpointFactory.tickets.comments, object_type='comment', id=comment_id)
 
     def _get_organization(self, organization_id):
-        return self._query_zendesk(endpoint=Endpoint.organizations, object_type='organization', id=organization_id)
+        return self._query_zendesk(endpoint=EndpointFactory.organizations, object_type='organization',
+                                   id=organization_id)
 
     def _get_group(self, group_id):
-        return self._query_zendesk(endpoint=Endpoint.groups, object_type='group', id=group_id)
+        return self._query_zendesk(endpoint=EndpointFactory.groups, object_type='group', id=group_id)
 
     def _get_brand(self, brand_id):
-        return self._query_zendesk(endpoint=Endpoint.brands, object_type='brand', id=brand_id)
+        return self._query_zendesk(endpoint=EndpointFactory.brands, object_type='brand', id=brand_id)
 
     def _get_ticket(self, ticket_id):
-        return self._query_zendesk(endpoint=Endpoint.tickets, object_type='ticket', id=ticket_id)
+        return self._query_zendesk(endpoint=EndpointFactory.tickets, object_type='ticket', id=ticket_id)
 
     def _get_actions(self, actions):
         for action in actions:
@@ -322,7 +324,7 @@ class Api(BaseApi):
     def _get_sharing_agreements(self, sharing_agreement_ids):
         sharing_agreements = []
         for _id in sharing_agreement_ids:
-            sharing_agreement = self._query_zendesk(endpoint=Endpoint.sharing_agreements,
+            sharing_agreement = self._query_zendesk(endpoint=EndpointFactory.sharing_agreements,
                                                     object_type='sharing_agreement',
                                                     id=_id)
             if sharing_agreement:
@@ -339,7 +341,7 @@ class Api(BaseApi):
         return self._object_manager.object_from_json('system', system)
 
     def _get_problem(self, problem_id):
-        return self._query_zendesk(Endpoint.tickets, 'ticket', id=problem_id)
+        return self._query_zendesk(EndpointFactory.tickets, 'ticket', id=problem_id)
 
     # This will be deprecated soon - https://developer.zendesk.com/rest_api/docs/web-portal/forums
     def _get_forum(self, forum_id):
@@ -497,123 +499,121 @@ class IncrementalApi(Api):
         return self._query_zendesk(self.endpoint.incremental, self.object_type, start_time=start_time)
 
 
+class UserIdentityApi(Api):
+    def __init__(self, config):
+        super(UserIdentityApi, self).__init__(config,
+                                              object_type='identity',
+                                              endpoint=EndpointFactory('users').identities)
+
+    def show(self, user, identity):
+        """
+        Show the specified identity for the specified user.
+
+        :param user: user id or User object
+        :param identity: identity id object
+        :return: Identity
+        """
+        if isinstance(user, User):
+            user = user.id
+        if isinstance(identity, Identity):
+            identity = identity.id
+
+        url = self.endpoint.show(user, identity)
+        return self._get(url)
+
+    def create(self, user, identity):
+        """
+        Create an additional identity for the specified user
+
+        :param user: User id or object
+        :param identity: Identity object to be created
+        """
+        if not isinstance(identity, Identity):
+            raise ZenpyException("Invalid type - expected Identity received: {}".format(type(identity)))
+        if isinstance(user, User):
+            user = user.id
+        return UserIdentityRequest(self).perform("POST", user, identity)
+
+    def update(self, user, identity):
+        """
+        Update specified identity for the specified user
+
+        :param user: User object or id
+        :param identity: Identity object to be updated.
+        :return: The updated Identity
+        """
+        if not isinstance(identity, Identity):
+            raise ZenpyException("You must pass an Identity object to this endpoint!")
+        if isinstance(user, User):
+            user = user.id
+        return UserIdentityRequest(self).perform("PUT", self.endpoint.update, user, identity.id)
+
+    def make_primary(self, user, identity):
+        """
+        Set the specified user as primary for the specified user.
+
+        :param user: User object or id
+        :param identity: Identity object or id
+        :return: list of user's Identities
+        """
+        if isinstance(user, User):
+            user = user.id
+        if isinstance(identity, Identity):
+            identity = identity.id
+        return UserIdentityRequest(self).perform("PUT", self.endpoint.make_primary, user, identity)
+
+    def request_verification(self, user, identity):
+        """
+        Sends the user a verification email with a link to verify ownership of the email address.
+
+        :param user: User id or object
+        :param identity: Identity id or object
+        :return: requests Response object
+        """
+        if isinstance(user, User):
+            user = user.id
+        if isinstance(identity, Identity):
+            identity = identity.id
+
+        return UserIdentityRequest(self).perform("PUT", self.endpoint.request_verification, user, identity)
+
+    def verify(self, user, identity):
+        """
+        Verify an identity for a user
+
+        :param user: User id or object
+        :param identity: Identity id or object
+        :return: the verified Identity
+        """
+        if isinstance(user, User):
+            user = user.id
+        if isinstance(identity, Identity):
+            identity = identity.id
+        return UserIdentityRequest(self).perform("PUT", self.endpoint.verify, user, identity)
+
+    def delete(self, user, identity):
+        """
+        Deletes the identity for a given user
+
+        :param user: User id or object
+        :param identity: Identity id or object
+        :return: requests Response object
+        """
+        if isinstance(user, User):
+            user = user.id
+        if isinstance(identity, Identity):
+            identity = identity.id
+        return UserIdentityRequest(self).perform("DELETE", user, identity)
+
+
 class UserApi(IncrementalApi, CRUDApi):
     """
     The UserApi adds some User specific functionality
     """
 
-    class UserIdentityApi(Api):
-        def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
-            Api.__init__(self, subdomain, session, endpoint.identities,
-                         object_type='identity',
-                         timeout=timeout,
-                         ratelimit=ratelimit)
-
-        def show(self, user, identity):
-            """
-            Show the specified identity for the specified user.
-
-            :param user: user id or User object
-            :param identity: identity id object
-            :return: Identity
-            """
-            if isinstance(user, User):
-                user = user.id
-            if isinstance(identity, Identity):
-                identity = identity.id
-
-            url = self.endpoint.show(user, identity)
-            return self._get(url)
-
-        def create(self, user, identity):
-            """
-            Create an additional identity for the specified user
-
-            :param user: User id or object
-            :param identity: Identity object to be created
-            """
-            if not isinstance(identity, Identity):
-                raise ZenpyException("Invalid type - expected Identity received: {}".format(type(identity)))
-            if isinstance(user, User):
-                user = user.id
-            return UserIdentityRequest(self).perform("POST", user, identity)
-
-        def update(self, user, identity):
-            """
-            Update specified identity for the specified user
-
-            :param user: User object or id
-            :param identity: Identity object to be updated.
-            :return: The updated Identity
-            """
-            if not isinstance(identity, Identity):
-                raise ZenpyException("You must pass an Identity object to this endpoint!")
-            if isinstance(user, User):
-                user = user.id
-            return UserIdentityRequest(self).perform("PUT", self.endpoint.update, user, identity.id)
-
-        def make_primary(self, user, identity):
-            """
-            Set the specified user as primary for the specified user.
-
-            :param user: User object or id
-            :param identity: Identity object or id
-            :return: list of user's Identities
-            """
-            if isinstance(user, User):
-                user = user.id
-            if isinstance(identity, Identity):
-                identity = identity.id
-            return UserIdentityRequest(self).perform("PUT", self.endpoint.make_primary, user, identity)
-
-        def request_verification(self, user, identity):
-            """
-            Sends the user a verification email with a link to verify ownership of the email address.
-
-            :param user: User id or object
-            :param identity: Identity id or object
-            :return: requests Response object
-            """
-            if isinstance(user, User):
-                user = user.id
-            if isinstance(identity, Identity):
-                identity = identity.id
-
-            return UserIdentityRequest(self).perform("PUT", self.endpoint.request_verification, user, identity)
-
-        def verify(self, user, identity):
-            """
-            Verify an identity for a user
-
-            :param user: User id or object
-            :param identity: Identity id or object
-            :return: the verified Identity
-            """
-            if isinstance(user, User):
-                user = user.id
-            if isinstance(identity, Identity):
-                identity = identity.id
-            return UserIdentityRequest(self).perform("PUT", self.endpoint.verify, user, identity)
-
-        def delete(self, user, identity):
-            """
-            Deletes the identity for a given user
-
-            :param user: User id or object
-            :param identity: Identity id or object
-            :return: requests Response object
-            """
-            if isinstance(user, User):
-                user = user.id
-            if isinstance(identity, Identity):
-                identity = identity.id
-            return UserIdentityRequest(self).perform("DELETE", user, identity)
-
-    identities = UserIdentityApi
-
-    def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
-        Api.__init__(self, subdomain, session, endpoint, object_type='user', timeout=timeout, ratelimit=ratelimit)
-        self.identities = self.identities(subdomain, session, endpoint, timeout=timeout, ratelimit=ratelimit)
+    def __init__(self, config):
+        super(UserApi, self).__init__(config, object_type='user')
+        self.identities = UserIdentityApi(config)
 
     def groups(self, user_id):
         """
@@ -720,8 +720,8 @@ class UserApi(IncrementalApi, CRUDApi):
 
 
 class AttachmentApi(Api):
-    def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
-        Api.__init__(self, subdomain, session, endpoint, object_type='attachment', timeout=timeout, ratelimit=ratelimit)
+    def __init__(self, config):
+        super(AttachmentApi, self).__init__(config, object_type='attachment')
 
     def __call__(self, *args, **kwargs):
         if 'id' not in kwargs:
@@ -747,8 +747,8 @@ class EndUserApi(CRUDApi):
     EndUsers can only update.
     """
 
-    def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
-        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='user', ratelimit=ratelimit)
+    def __init__(self, config):
+        super(EndUserApi, self).__init__(config, object_type='user')
 
     def delete(self, api_objects, **kwargs):
         raise ZenpyException("EndUsers cannot delete!")
@@ -758,9 +758,8 @@ class EndUserApi(CRUDApi):
 
 
 class OrganizationApi(TaggableApi, IncrementalApi, CRUDApi):
-    def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
-        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='organization',
-                     ratelimit=ratelimit)
+    def __init__(self, config):
+        super(OrganizationApi, self).__init__(config, object_type='organization')
 
     def organization_fields(self, org_id):
         """
@@ -806,18 +805,16 @@ class OrganizationMembershipApi(CRUDApi):
     The OrganizationMembershipApi allows the creation and deletion of Organization Memberships
     """
 
-    def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
-        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='organization_membership',
-                     ratelimit=ratelimit)
+    def __init__(self, config):
+        super(OrganizationMembershipApi, self).__init__(config, object_type='organization_membership')
 
     def update(self, items, **kwargs):
         raise ZenpyException("You cannot update Organization Memberships!")
 
 
 class SatisfactionRatingApi(Api):
-    def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
-        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='satisfaction_rating',
-                     ratelimit=ratelimit)
+    def __init__(self, config):
+        super(SatisfactionRatingApi, self).__init__(config, object_type='satisfaction_rating')
 
     def create(self, ticket_id, satisfaction_rating):
         """
@@ -830,9 +827,8 @@ class SatisfactionRatingApi(Api):
 
 
 class MacroApi(CRUDApi):
-    def __init__(self, subdomain, session, timeout, ratelimit):
-        Api.__init__(self, subdomain, session, Endpoint.macros, timeout=timeout, object_type='macro',
-                     ratelimit=ratelimit)
+    def __init__(self, config):
+        super(MacroApi, self).__init__(config, object_type='macro')
 
     def apply(self, macro_id):
         """
@@ -849,8 +845,8 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
     The TicketApi adds some Ticket specific functionality
     """
 
-    def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
-        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='ticket', ratelimit=ratelimit)
+    def __init__(self, config):
+        super(TicketApi, self).__init__(config, object_type='ticket')
 
     def organizations(self, org_id):
         """
@@ -935,8 +931,10 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
 
 
 class TicketImportAPI(CRUDApi):
-    def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
-        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='ticket', ratelimit=ratelimit)
+    def __init__(self, config):
+        super(TicketImportAPI, self).__init__(config,
+                                              object_type='ticket',
+                                              endpoint=EndpointFactory('ticket_import'))
 
     def __call__(self, *args, **kwargs):
         raise ZenpyException("You must pass ticket objects to this endpoint!")
@@ -949,8 +947,8 @@ class TicketImportAPI(CRUDApi):
 
 
 class RequestAPI(CRUDApi):
-    def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
-        Api.__init__(self, subdomain, session, endpoint, timeout=timeout, object_type='request', ratelimit=ratelimit)
+    def __init__(self, config):
+        super(RequestAPI, self).__init__(config, object_type='request')
 
     def open(self):
         """
@@ -988,27 +986,18 @@ class RequestAPI(CRUDApi):
 
 
 class SharingAgreementAPI(CRUDApi):
-    def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
-        Api.__init__(self, subdomain, session, endpoint,
-                     timeout=timeout,
-                     object_type='sharing_agreement',
-                     ratelimit=ratelimit)
+    def __init__(self, config):
+        super(SharingAgreementAPI, self).__init__(config, object_type='sharing_agreement')
 
 
 class GroupApi(CRUDApi):
-    def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
-        Api.__init__(self, subdomain, session, endpoint,
-                     timeout=timeout,
-                     object_type='group',
-                     ratelimit=ratelimit)
+    def __init__(self, config):
+        super(GroupApi, self).__init__(config, object_type='group')
 
 
 class ViewApi(CRUDApi):
-    def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
-        Api.__init__(self, subdomain, session, endpoint,
-                     timeout=timeout,
-                     object_type='view',
-                     ratelimit=ratelimit)
+    def __init__(self, config):
+        super(ViewApi, self).__init__(config, object_type='view')
 
     def active(self):
         """
@@ -1085,3 +1074,7 @@ class ViewApi(CRUDApi):
         :param kwargs: search parameters
         """
         return self._get(self._build_url(self.endpoint.search(*args, **kwargs)))
+
+    # TODO: https://github.com/facetoe/zenpy/issues/123
+    def _get_sla(self, sla_id):
+        pass

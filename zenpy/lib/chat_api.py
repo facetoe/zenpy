@@ -27,11 +27,10 @@ class ChatApiBase(Api):
     Request and Response handlers. 
     """
 
-    def __init__(self, subdomain, session, endpoint, timeout, ratelimit, request_handler=None):
-        super(Api, self).__init__(subdomain, session, endpoint,
-                                  timeout=timeout,
-                                  ratelimit=ratelimit,
-                                  object_type='chat')
+    def __init__(self, config, endpoint, request_handler=None):
+        super(ChatApiBase, self).__init__(config,
+                                          object_type='chat',
+                                          endpoint=endpoint)
         self._request_handler = request_handler or ChatApiRequest
         self._object_manager = ChatObjectManager(self)
         self._url_template = "%(protocol)s://www.zopim.com/%(api_prefix)s"
@@ -64,10 +63,9 @@ class ChatApiBase(Api):
 
 
 class AgentApi(ChatApiBase):
-    def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
-        super(AgentApi, self).__init__(subdomain, session, endpoint,
-                                       timeout=timeout,
-                                       ratelimit=ratelimit,
+    def __init__(self, config, endpoint):
+        super(AgentApi, self).__init__(config,
+                                       endpoint=endpoint,
                                        request_handler=AgentRequest)
 
     def me(self):
@@ -75,21 +73,26 @@ class AgentApi(ChatApiBase):
 
 
 class ChatApi(ChatApiBase):
-    def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
-        super(ChatApi, self).__init__(subdomain, session, endpoint,
-                                      timeout=timeout,
-                                      ratelimit=ratelimit)
-        self.accounts = ChatApiBase(subdomain, session, endpoint.account, timeout, ratelimit,
-                                    request_handler=AccountRequest)
-        self.agents = AgentApi(subdomain, session, endpoint.agents, timeout, ratelimit)
-        self.visitors = ChatApiBase(subdomain, session, endpoint.visitors, timeout, ratelimit,
-                                    request_handler=VisitorRequest)
-        self.shortcuts = ChatApiBase(subdomain, session, endpoint.shortcuts, timeout, ratelimit)
-        self.triggers = ChatApiBase(subdomain, session, endpoint.triggers, timeout, ratelimit)
-        self.bans = ChatApiBase(subdomain, session, endpoint.bans, timeout, ratelimit)
-        self.departments = ChatApiBase(subdomain, session, endpoint.departments, timeout, ratelimit)
-        self.goals = ChatApiBase(subdomain, session, endpoint.goals, timeout, ratelimit)
-        self.stream = ChatApiBase(subdomain, session, endpoint.stream, timeout, ratelimit)
+    def __init__(self, config, endpoint):
+        super(ChatApi, self).__init__(config, endpoint=endpoint)
+
+        self.accounts = ChatApiBase(config, endpoint.account, request_handler=AccountRequest)
+
+        self.agents = AgentApi(config, endpoint.agents)
+
+        self.visitors = ChatApiBase(config, endpoint.visitors, request_handler=VisitorRequest)
+
+        self.shortcuts = ChatApiBase(config, endpoint.shortcuts)
+
+        self.triggers = ChatApiBase(config, endpoint.triggers)
+
+        self.bans = ChatApiBase(config, endpoint.bans)
+
+        self.departments = ChatApiBase(config, endpoint.departments)
+
+        self.goals = ChatApiBase(config, endpoint.goals)
+
+        self.stream = ChatApiBase(config, endpoint.stream)
 
     def search(self, *args, **kwargs):
         url = self._build_url(self.endpoint.search(*args, **kwargs))

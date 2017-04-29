@@ -6,7 +6,7 @@ import os
 from zenpy.lib.api_objects import BaseObject, Ticket
 from zenpy.lib.api_objects.chat_objects import Shortcut, Trigger
 from zenpy.lib.cache import delete_from_cache
-from zenpy.lib.endpoint import Endpoint
+from zenpy.lib.endpoint import EndpointFactory
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.util import get_object_type, as_plural
 
@@ -293,7 +293,7 @@ class SatisfactionRatingRequest(BaseZendeskRequest):
 
     def post(self, ticket_id, satisfaction_rating):
         payload = self.build_payload(satisfaction_rating)
-        url = self.api._build_url(Endpoint.satisfaction_ratings.create(id=ticket_id))
+        url = self.api._build_url(EndpointFactory.satisfaction_ratings.create(id=ticket_id))
         return self.api._post(url, payload)
 
     def put(self, api_objects, *args, **kwargs):

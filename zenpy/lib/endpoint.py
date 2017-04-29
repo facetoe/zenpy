@@ -370,7 +370,7 @@ class ViewSearchEndpoint(BaseEndpoint):
         return self.endpoint + "&".join(params).lower()
 
 
-class Endpoint(object):
+class EndpointFactory(object):
     """
     The Endpoint object ties it all together.
     """
@@ -478,3 +478,6 @@ class Endpoint(object):
     views.execute = SecondaryEndpoint('views/%(id)s/execute.json')
     views.export = SecondaryEndpoint('views/%(id)s/export.json')
     views.search = ViewSearchEndpoint('views/search.json?')
+
+    def __new__(cls, endpoint_name):
+        return getattr(cls, endpoint_name)
