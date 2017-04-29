@@ -7,7 +7,7 @@ from zenpy.lib.api import UserApi, Api, TicketApi, OrganizationApi, SuspendedTic
     RequestAPI, OrganizationMembershipApi, AttachmentApi, SharingAgreementAPI, SatisfactionRatingApi, MacroApi, \
     GroupApi, ViewApi
 from zenpy.lib.cache import ZenpyCache, cache_mapping, purge_cache
-from zenpy.lib.chat_api import ChatApi
+from zenpy.lib.api import ChatApi
 from zenpy.lib.endpoint import EndpointFactory
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.mapping import ZendeskObjectMapping
