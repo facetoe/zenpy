@@ -113,3 +113,8 @@ class ChatResultGenerator(BaseResultGenerator):
 
     def process_page(self):
         return self.response_handler.deserialize(self._response_json)
+
+
+class ViewResultGenerator(BaseResultGenerator):
+    def process_page(self):
+        return self.response_handler.deserialize(self._response_json)

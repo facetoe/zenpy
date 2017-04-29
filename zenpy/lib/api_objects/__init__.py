@@ -194,6 +194,29 @@ class UserRelated(BaseObject):
             setattr(self, key, value)
 
 
+class Export(BaseObject):
+    def __init__(self, api=None, status=None, view_id=None, **kwargs):
+
+        self.api = api
+        self.status = status
+        self.view_id = view_id
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def view(self):
+
+        if self.api and self.view_id:
+            return self.api._get_view(self.view_id)
+
+    @view.setter
+    def view(self, view):
+        if view:
+            self.view_id = view.id
+            self._view = view
+
+
 class TicketSharingEvent(BaseObject):
     def __init__(self,
                  api=None,
@@ -1760,6 +1783,69 @@ class OrganizationMembership(BaseObject):
         if user:
             self.user_id = user.id
             self._user = user
+
+
+class ViewRow(BaseObject):
+    def __init__(self,
+                 api=None,
+                 created=None,
+                 group_id=None,
+                 priority=None,
+                 requester_id=None,
+                 score=None,
+                 subject=None,
+                 ticket=None,
+                 **kwargs):
+
+        self.api = api
+
+        self._custom_fields = None
+
+        self._fields = None
+        self.created = created
+        self.group_id = group_id
+        self.priority = priority
+        self.requester_id = requester_id
+        self.score = score
+        self.subject = subject
+        self.ticket = ticket
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def custom_fields(self):
+
+        if self.api and self._custom_fields:
+            return self.api._get_custom_fields(self._custom_fields)
+
+    @custom_fields.setter
+    def custom_fields(self, custom_fields):
+        if custom_fields:
+            self._custom_fields = custom_fields
+
+    @property
+    def fields(self):
+
+        if self.api and self._fields:
+            return self.api._get_fields(self._fields)
+
+    @fields.setter
+    def fields(self, fields):
+        if fields:
+            self._fields = fields
+
+    @property
+    def requester(self):
+
+        if self.api and self.requester_id:
+            return self.api._get_user(self.requester_id)
+
+    @requester.setter
+    def requester(self, requester):
+        if requester:
+            self.requester_id = requester.id
+            self._requester = requester
 
 
 class Identity(BaseObject):
@@ -3363,6 +3449,45 @@ class SatisfactionRatingEvent(BaseObject):
             self._assignee = assignee
 
 
+class ViewCount(BaseObject):
+    def __init__(self,
+                 api=None,
+                 channel=None,
+                 fresh=None,
+                 poll_wait=None,
+                 pretty=None,
+                 refresh=None,
+                 url=None,
+                 value=None,
+                 view_id=None,
+                 **kwargs):
+
+        self.api = api
+        self.channel = channel
+        self.fresh = fresh
+        self.poll_wait = poll_wait
+        self.pretty = pretty
+        self.refresh = refresh
+        self.url = url
+        self.value = value
+        self.view_id = view_id
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def view(self):
+
+        if self.api and self.view_id:
+            return self.api._get_view(self.view_id)
+
+    @view.setter
+    def view(self, view):
+        if view:
+            self.view_id = view.id
+            self._view = view
+
+
 class GroupMembership(BaseObject):
     def __init__(self,
                  api=None,
@@ -3741,6 +3866,19 @@ class Request(BaseObject):
             self.updated_at = updated
 
 
+class Conditions(BaseObject):
+    def __init__(self, api=None, **kwargs):
+
+        self.api = api
+
+        self._all = None
+
+        self._any = None
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+
 class SharingAgreement(BaseObject):
     def __init__(self,
                  api=None,
@@ -3798,6 +3936,121 @@ class SharingAgreement(BaseObject):
     def created(self, created):
         if created:
             self.created_at = created
+
+
+class View(BaseObject):
+    def __init__(self,
+                 api=None,
+                 active=None,
+                 created_at=None,
+                 id=None,
+                 position=None,
+                 raw_title=None,
+                 restriction=None,
+                 sla_id=None,
+                 title=None,
+                 updated_at=None,
+                 url=None,
+                 **kwargs):
+
+        self.api = api
+
+        # Comment: An object describing how the view is constructed
+        # Read-only: no
+        # Type: :class:`Conditions`
+
+        self._conditions = None
+
+        # Comment: An object describing how the view should be executed
+        # Read-only: no
+        # Type: :class:`Execute`
+
+        self._execution = None
+
+        # Comment: Useful for determining if the view should be displayed
+        # Read-only: no
+        # Type: boolean
+        self.active = active
+
+        # Comment: The time the view was created
+        # Read-only: yes
+        # Type: date
+        self.created_at = created_at
+
+        # Comment: Automatically assigned when created
+        # Read-only: yes
+        # Type: integer
+        self.id = id
+
+        # Comment: The position of the view
+        # Read-only: no
+        # Type: integer
+        self.position = position
+        self.raw_title = raw_title
+
+        # Comment: Who may access this account. Will be null when everyone in the account can access it.
+        # Read-only: no
+        # Type: object
+        self.restriction = restriction
+
+        # Comment: If the view is for an SLA, shows the id
+        # Read-only: yes
+        # Type: integer
+        self.sla_id = sla_id
+
+        # Comment: The title of the view
+        # Read-only: no
+        # Type: string
+        self.title = title
+
+        # Comment: The time of the last update of the view
+        # Read-only: yes
+        # Type: date
+        self.updated_at = updated_at
+        self.url = url
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def created(self):
+        """
+        |  Comment: The time the view was created
+        """
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
+
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created
+
+    @property
+    def sla(self):
+        """
+        |  Comment: If the view is for an SLA, shows the id
+        """
+        if self.api and self.sla_id:
+            return self.api._get_sla(self.sla_id)
+
+    @sla.setter
+    def sla(self, sla):
+        if sla:
+            self.sla_id = sla.id
+            self._sla = sla
+
+    @property
+    def updated(self):
+        """
+        |  Comment: The time of the last update of the view
+        """
+        if self.updated_at:
+            return dateutil.parser.parse(self.updated_at)
+
+    @updated.setter
+    def updated(self, updated):
+        if updated:
+            self.updated_at = updated
 
 
 class Status(BaseObject):

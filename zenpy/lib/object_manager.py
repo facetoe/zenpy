@@ -1,52 +1,7 @@
 import logging
 
-from zenpy.lib.api_objects import Activity, Request, UserRelated, OrganizationMembership, Upload, SharingAgreement, \
-    Macro, Action, MacroResult, AgentMacroReference, Identity
-from zenpy.lib.api_objects import Attachment
-from zenpy.lib.api_objects import Audit
-from zenpy.lib.api_objects import Brand
-from zenpy.lib.api_objects import CcEvent
-from zenpy.lib.api_objects import ChangeEvent
-from zenpy.lib.api_objects import Comment
-from zenpy.lib.api_objects import CommentPrivacyChangeEvent
-from zenpy.lib.api_objects import CreateEvent
-from zenpy.lib.api_objects import ErrorEvent
-from zenpy.lib.api_objects import ExternalEvent
-from zenpy.lib.api_objects import FacebookCommentEvent
-from zenpy.lib.api_objects import FacebookEvent
-from zenpy.lib.api_objects import Group
-from zenpy.lib.api_objects import GroupMembership
-from zenpy.lib.api_objects import JobStatus
-from zenpy.lib.api_objects import LogmeinTranscriptEvent
-from zenpy.lib.api_objects import Metadata
-from zenpy.lib.api_objects import NotificationEvent
-from zenpy.lib.api_objects import Organization
-from zenpy.lib.api_objects import OrganizationActivityEvent
-from zenpy.lib.api_objects import OrganizationField
-from zenpy.lib.api_objects import PushEvent
-from zenpy.lib.api_objects import SatisfactionRating
-from zenpy.lib.api_objects import SatisfactionRatingEvent
-from zenpy.lib.api_objects import Source
-from zenpy.lib.api_objects import Status
-from zenpy.lib.api_objects import SuspendedTicket
-from zenpy.lib.api_objects import System
-from zenpy.lib.api_objects import Tag
-from zenpy.lib.api_objects import Thumbnail
-from zenpy.lib.api_objects import Ticket
-from zenpy.lib.api_objects import TicketAudit
-from zenpy.lib.api_objects import TicketEvent
-from zenpy.lib.api_objects import TicketField
-from zenpy.lib.api_objects import TicketMetric
-from zenpy.lib.api_objects import TicketMetricItem
-from zenpy.lib.api_objects import TicketSharingEvent
-from zenpy.lib.api_objects import Topic
-from zenpy.lib.api_objects import TweetEvent
-from zenpy.lib.api_objects import User
-from zenpy.lib.api_objects import UserField
-from zenpy.lib.api_objects import Via
-from zenpy.lib.api_objects import VoiceCommentEvent
-from zenpy.lib.api_objects.chat_objects import Chat, Session, ResponseTime, Visitor, Webpath, Count, OfflineMessage, \
-    Shortcut, Trigger, Ban, Account, Plan, Billing, Roles, Agent, SearchResult, IpAddress, Department, Goal
+from zenpy.lib.api_objects import *
+from zenpy.lib.api_objects.chat_objects import *
 from zenpy.lib.cache import add_to_cache
 from zenpy.lib.exception import ZenpyException
 
@@ -114,7 +69,12 @@ class ZendeskObjectManager(object):
         'action': Action,
         'result': MacroResult,
         'agentmacroreference': AgentMacroReference,
-        'identity': Identity
+        'identity': Identity,
+        'view': View,
+        'conditions': Conditions,
+        'view_row': ViewRow,
+        'view_count': ViewCount,
+        'export': Export
     }
 
     def __init__(self, api):
@@ -127,7 +87,7 @@ class ZendeskObjectManager(object):
          to the relevant cache if applicable. 
         """
         if not isinstance(object_json, dict):
-            return
+            return object_json
         ZenpyClass = self.class_for_type(object_type)
         obj = ZenpyClass(api=self.api)
         for key, value in object_json.items():

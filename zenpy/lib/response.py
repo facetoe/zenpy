@@ -1,7 +1,7 @@
 from abc import abstractmethod
 
 from zenpy.lib.exception import ZenpyException
-from zenpy.lib.generator import SearchResultGenerator, ZendeskResultGenerator, ChatResultGenerator
+from zenpy.lib.generator import SearchResultGenerator, ZendeskResultGenerator, ChatResultGenerator, ViewResultGenerator
 from zenpy.lib.util import as_singular, as_plural
 
 
@@ -57,14 +57,18 @@ class GenericZendeskResponseHandler(ResponseHandler):
         """
         response_objects = dict()
         if all((t in response_json for t in ('ticket', 'audit'))):
-            response_objects["ticket_audit"] = self.api._object_manager.object_from_json("ticket_audit",
-                                                                                         response_json)
+            response_objects["ticket_audit"] = self.api._object_manager.object_from_json(
+                "ticket_audit",
+                response_json
+            )
 
         # Locate and store the single objects.
         for zenpy_object_name in self.api._object_manager.class_mapping:
             if zenpy_object_name in response_json:
-                zenpy_object = self.api._object_manager.object_from_json(zenpy_object_name,
-                                                                         response_json[zenpy_object_name])
+                zenpy_object = self.api._object_manager.object_from_json(
+                    zenpy_object_name,
+                    response_json[zenpy_object_name]
+                )
                 response_objects[zenpy_object_name] = zenpy_object
 
         # Locate and store the collections of objects.
@@ -74,7 +78,10 @@ class GenericZendeskResponseHandler(ResponseHandler):
                 if zenpy_object_name in self.api._object_manager.class_mapping:
                     response_objects[key] = []
                     for object_json in response_json[key]:
-                        zenpy_object = self.api._object_manager.object_from_json(zenpy_object_name, object_json)
+                        zenpy_object = self.api._object_manager.object_from_json(
+                            zenpy_object_name,
+                            object_json
+                        )
                         response_objects[key].append(zenpy_object)
         return response_objects
 
@@ -108,7 +115,6 @@ class GenericZendeskResponseHandler(ResponseHandler):
             plural_zenpy_object_name = as_plural(zenpy_object_name)
             if plural_zenpy_object_name in zenpy_objects:
                 return ZendeskResultGenerator(self, response_json)
-
         # Bummer, bail out with an informative message.
         raise ZenpyException("Unknown Response: " + str(response_json))
 
@@ -125,6 +131,37 @@ class HTTPOKResponseHandler(ResponseHandler):
 
     def build(self, response):
         return response
+
+
+class ViewResponseHandler(GenericZendeskResponseHandler):
+    @staticmethod
+    def applies_to(api, response):
+        return get_endpoint_path(api, response).startswith('/views')
+
+    def deserialize(self, response_json):
+        deserialized_response = super(ViewResponseHandler, self).deserialize(response_json)
+        if 'rows' in response_json:
+            views = list()
+            for row in response_json['rows']:
+                views.append(self.api._object_manager.object_from_json('view_row', row))
+            return views
+        elif 'views' in deserialized_response:
+            return deserialized_response['views']
+        elif 'tickets' in deserialized_response:
+            return deserialized_response['tickets']
+        elif 'view_counts' in deserialized_response:
+            return deserialized_response['view_counts']
+        elif 'export' in deserialized_response:
+            return deserialized_response['export']
+        else:
+            return deserialized_response['view']
+
+    def build(self, response):
+        response_json = response.json()
+        if 'rows' in response_json or 'view_counts' in response_json:
+            return ViewResultGenerator(self, response_json)
+        else:
+            return self.deserialize(response_json)
 
 
 class DeleteResponseHandler(GenericZendeskResponseHandler):

@@ -5,7 +5,7 @@ from requests.adapters import HTTPAdapter
 
 from zenpy.lib.api import UserApi, Api, TicketApi, OrganizationApi, SuspendedTicketApi, EndUserApi, TicketImportAPI, \
     RequestAPI, OrganizationMembershipApi, AttachmentApi, SharingAgreementAPI, SatisfactionRatingApi, MacroApi, \
-    GroupApi
+    GroupApi, ViewApi
 from zenpy.lib.cache import ZenpyCache, cache_mapping, purge_cache
 from zenpy.lib.chat_api import ChatApi
 from zenpy.lib.endpoint import Endpoint
@@ -259,6 +259,14 @@ class Zenpy(object):
             session=session,
             timeout=timeout,
             endpoint=endpoint.chats,
+            ratelimit=ratelimit
+        )
+
+        self.views = ViewApi(
+            subdomain=subdomain,
+            session=session,
+            timeout=timeout,
+            endpoint=endpoint.views,
             ratelimit=ratelimit
         )
 

@@ -225,8 +225,8 @@ class Attribute(object):
             'conditions',
             'all',
             'any',
-            'execution',
             'columns',
+            'execution',
             # ChatApi
             'agent_names',
             'count',
