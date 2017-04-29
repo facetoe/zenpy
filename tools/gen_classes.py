@@ -4,6 +4,7 @@ import glob
 import json
 import re
 import sys
+from multiprocessing.pool import Pool
 from optparse import OptionParser
 
 import os
@@ -221,6 +222,11 @@ class Attribute(object):
             'domain_names',
             'ticket',
             'audit',
+            'conditions',
+            'all',
+            'any',
+            'columns',
+            'execution',
             # ChatApi
             'agent_names',
             'count',
@@ -315,9 +321,6 @@ parser.add_option("--out-path", "-o", dest="out_path",
                   help="Where to put generated classes",
                   metavar="OUT_PATH",
                   default=os.getcwd())
-parser.add_option("--target-file", "-t", dest="target_file",
-                  help="Target JSON file. If not set all files will be generated",
-                  metavar="TARGET")
 
 (options, args) = parser.parse_args()
 
@@ -334,10 +337,11 @@ elif not options.doc_json_path:
 doc_json = json.load(open(options.doc_json_path))
 
 
-def process_file(path, output):
+def process_file(path):
     class_name = os.path.basename(os.path.splitext(path)[0]).capitalize()
     class_name = "".join([w.capitalize() for w in class_name.split('_')])
-    class_code = Class(class_name, json.load(open(path)), doc_json).render()
+    with open(path) as f:
+        class_code = Class(class_name, json.load(f), doc_json).render()
     print("Processed: %s -> %s" % (os.path.basename(path), class_name))
     return class_code
 
@@ -348,12 +352,10 @@ def process_specification_directory(glob_pattern, outfile_name, write_baseclass=
             classes = [BASE_CLASSS]
         else:
             classes = ["from zenpy.lib.api_objects import BaseObject"]
-        for file_path in glob.glob(os.path.join(options.spec_path, glob_pattern)):
-            if options.target_file is not None and os.path.basename(file_path) == options.target_file:
-                class_code = process_file(file_path, out_file)
-            else:
-                class_code = process_file(file_path, out_file)
-            classes.append(class_code)
+
+        paths = [p for p in glob.glob(os.path.join(options.spec_path, glob_pattern))]
+        with Pool() as pool:
+            classes.extend(pool.map(process_file, paths))
         print("Formatting...")
         formatted_code = FormatCode("\n".join(classes))[0]
         out_file.write(formatted_code)

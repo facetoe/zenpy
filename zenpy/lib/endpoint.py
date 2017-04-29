@@ -83,6 +83,8 @@ class PrimaryEndpoint(BaseEndpoint):
                 query = self._many(self.endpoint, value, action='recover_many.json?ids=')
             elif key == 'update_many':
                 query = "".join([self.endpoint, '/update_many.json'])
+            elif key == 'count_many':
+                query = self._many(self.endpoint, value, action='count_many.json?ids=')
             elif key in ('sort_by', 'sort_order'):
                 modifiers.append((key, value))
             elif key == 'permission_set':
@@ -328,10 +330,7 @@ class MacroEndpoint(BaseEndpoint):
         return url_out
 
 
-class ChatEndpoint(object):
-    def __init__(self, endpoint):
-        self.endpoint = endpoint
-
+class ChatEndpoint(BaseEndpoint):
     def __call__(self, **kwargs):
         if len(kwargs) > 1:
             raise ZenpyException("Only expect a single keyword to the ChatEndpoint")
@@ -350,10 +349,7 @@ class ChatEndpoint(object):
         return endpoint_path
 
 
-class ChatSearchEndpoint(object):
-    def __init__(self, endpoint):
-        self.endpoint = endpoint
-
+class ChatSearchEndpoint(BaseEndpoint):
     def __call__(self, *args, **kwargs):
         conditions = list()
         if args:
@@ -361,6 +357,17 @@ class ChatSearchEndpoint(object):
 
         conditions.extend(["{}:{}".format(k, v) for k, v in kwargs.items()])
         return self.endpoint + " AND ".join(conditions)
+
+
+class ViewSearchEndpoint(BaseEndpoint):
+    def __call__(self, *args, **kwargs):
+        params = list()
+        if len(args) > 1:
+            raise ZenpyException("Only query can be passed as an arg!")
+        elif len(args) == 1:
+            params.append("query={}".format(args[0]))
+        params.extend(["{}={}".format(k, v) for k, v in kwargs.items()])
+        return self.endpoint + "&".join(params).lower()
 
 
 class Endpoint(object):
@@ -464,3 +471,10 @@ class Endpoint(object):
     users.identities.verify = MutlipleIDEndpoint('users/{0}/identities/{1}/verify')
     users.identities.request_verification = MutlipleIDEndpoint('users/{0}/identities/{1}/request_verification.json')
     users.identities.delete = MutlipleIDEndpoint('users/{0}/identities/{1}.json')
+    views = PrimaryEndpoint('views', sideload=['app_installation', 'permissions'])
+    views.active = PrimaryEndpoint('views/active')
+    views.compact = PrimaryEndpoint('views/compact')
+    views.tickets = SecondaryEndpoint('views/%(id)s/tickets')
+    views.execute = SecondaryEndpoint('views/%(id)s/execute.json')
+    views.export = SecondaryEndpoint('views/%(id)s/export.json')
+    views.search = ViewSearchEndpoint('views/search.json?')

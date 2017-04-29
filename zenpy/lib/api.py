@@ -1,3 +1,4 @@
+import collections
 import json
 import logging
 from datetime import datetime, date
@@ -5,7 +6,7 @@ from time import sleep, time
 
 from json import JSONEncoder
 
-from zenpy.lib.api_objects import User, Ticket, Macro, Identity
+from zenpy.lib.api_objects import User, Ticket, Macro, Identity, View
 from zenpy.lib.cache import query_cache
 from zenpy.lib.endpoint import Endpoint
 from zenpy.lib.exception import APIException, RecordNotFoundException, TooManyValuesException
@@ -14,7 +15,7 @@ from zenpy.lib.object_manager import ZendeskObjectManager
 from zenpy.lib.request import CRUDRequest, SuspendedTicketRequest, TagRequest, RateRequest, UserIdentityRequest, \
     UploadRequest, UserMergeRequest, TicketMergeRequest, SatisfactionRatingRequest
 from zenpy.lib.response import GenericZendeskResponseHandler, SearchResponseHandler, CombinationResponseHandler, \
-    TagResponseHandler, DeleteResponseHandler, HTTPOKResponseHandler
+    TagResponseHandler, DeleteResponseHandler, HTTPOKResponseHandler, ViewResponseHandler
 
 __author__ = 'facetoe'
 
@@ -58,6 +59,7 @@ class BaseApi(object):
             TagResponseHandler,
             SearchResponseHandler,
             CombinationResponseHandler,
+            ViewResponseHandler,
             GenericZendeskResponseHandler,
             HTTPOKResponseHandler,
         )
@@ -999,3 +1001,87 @@ class GroupApi(CRUDApi):
                      timeout=timeout,
                      object_type='group',
                      ratelimit=ratelimit)
+
+
+class ViewApi(CRUDApi):
+    def __init__(self, subdomain, session, endpoint, timeout, ratelimit):
+        Api.__init__(self, subdomain, session, endpoint,
+                     timeout=timeout,
+                     object_type='view',
+                     ratelimit=ratelimit)
+
+    def active(self):
+        """
+        Return all active views.
+        """
+        return self._get(self._build_url(self.endpoint.active()))
+
+    def compact(self):
+        """
+        Return compact views - https://developer.zendesk.com/rest_api/docs/core/views#list-views---compact
+        """
+        return self._get(self._build_url(self.endpoint.compact()))
+
+    def execute(self, view):
+        """
+        Execute a view.
+        
+        :param view: View or view id
+        """
+        if isinstance(view, View):
+            view = view.id
+        return self._get(self._build_url(self.endpoint.execute(id=view)))
+
+    def tickets(self, view):
+        """
+        Return the tickets in a view.
+        
+        :param view: View or view id
+        """
+        if isinstance(view, View):
+            view = view.id
+        return self._get(self._build_url(self.endpoint.tickets(id=view)))
+
+    def count(self, view):
+        """
+        Return a ViewCount for a view.
+        
+        :param view: View or view id
+        """
+        if isinstance(view, View):
+            view = view.id
+        return self._get(self._build_url(self.endpoint(id=view)))
+
+    def count_many(self, views):
+        """
+        Return many ViewCounts.
+        
+        :param views: iterable of View or view ids
+        """
+        if not isinstance(views, collections.Iterable):
+            raise ZenpyException("count_many() requires an iterable!")
+        ids = []
+        for v in views:
+            ids.append(v.id if isinstance(v, View) else v)
+        return self._get(self._build_url(self.endpoint(count_many=ids)))
+
+    def export(self, view):
+        """
+        Export a view. Returns an Export object.
+        
+        :param view: View or view id
+        :return: 
+        :return: 
+        """
+        if isinstance(view, View):
+            view = view.id
+        return self._get(self._build_url(self.endpoint.export(id=view)))
+
+    def search(self, *args, **kwargs):
+        """
+        Search views. See - https://developer.zendesk.com/rest_api/docs/core/views#search-views.
+        
+        :param args: query is the only accepted arg. 
+        :param kwargs: search parameters
+        """
+        return self._get(self._build_url(self.endpoint.search(*args, **kwargs)))

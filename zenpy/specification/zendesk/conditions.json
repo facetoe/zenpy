@@ -1,0 +1,30 @@
+{
+  "all": [
+    {
+      "field": "type",
+      "operator": "is",
+      "value": "incident"
+    },
+    {
+      "field": "priority",
+      "operator": "less_than",
+      "value": "urgent"
+    },
+    {
+      "field": "NEW",
+      "operator": "greater_than",
+      "value": "120"
+    },
+    {
+      "field": "assignee_id",
+      "operator": "is_not",
+      "value": ""
+    },
+    {
+      "field": "status",
+      "operator": "less_than",
+      "value": "solved"
+    }
+  ],
+  "any": []
+}
