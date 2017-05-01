@@ -54,6 +54,11 @@ class {{object.name}}(BaseObject):
 
 class Init(TemplateObject):
     OBJECT_TEMPLATE = """
+    {% if object.attributes %}
+    {% for attribute in object.attributes %}
+    {{- attribute.attr_name -}} = None
+    {% endfor %}
+    {% endif %}
     {% if object.init_params %}
     def __init__(self, api=None, {{ object.init_params }}, **kwargs):
     {% else %}
@@ -78,6 +83,7 @@ class Init(TemplateObject):
     """
 
     def __init__(self, attributes):
+        self.attributes = attributes
         self.init_params = ", ".join(
             ["{}=None".format(a.attr_name)
              for a in attributes
@@ -189,9 +195,7 @@ class Attribute(object):
         return object_type
 
     def get_attr_name(self, object_name, attr_name, attr_value):
-        should_modify = attr_name.endswith('timestamp') \
-                        or (isinstance(attr_value, dict) and object_name not in ('ticket', 'audit')) \
-                        or (object_name == attr_name and isinstance(attr_value, list) and attr_name not in ('tags',))
+        should_modify = attr_name.endswith('timestamp')
         if should_modify:
             return "_%s" % attr_name
         else:
@@ -204,6 +208,8 @@ class Attribute(object):
             return '[o.id for o in %(object_name)s]' % locals()
 
     def get_object_name(self, attr_name, attr_value):
+        if attr_name == 'locale_id':
+            return attr_name
         for replacement in ('_at', '_id'):
             if attr_name.endswith(replacement):
                 return attr_name.replace(replacement, '')
@@ -212,49 +218,20 @@ class Attribute(object):
         return attr_name
 
     def get_is_property(self, attr_name, attr_value):
-        not_properties = (
-            'author',
-            'to',
-            'from',
-            'locale',
-            'locale_id',
-            'tags',
-            'domain_names',
-            'ticket',
-            'audit',
-            'conditions',
-            'all',
-            'any',
-            'columns',
-            'execution',
-            # ChatApi
-            'agent_names',
-            'count',
-            'response_time',
-            'session',
-            'visitor',
-            'agent_names',
-            'count',
-            'definition',
-            'actions',
-            'condition',
-            'billing',
-            'plan',
-            'agent',
-            'roles',
-            'department',
-            'members'
-        )
-        if attr_name in not_properties:
+        if attr_name == 'locale_id':
             return False
-        elif any([isinstance(attr_value, t) for t in (dict, list)]):
+        if attr_name.endswith('_id') or attr_name.endswith('_ids'):
             return True
         elif self.object_type == 'date':
             return True
-        elif attr_name.endswith('_id') and isinstance(attr_value, int):
-            return True
-        else:
-            return False
+        # if any([isinstance(attr_value, t) for t in (dict, list)]):
+        #     return True
+        # elif self.object_type == 'date':
+        #     return True
+        # elif attr_name.endswith('_id') and isinstance(attr_value, int):
+        #     return True
+        # else:
+        return False
 
     def __str__(self):
         return "[is_prop=%(is_property)s, " \

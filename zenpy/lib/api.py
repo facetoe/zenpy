@@ -301,31 +301,6 @@ class Api(BaseApi):
     def _get_ticket(self, ticket_id):
         return self._query_zendesk(endpoint=EndpointFactory.tickets, object_type='ticket', id=ticket_id)
 
-    def _get_actions(self, actions):
-        for action in actions:
-            yield self._object_mapping.object_from_json('action', action)
-
-    def _get_events(self, events):
-        for event in events:
-            yield self._object_mapping.object_from_json(event['type'].lower(), event)
-
-    def _get_via(self, via):
-        return self._object_mapping.object_from_json('via', via)
-
-    def _get_source(self, source):
-        return self._object_mapping.object_from_json('source', source)
-
-    def _get_attachments(self, attachments):
-        for attachment in attachments:
-            yield self._object_mapping.object_from_json('attachment', attachment)
-
-    def _get_thumbnails(self, thumbnails):
-        for thumbnail in thumbnails:
-            yield self._object_mapping.object_from_json('thumbnail', thumbnail)
-
-    def _get_satisfaction_rating(self, satisfaction_rating):
-        return self._object_mapping.object_from_json('satisfaction_rating', satisfaction_rating)
-
     def _get_sharing_agreements(self, sharing_agreement_ids):
         sharing_agreements = []
         for _id in sharing_agreement_ids:
@@ -336,48 +311,12 @@ class Api(BaseApi):
                 sharing_agreements.append(sharing_agreement)
         return sharing_agreements
 
-    def _get_ticket_metric_item(self, metric_item):
-        return self._object_mapping.object_from_json('ticket_metric_item', metric_item)
-
-    def _get_metadata(self, metadata):
-        return self._object_mapping.object_from_json('metadata', metadata)
-
-    def _get_system(self, system):
-        return self._object_mapping.object_from_json('system', system)
-
     def _get_problem(self, problem_id):
-        return self._query_zendesk(EndpointFactory.tickets, 'ticket', id=problem_id)
+        return self._query_zendesk(EndpointFactory('tickets'), 'ticket', id=problem_id)
 
     # This will be deprecated soon - https://developer.zendesk.com/rest_api/docs/web-portal/forums
     def _get_forum(self, forum_id):
         return forum_id
-
-    def _get_user_fields(self, user_fields):
-        return user_fields
-
-    def _get_organization_fields(self, organization_fields):
-        return organization_fields
-
-    # TODO implement this with Enterprise
-    def _get_custom_fields(self, custom_fields):
-        return custom_fields
-
-    # This is ticket fields, hopefully it doesn't conflict with another field type
-    def _get_fields(self, fields):
-        return fields
-
-    def _get_upload(self, upload):
-        return self._object_mapping.object_from_json('upload', upload)
-
-    def _get_attachment(self, attachment):
-        return self._object_mapping.object_from_json('attachment', attachment)
-
-    def _get_child_events(self, child_events):
-        return child_events
-
-    # JobStatus results
-    def _get_results(self, results):
-        return results
 
 
 class CRUDApi(Api):
@@ -1123,7 +1062,7 @@ class ChatApiBase(Api):
 
     def _get_ip_address(self, ips):
         for ip in ips:
-            yield self._object_manager.object_from_json('ip_address', ip)
+            yield self._object_mapping.object_from_json('ip_address', ip)
 
 
 class AgentApi(ChatApiBase):
