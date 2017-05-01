@@ -255,7 +255,7 @@ class MultipleCreateApiTestCase(ModifiableApiTestCase):
                 wait_on_job_status=True
             )
             self.assertEqual(len(job_status.results), num_objects)
-            for zenpy_object in self.api(ids=[r['id'] for r in job_status.results]):
+            for zenpy_object in self.api(ids=[r.id for r in job_status.results]):
                 self.assertIsInstance(zenpy_object, self.ZenpyType)
                 self.assertInCache(zenpy_object)
                 self.recursively_call_properties(zenpy_object)
@@ -371,7 +371,7 @@ class MultipleUpdateApiTestCase(ModifiableApiTestCase):
             job_status = self.create_multiple_zenpy_objects(num_objects)
             self.assertEqual(len(job_status.results), num_objects)
             updated_objects = list()
-            for zenpy_object in self.api(ids=[r['id'] for r in job_status.results]):
+            for zenpy_object in self.api(ids=[r.id for r in job_status.results]):
                 modified_object, new_kwargs = self.modify_object(zenpy_object)
                 updated_objects.append((modified_object, new_kwargs))
             self.create_method([m[0] for m in updated_objects])
@@ -402,7 +402,7 @@ class MultipleDeleteApiTestCase(ModifiableApiTestCase):
         with self.recorder.use_cassette(cassette_name=cassette_name, serialize_with='prettyjson'):
             job_status = self.create_multiple_zenpy_objects(num_objects)
             self.assertEqual(len(job_status.results), num_objects)
-            returned_objects = self.api(ids=[r['id'] for r in job_status.results])
+            returned_objects = self.api(ids=[r.id for r in job_status.results])
             self.delete_method(list(returned_objects))
             [self.created_objects.remove(obj) for obj in returned_objects]
 

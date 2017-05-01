@@ -39,6 +39,11 @@ class BaseObject(object):
 
 
 class ResponseTime(BaseObject):
+
+    avg = None
+    first = None
+    max = None
+
     def __init__(self, api=None, avg=None, first=None, max=None, **kwargs):
 
         self.api = api
@@ -51,6 +56,12 @@ class ResponseTime(BaseObject):
 
 
 class IpAddress(BaseObject):
+
+    id = None
+    ip_address = None
+    reason = None
+    type = None
+
     def __init__(self,
                  api=None,
                  id=None,
@@ -70,6 +81,12 @@ class IpAddress(BaseObject):
 
 
 class Shortcut(BaseObject):
+
+    message = None
+    name = None
+    options = None
+    tags = None
+
     def __init__(self,
                  api=None,
                  message=None,
@@ -89,6 +106,19 @@ class Shortcut(BaseObject):
 
 
 class Session(BaseObject):
+
+    browser = None
+    city = None
+    country_code = None
+    country_name = None
+    end_date = None
+    id = None
+    ip = None
+    platform = None
+    region = None
+    start_date = None
+    user_agent = None
+
     def __init__(self,
                  api=None,
                  browser=None,
@@ -127,6 +157,10 @@ class Session(BaseObject):
 
 
 class Roles(BaseObject):
+
+    administrator = None
+    owner = None
+
     def __init__(self, api=None, administrator=None, owner=None, **kwargs):
 
         self.api = api
@@ -138,6 +172,13 @@ class Roles(BaseObject):
 
 
 class Visitor(BaseObject):
+
+    email = None
+    id = None
+    name = None
+    notes = None
+    phone = None
+
     def __init__(self,
                  api=None,
                  email=None,
@@ -159,6 +200,13 @@ class Visitor(BaseObject):
 
 
 class SearchResult(BaseObject):
+
+    _timestamp = None
+    id = None
+    preview = None
+    type = None
+    url = None
+
     def __init__(self,
                  api=None,
                  id=None,
@@ -191,13 +239,21 @@ class SearchResult(BaseObject):
 
 
 class Definition(BaseObject):
-    def __init__(self, api=None, event=None, **kwargs):
+
+    actions = None
+    condition = None
+    event = None
+
+    def __init__(self,
+                 api=None,
+                 actions=None,
+                 condition=None,
+                 event=None,
+                 **kwargs):
 
         self.api = api
-
-        self._actions = None
-
-        self._condition = None
+        self.actions = actions
+        self.condition = condition
         self.event = event
 
         for key, value in kwargs.items():
@@ -205,40 +261,67 @@ class Definition(BaseObject):
 
 
 class Department(BaseObject):
+
+    description = None
+    enabled = None
+    id = None
+    members = None
+    name = None
+    settings = None
+
     def __init__(self,
                  api=None,
                  description=None,
                  enabled=None,
                  id=None,
+                 members=None,
                  name=None,
+                 settings=None,
                  **kwargs):
 
         self.api = api
-
-        self._members = None
-
-        self._settings = None
         self.description = description
         self.enabled = enabled
         self.id = id
+        self.members = members
         self.name = name
+        self.settings = settings
 
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    @property
-    def settings(self):
-
-        if self.api and self._settings:
-            return self.api._get_settings(self._settings)
-
-    @settings.setter
-    def settings(self, settings):
-        if settings:
-            self._settings = settings
-
 
 class Plan(BaseObject):
+
+    agent_leaderboard = None
+    agent_reports = None
+    analytics = None
+    chat_reports = None
+    daily_reports = None
+    email_reports = None
+    file_upload = None
+    goals = None
+    high_load = None
+    integrations = None
+    ip_restriction = None
+    long_desc = None
+    max_advanced_triggers = None
+    max_agents = None
+    max_basic_triggers = None
+    max_concurrent_chats = None
+    max_departments = None
+    max_history_search_days = None
+    monitoring = None
+    name = None
+    operating_hours = None
+    price = None
+    rest_api = None
+    short_desc = None
+    sla = None
+    support = None
+    unbranding = None
+    widget_customization = None
+
     def __init__(self,
                  api=None,
                  agent_leaderboard=None,
@@ -306,6 +389,12 @@ class Plan(BaseObject):
 
 
 class Webpath(BaseObject):
+
+    _timestamp = None
+    from_ = None
+    title = None
+    to = None
+
     def __init__(self, api=None, from_=None, title=None, to=None, **kwargs):
 
         self.api = api
@@ -331,20 +420,27 @@ class Webpath(BaseObject):
 
 
 class Account(BaseObject):
+
+    account_key = None
+    billing = None
+    create_date = None
+    plan = None
+    status = None
+
     def __init__(self,
                  api=None,
                  account_key=None,
+                 billing=None,
                  create_date=None,
+                 plan=None,
                  status=None,
                  **kwargs):
 
         self.api = api
-
-        self._billing = None
-
-        self._plan = None
         self.account_key = account_key
+        self.billing = billing
         self.create_date = create_date
+        self.plan = plan
         self.status = status
 
         for key, value in kwargs.items():
@@ -352,30 +448,26 @@ class Account(BaseObject):
 
 
 class Ban(BaseObject):
-    def __init__(self, api=None, **kwargs):
+
+    ip_address = None
+    visitor = None
+
+    def __init__(self, api=None, ip_address=None, visitor=None, **kwargs):
 
         self.api = api
-
-        self._ip_address = None
-
-        self._visitor = None
+        self.ip_address = ip_address
+        self.visitor = visitor
 
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    @property
-    def ip_address(self):
-
-        if self.api and self._ip_address:
-            return self.api._get_ip_address(self._ip_address)
-
-    @ip_address.setter
-    def ip_address(self, ip_address):
-        if ip_address:
-            self._ip_address = ip_address
-
 
 class Count(BaseObject):
+
+    agent = None
+    total = None
+    visitor = None
+
     def __init__(self,
                  api=None,
                  agent=None,
@@ -393,30 +485,42 @@ class Count(BaseObject):
 
 
 class OfflineMessage(BaseObject):
+
+    _timestamp = None
+    department_id = None
+    department_name = None
+    id = None
+    message = None
+    session = None
+    type = None
+    unread = None
+    visitor = None
+    zendesk_ticket_id = None
+
     def __init__(self,
                  api=None,
                  department_id=None,
                  department_name=None,
                  id=None,
                  message=None,
+                 session=None,
                  type=None,
                  unread=None,
+                 visitor=None,
                  zendesk_ticket_id=None,
                  **kwargs):
 
         self.api = api
 
-        self._session = None
-
         self._timestamp = None
-
-        self._visitor = None
         self.department_id = department_id
         self.department_name = department_name
         self.id = id
         self.message = message
+        self.session = session
         self.type = type
         self.unread = unread
+        self.visitor = visitor
         self.zendesk_ticket_id = zendesk_ticket_id
 
         for key, value in kwargs.items():
@@ -433,8 +537,41 @@ class OfflineMessage(BaseObject):
         if timestamp:
             self._timestamp = timestamp
 
+    @property
+    def department(self):
+
+        if self.api and self.department_id:
+            return self.api._get_department(self.department_id)
+
+    @department.setter
+    def department(self, department):
+        if department:
+            self.department_id = department.id
+            self._department = department
+
+    @property
+    def zendesk_ticket(self):
+
+        if self.api and self.zendesk_ticket_id:
+            return self.api._get_zendesk_ticket(self.zendesk_ticket_id)
+
+    @zendesk_ticket.setter
+    def zendesk_ticket(self, zendesk_ticket):
+        if zendesk_ticket:
+            self.zendesk_ticket_id = zendesk_ticket.id
+            self._zendesk_ticket = zendesk_ticket
+
 
 class Goal(BaseObject):
+
+    attribution_model = None
+    attribution_period = None
+    description = None
+    enabled = None
+    id = None
+    name = None
+    settings = None
+
     def __init__(self,
                  api=None,
                  attribution_model=None,
@@ -443,37 +580,40 @@ class Goal(BaseObject):
                  enabled=None,
                  id=None,
                  name=None,
+                 settings=None,
                  **kwargs):
 
         self.api = api
-
-        self._settings = None
         self.attribution_model = attribution_model
         self.attribution_period = attribution_period
         self.description = description
         self.enabled = enabled
         self.id = id
         self.name = name
+        self.settings = settings
 
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    @property
-    def settings(self):
-
-        if self.api and self._settings:
-            return self.api._get_settings(self._settings)
-
-    @settings.setter
-    def settings(self, settings):
-        if settings:
-            self._settings = settings
-
 
 class Agent(BaseObject):
+
+    create_date = None
+    departments = None
+    display_name = None
+    email = None
+    enabled = None
+    first_name = None
+    id = None
+    last_login = None
+    last_name = None
+    login_count = None
+    roles = None
+
     def __init__(self,
                  api=None,
                  create_date=None,
+                 departments=None,
                  display_name=None,
                  email=None,
                  enabled=None,
@@ -482,14 +622,12 @@ class Agent(BaseObject):
                  last_login=None,
                  last_name=None,
                  login_count=None,
+                 roles=None,
                  **kwargs):
 
         self.api = api
-
-        self._departments = None
-
-        self._roles = None
         self.create_date = create_date
+        self.departments = departments
         self.display_name = display_name
         self.email = email
         self.enabled = enabled
@@ -498,33 +636,29 @@ class Agent(BaseObject):
         self.last_login = last_login
         self.last_name = last_name
         self.login_count = login_count
+        self.roles = roles
 
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    @property
-    def departments(self):
-
-        if self.api and self._departments:
-            return self.api._get_departments(self._departments)
-
-    @departments.setter
-    def departments(self, departments):
-        if departments:
-            self._departments = departments
-
 
 class Trigger(BaseObject):
+
+    definition = None
+    description = None
+    enabled = None
+    name = None
+
     def __init__(self,
                  api=None,
+                 definition=None,
                  description=None,
                  enabled=None,
                  name=None,
                  **kwargs):
 
         self.api = api
-
-        self._definition = None
+        self.definition = definition
         self.description = description
         self.enabled = enabled
         self.name = name
@@ -534,6 +668,19 @@ class Trigger(BaseObject):
 
 
 class Billing(BaseObject):
+
+    additional_info = None
+    address1 = None
+    address2 = None
+    city = None
+    company = None
+    country_code = None
+    email = None
+    first_name = None
+    last_name = None
+    postal_code = None
+    state = None
+
     def __init__(self,
                  api=None,
                  additional_info=None,
@@ -567,62 +714,90 @@ class Billing(BaseObject):
 
 
 class Chat(BaseObject):
+
+    _end_timestamp = None
+    _timestamp = None
+    agent_ids = None
+    agent_names = None
+    comment = None
+    count = None
+    department_id = None
+    department_name = None
+    duration = None
+    history = None
+    id = None
+    missed = None
+    rating = None
+    referrer_search_engine = None
+    referrer_search_terms = None
+    response_time = None
+    session = None
+    started_by = None
+    tags = None
+    triggered = None
+    triggered_response = None
+    type = None
+    unread = None
+    visitor = None
+    webpath = None
+    zendesk_ticket_id = None
+
     def __init__(self,
                  api=None,
                  agent_ids=None,
+                 agent_names=None,
                  comment=None,
+                 count=None,
                  department_id=None,
                  department_name=None,
                  duration=None,
+                 history=None,
                  id=None,
                  missed=None,
                  rating=None,
                  referrer_search_engine=None,
                  referrer_search_terms=None,
+                 response_time=None,
+                 session=None,
                  started_by=None,
                  tags=None,
                  triggered=None,
                  triggered_response=None,
                  type=None,
                  unread=None,
+                 visitor=None,
+                 webpath=None,
                  zendesk_ticket_id=None,
                  **kwargs):
 
         self.api = api
 
-        self._agent_names = None
-
-        self._count = None
-
         self._end_timestamp = None
 
-        self._history = None
-
-        self._response_time = None
-
-        self._session = None
-
         self._timestamp = None
-
-        self._visitor = None
-
-        self._webpath = None
         self.agent_ids = agent_ids
+        self.agent_names = agent_names
         self.comment = comment
+        self.count = count
         self.department_id = department_id
         self.department_name = department_name
         self.duration = duration
+        self.history = history
         self.id = id
         self.missed = missed
         self.rating = rating
         self.referrer_search_engine = referrer_search_engine
         self.referrer_search_terms = referrer_search_terms
+        self.response_time = response_time
+        self.session = session
         self.started_by = started_by
         self.tags = tags
         self.triggered = triggered
         self.triggered_response = triggered_response
         self.type = type
         self.unread = unread
+        self.visitor = visitor
+        self.webpath = webpath
         self.zendesk_ticket_id = zendesk_ticket_id
 
         for key, value in kwargs.items():
@@ -640,17 +815,6 @@ class Chat(BaseObject):
             self._end_timestamp = end_timestamp
 
     @property
-    def history(self):
-
-        if self.api and self._history:
-            return self.api._get_history(self._history)
-
-    @history.setter
-    def history(self, history):
-        if history:
-            self._history = history
-
-    @property
     def timestamp(self):
 
         if self._timestamp:
@@ -660,17 +824,6 @@ class Chat(BaseObject):
     def timestamp(self, timestamp):
         if timestamp:
             self._timestamp = timestamp
-
-    @property
-    def webpath(self):
-
-        if self.api and self._webpath:
-            return self.api._get_webpath(self._webpath)
-
-    @webpath.setter
-    def webpath(self, webpath):
-        if webpath:
-            self._webpath = webpath
 
     @property
     def agents(self):
@@ -683,3 +836,27 @@ class Chat(BaseObject):
         if agents:
             self.agent_ids = [o.id for o in agents]
             self._agents = agents
+
+    @property
+    def department(self):
+
+        if self.api and self.department_id:
+            return self.api._get_department(self.department_id)
+
+    @department.setter
+    def department(self, department):
+        if department:
+            self.department_id = department.id
+            self._department = department
+
+    @property
+    def zendesk_ticket(self):
+
+        if self.api and self.zendesk_ticket_id:
+            return self.api._get_zendesk_ticket(self.zendesk_ticket_id)
+
+    @zendesk_ticket.setter
+    def zendesk_ticket(self, zendesk_ticket):
+        if zendesk_ticket:
+            self.zendesk_ticket_id = zendesk_ticket.id
+            self._zendesk_ticket = zendesk_ticket

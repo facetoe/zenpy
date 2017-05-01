@@ -55,6 +55,7 @@ class BaseApi(object):
             SearchResponseHandler,
             CombinationResponseHandler,
             ViewResponseHandler,
+            SlaPolicyResponseHandler,
             GenericZendeskResponseHandler,
             HTTPOKResponseHandler,
         )
@@ -241,8 +242,7 @@ class BaseApi(object):
 
 class Api(BaseApi):
     """
-    Most general API class. It is callable, and is suitable for basic API endpoints that can
-    only be called with no arguments to return a collection, or an id to return a single item.
+    Most general API class. It is callable, and is suitable for basic API endpoints.
 
     This class also contains many methods for retrieving specific objects or collections of objects.
     These methods are called by the classes found in zenpy.lib.api_objects.
@@ -1022,6 +1022,25 @@ class ViewApi(CRUDApi):
     # TODO: https://github.com/facetoe/zenpy/issues/123
     def _get_sla(self, sla_id):
         pass
+
+
+class SlaPolicyApi(CRUDApi):
+    def __init__(self, config):
+        super(SlaPolicyApi, self).__init__(config, object_type='sla_policy')
+
+    def create(self, api_objects, **kwargs):
+        if isinstance(api_objects, collections.Iterable):
+            raise ZenpyException("Cannot create multiple sla policies!")
+        super(SlaPolicyApi, self).create(api_objects, **kwargs)
+
+    def update(self, api_objects, **kwargs):
+        if isinstance(api_objects, collections.Iterable):
+            raise ZenpyException("Cannot update multiple sla policies!")
+        super(SlaPolicyApi, self).update(api_objects, **kwargs)
+
+    def definitions(self):
+        url = self._build_url(self.endpoint.definitions())
+        return self._get(url)
 
 
 class ChatApiBase(Api):

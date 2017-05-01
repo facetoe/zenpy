@@ -39,6 +39,12 @@ class BaseObject(object):
 
 
 class PushEvent(BaseObject):
+
+    id = None
+    type = None
+    value = None
+    value_reference = None
+
     def __init__(self,
                  api=None,
                  id=None,
@@ -58,10 +64,26 @@ class PushEvent(BaseObject):
 
 
 class VoiceCommentEvent(BaseObject):
+
+    attachments = None
+    author_id = None
+    body = None
+    data = None
+    formatted_from = None
+    formatted_to = None
+    html_body = None
+    id = None
+    public = None
+    transcription_visible = None
+    trusted = None
+    type = None
+
     def __init__(self,
                  api=None,
+                 attachments=None,
                  author_id=None,
                  body=None,
+                 data=None,
                  formatted_from=None,
                  formatted_to=None,
                  html_body=None,
@@ -73,12 +95,10 @@ class VoiceCommentEvent(BaseObject):
                  **kwargs):
 
         self.api = api
-
-        self._attachments = None
-
-        self._data = None
+        self.attachments = attachments
         self.author_id = author_id
         self.body = body
+        self.data = data
         self.formatted_from = formatted_from
         self.formatted_to = formatted_to
         self.html_body = html_body
@@ -90,28 +110,6 @@ class VoiceCommentEvent(BaseObject):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
-
-    @property
-    def attachments(self):
-
-        if self.api and self._attachments:
-            return self.api._get_attachments(self._attachments)
-
-    @attachments.setter
-    def attachments(self, attachments):
-        if attachments:
-            self._attachments = attachments
-
-    @property
-    def data(self):
-
-        if self.api and self._data:
-            return self.api._get_data(self._data)
-
-    @data.setter
-    def data(self, data):
-        if data:
-            self._data = data
 
     @property
     def author(self):
@@ -127,43 +125,43 @@ class VoiceCommentEvent(BaseObject):
 
 
 class CcEvent(BaseObject):
-    def __init__(self, api=None, id=None, type=None, **kwargs):
+
+    id = None
+    recipients = None
+    type = None
+    via = None
+
+    def __init__(self,
+                 api=None,
+                 id=None,
+                 recipients=None,
+                 type=None,
+                 via=None,
+                 **kwargs):
 
         self.api = api
-
-        self._recipients = None
-
-        self._via = None
         self.id = id
+        self.recipients = recipients
         self.type = type
+        self.via = via
 
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    @property
-    def recipients(self):
-
-        if self.api and self._recipients:
-            return self.api._get_users(self._recipients)
-
-    @recipients.setter
-    def recipients(self, recipients):
-        if recipients:
-            self._recipients = recipients
-
-    @property
-    def via(self):
-
-        if self.api and self._via:
-            return self.api._get_via(self._via)
-
-    @via.setter
-    def via(self, via):
-        if via:
-            self._via = via
-
 
 class UserRelated(BaseObject):
+
+    assigned_tickets = None
+    ccd_tickets = None
+    entry_subscriptions = None
+    forum_subscriptions = None
+    organization_subscriptions = None
+    requested_tickets = None
+    subscriptions = None
+    topic_comments = None
+    topics = None
+    votes = None
+
     def __init__(self,
                  api=None,
                  assigned_tickets=None,
@@ -195,6 +193,10 @@ class UserRelated(BaseObject):
 
 
 class Export(BaseObject):
+
+    status = None
+    view_id = None
+
     def __init__(self, api=None, status=None, view_id=None, **kwargs):
 
         self.api = api
@@ -218,6 +220,12 @@ class Export(BaseObject):
 
 
 class TicketSharingEvent(BaseObject):
+
+    action = None
+    agreement_id = None
+    id = None
+    type = None
+
     def __init__(self,
                  api=None,
                  action=None,
@@ -249,6 +257,10 @@ class TicketSharingEvent(BaseObject):
 
 
 class TicketAudit(BaseObject):
+
+    audit = None
+    ticket = None
+
     def __init__(self, api=None, audit=None, ticket=None, **kwargs):
 
         self.api = api
@@ -260,42 +272,64 @@ class TicketAudit(BaseObject):
 
 
 class AgentMacroReference(BaseObject):
+
+    id = None
+    macro_id = None
+    macro_title = None
+    type = None
+    via = None
+
     def __init__(self,
                  api=None,
                  id=None,
                  macro_id=None,
                  macro_title=None,
                  type=None,
+                 via=None,
                  **kwargs):
 
         self.api = api
-
-        self._via = None
         self.id = id
         self.macro_id = macro_id
         self.macro_title = macro_title
         self.type = type
+        self.via = via
 
         for key, value in kwargs.items():
             setattr(self, key, value)
 
     @property
-    def via(self):
+    def macro(self):
 
-        if self.api and self._via:
-            return self.api._get_via(self._via)
+        if self.api and self.macro_id:
+            return self.api._get_macro(self.macro_id)
 
-    @via.setter
-    def via(self, via):
-        if via:
-            self._via = via
+    @macro.setter
+    def macro(self, macro):
+        if macro:
+            self.macro_id = macro.id
+            self._macro = macro
 
 
 class FacebookCommentEvent(BaseObject):
+
+    attachments = None
+    author_id = None
+    body = None
+    data = None
+    graph_object_id = None
+    html_body = None
+    id = None
+    public = None
+    trusted = None
+    type = None
+
     def __init__(self,
                  api=None,
+                 attachments=None,
                  author_id=None,
                  body=None,
+                 data=None,
                  graph_object_id=None,
                  html_body=None,
                  id=None,
@@ -305,12 +339,10 @@ class FacebookCommentEvent(BaseObject):
                  **kwargs):
 
         self.api = api
-
-        self._attachments = None
-
-        self._data = None
+        self.attachments = attachments
         self.author_id = author_id
         self.body = body
+        self.data = data
         self.graph_object_id = graph_object_id
         self.html_body = html_body
         self.id = id
@@ -320,28 +352,6 @@ class FacebookCommentEvent(BaseObject):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
-
-    @property
-    def attachments(self):
-
-        if self.api and self._attachments:
-            return self.api._get_attachments(self._attachments)
-
-    @attachments.setter
-    def attachments(self, attachments):
-        if attachments:
-            self._attachments = attachments
-
-    @property
-    def data(self):
-
-        if self.api and self._data:
-            return self.api._get_data(self._data)
-
-    @data.setter
-    def data(self, data):
-        if data:
-            self._data = data
 
     @property
     def author(self):
@@ -355,21 +365,62 @@ class FacebookCommentEvent(BaseObject):
             self.author_id = author.id
             self._author = author
 
+    @property
+    def graph_object(self):
+
+        if self.api and self.graph_object_id:
+            return self.api._get_graph_object(self.graph_object_id)
+
+    @graph_object.setter
+    def graph_object(self, graph_object):
+        if graph_object:
+            self.graph_object_id = graph_object.id
+            self._graph_object = graph_object
+
 
 class TicketMetric(BaseObject):
+
+    agent_wait_time_in_minutes = None
+    assigned_at = None
+    assignee_stations = None
+    assignee_updated_at = None
+    created_at = None
+    first_resolution_time_in_minutes = None
+    full_resolution_time_in_minutes = None
+    group_stations = None
+    id = None
+    initially_assigned_at = None
+    latest_comment_added_at = None
+    on_hold_time_in_minutes = None
+    reopens = None
+    replies = None
+    reply_time_in_minutes = None
+    requester_updated_at = None
+    requester_wait_time_in_minutes = None
+    solved_at = None
+    status_updated_at = None
+    ticket_id = None
+    updated_at = None
+
     def __init__(self,
                  api=None,
+                 agent_wait_time_in_minutes=None,
                  assigned_at=None,
                  assignee_stations=None,
                  assignee_updated_at=None,
                  created_at=None,
+                 first_resolution_time_in_minutes=None,
+                 full_resolution_time_in_minutes=None,
                  group_stations=None,
                  id=None,
                  initially_assigned_at=None,
                  latest_comment_added_at=None,
+                 on_hold_time_in_minutes=None,
                  reopens=None,
                  replies=None,
+                 reply_time_in_minutes=None,
                  requester_updated_at=None,
+                 requester_wait_time_in_minutes=None,
                  solved_at=None,
                  status_updated_at=None,
                  ticket_id=None,
@@ -382,38 +433,7 @@ class TicketMetric(BaseObject):
         # Mandatory: no
         # Read-only: yes
         # Type: object
-
-        self._agent_wait_time_in_minutes = None
-
-        # Comment: Number of minutes to the first resolution time inside and out of business hours
-        # Mandatory: no
-        # Read-only: yes
-        # Type: object
-
-        self._first_resolution_time_in_minutes = None
-
-        # Comment: Number of minutes to the full resolution inside and out of business hours
-        # Mandatory: no
-        # Read-only: yes
-        # Type: object
-
-        self._full_resolution_time_in_minutes = None
-
-        self._on_hold_time_in_minutes = None
-
-        # Comment: Number of minutes to the first reply inside and out of business hours
-        # Mandatory: no
-        # Read-only: yes
-        # Type: object
-
-        self._reply_time_in_minutes = None
-
-        # Comment: Number of minutes the requester spent waiting inside and out of business hours
-        # Mandatory: no
-        # Read-only: yes
-        # Type: object
-
-        self._requester_wait_time_in_minutes = None
+        self.agent_wait_time_in_minutes = agent_wait_time_in_minutes
 
         # Comment: When the ticket was last assigned
         # Mandatory: no
@@ -439,6 +459,18 @@ class TicketMetric(BaseObject):
         # Type: date
         self.created_at = created_at
 
+        # Comment: Number of minutes to the first resolution time inside and out of business hours
+        # Mandatory: no
+        # Read-only: yes
+        # Type: object
+        self.first_resolution_time_in_minutes = first_resolution_time_in_minutes
+
+        # Comment: Number of minutes to the full resolution inside and out of business hours
+        # Mandatory: no
+        # Read-only: yes
+        # Type: object
+        self.full_resolution_time_in_minutes = full_resolution_time_in_minutes
+
         # Comment: Number of groups this ticket passed through
         # Mandatory: no
         # Read-only: yes
@@ -462,6 +494,7 @@ class TicketMetric(BaseObject):
         # Read-only: yes
         # Type: date
         self.latest_comment_added_at = latest_comment_added_at
+        self.on_hold_time_in_minutes = on_hold_time_in_minutes
 
         # Comment: Total number of times the ticket was reopened
         # Mandatory: no
@@ -475,11 +508,23 @@ class TicketMetric(BaseObject):
         # Type: integer
         self.replies = replies
 
+        # Comment: Number of minutes to the first reply inside and out of business hours
+        # Mandatory: no
+        # Read-only: yes
+        # Type: object
+        self.reply_time_in_minutes = reply_time_in_minutes
+
         # Comment: When the requester last updated the ticket
         # Mandatory: no
         # Read-only: yes
         # Type: date
         self.requester_updated_at = requester_updated_at
+
+        # Comment: Number of minutes the requester spent waiting inside and out of business hours
+        # Mandatory: no
+        # Read-only: yes
+        # Type: object
+        self.requester_wait_time_in_minutes = requester_wait_time_in_minutes
 
         # Comment: When the ticket was solved
         # Mandatory: no
@@ -507,89 +552,6 @@ class TicketMetric(BaseObject):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
-
-    @property
-    def agent_wait_time_in_minutes(self):
-        """
-        |  Comment: Number of minutes the agent spent waiting inside and out of business hours
-        """
-        if self.api and self._agent_wait_time_in_minutes:
-            return self.api._get_ticket_metric_item(
-                self._agent_wait_time_in_minutes)
-
-    @agent_wait_time_in_minutes.setter
-    def agent_wait_time_in_minutes(self, agent_wait_time_in_minutes):
-        if agent_wait_time_in_minutes:
-            self._agent_wait_time_in_minutes = agent_wait_time_in_minutes
-
-    @property
-    def first_resolution_time_in_minutes(self):
-        """
-        |  Comment: Number of minutes to the first resolution time inside and out of business hours
-        """
-        if self.api and self._first_resolution_time_in_minutes:
-            return self.api._get_ticket_metric_item(
-                self._first_resolution_time_in_minutes)
-
-    @first_resolution_time_in_minutes.setter
-    def first_resolution_time_in_minutes(self,
-                                         first_resolution_time_in_minutes):
-        if first_resolution_time_in_minutes:
-            self._first_resolution_time_in_minutes = first_resolution_time_in_minutes
-
-    @property
-    def full_resolution_time_in_minutes(self):
-        """
-        |  Comment: Number of minutes to the full resolution inside and out of business hours
-        """
-        if self.api and self._full_resolution_time_in_minutes:
-            return self.api._get_ticket_metric_item(
-                self._full_resolution_time_in_minutes)
-
-    @full_resolution_time_in_minutes.setter
-    def full_resolution_time_in_minutes(self, full_resolution_time_in_minutes):
-        if full_resolution_time_in_minutes:
-            self._full_resolution_time_in_minutes = full_resolution_time_in_minutes
-
-    @property
-    def on_hold_time_in_minutes(self):
-
-        if self.api and self._on_hold_time_in_minutes:
-            return self.api._get_ticket_metric_item(
-                self._on_hold_time_in_minutes)
-
-    @on_hold_time_in_minutes.setter
-    def on_hold_time_in_minutes(self, on_hold_time_in_minutes):
-        if on_hold_time_in_minutes:
-            self._on_hold_time_in_minutes = on_hold_time_in_minutes
-
-    @property
-    def reply_time_in_minutes(self):
-        """
-        |  Comment: Number of minutes to the first reply inside and out of business hours
-        """
-        if self.api and self._reply_time_in_minutes:
-            return self.api._get_ticket_metric_item(
-                self._reply_time_in_minutes)
-
-    @reply_time_in_minutes.setter
-    def reply_time_in_minutes(self, reply_time_in_minutes):
-        if reply_time_in_minutes:
-            self._reply_time_in_minutes = reply_time_in_minutes
-
-    @property
-    def requester_wait_time_in_minutes(self):
-        """
-        |  Comment: Number of minutes the requester spent waiting inside and out of business hours
-        """
-        if self.api and self._requester_wait_time_in_minutes:
-            return self.api._get_ticket_metric_item(
-                self._requester_wait_time_in_minutes)
-
-    @requester_wait_time_in_minutes.setter
-    def requester_wait_time_in_minutes(self, requester_wait_time_in_minutes):
-        if requester_wait_time_in_minutes:
-            self._requester_wait_time_in_minutes = requester_wait_time_in_minutes
 
     @property
     def assigned(self):
@@ -724,75 +686,43 @@ class TicketMetric(BaseObject):
 
 
 class Metadata(BaseObject):
-    def __init__(self, api=None, **kwargs):
+
+    custom = None
+    system = None
+
+    def __init__(self, api=None, custom=None, system=None, **kwargs):
 
         self.api = api
-
-        self._custom = None
-
-        self._system = None
+        self.custom = custom
+        self.system = system
 
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    @property
-    def custom(self):
-
-        if self.api and self._custom:
-            return self.api._get_custom(self._custom)
-
-    @custom.setter
-    def custom(self, custom):
-        if custom:
-            self._custom = custom
-
-    @property
-    def system(self):
-
-        if self.api and self._system:
-            return self.api._get_system(self._system)
-
-    @system.setter
-    def system(self, system):
-        if system:
-            self._system = system
-
 
 class Upload(BaseObject):
-    def __init__(self, api=None, expires_at=None, token=None, **kwargs):
+
+    attachment = None
+    attachments = None
+    expires_at = None
+    token = None
+
+    def __init__(self,
+                 api=None,
+                 attachment=None,
+                 attachments=None,
+                 expires_at=None,
+                 token=None,
+                 **kwargs):
 
         self.api = api
-
-        self._attachment = None
-
-        self._attachments = None
+        self.attachment = attachment
+        self.attachments = attachments
         self.expires_at = expires_at
         self.token = token
 
         for key, value in kwargs.items():
             setattr(self, key, value)
-
-    @property
-    def attachment(self):
-
-        if self.api and self._attachment:
-            return self.api._get_attachment(self._attachment)
-
-    @attachment.setter
-    def attachment(self, attachment):
-        if attachment:
-            self._attachment = attachment
-
-    @property
-    def attachments(self):
-
-        if self.api and self._attachments:
-            return self.api._get_attachments(self._attachments)
-
-    @attachments.setter
-    def attachments(self, attachments):
-        if attachments:
-            self._attachments = attachments
 
     @property
     def expires(self):
@@ -807,6 +737,10 @@ class Upload(BaseObject):
 
 
 class Tag(BaseObject):
+
+    count = None
+    name = None
+
     def __init__(self, api=None, count=None, name=None, **kwargs):
 
         self.api = api
@@ -818,6 +752,17 @@ class Tag(BaseObject):
 
 
 class SatisfactionRating(BaseObject):
+
+    assignee_id = None
+    created_at = None
+    group_id = None
+    id = None
+    requester_id = None
+    score = None
+    ticket_id = None
+    updated_at = None
+    url = None
+
     def __init__(self,
                  api=None,
                  assignee_id=None,
@@ -973,7 +918,26 @@ class SatisfactionRating(BaseObject):
             self.updated_at = updated
 
 
+class Definitions(BaseObject):
+
+    all = None
+    any = None
+
+    def __init__(self, api=None, all=None, any=None, **kwargs):
+
+        self.api = api
+        self.all = all
+        self.any = any
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+
 class TicketMetricItem(BaseObject):
+
+    business = None
+    calendar = None
+
     def __init__(self, api=None, business=None, calendar=None, **kwargs):
 
         self.api = api
@@ -985,6 +949,12 @@ class TicketMetricItem(BaseObject):
 
 
 class ExternalEvent(BaseObject):
+
+    body = None
+    id = None
+    resource = None
+    type = None
+
     def __init__(self,
                  api=None,
                  body=None,
@@ -1004,38 +974,42 @@ class ExternalEvent(BaseObject):
 
 
 class TweetEvent(BaseObject):
+
+    body = None
+    direct_message = None
+    id = None
+    recipients = None
+    type = None
+
     def __init__(self,
                  api=None,
                  body=None,
                  direct_message=None,
                  id=None,
+                 recipients=None,
                  type=None,
                  **kwargs):
 
         self.api = api
-
-        self._recipients = None
         self.body = body
         self.direct_message = direct_message
         self.id = id
+        self.recipients = recipients
         self.type = type
 
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    @property
-    def recipients(self):
-
-        if self.api and self._recipients:
-            return self.api._get_users(self._recipients)
-
-    @recipients.setter
-    def recipients(self, recipients):
-        if recipients:
-            self._recipients = recipients
-
 
 class Group(BaseObject):
+
+    created_at = None
+    deleted = None
+    id = None
+    name = None
+    updated_at = None
+    url = None
+
     def __init__(self,
                  api=None,
                  created_at=None,
@@ -1115,8 +1089,21 @@ class Group(BaseObject):
 
 
 class Macro(BaseObject):
+
+    actions = None
+    active = None
+    created_at = None
+    description = None
+    id = None
+    position = None
+    restriction = None
+    title = None
+    updated_at = None
+    url = None
+
     def __init__(self,
                  api=None,
+                 actions=None,
                  active=None,
                  created_at=None,
                  description=None,
@@ -1132,8 +1119,7 @@ class Macro(BaseObject):
 
         # Comment: An object describing what the macro will do
         # Type: :class:`Actions`
-
-        self._actions = None
+        self.actions = actions
 
         # Comment: Useful for determining if the macro should be displayed
         # Type: boolean
@@ -1199,6 +1185,10 @@ class Macro(BaseObject):
 
 
 class CustomField(BaseObject):
+
+    id = None
+    value = None
+
     def __init__(self, api=None, id=None, value=None, **kwargs):
 
         self.api = api
@@ -1210,6 +1200,12 @@ class CustomField(BaseObject):
 
 
 class CreateEvent(BaseObject):
+
+    field_name = None
+    id = None
+    type = None
+    value = None
+
     def __init__(self,
                  api=None,
                  field_name=None,
@@ -1229,6 +1225,13 @@ class CreateEvent(BaseObject):
 
 
 class Thumbnail(BaseObject):
+
+    content_type = None
+    content_url = None
+    file_name = None
+    id = None
+    size = None
+
     def __init__(self,
                  api=None,
                  content_type=None,
@@ -1250,31 +1253,38 @@ class Thumbnail(BaseObject):
 
 
 class Source(BaseObject):
-    def __init__(self, api=None, rel=None, **kwargs):
+
+    from_ = None
+    rel = None
+    to = None
+
+    def __init__(self, api=None, from_=None, rel=None, to=None, **kwargs):
 
         self.api = api
-
-        self._from_ = None
-
-        self._to = None
+        self.from_ = from_
         self.rel = rel
+        self.to = to
 
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    @property
-    def from_(self):
-
-        if self.api and self._from_:
-            return self.api._get_from_(self._from_)
-
-    @from_.setter
-    def from_(self, from_):
-        if from_:
-            self._from_ = from_
-
 
 class UserField(BaseObject):
+
+    active = None
+    created_at = None
+    description = None
+    id = None
+    key = None
+    position = None
+    raw_description = None
+    raw_title = None
+    regexp_for_validation = None
+    title = None
+    type = None
+    updated_at = None
+    url = None
+
     def __init__(self,
                  api=None,
                  active=None,
@@ -1403,6 +1413,10 @@ class UserField(BaseObject):
 
 
 class Action(BaseObject):
+
+    field = None
+    value = None
+
     def __init__(self, api=None, field=None, value=None, **kwargs):
 
         self.api = api
@@ -1414,51 +1428,53 @@ class Action(BaseObject):
 
 
 class NotificationEvent(BaseObject):
+
+    body = None
+    id = None
+    recipients = None
+    subject = None
+    type = None
+    via = None
+
     def __init__(self,
                  api=None,
                  body=None,
                  id=None,
+                 recipients=None,
                  subject=None,
                  type=None,
+                 via=None,
                  **kwargs):
 
         self.api = api
-
-        self._recipients = None
-
-        self._via = None
         self.body = body
         self.id = id
+        self.recipients = recipients
         self.subject = subject
         self.type = type
+        self.via = via
 
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    @property
-    def recipients(self):
-
-        if self.api and self._recipients:
-            return self.api._get_users(self._recipients)
-
-    @recipients.setter
-    def recipients(self, recipients):
-        if recipients:
-            self._recipients = recipients
-
-    @property
-    def via(self):
-
-        if self.api and self._via:
-            return self.api._get_via(self._via)
-
-    @via.setter
-    def via(self, via):
-        if via:
-            self._via = via
-
 
 class Forum(BaseObject):
+
+    access = None
+    category_id = None
+    created_at = None
+    description = None
+    forum_type = None
+    id = None
+    locale_id = None
+    locked = None
+    name = None
+    organization_id = None
+    position = None
+    tags = None
+    updated_at = None
+    url = None
+
     def __init__(self,
                  api=None,
                  access=None,
@@ -1544,6 +1560,21 @@ class Forum(BaseObject):
 
 
 class OrganizationField(BaseObject):
+
+    active = None
+    created_at = None
+    description = None
+    id = None
+    key = None
+    position = None
+    raw_description = None
+    raw_title = None
+    regexp_for_validation = None
+    title = None
+    type = None
+    updated_at = None
+    url = None
+
     def __init__(self,
                  api=None,
                  active=None,
@@ -1672,6 +1703,15 @@ class OrganizationField(BaseObject):
 
 
 class OrganizationMembership(BaseObject):
+
+    created_at = None
+    default = None
+    id = None
+    organization_id = None
+    updated_at = None
+    url = None
+    user_id = None
+
     def __init__(self,
                  api=None,
                  created_at=None,
@@ -1786,9 +1826,22 @@ class OrganizationMembership(BaseObject):
 
 
 class ViewRow(BaseObject):
+
+    created = None
+    custom_fields = None
+    fields = None
+    group_id = None
+    priority = None
+    requester_id = None
+    score = None
+    subject = None
+    ticket = None
+
     def __init__(self,
                  api=None,
                  created=None,
+                 custom_fields=None,
+                 fields=None,
                  group_id=None,
                  priority=None,
                  requester_id=None,
@@ -1798,11 +1851,9 @@ class ViewRow(BaseObject):
                  **kwargs):
 
         self.api = api
-
-        self._custom_fields = None
-
-        self._fields = None
         self.created = created
+        self.custom_fields = custom_fields
+        self.fields = fields
         self.group_id = group_id
         self.priority = priority
         self.requester_id = requester_id
@@ -1814,26 +1865,16 @@ class ViewRow(BaseObject):
             setattr(self, key, value)
 
     @property
-    def custom_fields(self):
+    def group(self):
 
-        if self.api and self._custom_fields:
-            return self.api._get_custom_fields(self._custom_fields)
+        if self.api and self.group_id:
+            return self.api._get_group(self.group_id)
 
-    @custom_fields.setter
-    def custom_fields(self, custom_fields):
-        if custom_fields:
-            self._custom_fields = custom_fields
-
-    @property
-    def fields(self):
-
-        if self.api and self._fields:
-            return self.api._get_fields(self._fields)
-
-    @fields.setter
-    def fields(self, fields):
-        if fields:
-            self._fields = fields
+    @group.setter
+    def group(self, group):
+        if group:
+            self.group_id = group.id
+            self._group = group
 
     @property
     def requester(self):
@@ -1848,7 +1889,45 @@ class ViewRow(BaseObject):
             self._requester = requester
 
 
+class PolicyMetric(BaseObject):
+
+    business_hours = None
+    metric = None
+    priority = None
+    target = None
+
+    def __init__(self,
+                 api=None,
+                 business_hours=None,
+                 metric=None,
+                 priority=None,
+                 target=None,
+                 **kwargs):
+
+        self.api = api
+        self.business_hours = business_hours
+        self.metric = metric
+        self.priority = priority
+        self.target = target
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+
 class Identity(BaseObject):
+
+    created_at = None
+    deliverable_state = None
+    id = None
+    primary = None
+    type = None
+    undeliverable_count = None
+    updated_at = None
+    url = None
+    user_id = None
+    value = None
+    verified = None
+
     def __init__(self,
                  api=None,
                  created_at=None,
@@ -1916,6 +1995,14 @@ class Identity(BaseObject):
 
 
 class Attachment(BaseObject):
+
+    content_type = None
+    content_url = None
+    file_name = None
+    id = None
+    size = None
+    thumbnails = None
+
     def __init__(self,
                  api=None,
                  content_type=None,
@@ -1923,15 +2010,10 @@ class Attachment(BaseObject):
                  file_name=None,
                  id=None,
                  size=None,
+                 thumbnails=None,
                  **kwargs):
 
         self.api = api
-
-        # Comment: An array of Photo objects. Note that thumbnails do not have thumbnails.
-        # Read-only: yes
-        # Type: array
-
-        self._thumbnails = None
 
         # Comment: The content type of the image. Example value: image/png
         # Read-only: yes
@@ -1958,24 +2040,19 @@ class Attachment(BaseObject):
         # Type: integer
         self.size = size
 
+        # Comment: An array of Photo objects. Note that thumbnails do not have thumbnails.
+        # Read-only: yes
+        # Type: array
+        self.thumbnails = thumbnails
+
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    @property
-    def thumbnails(self):
-        """
-        |  Comment: An array of Photo objects. Note that thumbnails do not have thumbnails.
-        """
-        if self.api and self._thumbnails:
-            return self.api._get_thumbnails(self._thumbnails)
-
-    @thumbnails.setter
-    def thumbnails(self, thumbnails):
-        if thumbnails:
-            self._thumbnails = thumbnails
-
 
 class MacroResult(BaseObject):
+
+    ticket = None
+
     def __init__(self, api=None, ticket=None, **kwargs):
 
         self.api = api
@@ -1986,51 +2063,72 @@ class MacroResult(BaseObject):
 
 
 class OrganizationActivityEvent(BaseObject):
+
+    body = None
+    id = None
+    recipients = None
+    subject = None
+    type = None
+    via = None
+
     def __init__(self,
                  api=None,
                  body=None,
                  id=None,
+                 recipients=None,
                  subject=None,
                  type=None,
+                 via=None,
                  **kwargs):
 
         self.api = api
-
-        self._recipients = None
-
-        self._via = None
         self.body = body
         self.id = id
+        self.recipients = recipients
         self.subject = subject
         self.type = type
+        self.via = via
 
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    @property
-    def recipients(self):
-
-        if self.api and self._recipients:
-            return self.api._get_users(self._recipients)
-
-    @recipients.setter
-    def recipients(self, recipients):
-        if recipients:
-            self._recipients = recipients
-
-    @property
-    def via(self):
-
-        if self.api and self._via:
-            return self.api._get_via(self._via)
-
-    @via.setter
-    def via(self, via):
-        if via:
-            self._via = via
-
 
 class User(BaseObject):
+
+    active = None
+    alias = None
+    chat_only = None
+    created_at = None
+    custom_role_id = None
+    details = None
+    email = None
+    external_id = None
+    id = None
+    last_login_at = None
+    locale = None
+    locale_id = None
+    moderator = None
+    name = None
+    notes = None
+    only_private_comments = None
+    organization_id = None
+    phone = None
+    photo = None
+    restricted_agent = None
+    role = None
+    shared = None
+    shared_agent = None
+    signature = None
+    suspended = None
+    tags = None
+    ticket_restriction = None
+    time_zone = None
+    two_factor_auth_enabled = None
+    updated_at = None
+    url = None
+    user_fields = None
+    verified = None
+
     def __init__(self,
                  api=None,
                  active=None,
@@ -2064,17 +2162,11 @@ class User(BaseObject):
                  two_factor_auth_enabled=None,
                  updated_at=None,
                  url=None,
+                 user_fields=None,
                  verified=None,
                  **kwargs):
 
         self.api = api
-
-        # Comment: Custom fields for the user
-        # Mandatory: no
-        # Read-only: no
-        # Type: :class:`hash`
-
-        self._user_fields = None
 
         # Comment: false if the user has been deleted
         # Mandatory: no
@@ -2262,6 +2354,12 @@ class User(BaseObject):
         # Type: string
         self.url = url
 
+        # Comment: Custom fields for the user
+        # Mandatory: no
+        # Read-only: no
+        # Type: :class:`hash`
+        self.user_fields = user_fields
+
         # Comment: If the user's identity has been verified or not
         # Mandatory: no
         # Read-only: no
@@ -2270,19 +2368,6 @@ class User(BaseObject):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
-
-    @property
-    def user_fields(self):
-        """
-        |  Comment: Custom fields for the user
-        """
-        if self.api and self._user_fields:
-            return self.api._get_user_fields(self._user_fields)
-
-    @user_fields.setter
-    def user_fields(self, user_fields):
-        if user_fields:
-            self._user_fields = user_fields
 
     @property
     def created(self):
@@ -2310,6 +2395,20 @@ class User(BaseObject):
         if custom_role:
             self.custom_role_id = custom_role.id
             self._custom_role = custom_role
+
+    @property
+    def external(self):
+        """
+        |  Comment: A unique id you can specify for the user
+        """
+        if self.api and self.external_id:
+            return self.api._get_external(self.external_id)
+
+    @external.setter
+    def external(self, external):
+        if external:
+            self.external_id = external.id
+            self._external = external
 
     @property
     def last_login(self):
@@ -2353,6 +2452,21 @@ class User(BaseObject):
 
 
 class Brand(BaseObject):
+
+    active = None
+    brand_url = None
+    created_at = None
+    default = None
+    has_help_center = None
+    help_center_state = None
+    host_mapping = None
+    id = None
+    logo = None
+    name = None
+    subdomain = None
+    updated_at = None
+    url = None
+
     def __init__(self,
                  api=None,
                  active=None,
@@ -2363,6 +2477,7 @@ class Brand(BaseObject):
                  help_center_state=None,
                  host_mapping=None,
                  id=None,
+                 logo=None,
                  name=None,
                  subdomain=None,
                  updated_at=None,
@@ -2370,13 +2485,6 @@ class Brand(BaseObject):
                  **kwargs):
 
         self.api = api
-
-        # Comment: Logo image for this brand
-        # Mandatory: no
-        # Read-only: no
-        # Type: :class:`Attachment`
-
-        self._logo = None
 
         # Comment: If the brand is set as active
         # Mandatory: no
@@ -2426,6 +2534,12 @@ class Brand(BaseObject):
         # Type: integer
         self.id = id
 
+        # Comment: Logo image for this brand
+        # Mandatory: no
+        # Read-only: no
+        # Type: :class:`Attachment`
+        self.logo = logo
+
         # Comment: The name of the brand
         # Mandatory: yes
         # Read-only: no
@@ -2452,19 +2566,6 @@ class Brand(BaseObject):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
-
-    @property
-    def logo(self):
-        """
-        |  Comment: Logo image for this brand
-        """
-        if self.api and self._logo:
-            return self.api._get_logo(self._logo)
-
-    @logo.setter
-    def logo(self, logo):
-        if logo:
-            self._logo = logo
 
     @property
     def created(self):
@@ -2494,8 +2595,23 @@ class Brand(BaseObject):
 
 
 class SuspendedTicket(BaseObject):
+
+    author = None
+    brand_id = None
+    cause = None
+    content = None
+    created_at = None
+    id = None
+    recipient = None
+    subject = None
+    ticket_id = None
+    updated_at = None
+    url = None
+    via = None
+
     def __init__(self,
                  api=None,
+                 author=None,
                  brand_id=None,
                  cause=None,
                  content=None,
@@ -2506,6 +2622,7 @@ class SuspendedTicket(BaseObject):
                  ticket_id=None,
                  updated_at=None,
                  url=None,
+                 via=None,
                  **kwargs):
 
         self.api = api
@@ -2514,15 +2631,7 @@ class SuspendedTicket(BaseObject):
         # Mandatory: no
         # Read-only: yes
         # Type: object
-
-        self._author = None
-
-        # Comment: This object explains how the ticket was created
-        # Mandatory: no
-        # Read-only: yes
-        # Type: :class:`Via`
-
-        self._via = None
+        self.author = author
 
         # Comment: The id of the brand this ticket is associated with - only applicable for enterprise accounts
         # Mandatory: no
@@ -2584,21 +2693,14 @@ class SuspendedTicket(BaseObject):
         # Type: string
         self.url = url
 
+        # Comment: This object explains how the ticket was created
+        # Mandatory: no
+        # Read-only: yes
+        # Type: :class:`Via`
+        self.via = via
+
         for key, value in kwargs.items():
             setattr(self, key, value)
-
-    @property
-    def via(self):
-        """
-        |  Comment: This object explains how the ticket was created
-        """
-        if self.api and self._via:
-            return self.api._get_via(self._via)
-
-    @via.setter
-    def via(self, via):
-        if via:
-            self._via = via
 
     @property
     def brand(self):
@@ -2656,6 +2758,12 @@ class SuspendedTicket(BaseObject):
 
 
 class CommentPrivacyChangeEvent(BaseObject):
+
+    comment_id = None
+    id = None
+    public = None
+    type = None
+
     def __init__(self,
                  api=None,
                  comment_id=None,
@@ -2687,6 +2795,16 @@ class CommentPrivacyChangeEvent(BaseObject):
 
 
 class Activity(BaseObject):
+
+    actor = None
+    created_at = None
+    id = None
+    title = None
+    updated_at = None
+    url = None
+    user = None
+    verb = None
+
     def __init__(self,
                  api=None,
                  actor=None,
@@ -2736,22 +2854,31 @@ class Activity(BaseObject):
 
 
 class JobStatus(BaseObject):
+
+    id = None
+    message = None
+    progress = None
+    results = None
+    status = None
+    total = None
+    url = None
+
     def __init__(self,
                  api=None,
                  id=None,
                  message=None,
                  progress=None,
+                 results=None,
                  status=None,
                  total=None,
                  url=None,
                  **kwargs):
 
         self.api = api
-
-        self._results = None
         self.id = id
         self.message = message
         self.progress = progress
+        self.results = results
         self.status = status
         self.total = total
         self.url = url
@@ -2759,19 +2886,25 @@ class JobStatus(BaseObject):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    @property
-    def results(self):
-
-        if self.api and self._results:
-            return self.api._get_results(self._results)
-
-    @results.setter
-    def results(self, results):
-        if results:
-            self._results = results
-
 
 class Topic(BaseObject):
+
+    body = None
+    created_at = None
+    forum_id = None
+    id = None
+    locked = None
+    pinned = None
+    position = None
+    search_phrases = None
+    submitter_id = None
+    tags = None
+    title = None
+    topic_type = None
+    updated_at = None
+    updater_id = None
+    url = None
+
     def __init__(self,
                  api=None,
                  body=None,
@@ -2781,6 +2914,7 @@ class Topic(BaseObject):
                  locked=None,
                  pinned=None,
                  position=None,
+                 search_phrases=None,
                  submitter_id=None,
                  tags=None,
                  title=None,
@@ -2791,8 +2925,6 @@ class Topic(BaseObject):
                  **kwargs):
 
         self.api = api
-
-        self._search_phrases = None
         self.body = body
         self.created_at = created_at
         self.forum_id = forum_id
@@ -2800,6 +2932,7 @@ class Topic(BaseObject):
         self.locked = locked
         self.pinned = pinned
         self.position = position
+        self.search_phrases = search_phrases
         self.submitter_id = submitter_id
         self.tags = tags
         self.title = title
@@ -2810,17 +2943,6 @@ class Topic(BaseObject):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
-
-    @property
-    def search_phrases(self):
-
-        if self.api and self._search_phrases:
-            return self.api._get_search_phrases(self._search_phrases)
-
-    @search_phrases.setter
-    def search_phrases(self, search_phrases):
-        if search_phrases:
-            self._search_phrases = search_phrases
 
     @property
     def created(self):
@@ -2882,6 +3004,11 @@ class Topic(BaseObject):
 
 
 class ErrorEvent(BaseObject):
+
+    id = None
+    message = None
+    type = None
+
     def __init__(self, api=None, id=None, message=None, type=None, **kwargs):
 
         self.api = api
@@ -2894,65 +3021,43 @@ class ErrorEvent(BaseObject):
 
 
 class Comment(BaseObject):
+
+    attachments = None
+    author_id = None
+    body = None
+    created_at = None
+    id = None
+    metadata = None
+    public = None
+    type = None
+    via = None
+
     def __init__(self,
                  api=None,
+                 attachments=None,
                  author_id=None,
                  body=None,
                  created_at=None,
                  id=None,
+                 metadata=None,
                  public=None,
                  type=None,
+                 via=None,
                  **kwargs):
 
         self.api = api
-
-        self._attachments = None
-
-        self._metadata = None
-
-        self._via = None
+        self.attachments = attachments
         self.author_id = author_id
         self.body = body
         self.created_at = created_at
         self.id = id
+        self.metadata = metadata
         self.public = public
         self.type = type
+        self.via = via
 
         for key, value in kwargs.items():
             setattr(self, key, value)
-
-    @property
-    def attachments(self):
-
-        if self.api and self._attachments:
-            return self.api._get_attachments(self._attachments)
-
-    @attachments.setter
-    def attachments(self, attachments):
-        if attachments:
-            self._attachments = attachments
-
-    @property
-    def metadata(self):
-
-        if self.api and self._metadata:
-            return self.api._get_metadata(self._metadata)
-
-    @metadata.setter
-    def metadata(self, metadata):
-        if metadata:
-            self._metadata = metadata
-
-    @property
-    def via(self):
-
-        if self.api and self._via:
-            return self.api._get_via(self._via)
-
-    @via.setter
-    def via(self, via):
-        if via:
-            self._via = via
 
     @property
     def author(self):
@@ -2979,15 +3084,48 @@ class Comment(BaseObject):
 
 
 class Ticket(BaseObject):
+
+    assignee_id = None
+    brand_id = None
+    collaborator_ids = None
+    created_at = None
+    custom_fields = None
+    description = None
+    due_at = None
+    external_id = None
+    fields = None
+    forum_topic_id = None
+    group_id = None
+    has_incidents = None
+    id = None
+    organization_id = None
+    priority = None
+    problem_id = None
+    raw_subject = None
+    recipient = None
+    requester_id = None
+    satisfaction_rating = None
+    sharing_agreement_ids = None
+    status = None
+    subject = None
+    submitter_id = None
+    tags = None
+    type = None
+    updated_at = None
+    url = None
+    via = None
+
     def __init__(self,
                  api=None,
                  assignee_id=None,
                  brand_id=None,
                  collaborator_ids=None,
                  created_at=None,
+                 custom_fields=None,
                  description=None,
                  due_at=None,
                  external_id=None,
+                 fields=None,
                  forum_topic_id=None,
                  group_id=None,
                  has_incidents=None,
@@ -2998,6 +3136,7 @@ class Ticket(BaseObject):
                  raw_subject=None,
                  recipient=None,
                  requester_id=None,
+                 satisfaction_rating=None,
                  sharing_agreement_ids=None,
                  status=None,
                  subject=None,
@@ -3006,32 +3145,10 @@ class Ticket(BaseObject):
                  type=None,
                  updated_at=None,
                  url=None,
+                 via=None,
                  **kwargs):
 
         self.api = api
-
-        # Comment: The custom fields of the ticket
-        # Mandatory: no
-        # Read-only: no
-        # Type: array
-
-        self._custom_fields = None
-
-        self._fields = None
-
-        # Comment: The satisfaction rating of the ticket, if it exists, or the state of satisfaction, 'offered' or 'unoffered'
-        # Mandatory: no
-        # Read-only: yes
-        # Type: object
-
-        self._satisfaction_rating = None
-
-        # Comment: This object explains how the ticket was created
-        # Mandatory: no
-        # Read-only: yes
-        # Type: :class:`Via`
-
-        self._via = None
 
         # Comment: What agent is currently assigned to the ticket
         # Mandatory: no
@@ -3057,6 +3174,12 @@ class Ticket(BaseObject):
         # Type: date
         self.created_at = created_at
 
+        # Comment: The custom fields of the ticket
+        # Mandatory: no
+        # Read-only: no
+        # Type: array
+        self.custom_fields = custom_fields
+
         # Comment: The first comment on the ticket
         # Mandatory: no
         # Read-only: yes
@@ -3074,6 +3197,7 @@ class Ticket(BaseObject):
         # Read-only: no
         # Type: string
         self.external_id = external_id
+        self.fields = fields
 
         # Comment: The topic this ticket originated from, if any
         # Mandatory: no
@@ -3135,6 +3259,12 @@ class Ticket(BaseObject):
         # Type: integer
         self.requester_id = requester_id
 
+        # Comment: The satisfaction rating of the ticket, if it exists, or the state of satisfaction, 'offered' or 'unoffered'
+        # Mandatory: no
+        # Read-only: yes
+        # Type: object
+        self.satisfaction_rating = satisfaction_rating
+
         # Comment: The ids of the sharing agreements used for this ticket
         # Mandatory: no
         # Read-only: yes
@@ -3183,58 +3313,14 @@ class Ticket(BaseObject):
         # Type: string
         self.url = url
 
+        # Comment: This object explains how the ticket was created
+        # Mandatory: no
+        # Read-only: yes
+        # Type: :class:`Via`
+        self.via = via
+
         for key, value in kwargs.items():
             setattr(self, key, value)
-
-    @property
-    def custom_fields(self):
-        """
-        |  Comment: The custom fields of the ticket
-        """
-        if self.api and self._custom_fields:
-            return self.api._get_custom_fields(self._custom_fields)
-
-    @custom_fields.setter
-    def custom_fields(self, custom_fields):
-        if custom_fields:
-            self._custom_fields = custom_fields
-
-    @property
-    def fields(self):
-
-        if self.api and self._fields:
-            return self.api._get_fields(self._fields)
-
-    @fields.setter
-    def fields(self, fields):
-        if fields:
-            self._fields = fields
-
-    @property
-    def satisfaction_rating(self):
-        """
-        |  Comment: The satisfaction rating of the ticket, if it exists, or the state of satisfaction, 'offered' or 'unoffered'
-        """
-        if self.api and self._satisfaction_rating:
-            return self.api._get_satisfaction_rating(self._satisfaction_rating)
-
-    @satisfaction_rating.setter
-    def satisfaction_rating(self, satisfaction_rating):
-        if satisfaction_rating:
-            self._satisfaction_rating = satisfaction_rating
-
-    @property
-    def via(self):
-        """
-        |  Comment: This object explains how the ticket was created
-        """
-        if self.api and self._via:
-            return self.api._get_via(self._via)
-
-    @via.setter
-    def via(self, via):
-        if via:
-            self._via = via
 
     @property
     def assignee(self):
@@ -3303,6 +3389,20 @@ class Ticket(BaseObject):
     def due(self, due):
         if due:
             self.due_at = due
+
+    @property
+    def external(self):
+        """
+        |  Comment: An id you can use to link Zendesk Support tickets to local records
+        """
+        if self.api and self.external_id:
+            return self.api._get_external(self.external_id)
+
+    @external.setter
+    def external(self, external):
+        if external:
+            self.external_id = external.id
+            self._external = external
 
     @property
     def forum_topic(self):
@@ -3417,6 +3517,13 @@ class Ticket(BaseObject):
 
 
 class SatisfactionRatingEvent(BaseObject):
+
+    assignee_id = None
+    body = None
+    id = None
+    score = None
+    type = None
+
     def __init__(self,
                  api=None,
                  assignee_id=None,
@@ -3450,6 +3557,16 @@ class SatisfactionRatingEvent(BaseObject):
 
 
 class ViewCount(BaseObject):
+
+    channel = None
+    fresh = None
+    poll_wait = None
+    pretty = None
+    refresh = None
+    url = None
+    value = None
+    view_id = None
+
     def __init__(self,
                  api=None,
                  channel=None,
@@ -3488,7 +3605,47 @@ class ViewCount(BaseObject):
             self._view = view
 
 
+class JobStatusResult(BaseObject):
+
+    action = None
+    errors = None
+    id = None
+    status = None
+    success = None
+    title = None
+
+    def __init__(self,
+                 api=None,
+                 action=None,
+                 errors=None,
+                 id=None,
+                 status=None,
+                 success=None,
+                 title=None,
+                 **kwargs):
+
+        self.api = api
+        self.action = action
+        self.errors = errors
+        self.id = id
+        self.status = status
+        self.success = success
+        self.title = title
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+
 class GroupMembership(BaseObject):
+
+    created_at = None
+    default = None
+    group_id = None
+    id = None
+    updated_at = None
+    url = None
+    user_id = None
+
     def __init__(self,
                  api=None,
                  created_at=None,
@@ -3603,14 +3760,36 @@ class GroupMembership(BaseObject):
 
 
 class Request(BaseObject):
+
+    assignee_id = None
+    can_be_solved_by_me = None
+    collaborator_ids = None
+    created_at = None
+    custom_fields = None
+    description = None
+    due_at = None
+    fields = None
+    id = None
+    organization_id = None
+    priority = None
+    requester_id = None
+    status = None
+    subject = None
+    type = None
+    updated_at = None
+    url = None
+    via = None
+
     def __init__(self,
                  api=None,
                  assignee_id=None,
                  can_be_solved_by_me=None,
                  collaborator_ids=None,
                  created_at=None,
+                 custom_fields=None,
                  description=None,
                  due_at=None,
+                 fields=None,
                  id=None,
                  organization_id=None,
                  priority=None,
@@ -3620,25 +3799,10 @@ class Request(BaseObject):
                  type=None,
                  updated_at=None,
                  url=None,
+                 via=None,
                  **kwargs):
 
         self.api = api
-
-        # Comment: The fields and entries for this request
-        # Mandatory: no
-        # Read-only: no
-        # Type: :class:`Array`
-
-        self._custom_fields = None
-
-        self._fields = None
-
-        # Comment: This object explains how the request was created
-        # Mandatory: no
-        # Read-only: yes
-        # Type: :class:`Via`
-
-        self._via = None
 
         # Comment: The id of the assignee if the field is visible to end users
         # Mandatory: no
@@ -3664,6 +3828,12 @@ class Request(BaseObject):
         # Type: date
         self.created_at = created_at
 
+        # Comment: The fields and entries for this request
+        # Mandatory: no
+        # Read-only: no
+        # Type: :class:`Array`
+        self.custom_fields = custom_fields
+
         # Comment: The first comment on the request
         # Mandatory: yes
         # Read-only: yes
@@ -3675,6 +3845,7 @@ class Request(BaseObject):
         # Read-only: no
         # Type: date
         self.due_at = due_at
+        self.fields = fields
 
         # Comment: Automatically assigned when creating requests
         # Mandatory: no
@@ -3730,45 +3901,14 @@ class Request(BaseObject):
         # Type: string
         self.url = url
 
+        # Comment: This object explains how the request was created
+        # Mandatory: no
+        # Read-only: yes
+        # Type: :class:`Via`
+        self.via = via
+
         for key, value in kwargs.items():
             setattr(self, key, value)
-
-    @property
-    def custom_fields(self):
-        """
-        |  Comment: The fields and entries for this request
-        """
-        if self.api and self._custom_fields:
-            return self.api._get_custom_fields(self._custom_fields)
-
-    @custom_fields.setter
-    def custom_fields(self, custom_fields):
-        if custom_fields:
-            self._custom_fields = custom_fields
-
-    @property
-    def fields(self):
-
-        if self.api and self._fields:
-            return self.api._get_fields(self._fields)
-
-    @fields.setter
-    def fields(self, fields):
-        if fields:
-            self._fields = fields
-
-    @property
-    def via(self):
-        """
-        |  Comment: This object explains how the request was created
-        """
-        if self.api and self._via:
-            return self.api._get_via(self._via)
-
-    @via.setter
-    def via(self, via):
-        if via:
-            self._via = via
 
     @property
     def assignee(self):
@@ -3867,19 +4007,30 @@ class Request(BaseObject):
 
 
 class Conditions(BaseObject):
-    def __init__(self, api=None, **kwargs):
+
+    all = None
+    any = None
+
+    def __init__(self, api=None, all=None, any=None, **kwargs):
 
         self.api = api
-
-        self._all = None
-
-        self._any = None
+        self.all = all
+        self.any = any
 
         for key, value in kwargs.items():
             setattr(self, key, value)
 
 
 class SharingAgreement(BaseObject):
+
+    created_at = None
+    id = None
+    name = None
+    partner_name = None
+    remote_subdomain = None
+    status = None
+    type = None
+
     def __init__(self,
                  api=None,
                  created_at=None,
@@ -3939,10 +4090,26 @@ class SharingAgreement(BaseObject):
 
 
 class View(BaseObject):
+
+    active = None
+    conditions = None
+    created_at = None
+    execution = None
+    id = None
+    position = None
+    raw_title = None
+    restriction = None
+    sla_id = None
+    title = None
+    updated_at = None
+    url = None
+
     def __init__(self,
                  api=None,
                  active=None,
+                 conditions=None,
                  created_at=None,
+                 execution=None,
                  id=None,
                  position=None,
                  raw_title=None,
@@ -3955,27 +4122,25 @@ class View(BaseObject):
 
         self.api = api
 
-        # Comment: An object describing how the view is constructed
-        # Read-only: no
-        # Type: :class:`Conditions`
-
-        self._conditions = None
-
-        # Comment: An object describing how the view should be executed
-        # Read-only: no
-        # Type: :class:`Execute`
-
-        self._execution = None
-
         # Comment: Useful for determining if the view should be displayed
         # Read-only: no
         # Type: boolean
         self.active = active
 
+        # Comment: An object describing how the view is constructed
+        # Read-only: no
+        # Type: :class:`Conditions`
+        self.conditions = conditions
+
         # Comment: The time the view was created
         # Read-only: yes
         # Type: date
         self.created_at = created_at
+
+        # Comment: An object describing how the view should be executed
+        # Read-only: no
+        # Type: :class:`Execute`
+        self.execution = execution
 
         # Comment: Automatically assigned when created
         # Read-only: yes
@@ -4054,6 +4219,14 @@ class View(BaseObject):
 
 
 class Status(BaseObject):
+
+    action = None
+    errors = None
+    id = None
+    status = None
+    success = None
+    title = None
+
     def __init__(self,
                  api=None,
                  action=None,
@@ -4077,6 +4250,13 @@ class Status(BaseObject):
 
 
 class ChangeEvent(BaseObject):
+
+    field_name = None
+    id = None
+    previous_value = None
+    type = None
+    value = None
+
     def __init__(self,
                  api=None,
                  field_name=None,
@@ -4098,6 +4278,11 @@ class ChangeEvent(BaseObject):
 
 
 class LogmeinTranscriptEvent(BaseObject):
+
+    body = None
+    id = None
+    type = None
+
     def __init__(self, api=None, body=None, id=None, type=None, **kwargs):
 
         self.api = api
@@ -4110,61 +4295,37 @@ class LogmeinTranscriptEvent(BaseObject):
 
 
 class Audit(BaseObject):
+
+    author_id = None
+    created_at = None
+    events = None
+    id = None
+    metadata = None
+    ticket_id = None
+    via = None
+
     def __init__(self,
                  api=None,
                  author_id=None,
                  created_at=None,
+                 events=None,
                  id=None,
+                 metadata=None,
                  ticket_id=None,
+                 via=None,
                  **kwargs):
 
         self.api = api
-
-        self._events = None
-
-        self._metadata = None
-
-        self._via = None
         self.author_id = author_id
         self.created_at = created_at
+        self.events = events
         self.id = id
+        self.metadata = metadata
         self.ticket_id = ticket_id
+        self.via = via
 
         for key, value in kwargs.items():
             setattr(self, key, value)
-
-    @property
-    def events(self):
-
-        if self.api and self._events:
-            return self.api._get_events(self._events)
-
-    @events.setter
-    def events(self, events):
-        if events:
-            self._events = events
-
-    @property
-    def metadata(self):
-
-        if self.api and self._metadata:
-            return self.api._get_metadata(self._metadata)
-
-    @metadata.setter
-    def metadata(self, metadata):
-        if metadata:
-            self._metadata = metadata
-
-    @property
-    def via(self):
-
-        if self.api and self._via:
-            return self.api._get_via(self._via)
-
-    @via.setter
-    def via(self, via):
-        if via:
-            self._via = via
 
     @property
     def author(self):
@@ -4202,38 +4363,109 @@ class Audit(BaseObject):
             self._ticket = ticket
 
 
-class Via(BaseObject):
-    def __init__(self, api=None, **kwargs):
+class SlaPolicy(BaseObject):
+
+    created_at = None
+    description = None
+    filter = None
+    id = None
+    policy_metrics = None
+    position = None
+    title = None
+    updated_at = None
+    url = None
+
+    def __init__(self,
+                 api=None,
+                 created_at=None,
+                 description=None,
+                 filter=None,
+                 id=None,
+                 policy_metrics=None,
+                 position=None,
+                 title=None,
+                 updated_at=None,
+                 url=None,
+                 **kwargs):
 
         self.api = api
-
-        self._source = None
+        self.created_at = created_at
+        self.description = description
+        self.filter = filter
+        self.id = id
+        self.policy_metrics = policy_metrics
+        self.position = position
+        self.title = title
+        self.updated_at = updated_at
+        self.url = url
 
         for key, value in kwargs.items():
             setattr(self, key, value)
 
     @property
-    def source(self):
+    def created(self):
 
-        if self.api and self._source:
-            return self.api._get_source(self._source)
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
 
-    @source.setter
-    def source(self, source):
-        if source:
-            self._source = source
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created
+
+    @property
+    def updated(self):
+
+        if self.updated_at:
+            return dateutil.parser.parse(self.updated_at)
+
+    @updated.setter
+    def updated(self, updated):
+        if updated:
+            self.updated_at = updated
+
+
+class Via(BaseObject):
+
+    source = None
+
+    def __init__(self, api=None, source=None, **kwargs):
+
+        self.api = api
+        self.source = source
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
 
 class Organization(BaseObject):
+
+    created_at = None
+    details = None
+    domain_names = None
+    external_id = None
+    group_id = None
+    id = None
+    name = None
+    notes = None
+    organization_fields = None
+    shared_comments = None
+    shared_tickets = None
+    tags = None
+    updated_at = None
+    url = None
+
     def __init__(self,
                  api=None,
                  created_at=None,
                  details=None,
+                 domain_names=None,
                  external_id=None,
                  group_id=None,
                  id=None,
                  name=None,
                  notes=None,
+                 organization_fields=None,
                  shared_comments=None,
                  shared_tickets=None,
                  tags=None,
@@ -4242,20 +4474,6 @@ class Organization(BaseObject):
                  **kwargs):
 
         self.api = api
-
-        # Comment: An array of domain names associated with this organization
-        # Mandatory: no
-        # Read-only: no
-        # Type: array
-
-        self._domain_names = None
-
-        # Comment: Custom fields for this organization
-        # Mandatory: no
-        # Read-only: no
-        # Type: :class:`hash`
-
-        self._organization_fields = None
 
         # Comment: The time the organization was created
         # Mandatory: no
@@ -4268,6 +4486,12 @@ class Organization(BaseObject):
         # Read-only: no
         # Type: string
         self.details = details
+
+        # Comment: An array of domain names associated with this organization
+        # Mandatory: no
+        # Read-only: no
+        # Type: array
+        self.domain_names = domain_names
 
         # Comment: A unique external id to associate organizations to an external record
         # Mandatory: no
@@ -4298,6 +4522,12 @@ class Organization(BaseObject):
         # Read-only: no
         # Type: string
         self.notes = notes
+
+        # Comment: Custom fields for this organization
+        # Mandatory: no
+        # Read-only: no
+        # Type: :class:`hash`
+        self.organization_fields = organization_fields
 
         # Comment: End users in this organization are able to see each other's comments on tickets
         # Mandatory: no
@@ -4333,19 +4563,6 @@ class Organization(BaseObject):
             setattr(self, key, value)
 
     @property
-    def organization_fields(self):
-        """
-        |  Comment: Custom fields for this organization
-        """
-        if self.api and self._organization_fields:
-            return self.api._get_organization_fields(self._organization_fields)
-
-    @organization_fields.setter
-    def organization_fields(self, organization_fields):
-        if organization_fields:
-            self._organization_fields = organization_fields
-
-    @property
     def created(self):
         """
         |  Comment: The time the organization was created
@@ -4357,6 +4574,20 @@ class Organization(BaseObject):
     def created(self, created):
         if created:
             self.created_at = created
+
+    @property
+    def external(self):
+        """
+        |  Comment: A unique external id to associate organizations to an external record
+        """
+        if self.api and self.external_id:
+            return self.api._get_external(self.external_id)
+
+    @external.setter
+    def external(self, external):
+        if external:
+            self.external_id = external.id
+            self._external = external
 
     @property
     def group(self):
@@ -4387,40 +4618,59 @@ class Organization(BaseObject):
 
 
 class FacebookEvent(BaseObject):
+
+    body = None
+    communication = None
+    id = None
+    page = None
+    ticket_via = None
+    type = None
+
     def __init__(self,
                  api=None,
                  body=None,
                  communication=None,
                  id=None,
+                 page=None,
                  ticket_via=None,
                  type=None,
                  **kwargs):
 
         self.api = api
-
-        self._page = None
         self.body = body
         self.communication = communication
         self.id = id
+        self.page = page
         self.ticket_via = ticket_via
         self.type = type
 
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    @property
-    def page(self):
-
-        if self.api and self._page:
-            return self.api._get_page(self._page)
-
-    @page.setter
-    def page(self, page):
-        if page:
-            self._page = page
-
 
 class TicketField(BaseObject):
+
+    active = None
+    collapsed_for_agents = None
+    created_at = None
+    description = None
+    editable_in_portal = None
+    id = None
+    position = None
+    raw_description = None
+    raw_title = None
+    raw_title_in_portal = None
+    regexp_for_validation = None
+    required = None
+    required_in_portal = None
+    tag = None
+    title = None
+    title_in_portal = None
+    type = None
+    updated_at = None
+    url = None
+    visible_in_portal = None
+
     def __init__(self,
                  api=None,
                  active=None,
@@ -4598,8 +4848,17 @@ class TicketField(BaseObject):
 
 
 class TicketEvent(BaseObject):
+
+    _timestamp = None
+    child_events = None
+    id = None
+    ticket_id = None
+    updater_id = None
+    via = None
+
     def __init__(self,
                  api=None,
+                 child_events=None,
                  id=None,
                  ticket_id=None,
                  updater_id=None,
@@ -4608,9 +4867,8 @@ class TicketEvent(BaseObject):
 
         self.api = api
 
-        self._child_events = None
-
         self._timestamp = None
+        self.child_events = child_events
         self.id = id
         self.ticket_id = ticket_id
         self.updater_id = updater_id
@@ -4618,17 +4876,6 @@ class TicketEvent(BaseObject):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
-
-    @property
-    def child_events(self):
-
-        if self.api and self._child_events:
-            return self.api._get_child_events(self._child_events)
-
-    @child_events.setter
-    def child_events(self, child_events):
-        if child_events:
-            self._child_events = child_events
 
     @property
     def timestamp(self):
@@ -4667,6 +4914,13 @@ class TicketEvent(BaseObject):
 
 
 class System(BaseObject):
+
+    client = None
+    ip_address = None
+    latitude = None
+    location = None
+    longitude = None
+
     def __init__(self,
                  api=None,
                  client=None,

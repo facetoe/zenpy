@@ -372,7 +372,7 @@ class ViewSearchEndpoint(BaseEndpoint):
 
 class EndpointFactory(object):
     """
-    The Endpoint object ties it all together.
+    Provide access to the various endpoints.
     """
 
     activities = PrimaryEndpoint('activities')
@@ -417,6 +417,8 @@ class EndpointFactory(object):
     satisfaction_ratings.create = SecondaryEndpoint('tickets/%(id)s/satisfaction_rating.json')
     search = SearchEndpoint('search.json?')
     sharing_agreements = PrimaryEndpoint('sharing_agreements')
+    sla_policies = PrimaryEndpoint('slas/policies')
+    sla_policies.definitions = PrimaryEndpoint('slas/policies/definitions')
     suspended_tickets = PrimaryEndpoint('suspended_tickets')
     suspended_tickets.recover = SecondaryEndpoint('suspended_tickets/%(id)s/recover.json')
     tags = PrimaryEndpoint('tags')

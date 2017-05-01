@@ -4,6 +4,7 @@ from zenpy.lib.api_objects import *
 from zenpy.lib.api_objects.chat_objects import *
 from zenpy.lib.cache import add_to_cache
 from zenpy.lib.exception import ZenpyException
+from zenpy.lib.util import as_singular, get_object_type
 
 log = logging.getLogger(__name__)
 
@@ -67,14 +68,19 @@ class ZendeskObjectMapping(object):
         'sharing_agreement': SharingAgreement,
         'macro': Macro,
         'action': Action,
-        'result': MacroResult,
+        'result': None,  # result can represent many things, it is handled in format_key()
+        'macro_result': MacroResult,
+        'job_status_result': JobStatusResult,
         'agentmacroreference': AgentMacroReference,
         'identity': Identity,
         'view': View,
         'conditions': Conditions,
         'view_row': ViewRow,
         'view_count': ViewCount,
-        'export': Export
+        'export': Export,
+        'sla_policy': SlaPolicy,
+        'policy_metric': PolicyMetric,
+        'definitions': Definitions
     }
 
     def __init__(self, api):
@@ -92,9 +98,17 @@ class ZendeskObjectMapping(object):
         obj = ZenpyClass(api=self.api)
         for key, value in object_json.items():
             if isinstance(value, dict):
-                key = self.format_key(key)
+                key = self.format_key(key, parent=obj)
                 if key in self.class_mapping:
                     value = self.object_from_json(key, value)
+                elif as_singular(key) in self.class_mapping:
+                    value = self.object_from_json(as_singular(key), value)
+            elif isinstance(value, list) and self.format_key(as_singular(key), parent=obj) in self.class_mapping:
+
+                zenpy_objects = list()
+                for item in value:
+                    zenpy_objects.append(self.object_from_json(self.format_key(as_singular(key), parent=obj), item))
+                value = zenpy_objects
             setattr(obj, key, value)
         add_to_cache(obj)
         return obj
@@ -106,8 +120,10 @@ class ZendeskObjectMapping(object):
         else:
             return self.class_mapping[object_type]
 
-    def format_key(self, key):
-        if key in ('metadata', 'from', 'system', 'photo', 'thumbnails'):
+    def format_key(self, key, parent):
+        if key == 'result':
+            key = "{}_result".format(get_object_type(parent))
+        elif key in ('metadata', 'from', 'system', 'photo', 'thumbnails'):
             key = '{}'.format(key)
         return key
 
@@ -141,8 +157,3 @@ class ChatObjectMapping(ZendeskObjectMapping):
 
     def __init__(self, api):
         super(ChatObjectMapping, self).__init__(api)
-
-    def format_key(self, key):
-        if key in ('webpath',):
-            key = '_{}'.format(key)
-        return key

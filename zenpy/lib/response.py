@@ -119,7 +119,7 @@ class GenericZendeskResponseHandler(ResponseHandler):
         for zenpy_object_name in self.api._object_mapping.class_mapping:
             plural_zenpy_object_name = as_plural(zenpy_object_name)
             if plural_zenpy_object_name in zenpy_objects:
-                return ZendeskResultGenerator(self, response_json)
+                return ZendeskResultGenerator(self, response_json, object_type=plural_zenpy_object_name)
         # Bummer, bail out with an informative message.
         raise ZenpyException("Unknown Response: " + str(response_json))
 
@@ -242,6 +242,29 @@ class TagResponseHandler(ResponseHandler):
 
     def build(self, response):
         return self.deserialize(response.json())
+
+
+class SlaPolicyResponseHandler(GenericZendeskResponseHandler):
+    @staticmethod
+    def applies_to(api, response):
+        return get_endpoint_path(api, response).startswith('/slas')
+
+    def deserialize(self, response_json):
+        if 'definitions' in response_json:
+            definitions = self.api._object_mapping.object_from_json('definitions', response_json['definitions'])
+            return dict(definitions=definitions)
+        return super(SlaPolicyResponseHandler, self).deserialize(response_json)
+
+    def build(self, response):
+        response_json = response.json()
+        response_objects = self.deserialize(response_json)
+        if 'sla_policies' in response_objects:
+            return ZendeskResultGenerator(self, response.json(), response_objects=response_objects['sla_policies'])
+        elif 'sla_policy' in response_objects:
+            return response_objects['sla_policy']
+        elif response_objects:
+            return response_objects['definitions']
+        raise ZenpyException("Could not handle response: {}".format(response_json))
 
 
 class ChatResponseHandler(ResponseHandler):

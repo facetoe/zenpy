@@ -5,7 +5,7 @@ from requests.adapters import HTTPAdapter
 
 from zenpy.lib.api import UserApi, Api, TicketApi, OrganizationApi, SuspendedTicketApi, EndUserApi, TicketImportAPI, \
     RequestAPI, OrganizationMembershipApi, AttachmentApi, SharingAgreementAPI, SatisfactionRatingApi, MacroApi, \
-    GroupApi, ViewApi
+    GroupApi, ViewApi, SlaPolicyApi
 from zenpy.lib.cache import ZenpyCache, cache_mapping, purge_cache
 from zenpy.lib.api import ChatApi
 from zenpy.lib.endpoint import EndpointFactory
@@ -57,9 +57,10 @@ class Zenpy(object):
         :param token: Zendesk API token
         :param oauth_token: OAuth token
         :param password: Zendesk password
-        :param session: Existing Requests Session object
-        :param timeout: Global timeout on API requests.
-        :param ratelimit: User specified rate limit
+        :param session: existing Requests Session object
+        :param timeout: global timeout on API requests.
+        :param ratelimit: user specified rate limit
+        :param ratelimit_budget: maximum time to spend being rate limited
         """
 
         session = self._init_session(email, token, oauth_token, password, session)
@@ -123,6 +124,8 @@ class Zenpy(object):
         self.chats = ChatApi(config, endpoint=EndpointFactory('chats'))
 
         self.views = ViewApi(config)
+
+        self.sla_policies = SlaPolicyApi(config)
 
     def _init_session(self, email, token, oath_token, password, session):
         if not session:

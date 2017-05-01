@@ -20,9 +20,9 @@ class BaseResultGenerator(collections.Iterable):
     def __init__(self, response_handler, response_json):
         self.response_handler = response_handler
         self._response_json = response_json
-        self.update_attrs()
         self.values = None
         self.position = 0
+        self.update_attrs()
 
     @abstractmethod
     def process_page(self):
@@ -74,9 +74,14 @@ class BaseResultGenerator(collections.Iterable):
 class ZendeskResultGenerator(BaseResultGenerator):
     """ Generic result generator. """
 
+    def __init__(self, response_handler, response_json, response_objects=None, object_type=None):
+        super(ZendeskResultGenerator, self).__init__(response_handler, response_json)
+        self.object_type = object_type or self.response_handler.api.object_type
+        self.values = response_objects or None
+
     def process_page(self):
         response_objects = self.response_handler.deserialize(self._response_json)
-        return response_objects[as_plural(self.response_handler.api.object_type)]
+        return response_objects[as_plural(self.object_type)]
 
     def get_next_page(self):
         end_time = self._response_json.get('end_time', None)

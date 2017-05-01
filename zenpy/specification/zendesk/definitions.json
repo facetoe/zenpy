@@ -1,0 +1,1500 @@
+{
+  "all": [
+    {
+      "title": "Type",
+      "values": {
+        "type": "list",
+        "list": [
+          {
+            "value": 0,
+            "title": "-"
+          },
+          {
+            "value": 1,
+            "title": "Question"
+          },
+          {
+            "value": 2,
+            "title": "Incident"
+          },
+          {
+            "value": 3,
+            "title": "Problem"
+          },
+          {
+            "value": 4,
+            "title": "Task"
+          }
+        ]
+      },
+      "value": "ticket_type_id",
+      "operators": [
+        {
+          "value": "is",
+          "title": "Is"
+        },
+        {
+          "value": "is_not",
+          "title": "Is not"
+        }
+      ],
+      "group": "ticket",
+      "title_for_field": "Ticket type",
+      "output_key": "type"
+    },
+    {
+      "title": "Group",
+      "values": {
+        "type": "list",
+        "list": [
+          {
+            "value": null,
+            "title": "-"
+          },
+          {
+            "value": 41661887,
+            "title": "Support"
+          },
+          {
+            "value": 41763168,
+            "title": "testGroup"
+          },
+          {
+            "value": 41764148,
+            "title": "testGroup"
+          },
+          {
+            "value": 41775288,
+            "title": "testGroup"
+          },
+          {
+            "value": 41775308,
+            "title": "testGroup"
+          },
+          {
+            "value": 41775328,
+            "title": "testGroup"
+          },
+          {
+            "value": 41775348,
+            "title": "testGroup"
+          },
+          {
+            "value": 41775828,
+            "title": "testGroup"
+          },
+          {
+            "value": 41795448,
+            "title": "testGroup"
+          },
+          {
+            "value": 41795488,
+            "title": "testGroup"
+          },
+          {
+            "value": 41795728,
+            "title": "testGroup"
+          },
+          {
+            "value": 41795788,
+            "title": "testGroup"
+          },
+          {
+            "value": 41761767,
+            "title": "testGroup"
+          },
+          {
+            "value": 41795948,
+            "title": "testGroup"
+          },
+          {
+            "value": 41728647,
+            "title": "testGroup"
+          },
+          {
+            "value": 41730067,
+            "title": "testGroup"
+          },
+          {
+            "value": 41741467,
+            "title": "testGroup"
+          },
+          {
+            "value": 41741547,
+            "title": "testGroup"
+          },
+          {
+            "value": 41741567,
+            "title": "testGroup"
+          },
+          {
+            "value": 41741587,
+            "title": "testGroup"
+          },
+          {
+            "value": 41742067,
+            "title": "testGroup"
+          },
+          {
+            "value": 41761327,
+            "title": "testGroup"
+          },
+          {
+            "value": 41761527,
+            "title": "testGroup"
+          },
+          {
+            "value": 41741867,
+            "title": "testGroupbfc937463906e5db7a02a37c6060c62f9086c548"
+          },
+          {
+            "value": 41795808,
+            "title": "testGroupbfc937463906e5db7a02a37c6060c62f9086c548"
+          },
+          {
+            "value": 41761707,
+            "title": "testGroupbfc937463906e5db7a02a37c6060c62f9086c548"
+          },
+          {
+            "value": 41761347,
+            "title": "testGroupbfc937463906e5db7a02a37c6060c62f9086c548"
+          },
+          {
+            "value": 41795468,
+            "title": "testGroupbfc937463906e5db7a02a37c6060c62f9086c548"
+          },
+          {
+            "value": 41775848,
+            "title": "testGroupbfc937463906e5db7a02a37c6060c62f9086c548"
+          },
+          {
+            "value": 41742087,
+            "title": "testGroupbfc937463906e5db7a02a37c6060c62f9086c548"
+          },
+          {
+            "value": 41761687,
+            "title": "testGroupbfc937463906e5db7a02a37c6060c62f9086c548"
+          }
+        ]
+      },
+      "value": "group_id",
+      "operators": [
+        {
+          "value": "is",
+          "title": "Is"
+        },
+        {
+          "value": "is_not",
+          "title": "Is not"
+        }
+      ],
+      "group": "ticket",
+      "title_for_field": "Group",
+      "output_key": "group"
+    },
+    {
+      "title": "Assignee",
+      "values": {
+        "type": "list",
+        "list": [
+          {
+            "value": null,
+            "title": "-"
+          },
+          {
+            "value": "current_user",
+            "title": "(current user)"
+          },
+          {
+            "value": "requester_id",
+            "title": "(requester)"
+          },
+          {
+            "value": 21822442528,
+            "title": "destination"
+          },
+          {
+            "value": 21311632247,
+            "title": "Facetoe"
+          },
+          {
+            "value": 21743728687,
+            "title": "source"
+          },
+          {
+            "value": 21696995507,
+            "title": "test"
+          }
+        ]
+      },
+      "value": "assignee_id",
+      "operators": [
+        {
+          "value": "is",
+          "title": "Is"
+        },
+        {
+          "value": "is_not",
+          "title": "Is not"
+        }
+      ],
+      "group": "ticket",
+      "title_for_field": "Assignee",
+      "output_key": "assignee"
+    },
+    {
+      "title": "Requester",
+      "values": {
+        "type": "list",
+        "list": [
+          {
+            "value": "current_user",
+            "title": "(current user)"
+          },
+          {
+            "value": "assignee_id",
+            "title": "(assignee)"
+          },
+          {
+            "value": 21822442528,
+            "title": "destination"
+          },
+          {
+            "value": 21311632247,
+            "title": "Facetoe"
+          },
+          {
+            "value": 21743728687,
+            "title": "source"
+          },
+          {
+            "value": 21696995507,
+            "title": "test"
+          }
+        ]
+      },
+      "value": "requester_id",
+      "operators": [
+        {
+          "value": "is",
+          "title": "Is"
+        },
+        {
+          "value": "is_not",
+          "title": "Is not"
+        }
+      ],
+      "group": "ticket",
+      "title_for_field": "Requester",
+      "output_key": "requester"
+    },
+    {
+      "title": "Organization",
+      "values": {
+        "type": "list",
+        "list": [
+          {
+            "value": null,
+            "title": "-"
+          },
+          {
+            "value": 16478377267,
+            "title": "lol"
+          },
+          {
+            "value": 16551373428,
+            "title": "lolsomuchlol"
+          },
+          {
+            "value": 16482887008,
+            "title": "TestOrg"
+          }
+        ]
+      },
+      "value": "organization_id",
+      "operators": [
+        {
+          "value": "is",
+          "title": "Is"
+        },
+        {
+          "value": "is_not",
+          "title": "Is not"
+        }
+      ],
+      "group": "ticket",
+      "title_for_field": "Organization",
+      "output_key": "organization"
+    },
+    {
+      "title": "Tags",
+      "values": {
+        "type": "text",
+        "css_class": "large",
+        "list": []
+      },
+      "value": "current_tags",
+      "operators": [
+        {
+          "value": "includes",
+          "title": "Contains at least one of the following"
+        },
+        {
+          "value": "not_includes",
+          "title": "Contains none of the following"
+        }
+      ],
+      "group": "ticket",
+      "title_for_field": "Tags",
+      "output_key": null
+    },
+    {
+      "title": "Channel",
+      "values": {
+        "type": "list",
+        "list": [
+          {
+            "value": 0,
+            "title": "Web form"
+          },
+          {
+            "value": 4,
+            "title": "Email"
+          },
+          {
+            "value": 29,
+            "title": "Chat"
+          },
+          {
+            "value": 30,
+            "title": "Twitter"
+          },
+          {
+            "value": 26,
+            "title": "Twitter DM"
+          },
+          {
+            "value": 23,
+            "title": "Twitter Like"
+          },
+          {
+            "value": 33,
+            "title": "Voicemail"
+          },
+          {
+            "value": 34,
+            "title": "Phone call (incoming)"
+          },
+          {
+            "value": 35,
+            "title": "Phone call (outgoing)"
+          },
+          {
+            "value": 44,
+            "title": "CTI voicemail"
+          },
+          {
+            "value": 45,
+            "title": "CTI phone call (incoming)"
+          },
+          {
+            "value": 46,
+            "title": "CTI phone call (outgoing)"
+          },
+          {
+            "value": 57,
+            "title": "Text"
+          },
+          {
+            "value": 16,
+            "title": "Get Satisfaction"
+          },
+          {
+            "value": 17,
+            "title": "Feedback Tab"
+          },
+          {
+            "value": 48,
+            "title": "Web Widget"
+          },
+          {
+            "value": 49,
+            "title": "Mobile SDK"
+          },
+          {
+            "value": 56,
+            "title": "Mobile"
+          },
+          {
+            "value": 50,
+            "title": "Help Center post"
+          },
+          {
+            "value": 5,
+            "title": "Web service (API)"
+          },
+          {
+            "value": 8,
+            "title": "Automation"
+          },
+          {
+            "value": 24,
+            "title": "Forum topic"
+          },
+          {
+            "value": 27,
+            "title": "Closed ticket"
+          },
+          {
+            "value": 31,
+            "title": "Ticket sharing"
+          },
+          {
+            "value": 38,
+            "title": "Facebook Post"
+          },
+          {
+            "value": 41,
+            "title": "Facebook Private Message"
+          },
+          {
+            "value": 54,
+            "title": "Satisfaction Prediction"
+          }
+        ]
+      },
+      "value": "via_id",
+      "operators": [
+        {
+          "value": "is",
+          "title": "Is"
+        },
+        {
+          "value": "is_not",
+          "title": "Is not"
+        }
+      ],
+      "group": "ticket",
+      "title_for_field": "Channel",
+      "output_key": "via"
+    },
+    {
+      "title": "Update via",
+      "values": {
+        "type": "list",
+        "list": [
+          {
+            "value": 0,
+            "title": "Web form"
+          },
+          {
+            "value": 4,
+            "title": "Email"
+          },
+          {
+            "value": 29,
+            "title": "Chat"
+          },
+          {
+            "value": 30,
+            "title": "Twitter"
+          },
+          {
+            "value": 26,
+            "title": "Twitter DM"
+          },
+          {
+            "value": 23,
+            "title": "Twitter Like"
+          },
+          {
+            "value": 33,
+            "title": "Voicemail"
+          },
+          {
+            "value": 34,
+            "title": "Phone call (incoming)"
+          },
+          {
+            "value": 35,
+            "title": "Phone call (outgoing)"
+          },
+          {
+            "value": 44,
+            "title": "CTI voicemail"
+          },
+          {
+            "value": 45,
+            "title": "CTI phone call (incoming)"
+          },
+          {
+            "value": 46,
+            "title": "CTI phone call (outgoing)"
+          },
+          {
+            "value": 57,
+            "title": "Text"
+          },
+          {
+            "value": 16,
+            "title": "Get Satisfaction"
+          },
+          {
+            "value": 17,
+            "title": "Feedback Tab"
+          },
+          {
+            "value": 48,
+            "title": "Web Widget"
+          },
+          {
+            "value": 49,
+            "title": "Mobile SDK"
+          },
+          {
+            "value": 56,
+            "title": "Mobile"
+          },
+          {
+            "value": 50,
+            "title": "Help Center post"
+          },
+          {
+            "value": 5,
+            "title": "Web service (API)"
+          },
+          {
+            "value": 8,
+            "title": "Automation"
+          },
+          {
+            "value": 24,
+            "title": "Forum topic"
+          },
+          {
+            "value": 27,
+            "title": "Closed ticket"
+          },
+          {
+            "value": 31,
+            "title": "Ticket sharing"
+          },
+          {
+            "value": 38,
+            "title": "Facebook Post"
+          },
+          {
+            "value": 41,
+            "title": "Facebook Private Message"
+          },
+          {
+            "value": 54,
+            "title": "Satisfaction Prediction"
+          }
+        ]
+      },
+      "value": "current_via_id",
+      "operators": [
+        {
+          "value": "is",
+          "title": "Is"
+        },
+        {
+          "value": "is_not",
+          "title": "Is not"
+        }
+      ],
+      "group": "ticket",
+      "title_for_field": "Update via",
+      "output_key": null
+    },
+    {
+      "title": "Received at",
+      "values": {
+        "type": "list",
+        "label": {
+          "default": "html_block You can add and remove support addresses in your account's email <a href=\"/settings/email\">settings</a>."
+        },
+        "list": [
+          {
+            "value": "support@facetoe1.zendesk.com",
+            "title": "support@facetoe1.zendesk.com"
+          }
+        ]
+      },
+      "value": "recipient",
+      "operators": [
+        {
+          "value": "is",
+          "title": "Is"
+        }
+      ],
+      "group": "ticket",
+      "title_for_field": "Received at",
+      "output_key": null
+    },
+    {
+      "title": "Privacy",
+      "values": {
+        "type": "list",
+        "list": [
+          {
+            "value": "public",
+            "title": "Ticket has public comments"
+          },
+          {
+            "value": "private",
+            "title": "Ticket has no public comments"
+          }
+        ]
+      },
+      "value": "ticket_is_public",
+      "operators": [
+        {
+          "value": "is",
+          "title": "Is"
+        }
+      ],
+      "group": "ticket",
+      "title_for_field": "Privacy",
+      "output_key": null
+    },
+    {
+      "title": "Created",
+      "values": {
+        "type": "datetime",
+        "labels": {
+          "default": "YYYY-MM-DD hh:mm",
+          "integer": " days"
+        },
+        "list": []
+      },
+      "value": "exact_created_at",
+      "operators": [
+        {
+          "value": "less_than",
+          "title": "Before"
+        },
+        {
+          "value": "less_than_equal",
+          "title": "Before or on"
+        },
+        {
+          "value": "greater_than",
+          "title": "After"
+        },
+        {
+          "value": "greater_than_equal",
+          "title": "After or on"
+        }
+      ],
+      "group": "ticket",
+      "title_for_field": "Created",
+      "output_key": null
+    },
+    {
+      "title": "Role",
+      "values": {
+        "type": "list",
+        "list": [
+          {
+            "value": 4,
+            "title": "(agent)"
+          },
+          {
+            "value": 0,
+            "title": "(end-user)"
+          },
+          {
+            "value": 2,
+            "title": "(admin)"
+          }
+        ]
+      },
+      "value": "requester_role",
+      "operators": [
+        {
+          "value": "is",
+          "title": "Is"
+        },
+        {
+          "value": "is_not",
+          "title": "Is not"
+        }
+      ],
+      "group": "requester",
+      "title_for_field": "Role",
+      "output_key": null
+    },
+    {
+      "title": "Party",
+      "values": {
+        "type": "text",
+        "list": []
+      },
+      "value": "organization.custom_fields.party",
+      "operators": [
+        {
+          "value": "is",
+          "title": "Is"
+        },
+        {
+          "value": "is_not",
+          "title": "Is not"
+        }
+      ],
+      "group": "organization",
+      "title_for_field": "Party",
+      "output_key": "1234847"
+    }
+  ],
+  "any": [
+    {
+      "title": "Type",
+      "values": {
+        "type": "list",
+        "list": [
+          {
+            "value": 0,
+            "title": "-"
+          },
+          {
+            "value": 1,
+            "title": "Question"
+          },
+          {
+            "value": 2,
+            "title": "Incident"
+          },
+          {
+            "value": 3,
+            "title": "Problem"
+          },
+          {
+            "value": 4,
+            "title": "Task"
+          }
+        ]
+      },
+      "value": "ticket_type_id",
+      "operators": [
+        {
+          "value": "is",
+          "title": "Is"
+        },
+        {
+          "value": "is_not",
+          "title": "Is not"
+        }
+      ],
+      "group": "ticket",
+      "title_for_field": "Ticket type",
+      "output_key": "type"
+    },
+    {
+      "title": "Group",
+      "values": {
+        "type": "list",
+        "list": [
+          {
+            "value": null,
+            "title": "-"
+          },
+          {
+            "value": 41661887,
+            "title": "Support"
+          },
+          {
+            "value": 41763168,
+            "title": "testGroup"
+          },
+          {
+            "value": 41764148,
+            "title": "testGroup"
+          },
+          {
+            "value": 41775288,
+            "title": "testGroup"
+          },
+          {
+            "value": 41775308,
+            "title": "testGroup"
+          },
+          {
+            "value": 41775328,
+            "title": "testGroup"
+          },
+          {
+            "value": 41775348,
+            "title": "testGroup"
+          },
+          {
+            "value": 41775828,
+            "title": "testGroup"
+          },
+          {
+            "value": 41795448,
+            "title": "testGroup"
+          },
+          {
+            "value": 41795488,
+            "title": "testGroup"
+          },
+          {
+            "value": 41795728,
+            "title": "testGroup"
+          },
+          {
+            "value": 41795788,
+            "title": "testGroup"
+          },
+          {
+            "value": 41761767,
+            "title": "testGroup"
+          },
+          {
+            "value": 41795948,
+            "title": "testGroup"
+          },
+          {
+            "value": 41728647,
+            "title": "testGroup"
+          },
+          {
+            "value": 41730067,
+            "title": "testGroup"
+          },
+          {
+            "value": 41741467,
+            "title": "testGroup"
+          },
+          {
+            "value": 41741547,
+            "title": "testGroup"
+          },
+          {
+            "value": 41741567,
+            "title": "testGroup"
+          },
+          {
+            "value": 41741587,
+            "title": "testGroup"
+          },
+          {
+            "value": 41742067,
+            "title": "testGroup"
+          },
+          {
+            "value": 41761327,
+            "title": "testGroup"
+          },
+          {
+            "value": 41761527,
+            "title": "testGroup"
+          },
+          {
+            "value": 41741867,
+            "title": "testGroupbfc937463906e5db7a02a37c6060c62f9086c548"
+          },
+          {
+            "value": 41795808,
+            "title": "testGroupbfc937463906e5db7a02a37c6060c62f9086c548"
+          },
+          {
+            "value": 41761707,
+            "title": "testGroupbfc937463906e5db7a02a37c6060c62f9086c548"
+          },
+          {
+            "value": 41761347,
+            "title": "testGroupbfc937463906e5db7a02a37c6060c62f9086c548"
+          },
+          {
+            "value": 41795468,
+            "title": "testGroupbfc937463906e5db7a02a37c6060c62f9086c548"
+          },
+          {
+            "value": 41775848,
+            "title": "testGroupbfc937463906e5db7a02a37c6060c62f9086c548"
+          },
+          {
+            "value": 41742087,
+            "title": "testGroupbfc937463906e5db7a02a37c6060c62f9086c548"
+          },
+          {
+            "value": 41761687,
+            "title": "testGroupbfc937463906e5db7a02a37c6060c62f9086c548"
+          }
+        ]
+      },
+      "value": "group_id",
+      "operators": [
+        {
+          "value": "is",
+          "title": "Is"
+        },
+        {
+          "value": "is_not",
+          "title": "Is not"
+        }
+      ],
+      "group": "ticket",
+      "title_for_field": "Group",
+      "output_key": "group"
+    },
+    {
+      "title": "Assignee",
+      "values": {
+        "type": "list",
+        "list": [
+          {
+            "value": null,
+            "title": "-"
+          },
+          {
+            "value": "current_user",
+            "title": "(current user)"
+          },
+          {
+            "value": "requester_id",
+            "title": "(requester)"
+          },
+          {
+            "value": 21822442528,
+            "title": "destination"
+          },
+          {
+            "value": 21311632247,
+            "title": "Facetoe"
+          },
+          {
+            "value": 21743728687,
+            "title": "source"
+          },
+          {
+            "value": 21696995507,
+            "title": "test"
+          }
+        ]
+      },
+      "value": "assignee_id",
+      "operators": [
+        {
+          "value": "is",
+          "title": "Is"
+        },
+        {
+          "value": "is_not",
+          "title": "Is not"
+        }
+      ],
+      "group": "ticket",
+      "title_for_field": "Assignee",
+      "output_key": "assignee"
+    },
+    {
+      "title": "Requester",
+      "values": {
+        "type": "list",
+        "list": [
+          {
+            "value": "current_user",
+            "title": "(current user)"
+          },
+          {
+            "value": "assignee_id",
+            "title": "(assignee)"
+          },
+          {
+            "value": 21822442528,
+            "title": "destination"
+          },
+          {
+            "value": 21311632247,
+            "title": "Facetoe"
+          },
+          {
+            "value": 21743728687,
+            "title": "source"
+          },
+          {
+            "value": 21696995507,
+            "title": "test"
+          }
+        ]
+      },
+      "value": "requester_id",
+      "operators": [
+        {
+          "value": "is",
+          "title": "Is"
+        },
+        {
+          "value": "is_not",
+          "title": "Is not"
+        }
+      ],
+      "group": "ticket",
+      "title_for_field": "Requester",
+      "output_key": "requester"
+    },
+    {
+      "title": "Organization",
+      "values": {
+        "type": "list",
+        "list": [
+          {
+            "value": null,
+            "title": "-"
+          },
+          {
+            "value": 16478377267,
+            "title": "lol"
+          },
+          {
+            "value": 16551373428,
+            "title": "lolsomuchlol"
+          },
+          {
+            "value": 16482887008,
+            "title": "TestOrg"
+          }
+        ]
+      },
+      "value": "organization_id",
+      "operators": [
+        {
+          "value": "is",
+          "title": "Is"
+        },
+        {
+          "value": "is_not",
+          "title": "Is not"
+        }
+      ],
+      "group": "ticket",
+      "title_for_field": "Organization",
+      "output_key": "organization"
+    },
+    {
+      "title": "Tags",
+      "values": {
+        "type": "text",
+        "css_class": "large",
+        "list": []
+      },
+      "value": "current_tags",
+      "operators": [
+        {
+          "value": "includes",
+          "title": "Contains at least one of the following"
+        },
+        {
+          "value": "not_includes",
+          "title": "Contains none of the following"
+        }
+      ],
+      "group": "ticket",
+      "title_for_field": "Tags",
+      "output_key": null
+    },
+    {
+      "title": "Channel",
+      "values": {
+        "type": "list",
+        "list": [
+          {
+            "value": 0,
+            "title": "Web form"
+          },
+          {
+            "value": 4,
+            "title": "Email"
+          },
+          {
+            "value": 29,
+            "title": "Chat"
+          },
+          {
+            "value": 30,
+            "title": "Twitter"
+          },
+          {
+            "value": 26,
+            "title": "Twitter DM"
+          },
+          {
+            "value": 23,
+            "title": "Twitter Like"
+          },
+          {
+            "value": 33,
+            "title": "Voicemail"
+          },
+          {
+            "value": 34,
+            "title": "Phone call (incoming)"
+          },
+          {
+            "value": 35,
+            "title": "Phone call (outgoing)"
+          },
+          {
+            "value": 44,
+            "title": "CTI voicemail"
+          },
+          {
+            "value": 45,
+            "title": "CTI phone call (incoming)"
+          },
+          {
+            "value": 46,
+            "title": "CTI phone call (outgoing)"
+          },
+          {
+            "value": 57,
+            "title": "Text"
+          },
+          {
+            "value": 16,
+            "title": "Get Satisfaction"
+          },
+          {
+            "value": 17,
+            "title": "Feedback Tab"
+          },
+          {
+            "value": 48,
+            "title": "Web Widget"
+          },
+          {
+            "value": 49,
+            "title": "Mobile SDK"
+          },
+          {
+            "value": 56,
+            "title": "Mobile"
+          },
+          {
+            "value": 50,
+            "title": "Help Center post"
+          },
+          {
+            "value": 5,
+            "title": "Web service (API)"
+          },
+          {
+            "value": 8,
+            "title": "Automation"
+          },
+          {
+            "value": 24,
+            "title": "Forum topic"
+          },
+          {
+            "value": 27,
+            "title": "Closed ticket"
+          },
+          {
+            "value": 31,
+            "title": "Ticket sharing"
+          },
+          {
+            "value": 38,
+            "title": "Facebook Post"
+          },
+          {
+            "value": 41,
+            "title": "Facebook Private Message"
+          },
+          {
+            "value": 54,
+            "title": "Satisfaction Prediction"
+          }
+        ]
+      },
+      "value": "via_id",
+      "operators": [
+        {
+          "value": "is",
+          "title": "Is"
+        },
+        {
+          "value": "is_not",
+          "title": "Is not"
+        }
+      ],
+      "group": "ticket",
+      "title_for_field": "Channel",
+      "output_key": "via"
+    },
+    {
+      "title": "Update via",
+      "values": {
+        "type": "list",
+        "list": [
+          {
+            "value": 0,
+            "title": "Web form"
+          },
+          {
+            "value": 4,
+            "title": "Email"
+          },
+          {
+            "value": 29,
+            "title": "Chat"
+          },
+          {
+            "value": 30,
+            "title": "Twitter"
+          },
+          {
+            "value": 26,
+            "title": "Twitter DM"
+          },
+          {
+            "value": 23,
+            "title": "Twitter Like"
+          },
+          {
+            "value": 33,
+            "title": "Voicemail"
+          },
+          {
+            "value": 34,
+            "title": "Phone call (incoming)"
+          },
+          {
+            "value": 35,
+            "title": "Phone call (outgoing)"
+          },
+          {
+            "value": 44,
+            "title": "CTI voicemail"
+          },
+          {
+            "value": 45,
+            "title": "CTI phone call (incoming)"
+          },
+          {
+            "value": 46,
+            "title": "CTI phone call (outgoing)"
+          },
+          {
+            "value": 57,
+            "title": "Text"
+          },
+          {
+            "value": 16,
+            "title": "Get Satisfaction"
+          },
+          {
+            "value": 17,
+            "title": "Feedback Tab"
+          },
+          {
+            "value": 48,
+            "title": "Web Widget"
+          },
+          {
+            "value": 49,
+            "title": "Mobile SDK"
+          },
+          {
+            "value": 56,
+            "title": "Mobile"
+          },
+          {
+            "value": 50,
+            "title": "Help Center post"
+          },
+          {
+            "value": 5,
+            "title": "Web service (API)"
+          },
+          {
+            "value": 8,
+            "title": "Automation"
+          },
+          {
+            "value": 24,
+            "title": "Forum topic"
+          },
+          {
+            "value": 27,
+            "title": "Closed ticket"
+          },
+          {
+            "value": 31,
+            "title": "Ticket sharing"
+          },
+          {
+            "value": 38,
+            "title": "Facebook Post"
+          },
+          {
+            "value": 41,
+            "title": "Facebook Private Message"
+          },
+          {
+            "value": 54,
+            "title": "Satisfaction Prediction"
+          }
+        ]
+      },
+      "value": "current_via_id",
+      "operators": [
+        {
+          "value": "is",
+          "title": "Is"
+        },
+        {
+          "value": "is_not",
+          "title": "Is not"
+        }
+      ],
+      "group": "ticket",
+      "title_for_field": "Update via",
+      "output_key": null
+    },
+    {
+      "title": "Received at",
+      "values": {
+        "type": "list",
+        "label": {
+          "default": "html_block You can add and remove support addresses in your account's email <a href=\"/settings/email\">settings</a>."
+        },
+        "list": [
+          {
+            "value": "support@facetoe1.zendesk.com",
+            "title": "support@facetoe1.zendesk.com"
+          }
+        ]
+      },
+      "value": "recipient",
+      "operators": [
+        {
+          "value": "is",
+          "title": "Is"
+        }
+      ],
+      "group": "ticket",
+      "title_for_field": "Received at",
+      "output_key": null
+    },
+    {
+      "title": "Privacy",
+      "values": {
+        "type": "list",
+        "list": [
+          {
+            "value": "public",
+            "title": "Ticket has public comments"
+          },
+          {
+            "value": "private",
+            "title": "Ticket has no public comments"
+          }
+        ]
+      },
+      "value": "ticket_is_public",
+      "operators": [
+        {
+          "value": "is",
+          "title": "Is"
+        }
+      ],
+      "group": "ticket",
+      "title_for_field": "Privacy",
+      "output_key": null
+    },
+    {
+      "title": "Created",
+      "values": {
+        "type": "datetime",
+        "labels": {
+          "default": "YYYY-MM-DD hh:mm",
+          "integer": " days"
+        },
+        "list": []
+      },
+      "value": "exact_created_at",
+      "operators": [
+        {
+          "value": "less_than",
+          "title": "Before"
+        },
+        {
+          "value": "less_than_equal",
+          "title": "Before or on"
+        },
+        {
+          "value": "greater_than",
+          "title": "After"
+        },
+        {
+          "value": "greater_than_equal",
+          "title": "After or on"
+        }
+      ],
+      "group": "ticket",
+      "title_for_field": "Created",
+      "output_key": null
+    },
+    {
+      "title": "Role",
+      "values": {
+        "type": "list",
+        "list": [
+          {
+            "value": 4,
+            "title": "(agent)"
+          },
+          {
+            "value": 0,
+            "title": "(end-user)"
+          },
+          {
+            "value": 2,
+            "title": "(admin)"
+          }
+        ]
+      },
+      "value": "requester_role",
+      "operators": [
+        {
+          "value": "is",
+          "title": "Is"
+        },
+        {
+          "value": "is_not",
+          "title": "Is not"
+        }
+      ],
+      "group": "requester",
+      "title_for_field": "Role",
+      "output_key": null
+    },
+    {
+      "title": "Party",
+      "values": {
+        "type": "text",
+        "list": []
+      },
+      "value": "organization.custom_fields.party",
+      "operators": [
+        {
+          "value": "is",
+          "title": "Is"
+        },
+        {
+          "value": "is_not",
+          "title": "Is not"
+        }
+      ],
+      "group": "organization",
+      "title_for_field": "Party",
+      "output_key": "1234847"
+    }
+  ]
+}
