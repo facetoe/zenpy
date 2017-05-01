@@ -39,12 +39,6 @@ class BaseObject(object):
 
 
 class PushEvent(BaseObject):
-
-    id = None
-    type = None
-    value = None
-    value_reference = None
-
     def __init__(self,
                  api=None,
                  id=None,
@@ -64,20 +58,6 @@ class PushEvent(BaseObject):
 
 
 class VoiceCommentEvent(BaseObject):
-
-    attachments = None
-    author_id = None
-    body = None
-    data = None
-    formatted_from = None
-    formatted_to = None
-    html_body = None
-    id = None
-    public = None
-    transcription_visible = None
-    trusted = None
-    type = None
-
     def __init__(self,
                  api=None,
                  attachments=None,
@@ -125,12 +105,6 @@ class VoiceCommentEvent(BaseObject):
 
 
 class CcEvent(BaseObject):
-
-    id = None
-    recipients = None
-    type = None
-    via = None
-
     def __init__(self,
                  api=None,
                  id=None,
@@ -150,18 +124,6 @@ class CcEvent(BaseObject):
 
 
 class UserRelated(BaseObject):
-
-    assigned_tickets = None
-    ccd_tickets = None
-    entry_subscriptions = None
-    forum_subscriptions = None
-    organization_subscriptions = None
-    requested_tickets = None
-    subscriptions = None
-    topic_comments = None
-    topics = None
-    votes = None
-
     def __init__(self,
                  api=None,
                  assigned_tickets=None,
@@ -193,10 +155,6 @@ class UserRelated(BaseObject):
 
 
 class Export(BaseObject):
-
-    status = None
-    view_id = None
-
     def __init__(self, api=None, status=None, view_id=None, **kwargs):
 
         self.api = api
@@ -220,12 +178,6 @@ class Export(BaseObject):
 
 
 class TicketSharingEvent(BaseObject):
-
-    action = None
-    agreement_id = None
-    id = None
-    type = None
-
     def __init__(self,
                  api=None,
                  action=None,
@@ -257,10 +209,6 @@ class TicketSharingEvent(BaseObject):
 
 
 class TicketAudit(BaseObject):
-
-    audit = None
-    ticket = None
-
     def __init__(self, api=None, audit=None, ticket=None, **kwargs):
 
         self.api = api
@@ -272,13 +220,6 @@ class TicketAudit(BaseObject):
 
 
 class AgentMacroReference(BaseObject):
-
-    id = None
-    macro_id = None
-    macro_title = None
-    type = None
-    via = None
-
     def __init__(self,
                  api=None,
                  id=None,
@@ -312,18 +253,6 @@ class AgentMacroReference(BaseObject):
 
 
 class FacebookCommentEvent(BaseObject):
-
-    attachments = None
-    author_id = None
-    body = None
-    data = None
-    graph_object_id = None
-    html_body = None
-    id = None
-    public = None
-    trusted = None
-    type = None
-
     def __init__(self,
                  api=None,
                  attachments=None,
@@ -379,29 +308,6 @@ class FacebookCommentEvent(BaseObject):
 
 
 class TicketMetric(BaseObject):
-
-    agent_wait_time_in_minutes = None
-    assigned_at = None
-    assignee_stations = None
-    assignee_updated_at = None
-    created_at = None
-    first_resolution_time_in_minutes = None
-    full_resolution_time_in_minutes = None
-    group_stations = None
-    id = None
-    initially_assigned_at = None
-    latest_comment_added_at = None
-    on_hold_time_in_minutes = None
-    reopens = None
-    replies = None
-    reply_time_in_minutes = None
-    requester_updated_at = None
-    requester_wait_time_in_minutes = None
-    solved_at = None
-    status_updated_at = None
-    ticket_id = None
-    updated_at = None
-
     def __init__(self,
                  api=None,
                  agent_wait_time_in_minutes=None,
@@ -686,10 +592,6 @@ class TicketMetric(BaseObject):
 
 
 class Metadata(BaseObject):
-
-    custom = None
-    system = None
-
     def __init__(self, api=None, custom=None, system=None, **kwargs):
 
         self.api = api
@@ -701,12 +603,6 @@ class Metadata(BaseObject):
 
 
 class Upload(BaseObject):
-
-    attachment = None
-    attachments = None
-    expires_at = None
-    token = None
-
     def __init__(self,
                  api=None,
                  attachment=None,
@@ -737,10 +633,6 @@ class Upload(BaseObject):
 
 
 class Tag(BaseObject):
-
-    count = None
-    name = None
-
     def __init__(self, api=None, count=None, name=None, **kwargs):
 
         self.api = api
@@ -752,17 +644,6 @@ class Tag(BaseObject):
 
 
 class SatisfactionRating(BaseObject):
-
-    assignee_id = None
-    created_at = None
-    group_id = None
-    id = None
-    requester_id = None
-    score = None
-    ticket_id = None
-    updated_at = None
-    url = None
-
     def __init__(self,
                  api=None,
                  assignee_id=None,
@@ -919,10 +800,6 @@ class SatisfactionRating(BaseObject):
 
 
 class Definitions(BaseObject):
-
-    all = None
-    any = None
-
     def __init__(self, api=None, all=None, any=None, **kwargs):
 
         self.api = api
@@ -934,10 +811,6 @@ class Definitions(BaseObject):
 
 
 class TicketMetricItem(BaseObject):
-
-    business = None
-    calendar = None
-
     def __init__(self, api=None, business=None, calendar=None, **kwargs):
 
         self.api = api
@@ -949,12 +822,6 @@ class TicketMetricItem(BaseObject):
 
 
 class ExternalEvent(BaseObject):
-
-    body = None
-    id = None
-    resource = None
-    type = None
-
     def __init__(self,
                  api=None,
                  body=None,
@@ -974,13 +841,6 @@ class ExternalEvent(BaseObject):
 
 
 class TweetEvent(BaseObject):
-
-    body = None
-    direct_message = None
-    id = None
-    recipients = None
-    type = None
-
     def __init__(self,
                  api=None,
                  body=None,
@@ -1002,14 +862,6 @@ class TweetEvent(BaseObject):
 
 
 class Group(BaseObject):
-
-    created_at = None
-    deleted = None
-    id = None
-    name = None
-    updated_at = None
-    url = None
-
     def __init__(self,
                  api=None,
                  created_at=None,
@@ -1089,18 +941,6 @@ class Group(BaseObject):
 
 
 class Macro(BaseObject):
-
-    actions = None
-    active = None
-    created_at = None
-    description = None
-    id = None
-    position = None
-    restriction = None
-    title = None
-    updated_at = None
-    url = None
-
     def __init__(self,
                  api=None,
                  actions=None,
@@ -1185,10 +1025,6 @@ class Macro(BaseObject):
 
 
 class CustomField(BaseObject):
-
-    id = None
-    value = None
-
     def __init__(self, api=None, id=None, value=None, **kwargs):
 
         self.api = api
@@ -1200,12 +1036,6 @@ class CustomField(BaseObject):
 
 
 class CreateEvent(BaseObject):
-
-    field_name = None
-    id = None
-    type = None
-    value = None
-
     def __init__(self,
                  api=None,
                  field_name=None,
@@ -1225,13 +1055,6 @@ class CreateEvent(BaseObject):
 
 
 class Thumbnail(BaseObject):
-
-    content_type = None
-    content_url = None
-    file_name = None
-    id = None
-    size = None
-
     def __init__(self,
                  api=None,
                  content_type=None,
@@ -1253,11 +1076,6 @@ class Thumbnail(BaseObject):
 
 
 class Source(BaseObject):
-
-    from_ = None
-    rel = None
-    to = None
-
     def __init__(self, api=None, from_=None, rel=None, to=None, **kwargs):
 
         self.api = api
@@ -1270,21 +1088,6 @@ class Source(BaseObject):
 
 
 class UserField(BaseObject):
-
-    active = None
-    created_at = None
-    description = None
-    id = None
-    key = None
-    position = None
-    raw_description = None
-    raw_title = None
-    regexp_for_validation = None
-    title = None
-    type = None
-    updated_at = None
-    url = None
-
     def __init__(self,
                  api=None,
                  active=None,
@@ -1413,10 +1216,6 @@ class UserField(BaseObject):
 
 
 class Action(BaseObject):
-
-    field = None
-    value = None
-
     def __init__(self, api=None, field=None, value=None, **kwargs):
 
         self.api = api
@@ -1428,14 +1227,6 @@ class Action(BaseObject):
 
 
 class NotificationEvent(BaseObject):
-
-    body = None
-    id = None
-    recipients = None
-    subject = None
-    type = None
-    via = None
-
     def __init__(self,
                  api=None,
                  body=None,
@@ -1459,22 +1250,6 @@ class NotificationEvent(BaseObject):
 
 
 class Forum(BaseObject):
-
-    access = None
-    category_id = None
-    created_at = None
-    description = None
-    forum_type = None
-    id = None
-    locale_id = None
-    locked = None
-    name = None
-    organization_id = None
-    position = None
-    tags = None
-    updated_at = None
-    url = None
-
     def __init__(self,
                  api=None,
                  access=None,
@@ -1560,21 +1335,6 @@ class Forum(BaseObject):
 
 
 class OrganizationField(BaseObject):
-
-    active = None
-    created_at = None
-    description = None
-    id = None
-    key = None
-    position = None
-    raw_description = None
-    raw_title = None
-    regexp_for_validation = None
-    title = None
-    type = None
-    updated_at = None
-    url = None
-
     def __init__(self,
                  api=None,
                  active=None,
@@ -1703,15 +1463,6 @@ class OrganizationField(BaseObject):
 
 
 class OrganizationMembership(BaseObject):
-
-    created_at = None
-    default = None
-    id = None
-    organization_id = None
-    updated_at = None
-    url = None
-    user_id = None
-
     def __init__(self,
                  api=None,
                  created_at=None,
@@ -1826,17 +1577,6 @@ class OrganizationMembership(BaseObject):
 
 
 class ViewRow(BaseObject):
-
-    created = None
-    custom_fields = None
-    fields = None
-    group_id = None
-    priority = None
-    requester_id = None
-    score = None
-    subject = None
-    ticket = None
-
     def __init__(self,
                  api=None,
                  created=None,
@@ -1890,12 +1630,6 @@ class ViewRow(BaseObject):
 
 
 class PolicyMetric(BaseObject):
-
-    business_hours = None
-    metric = None
-    priority = None
-    target = None
-
     def __init__(self,
                  api=None,
                  business_hours=None,
@@ -1915,19 +1649,6 @@ class PolicyMetric(BaseObject):
 
 
 class Identity(BaseObject):
-
-    created_at = None
-    deliverable_state = None
-    id = None
-    primary = None
-    type = None
-    undeliverable_count = None
-    updated_at = None
-    url = None
-    user_id = None
-    value = None
-    verified = None
-
     def __init__(self,
                  api=None,
                  created_at=None,
@@ -1995,14 +1716,6 @@ class Identity(BaseObject):
 
 
 class Attachment(BaseObject):
-
-    content_type = None
-    content_url = None
-    file_name = None
-    id = None
-    size = None
-    thumbnails = None
-
     def __init__(self,
                  api=None,
                  content_type=None,
@@ -2050,9 +1763,6 @@ class Attachment(BaseObject):
 
 
 class MacroResult(BaseObject):
-
-    ticket = None
-
     def __init__(self, api=None, ticket=None, **kwargs):
 
         self.api = api
@@ -2063,14 +1773,6 @@ class MacroResult(BaseObject):
 
 
 class OrganizationActivityEvent(BaseObject):
-
-    body = None
-    id = None
-    recipients = None
-    subject = None
-    type = None
-    via = None
-
     def __init__(self,
                  api=None,
                  body=None,
@@ -2094,41 +1796,6 @@ class OrganizationActivityEvent(BaseObject):
 
 
 class User(BaseObject):
-
-    active = None
-    alias = None
-    chat_only = None
-    created_at = None
-    custom_role_id = None
-    details = None
-    email = None
-    external_id = None
-    id = None
-    last_login_at = None
-    locale = None
-    locale_id = None
-    moderator = None
-    name = None
-    notes = None
-    only_private_comments = None
-    organization_id = None
-    phone = None
-    photo = None
-    restricted_agent = None
-    role = None
-    shared = None
-    shared_agent = None
-    signature = None
-    suspended = None
-    tags = None
-    ticket_restriction = None
-    time_zone = None
-    two_factor_auth_enabled = None
-    updated_at = None
-    url = None
-    user_fields = None
-    verified = None
-
     def __init__(self,
                  api=None,
                  active=None,
@@ -2452,21 +2119,6 @@ class User(BaseObject):
 
 
 class Brand(BaseObject):
-
-    active = None
-    brand_url = None
-    created_at = None
-    default = None
-    has_help_center = None
-    help_center_state = None
-    host_mapping = None
-    id = None
-    logo = None
-    name = None
-    subdomain = None
-    updated_at = None
-    url = None
-
     def __init__(self,
                  api=None,
                  active=None,
@@ -2595,20 +2247,6 @@ class Brand(BaseObject):
 
 
 class SuspendedTicket(BaseObject):
-
-    author = None
-    brand_id = None
-    cause = None
-    content = None
-    created_at = None
-    id = None
-    recipient = None
-    subject = None
-    ticket_id = None
-    updated_at = None
-    url = None
-    via = None
-
     def __init__(self,
                  api=None,
                  author=None,
@@ -2758,12 +2396,6 @@ class SuspendedTicket(BaseObject):
 
 
 class CommentPrivacyChangeEvent(BaseObject):
-
-    comment_id = None
-    id = None
-    public = None
-    type = None
-
     def __init__(self,
                  api=None,
                  comment_id=None,
@@ -2795,16 +2427,6 @@ class CommentPrivacyChangeEvent(BaseObject):
 
 
 class Activity(BaseObject):
-
-    actor = None
-    created_at = None
-    id = None
-    title = None
-    updated_at = None
-    url = None
-    user = None
-    verb = None
-
     def __init__(self,
                  api=None,
                  actor=None,
@@ -2854,15 +2476,6 @@ class Activity(BaseObject):
 
 
 class JobStatus(BaseObject):
-
-    id = None
-    message = None
-    progress = None
-    results = None
-    status = None
-    total = None
-    url = None
-
     def __init__(self,
                  api=None,
                  id=None,
@@ -2888,23 +2501,6 @@ class JobStatus(BaseObject):
 
 
 class Topic(BaseObject):
-
-    body = None
-    created_at = None
-    forum_id = None
-    id = None
-    locked = None
-    pinned = None
-    position = None
-    search_phrases = None
-    submitter_id = None
-    tags = None
-    title = None
-    topic_type = None
-    updated_at = None
-    updater_id = None
-    url = None
-
     def __init__(self,
                  api=None,
                  body=None,
@@ -3004,11 +2600,6 @@ class Topic(BaseObject):
 
 
 class ErrorEvent(BaseObject):
-
-    id = None
-    message = None
-    type = None
-
     def __init__(self, api=None, id=None, message=None, type=None, **kwargs):
 
         self.api = api
@@ -3021,17 +2612,6 @@ class ErrorEvent(BaseObject):
 
 
 class Comment(BaseObject):
-
-    attachments = None
-    author_id = None
-    body = None
-    created_at = None
-    id = None
-    metadata = None
-    public = None
-    type = None
-    via = None
-
     def __init__(self,
                  api=None,
                  attachments=None,
@@ -3084,37 +2664,6 @@ class Comment(BaseObject):
 
 
 class Ticket(BaseObject):
-
-    assignee_id = None
-    brand_id = None
-    collaborator_ids = None
-    created_at = None
-    custom_fields = None
-    description = None
-    due_at = None
-    external_id = None
-    fields = None
-    forum_topic_id = None
-    group_id = None
-    has_incidents = None
-    id = None
-    organization_id = None
-    priority = None
-    problem_id = None
-    raw_subject = None
-    recipient = None
-    requester_id = None
-    satisfaction_rating = None
-    sharing_agreement_ids = None
-    status = None
-    subject = None
-    submitter_id = None
-    tags = None
-    type = None
-    updated_at = None
-    url = None
-    via = None
-
     def __init__(self,
                  api=None,
                  assignee_id=None,
@@ -3517,13 +3066,6 @@ class Ticket(BaseObject):
 
 
 class SatisfactionRatingEvent(BaseObject):
-
-    assignee_id = None
-    body = None
-    id = None
-    score = None
-    type = None
-
     def __init__(self,
                  api=None,
                  assignee_id=None,
@@ -3557,16 +3099,6 @@ class SatisfactionRatingEvent(BaseObject):
 
 
 class ViewCount(BaseObject):
-
-    channel = None
-    fresh = None
-    poll_wait = None
-    pretty = None
-    refresh = None
-    url = None
-    value = None
-    view_id = None
-
     def __init__(self,
                  api=None,
                  channel=None,
@@ -3606,14 +3138,6 @@ class ViewCount(BaseObject):
 
 
 class JobStatusResult(BaseObject):
-
-    action = None
-    errors = None
-    id = None
-    status = None
-    success = None
-    title = None
-
     def __init__(self,
                  api=None,
                  action=None,
@@ -3637,15 +3161,6 @@ class JobStatusResult(BaseObject):
 
 
 class GroupMembership(BaseObject):
-
-    created_at = None
-    default = None
-    group_id = None
-    id = None
-    updated_at = None
-    url = None
-    user_id = None
-
     def __init__(self,
                  api=None,
                  created_at=None,
@@ -3760,26 +3275,6 @@ class GroupMembership(BaseObject):
 
 
 class Request(BaseObject):
-
-    assignee_id = None
-    can_be_solved_by_me = None
-    collaborator_ids = None
-    created_at = None
-    custom_fields = None
-    description = None
-    due_at = None
-    fields = None
-    id = None
-    organization_id = None
-    priority = None
-    requester_id = None
-    status = None
-    subject = None
-    type = None
-    updated_at = None
-    url = None
-    via = None
-
     def __init__(self,
                  api=None,
                  assignee_id=None,
@@ -4007,10 +3502,6 @@ class Request(BaseObject):
 
 
 class Conditions(BaseObject):
-
-    all = None
-    any = None
-
     def __init__(self, api=None, all=None, any=None, **kwargs):
 
         self.api = api
@@ -4022,15 +3513,6 @@ class Conditions(BaseObject):
 
 
 class SharingAgreement(BaseObject):
-
-    created_at = None
-    id = None
-    name = None
-    partner_name = None
-    remote_subdomain = None
-    status = None
-    type = None
-
     def __init__(self,
                  api=None,
                  created_at=None,
@@ -4090,20 +3572,6 @@ class SharingAgreement(BaseObject):
 
 
 class View(BaseObject):
-
-    active = None
-    conditions = None
-    created_at = None
-    execution = None
-    id = None
-    position = None
-    raw_title = None
-    restriction = None
-    sla_id = None
-    title = None
-    updated_at = None
-    url = None
-
     def __init__(self,
                  api=None,
                  active=None,
@@ -4219,14 +3687,6 @@ class View(BaseObject):
 
 
 class Status(BaseObject):
-
-    action = None
-    errors = None
-    id = None
-    status = None
-    success = None
-    title = None
-
     def __init__(self,
                  api=None,
                  action=None,
@@ -4250,13 +3710,6 @@ class Status(BaseObject):
 
 
 class ChangeEvent(BaseObject):
-
-    field_name = None
-    id = None
-    previous_value = None
-    type = None
-    value = None
-
     def __init__(self,
                  api=None,
                  field_name=None,
@@ -4278,11 +3731,6 @@ class ChangeEvent(BaseObject):
 
 
 class LogmeinTranscriptEvent(BaseObject):
-
-    body = None
-    id = None
-    type = None
-
     def __init__(self, api=None, body=None, id=None, type=None, **kwargs):
 
         self.api = api
@@ -4295,15 +3743,6 @@ class LogmeinTranscriptEvent(BaseObject):
 
 
 class Audit(BaseObject):
-
-    author_id = None
-    created_at = None
-    events = None
-    id = None
-    metadata = None
-    ticket_id = None
-    via = None
-
     def __init__(self,
                  api=None,
                  author_id=None,
@@ -4364,17 +3803,6 @@ class Audit(BaseObject):
 
 
 class SlaPolicy(BaseObject):
-
-    created_at = None
-    description = None
-    filter = None
-    id = None
-    policy_metrics = None
-    position = None
-    title = None
-    updated_at = None
-    url = None
-
     def __init__(self,
                  api=None,
                  created_at=None,
@@ -4426,9 +3854,6 @@ class SlaPolicy(BaseObject):
 
 
 class Via(BaseObject):
-
-    source = None
-
     def __init__(self, api=None, source=None, **kwargs):
 
         self.api = api
@@ -4439,22 +3864,6 @@ class Via(BaseObject):
 
 
 class Organization(BaseObject):
-
-    created_at = None
-    details = None
-    domain_names = None
-    external_id = None
-    group_id = None
-    id = None
-    name = None
-    notes = None
-    organization_fields = None
-    shared_comments = None
-    shared_tickets = None
-    tags = None
-    updated_at = None
-    url = None
-
     def __init__(self,
                  api=None,
                  created_at=None,
@@ -4618,14 +4027,6 @@ class Organization(BaseObject):
 
 
 class FacebookEvent(BaseObject):
-
-    body = None
-    communication = None
-    id = None
-    page = None
-    ticket_via = None
-    type = None
-
     def __init__(self,
                  api=None,
                  body=None,
@@ -4649,28 +4050,6 @@ class FacebookEvent(BaseObject):
 
 
 class TicketField(BaseObject):
-
-    active = None
-    collapsed_for_agents = None
-    created_at = None
-    description = None
-    editable_in_portal = None
-    id = None
-    position = None
-    raw_description = None
-    raw_title = None
-    raw_title_in_portal = None
-    regexp_for_validation = None
-    required = None
-    required_in_portal = None
-    tag = None
-    title = None
-    title_in_portal = None
-    type = None
-    updated_at = None
-    url = None
-    visible_in_portal = None
-
     def __init__(self,
                  api=None,
                  active=None,
@@ -4848,14 +4227,6 @@ class TicketField(BaseObject):
 
 
 class TicketEvent(BaseObject):
-
-    _timestamp = None
-    child_events = None
-    id = None
-    ticket_id = None
-    updater_id = None
-    via = None
-
     def __init__(self,
                  api=None,
                  child_events=None,
@@ -4914,13 +4285,6 @@ class TicketEvent(BaseObject):
 
 
 class System(BaseObject):
-
-    client = None
-    ip_address = None
-    latitude = None
-    location = None
-    longitude = None
-
     def __init__(self,
                  api=None,
                  client=None,

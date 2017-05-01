@@ -54,11 +54,6 @@ class {{object.name}}(BaseObject):
 
 class Init(TemplateObject):
     OBJECT_TEMPLATE = """
-    {% if object.attributes %}
-    {% for attribute in object.attributes %}
-    {{- attribute.attr_name -}} = None
-    {% endfor %}
-    {% endif %}
     {% if object.init_params %}
     def __init__(self, api=None, {{ object.init_params }}, **kwargs):
     {% else %}

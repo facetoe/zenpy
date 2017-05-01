@@ -39,11 +39,6 @@ class BaseObject(object):
 
 
 class ResponseTime(BaseObject):
-
-    avg = None
-    first = None
-    max = None
-
     def __init__(self, api=None, avg=None, first=None, max=None, **kwargs):
 
         self.api = api
@@ -56,12 +51,6 @@ class ResponseTime(BaseObject):
 
 
 class IpAddress(BaseObject):
-
-    id = None
-    ip_address = None
-    reason = None
-    type = None
-
     def __init__(self,
                  api=None,
                  id=None,
@@ -81,12 +70,6 @@ class IpAddress(BaseObject):
 
 
 class Shortcut(BaseObject):
-
-    message = None
-    name = None
-    options = None
-    tags = None
-
     def __init__(self,
                  api=None,
                  message=None,
@@ -106,19 +89,6 @@ class Shortcut(BaseObject):
 
 
 class Session(BaseObject):
-
-    browser = None
-    city = None
-    country_code = None
-    country_name = None
-    end_date = None
-    id = None
-    ip = None
-    platform = None
-    region = None
-    start_date = None
-    user_agent = None
-
     def __init__(self,
                  api=None,
                  browser=None,
@@ -157,10 +127,6 @@ class Session(BaseObject):
 
 
 class Roles(BaseObject):
-
-    administrator = None
-    owner = None
-
     def __init__(self, api=None, administrator=None, owner=None, **kwargs):
 
         self.api = api
@@ -172,13 +138,6 @@ class Roles(BaseObject):
 
 
 class Visitor(BaseObject):
-
-    email = None
-    id = None
-    name = None
-    notes = None
-    phone = None
-
     def __init__(self,
                  api=None,
                  email=None,
@@ -200,13 +159,6 @@ class Visitor(BaseObject):
 
 
 class SearchResult(BaseObject):
-
-    _timestamp = None
-    id = None
-    preview = None
-    type = None
-    url = None
-
     def __init__(self,
                  api=None,
                  id=None,
@@ -239,11 +191,6 @@ class SearchResult(BaseObject):
 
 
 class Definition(BaseObject):
-
-    actions = None
-    condition = None
-    event = None
-
     def __init__(self,
                  api=None,
                  actions=None,
@@ -261,14 +208,6 @@ class Definition(BaseObject):
 
 
 class Department(BaseObject):
-
-    description = None
-    enabled = None
-    id = None
-    members = None
-    name = None
-    settings = None
-
     def __init__(self,
                  api=None,
                  description=None,
@@ -292,36 +231,6 @@ class Department(BaseObject):
 
 
 class Plan(BaseObject):
-
-    agent_leaderboard = None
-    agent_reports = None
-    analytics = None
-    chat_reports = None
-    daily_reports = None
-    email_reports = None
-    file_upload = None
-    goals = None
-    high_load = None
-    integrations = None
-    ip_restriction = None
-    long_desc = None
-    max_advanced_triggers = None
-    max_agents = None
-    max_basic_triggers = None
-    max_concurrent_chats = None
-    max_departments = None
-    max_history_search_days = None
-    monitoring = None
-    name = None
-    operating_hours = None
-    price = None
-    rest_api = None
-    short_desc = None
-    sla = None
-    support = None
-    unbranding = None
-    widget_customization = None
-
     def __init__(self,
                  api=None,
                  agent_leaderboard=None,
@@ -389,12 +298,6 @@ class Plan(BaseObject):
 
 
 class Webpath(BaseObject):
-
-    _timestamp = None
-    from_ = None
-    title = None
-    to = None
-
     def __init__(self, api=None, from_=None, title=None, to=None, **kwargs):
 
         self.api = api
@@ -420,13 +323,6 @@ class Webpath(BaseObject):
 
 
 class Account(BaseObject):
-
-    account_key = None
-    billing = None
-    create_date = None
-    plan = None
-    status = None
-
     def __init__(self,
                  api=None,
                  account_key=None,
@@ -448,10 +344,6 @@ class Account(BaseObject):
 
 
 class Ban(BaseObject):
-
-    ip_address = None
-    visitor = None
-
     def __init__(self, api=None, ip_address=None, visitor=None, **kwargs):
 
         self.api = api
@@ -463,11 +355,6 @@ class Ban(BaseObject):
 
 
 class Count(BaseObject):
-
-    agent = None
-    total = None
-    visitor = None
-
     def __init__(self,
                  api=None,
                  agent=None,
@@ -485,18 +372,6 @@ class Count(BaseObject):
 
 
 class OfflineMessage(BaseObject):
-
-    _timestamp = None
-    department_id = None
-    department_name = None
-    id = None
-    message = None
-    session = None
-    type = None
-    unread = None
-    visitor = None
-    zendesk_ticket_id = None
-
     def __init__(self,
                  api=None,
                  department_id=None,
@@ -563,15 +438,6 @@ class OfflineMessage(BaseObject):
 
 
 class Goal(BaseObject):
-
-    attribution_model = None
-    attribution_period = None
-    description = None
-    enabled = None
-    id = None
-    name = None
-    settings = None
-
     def __init__(self,
                  api=None,
                  attribution_model=None,
@@ -597,19 +463,6 @@ class Goal(BaseObject):
 
 
 class Agent(BaseObject):
-
-    create_date = None
-    departments = None
-    display_name = None
-    email = None
-    enabled = None
-    first_name = None
-    id = None
-    last_login = None
-    last_name = None
-    login_count = None
-    roles = None
-
     def __init__(self,
                  api=None,
                  create_date=None,
@@ -643,12 +496,6 @@ class Agent(BaseObject):
 
 
 class Trigger(BaseObject):
-
-    definition = None
-    description = None
-    enabled = None
-    name = None
-
     def __init__(self,
                  api=None,
                  definition=None,
@@ -668,19 +515,6 @@ class Trigger(BaseObject):
 
 
 class Billing(BaseObject):
-
-    additional_info = None
-    address1 = None
-    address2 = None
-    city = None
-    company = None
-    country_code = None
-    email = None
-    first_name = None
-    last_name = None
-    postal_code = None
-    state = None
-
     def __init__(self,
                  api=None,
                  additional_info=None,
@@ -714,34 +548,6 @@ class Billing(BaseObject):
 
 
 class Chat(BaseObject):
-
-    _end_timestamp = None
-    _timestamp = None
-    agent_ids = None
-    agent_names = None
-    comment = None
-    count = None
-    department_id = None
-    department_name = None
-    duration = None
-    history = None
-    id = None
-    missed = None
-    rating = None
-    referrer_search_engine = None
-    referrer_search_terms = None
-    response_time = None
-    session = None
-    started_by = None
-    tags = None
-    triggered = None
-    triggered_response = None
-    type = None
-    unread = None
-    visitor = None
-    webpath = None
-    zendesk_ticket_id = None
-
     def __init__(self,
                  api=None,
                  agent_ids=None,
