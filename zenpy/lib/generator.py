@@ -107,7 +107,7 @@ class SearchResultGenerator(BaseResultGenerator):
         search_results = list()
         for object_json in self._response_json['results']:
             object_type = object_json.pop('result_type')
-            search_results.append(self.response_handler.api.deserializer.object_from_json(object_type, object_json))
+            search_results.append(self.response_handler.api._object_mapping.object_from_json(object_type, object_json))
         return search_results
 
 
