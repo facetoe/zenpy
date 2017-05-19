@@ -1,11 +1,12 @@
+import base64
 import json
 
-import base64
 import os
 import requests
 from betamax import Betamax
-from betamax_matchers.json_body import JSONBodyMatcher
+from betamax.matchers import URIMatcher
 from betamax_serializers.pretty_json import PrettyJSONSerializer
+
 from zenpy import Zenpy
 
 cred_path = os.path.expanduser('~/zenpy-test-credentials.json')
@@ -81,7 +82,7 @@ def configure():
     config = Betamax.configure()
     config.cassette_library_dir = "tests/test_api/betamax/"
     config.default_cassette_options['record_mode'] = 'once'
-    config.default_cassette_options['match_requests_on'] = ['method', 'uri']
+    config.default_cassette_options['match_requests_on'] = ['method', 'path_matcher']
     if credentials:
         auth_key = 'token' if 'token' in credentials else 'password'
         config.define_cassette_placeholder(
@@ -94,6 +95,20 @@ def configure():
     credentials['session'] = session
     zenpy_client = Zenpy(**credentials)
     recorder = Betamax(session=session)
-    recorder.register_request_matcher(JSONBodyMatcher)
+
+    class PathMatcher(URIMatcher):
+        """
+        I use trial accounts for testing Zenpy and as such the subdomain is always changing.
+        This matcher ignores the netloc section of the parsed URL which prevents the tests
+        failing when the subdomain is changed.
+        """
+        name = 'path_matcher'
+
+        def parse(self, uri):
+            parse_result = super(PathMatcher, self).parse(uri)
+            parse_result.pop('netloc')
+            return parse_result
+        
+    Betamax.register_request_matcher(PathMatcher)
     recorder.register_serializer(PrettyJSONSerializer)
     return zenpy_client, recorder
