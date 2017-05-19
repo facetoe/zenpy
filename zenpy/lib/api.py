@@ -163,8 +163,8 @@ class BaseApi(object):
 
     def _process_response(self, response):
         """
-        Attempt to find a ResponseHandler that knows how to process this response. 
-        If no handler can be found, raise an Exception. 
+        Attempt to find a ResponseHandler that knows how to process this response.
+        If no handler can be found, raise an Exception.
         """
         try:
             pretty_response = response.json()
@@ -237,6 +237,8 @@ class BaseApi(object):
 
     def _build_url(self, endpoint=''):
         """ Build complete URL """
+        if not issubclass(type(self), ChatApiBase) and not self.subdomain:
+            raise ZenpyException("subdomain is required when accessing the Zendesk API!")
         return "/".join((self._url_template % vars(self), endpoint))
 
 
@@ -958,7 +960,7 @@ class ViewApi(CRUDApi):
     def execute(self, view):
         """
         Execute a view.
-        
+
         :param view: View or view id
         """
         if isinstance(view, View):
@@ -968,7 +970,7 @@ class ViewApi(CRUDApi):
     def tickets(self, view):
         """
         Return the tickets in a view.
-        
+
         :param view: View or view id
         """
         if isinstance(view, View):
@@ -978,7 +980,7 @@ class ViewApi(CRUDApi):
     def count(self, view):
         """
         Return a ViewCount for a view.
-        
+
         :param view: View or view id
         """
         if isinstance(view, View):
@@ -988,7 +990,7 @@ class ViewApi(CRUDApi):
     def count_many(self, views):
         """
         Return many ViewCounts.
-        
+
         :param views: iterable of View or view ids
         """
         if not isinstance(views, collections.Iterable):
@@ -1001,10 +1003,10 @@ class ViewApi(CRUDApi):
     def export(self, view):
         """
         Export a view. Returns an Export object.
-        
+
         :param view: View or view id
-        :return: 
-        :return: 
+        :return:
+        :return:
         """
         if isinstance(view, View):
             view = view.id
@@ -1013,8 +1015,8 @@ class ViewApi(CRUDApi):
     def search(self, *args, **kwargs):
         """
         Search views. See - https://developer.zendesk.com/rest_api/docs/core/views#search-views.
-        
-        :param args: query is the only accepted arg. 
+
+        :param args: query is the only accepted arg.
         :param kwargs: search parameters
         """
         return self._get(self._build_url(self.endpoint.search(*args, **kwargs)))
@@ -1045,8 +1047,8 @@ class SlaPolicyApi(CRUDApi):
 
 class ChatApiBase(Api):
     """
-    Implements most generic ChatApi functionality. Most if the actual work is delegated to 
-    Request and Response handlers. 
+    Implements most generic ChatApi functionality. Most if the actual work is delegated to
+    Request and Response handlers.
     """
 
     def __init__(self, config, endpoint, request_handler=None):

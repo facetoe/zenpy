@@ -48,7 +48,7 @@ class Zenpy(object):
             max_retries=3
         )
 
-    def __init__(self, subdomain,
+    def __init__(self, subdomain=None,
                  email=None,
                  token=None,
                  oauth_token=None,
@@ -216,7 +216,7 @@ class Zenpy(object):
 
     def purge_cache(self, cache_name):
         """
-        Purges the named cache. 
+        Purges the named cache.
         """
         purge_cache(cache_name)
 
