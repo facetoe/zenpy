@@ -15,7 +15,7 @@ if os.path.exists(cred_path):
         credentials = json.load(f)
 else:
     credentials = {
-        "subdomain": "facetoe1",
+        "subdomain": "zenpytesthelp",
         "email": "example@example.com",
         "token": "not really a token"
     }
@@ -108,7 +108,7 @@ def configure():
             parse_result = super(PathMatcher, self).parse(uri)
             parse_result.pop('netloc')
             return parse_result
-        
+
     Betamax.register_request_matcher(PathMatcher)
     recorder.register_serializer(PrettyJSONSerializer)
     return zenpy_client, recorder
