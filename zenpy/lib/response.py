@@ -8,12 +8,12 @@ from zenpy.lib.util import as_singular, as_plural
 class ResponseHandler(object):
     """
     A ResponseHandler knows the type of response it can handle, how to deserialize it and
-    also how to build the correct return type for the data received. 
-    
+    also how to build the correct return type for the data received.
+
     Note: it is legal for multiple handlers to know how to process the same response. The
     handler that is ultimately chosen is determined by the order in the Api._response_handlers tuple.
     When adding a new handler, it is important to place the most general handlers last, and the most
-    specific first. 
+    specific first.
     """
 
     def __init__(self, api):
@@ -30,10 +30,10 @@ class ResponseHandler(object):
 
     @abstractmethod
     def build(self, response):
-        """ 
-        Subclasses should deserialize the objects here and return the correct type to the user. 
+        """
+        Subclasses should deserialize the objects here and return the correct type to the user.
         Usually this boils down to deciding whether or not we should return a ResultGenerator
-        of a particular type, a list of objects or a single object. 
+        of a particular type, a list of objects or a single object.
         """
 
 
@@ -54,11 +54,11 @@ class GenericZendeskResponseHandler(ResponseHandler):
 
     def deserialize(self, response_json):
         """
-        Locate and deserialize all objects in the returned JSON. 
-        
+        Locate and deserialize all objects in the returned JSON.
+
         Return a dict keyed by object_type. If the key is plural, the value will be a list,
-        if it is singular, the value will be an object of that type. 
-        :param response_json: 
+        if it is singular, the value will be an object of that type.
+        :param response_json:
         """
         response_objects = dict()
         if all((t in response_json for t in ('ticket', 'audit'))):
@@ -92,8 +92,8 @@ class GenericZendeskResponseHandler(ResponseHandler):
 
     def build(self, response):
         """
-        Deserialize the returned objects and return either a single Zenpy object, or a ResultGenerator in 
-        the case of multiple results. 
+        Deserialize the returned objects and return either a single Zenpy object, or a ResultGenerator in
+        the case of multiple results.
 
         :param response: the requests Response object.
         """
@@ -140,7 +140,7 @@ class HTTPOKResponseHandler(ResponseHandler):
 
 class ViewResponseHandler(GenericZendeskResponseHandler):
     """
-    Handles the various responses returned by the View endpoint. 
+    Handles the various responses returned by the View endpoint.
     """
 
     @staticmethod
@@ -167,7 +167,7 @@ class ViewResponseHandler(GenericZendeskResponseHandler):
 
     def build(self, response):
         response_json = response.json()
-        if 'rows' in response_json or 'view_counts' in response_json:
+        if any([key in response_json for key in ['rows', 'view_counts', 'tickets']]):
             return ViewResultGenerator(self, response_json)
         else:
             return self.deserialize(response_json)
@@ -327,8 +327,8 @@ class ChatSearchResponseHandler(ResponseHandler):
 
 
 class ChatApiResponseHandler(ResponseHandler):
-    """ 
-    Base class for Chat API responses that follow the same pattern. 
+    """
+    Base class for Chat API responses that follow the same pattern.
     Subclasses need only define object type and implement applies_to().
     """
     object_type = None
