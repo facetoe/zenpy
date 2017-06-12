@@ -985,7 +985,7 @@ class ViewApi(CRUDApi):
         """
         if isinstance(view, View):
             view = view.id
-        return self._get(self._build_url(self.endpoint(id=view)))
+        return self._get(self._build_url(self.endpoint.count(id=view)))
 
     def count_many(self, views):
         """

@@ -160,6 +160,8 @@ class ViewResponseHandler(GenericZendeskResponseHandler):
             return deserialized_response['tickets']
         elif 'view_counts' in deserialized_response:
             return deserialized_response['view_counts']
+        elif 'view_count' in deserialized_response:
+            return deserialized_response['view_count']
         elif 'export' in deserialized_response:
             return deserialized_response['export']
         else:

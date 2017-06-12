@@ -476,6 +476,7 @@ class EndpointFactory(object):
     views = PrimaryEndpoint('views', sideload=['app_installation', 'permissions'])
     views.active = PrimaryEndpoint('views/active')
     views.compact = PrimaryEndpoint('views/compact')
+    views.count = SecondaryEndpoint('views/%(id)s/count.json')
     views.tickets = SecondaryEndpoint('views/%(id)s/tickets')
     views.execute = SecondaryEndpoint('views/%(id)s/execute.json')
     views.export = SecondaryEndpoint('views/%(id)s/export.json')
