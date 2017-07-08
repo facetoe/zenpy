@@ -1,9 +1,8 @@
 import json
 import logging
 from datetime import datetime, date
-from time import sleep, time
-
 from json import JSONEncoder
+from time import sleep, time
 
 from zenpy.lib.api_objects import User, Macro, Identity, View
 from zenpy.lib.cache import query_cache
@@ -940,6 +939,22 @@ class GroupApi(CRUDApi):
     def __init__(self, config):
         super(GroupApi, self).__init__(config, object_type='group')
 
+    def memberships(self, group_id):
+        """
+        Return the GroupMemberships for this group
+
+        :param group_id
+        """
+        return self._get(self._build_url(self.endpoint.memberships(id=group_id)))
+
+    def memberships_assignable(self, group_id):
+        """
+        Return memberships that are assignable for this group.
+
+        :param group_id: group or group_id
+        """
+        return self._get(self._build_url(self.endpoint.memberships_assignable(id=group_id)))
+
 
 class ViewApi(CRUDApi):
     def __init__(self, config):
@@ -1024,6 +1039,29 @@ class ViewApi(CRUDApi):
     # TODO: https://github.com/facetoe/zenpy/issues/123
     def _get_sla(self, sla_id):
         pass
+
+
+class GroupMembershipApi(CRUDApi):
+    def __init__(self, config):
+        super(GroupMembershipApi, self).__init__(config, object_type='group_membership')
+
+    def update(self, api_objects, **kwargs):
+        raise ZenpyException("Cannot update GroupMemberships")
+
+    def assignable(self):
+        """
+        Return GroupMemberships that are assignable.
+        """
+        return self._get(self._build_url(self.endpoint.assignable()))
+
+    def make_default(self, user_id, group_membership_id):
+        """
+        Set the passed GroupMembership as default for the specified user.
+
+        :param user_id:
+        :param group_membership_id:
+        """
+        return self._put(self._build_url(self.endpoint.make_default(user_id, group_membership_id)), payload={})
 
 
 class SlaPolicyApi(CRUDApi):

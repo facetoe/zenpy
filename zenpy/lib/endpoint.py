@@ -123,7 +123,7 @@ class SecondaryEndpoint(BaseEndpoint):
         return self.endpoint % kwargs
 
 
-class MutlipleIDEndpoint(BaseEndpoint):
+class MultipleIDEndpoint(BaseEndpoint):
     def __call__(self, *args):
         if not args or len(args) < 2:
             raise ZenpyException("This endpoint requires at least two arguments!")
@@ -393,13 +393,17 @@ class EndpointFactory(object):
     chats.stream = ChatSearchEndpoint('stream/chats')
     end_user = SecondaryEndpoint('end_users/%(id)s.json')
     group_memberships = PrimaryEndpoint('group_memberships', sideload=['users', ' groups'])
+    group_memberships.assignable = PrimaryEndpoint('group_memberships/assignable')
+    group_memberships.make_default = MultipleIDEndpoint('users/{}/group_memberships/{}/make_default.json')
     groups = PrimaryEndpoint('groups', ['users'])
+    groups.memberships = SecondaryEndpoint('groups/%(id)s/memberships.json')
+    groups.memberships_assignable = SecondaryEndpoint('groups/%(id)s/memberships/assignable.json')
     job_statuses = PrimaryEndpoint('job_statuses')
     macros = MacroEndpoint('macros', sideload=['app_installation', 'categories', 'permissions', 'usage_1h', 'usage_24h',
                                                'usage_7d', 'usage_30d'])
     macros.apply = SecondaryEndpoint('macros/%(id)s/apply.json')
     organization_memberships = PrimaryEndpoint('organization_memberships')
-    organizations = PrimaryEndpoint('organizations', 'abilities')
+    organizations = PrimaryEndpoint('organizations', ['abilities'])
     organizations.external = SecondaryEndpoint('organizations/search.json?external_id=%(id)s')
     organizations.incremental = IncrementalEndpoint('incremental/organizations.json?')
     organizations.organization_fields = PrimaryEndpoint('organization_fields')
@@ -444,7 +448,7 @@ class EndpointFactory(object):
     tickets.organizations = SecondaryEndpoint('organizations/%(id)s/tickets.json')
     tickets.recent = SecondaryEndpoint('tickets/recent.json')
     tickets.tags = SecondaryEndpoint('tickets/%(id)s/tags.json')
-    tickets.macro = MutlipleIDEndpoint('tickets/{0}/macros/{1}/apply.json')
+    tickets.macro = MultipleIDEndpoint('tickets/{0}/macros/{1}/apply.json')
     tickets.merge = SecondaryEndpoint('tickets/%(id)s/merge.json')
     topics = PrimaryEndpoint('topics')
     topics.tags = SecondaryEndpoint('topics/%(id)s/tags.json')
@@ -467,12 +471,12 @@ class EndpointFactory(object):
     users.requests = SecondaryEndpoint('users/%(id)s/requests.json', sideload=['users', 'organizations'])
     users.tags = SecondaryEndpoint('users/%(id)s/tags.json')
     users.identities = SecondaryEndpoint('users/%(id)s/identities.json')
-    users.identities.show = MutlipleIDEndpoint('users/{0}/identities/{1}.json')
-    users.identities.update = MutlipleIDEndpoint('users/{0}/identities/{1}.json')
-    users.identities.make_primary = MutlipleIDEndpoint('users/{0}/identities/{1}/make_primary')
-    users.identities.verify = MutlipleIDEndpoint('users/{0}/identities/{1}/verify')
-    users.identities.request_verification = MutlipleIDEndpoint('users/{0}/identities/{1}/request_verification.json')
-    users.identities.delete = MutlipleIDEndpoint('users/{0}/identities/{1}.json')
+    users.identities.show = MultipleIDEndpoint('users/{0}/identities/{1}.json')
+    users.identities.update = MultipleIDEndpoint('users/{0}/identities/{1}.json')
+    users.identities.make_primary = MultipleIDEndpoint('users/{0}/identities/{1}/make_primary')
+    users.identities.verify = MultipleIDEndpoint('users/{0}/identities/{1}/verify')
+    users.identities.request_verification = MultipleIDEndpoint('users/{0}/identities/{1}/request_verification.json')
+    users.identities.delete = MultipleIDEndpoint('users/{0}/identities/{1}.json')
     views = PrimaryEndpoint('views', sideload=['app_installation', 'permissions'])
     views.active = PrimaryEndpoint('views/active')
     views.compact = PrimaryEndpoint('views/compact')
