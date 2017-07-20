@@ -408,11 +408,11 @@ class TaggableApi(Api):
         """
         return TagRequest(self).perform("DELETE", tags, id)
 
-    def tags(self, _id):
+    def tags(self, ticket_id):
         """
-        Lists the most popular recent tags in decreasing popularity
+        Lists the most popular recent tags in decreasing popularity from a specific ticket.
         """
-        return self._query_zendesk(self.endpoint.tags, 'tag', id=_id)
+        return self._query_zendesk(self.endpoint.tags, 'tag', id=ticket_id)
 
 
 # noinspection PyShadowingBuiltins
