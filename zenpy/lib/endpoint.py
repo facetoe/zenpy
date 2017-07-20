@@ -143,7 +143,7 @@ class IncrementalEndpoint(BaseEndpoint):
     """
 
     def __call__(self, start_time=None):
-        if not start_time:
+        if start_time is None:
             raise ZenpyException("Incremental Endoint requires a start_time parameter!")
 
         if isinstance(start_time, datetime):
