@@ -1,0 +1,59 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2017-04-23T13:52:08",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"macro\": {\"title\": \"TestMacro\", \"actions\": [{\"field\": \"status\", \"value\": \"solved\"}]}}"
+        },
+        "headers": {
+          "Accept": "*/*",
+          "Accept-Encoding": "gzip, deflate",
+          "Authorization": "Basic ZmFjZXRvZUBmYWNldG9lLmNvbS5hdS90b2tlbjpkbWZIVnh6ak90b0ZsVlhJNnMzeFE2YmQ1dXZ1RG5Sb0kydkZWWW85",
+          "Connection": "keep-alive",
+          "Content-Length": "86",
+          "Content-type": "application/json",
+          "User-Agent": "Zenpy/1.1"
+        },
+        "method": "POST",
+        "uri": "https://facetoe1.zendesk.com/api/v2/macros"
+      },
+      "response": {
+        "body": {
+          "encoding": "UTF-8",
+          "string": "{\"macro\":{\"url\":\"https://facetoe1.zendesk.com/api/v2/macros/306018807.json\",\"id\":306018807,\"title\":\"TestMacro\",\"active\":true,\"updated_at\":\"2017-04-23T13:52:17Z\",\"created_at\":\"2017-04-23T13:52:17Z\",\"position\":10000,\"description\":null,\"actions\":[{\"field\":\"status\",\"value\":\"solved\"}],\"restriction\":null}}"
+        },
+        "headers": {
+          "Cache-Control": "max-age=0, private, must-revalidate",
+          "Connection": "keep-alive",
+          "Content-Length": "301",
+          "Content-Type": "application/json; charset=UTF-8",
+          "Date": "Sun, 23 Apr 2017 13:52:17 GMT",
+          "ETag": "\"6f933ba1b398488aceca189e614e9931\"",
+          "Location": "https://facetoe1.zendesk.com/api/v2/macros/306018807.json",
+          "Server": "nginx",
+          "Strict-Transport-Security": "max-age=31536000;",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "SAMEORIGIN",
+          "X-Rack-Cache": "invalidate, pass",
+          "X-Rate-Limit": "400",
+          "X-Rate-Limit-Remaining": "388",
+          "X-Request-Id": "4422ded9-4fb7-471b-c748-ecf4bbdf6efc",
+          "X-Runtime": "0.238222",
+          "X-UA-Compatible": "IE=Edge,chrome=1",
+          "X-Zendesk-API-Version": "v2",
+          "X-Zendesk-Application-Version": "v20.24",
+          "X-Zendesk-Origin-Server": "app41.pod5.iad1.zdsys.com",
+          "X-Zendesk-Request-Id": "eeb1947b39fec894b250"
+        },
+        "status": {
+          "code": 201,
+          "message": "Created"
+        },
+        "url": "https://facetoe1.zendesk.com/api/v2/macros"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.8.0"
+}

@@ -1,12 +1,31 @@
 import logging
 
 import requests
+from requests.adapters import HTTPAdapter
 
-from zenpy.lib.api import UserApi, Api, TicketApi, OrganizationApi, SuspendedTicketApi, EndUserApi, TicketImportAPI, \
-    RequestAPI, OrganizationMembershipApi
-from zenpy.lib.cache import ZenpyCache
-from zenpy.lib.endpoint import Endpoint
+from zenpy.lib.api import (
+    UserApi,
+    Api,
+    TicketApi,
+    OrganizationApi,
+    SuspendedTicketApi,
+    EndUserApi,
+    TicketImportAPI,
+    RequestAPI,
+    OrganizationMembershipApi,
+    AttachmentApi,
+    SharingAgreementAPI,
+    SatisfactionRatingApi,
+    MacroApi,
+    GroupApi,
+    ViewApi,
+    SlaPolicyApi,
+    ChatApi,
+    GroupMembershipApi)
+from zenpy.lib.cache import ZenpyCache, cache_mapping, purge_cache
+from zenpy.lib.endpoint import EndpointFactory
 from zenpy.lib.exception import ZenpyException
+from zenpy.lib.mapping import ZendeskObjectMapping
 
 log = logging.getLogger()
 
@@ -14,147 +33,147 @@ __author__ = 'facetoe'
 
 
 class Zenpy(object):
-    """
-    """
+    """"""
 
-    def __init__(self, subdomain, email=None, token=None, oauth_token=None, password=None, session=None):
+    DEFAULT_TIMEOUT = 60.0
+
+    @staticmethod
+    def http_adapter_kwargs():
+        """
+        Provides Zenpy's default HTTPAdapter args for those users providing their own adapter.
+        """
+
+        return dict(
+            # http://docs.python-requests.org/en/latest/api/?highlight=max_retries#requests.adapters.HTTPAdapter
+            max_retries=3
+        )
+
+    def __init__(self, subdomain=None,
+                 email=None,
+                 token=None,
+                 oauth_token=None,
+                 password=None,
+                 session=None,
+                 timeout=None,
+                 ratelimit=None,
+                 ratelimit_budget=None):
+        """
+        Python Wrapper for the Zendesk API.
+
+        There are several ways to authenticate with the Zendesk API:
+            * Email and password
+            * Email and Zendesk API token
+            * Email and OAuth token
+            * Existing authenticated Requests Session object.
+
+
+        :param subdomain: your Zendesk subdomain
+        :param email: email address
+        :param token: Zendesk API token
+        :param oauth_token: OAuth token
+        :param password: Zendesk password
+        :param session: existing Requests Session object
+        :param timeout: global timeout on API requests.
+        :param ratelimit: user specified rate limit
+        :param ratelimit_budget: maximum time to spend being rate limited
+        """
+
         session = self._init_session(email, token, oauth_token, password, session)
-        endpoint = Endpoint()
 
-        self.users = UserApi(
-            subdomain,
-            session=session,
-            endpoint=endpoint.users)
+        timeout = timeout or self.DEFAULT_TIMEOUT
 
-        self.user_fields = Api(
-            subdomain,
+        config = dict(
+            subdomain=subdomain,
             session=session,
-            endpoint=endpoint.user_fields,
-            object_type='user_field'
+            timeout=timeout,
+            ratelimit=ratelimit,
+            ratelimit_budget=ratelimit_budget
         )
 
-        self.groups = Api(
-            subdomain,
-            session=session,
-            endpoint=endpoint.groups,
-            object_type='group')
+        self.users = UserApi(config)
 
-        self.organizations = OrganizationApi(
-            subdomain,
-            session=session,
-            endpoint=endpoint.organizations)
+        self.user_fields = Api(config, object_type='user_field')
 
-        self.organization_memberships = OrganizationMembershipApi(
-            subdomain,
-            session=session,
-            endpoint=endpoint.organization_memberships
-        )
+        self.groups = GroupApi(config)
 
-        self.tickets = TicketApi(
-            subdomain,
-            session=session,
-            endpoint=endpoint.tickets)
+        self.macros = MacroApi(config)
 
-        self.suspended_tickets = SuspendedTicketApi(
-            subdomain,
-            session=session,
-            endpoint=endpoint.suspended_tickets)
+        self.organizations = OrganizationApi(config)
 
-        self.search = Api(
-            subdomain,
-            session=session,
-            endpoint=endpoint.search,
-            object_type='results')
+        self.organization_memberships = OrganizationMembershipApi(config)
 
-        self.topics = Api(
-            subdomain,
-            session=session,
-            endpoint=endpoint.topics,
-            object_type='topic')
+        self.tickets = TicketApi(config)
 
-        self.attachments = Api(
-            subdomain,
-            session=session,
-            endpoint=endpoint.attachments,
-            object_type='attachment')
+        self.suspended_tickets = SuspendedTicketApi(config, object_type='suspended_ticket')
 
-        self.brands = Api(
-            subdomain,
-            session=session,
-            endpoint=endpoint.brands,
-            object_type='brand')
+        self.search = Api(config, object_type='results', endpoint=EndpointFactory('search'))
 
-        self.job_status = Api(
-            subdomain,
-            session=session,
-            endpoint=endpoint.job_statuses,
-            object_type='job_status')
+        self.topics = Api(config, object_type='topic')
 
-        self.tags = Api(
-            subdomain,
-            session=session,
-            endpoint=endpoint.tags,
-            object_type='tag')
+        self.attachments = AttachmentApi(config)
 
-        self.satisfaction_ratings = Api(
-            subdomain,
-            session=session,
-            endpoint=endpoint.satisfaction_ratings,
-            object_type='satisfaction_rating'
-        )
+        self.brands = Api(config, object_type='brand')
 
-        self.activities = Api(
-            subdomain,
-            session=session,
+        self.job_status = Api(config, object_type='job_status', endpoint=EndpointFactory('job_statuses'))
 
-            endpoint=endpoint.activities,
-            object_type='activity'
-        )
+        self.tags = Api(config, object_type='tag')
 
-        self.group_memberships = Api(
-            subdomain,
-            session=session,
-            endpoint=endpoint.group_memberships,
-            object_type='group_membership'
-        )
+        self.satisfaction_ratings = SatisfactionRatingApi(config)
 
-        self.end_user = EndUserApi(
-            subdomain,
-            session=session,
-            endpoint=endpoint.end_user
-        )
+        self.sharing_agreements = SharingAgreementAPI(config)
 
-        self.ticket_metrics = Api(
-            subdomain,
-            session=session,
-            endpoint=endpoint.ticket_metrics,
-            object_type='ticket_metric'
-        )
+        self.activities = Api(config, object_type='activity')
 
-        self.ticket_fields = Api(
-            subdomain,
-            session=session,
-            endpoint=endpoint.ticket_fields,
-            object_type='ticket_field'
-        )
+        self.group_memberships = GroupMembershipApi(config)
 
-        self.ticket_import = TicketImportAPI(
-            subdomain,
-            session=session,
-            endpoint=endpoint.ticket_import
-        )
+        self.end_user = EndUserApi(config)
 
-        self.requests = RequestAPI(
-            subdomain,
-            session=session,
-            endpoint=endpoint.requests
-        )
+        self.ticket_metrics = Api(config, object_type='ticket_metric')
+
+        self.ticket_fields = Api(config, object_type='ticket_field')
+
+        self.ticket_import = TicketImportAPI(config)
+
+        self.requests = RequestAPI(config)
+
+        self.chats = ChatApi(config, endpoint=EndpointFactory('chats'))
+
+        self.views = ViewApi(config)
+
+        self.sla_policies = SlaPolicyApi(config)
+
+    def _init_session(self, email, token, oath_token, password, session):
+        if not session:
+            session = requests.Session()
+            # Workaround for possible race condition - https://github.com/kennethreitz/requests/issues/3661
+            session.mount('https://', HTTPAdapter(**self.http_adapter_kwargs()))
+
+        if not hasattr(session, 'authorized') or not session.authorized:
+            # session is not an OAuth session that has been authorized, so authorize the session.
+            if not password and not token and not oath_token:
+                raise ZenpyException("password, token or oauth_token are required!")
+            elif password and token:
+                raise ZenpyException("password and token "
+                                     "are mutually exclusive!")
+            if password:
+                session.auth = (email, password)
+            elif token:
+                session.auth = ('%s/token' % email, token)
+            elif oath_token:
+                session.headers.update({'Authorization': 'Bearer %s' % oath_token})
+            else:
+                raise ZenpyException("Invalid arguments to _init_session()!")
+
+        headers = {'Content-type': 'application/json',
+                   'User-Agent': 'Zenpy/1.2'}
+        session.headers.update(headers)
+        return session
 
     def get_cache_names(self):
         """
         Returns a list of current caches
         """
-        return self._get_cache_mapping().keys()
+        return cache_mapping.keys()
 
     def get_cache_max(self, cache_name):
         """
@@ -185,51 +204,24 @@ class Zenpy(object):
         """
         Add a new cache for the named object type and cache implementation
         """
-        if object_type not in self.users.object_manager.class_manager.class_mapping:
+        if object_type not in ZendeskObjectMapping.class_mapping:
             raise ZenpyException("No such object type: %s" % object_type)
-        cache_mapping = self._get_cache_mapping()
         cache_mapping[object_type] = ZenpyCache(cache_impl_name, maxsize, **kwargs)
 
     def delete_cache(self, cache_name):
         """
         Deletes the named cache
         """
-        cache_mapping = self._get_cache_mapping()
         del cache_mapping[cache_name]
 
+    def purge_cache(self, cache_name):
+        """
+        Purges the named cache.
+        """
+        purge_cache(cache_name)
+
     def _get_cache(self, cache_name):
-        cache_mapping = self._get_cache_mapping()
         if cache_name not in cache_mapping:
             raise ZenpyException("No such cache - %s" % cache_name)
         else:
             return cache_mapping[cache_name]
-
-    def _get_cache_mapping(self):
-        # Even though we access the users API object the cache_mapping that
-        # we receive applies to all API's as it is a class attribute of ObjectManager.
-        return self.users.object_manager.cache_mapping
-
-    def _init_session(self, email, token, oath_token, password, session):
-        if not session or not hasattr(session, 'authorized') \
-                or not session.authorized:
-            # session is not an OAuth session that has been authorized,
-            # so create a new Session.
-            if not password and not token and not oath_token:
-                raise ZenpyException("password, token or oauth_token are required!")
-            elif password and token:
-                raise ZenpyException("password and token "
-                                     "are mutually exclusive!")
-            session = session if session else requests.Session()
-            if password:
-                session.auth = (email, password)
-            elif token:
-                session.auth = ('%s/token' % email, token)
-            elif oath_token:
-                session.headers.update({'Authorization': 'Bearer %s' % oath_token})
-            else:
-                raise ZenpyException("Invalid arguments to _init_session()!")
-
-        headers = {'Content-type': 'application/json',
-                   'User-Agent': 'Zenpy/1.0.5'}
-        session.headers.update(headers)
-        return session

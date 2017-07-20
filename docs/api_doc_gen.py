@@ -6,7 +6,6 @@ from docutils.parsers.rst import Directive
 from docutils.statemachine import StringList
 
 from zenpy import Api, Zenpy
-from zenpy.lib.api import BaseApi
 from zenpy.lib.endpoint import PrimaryEndpoint, SecondaryEndpoint
 
 __author__ = 'facetoe'
@@ -24,7 +23,7 @@ def get_api_class_info(obj):
                and m.__name__ not in ignore_methods
 
     results = list()
-    for name, api in inspect.getmembers(obj, lambda x: issubclass(x.__class__, BaseApi)):
+    for name, api in inspect.getmembers(obj, lambda x: issubclass(x.__class__, Api)):
         signature = "%s%s" % (name, inspect.signature(getattr(api, '__call__')))
         docstring = api.endpoint.__doc__ if not any(
             (isinstance(api.endpoint, o) for o in [PrimaryEndpoint, SecondaryEndpoint])) else None

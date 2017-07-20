@@ -1,0 +1,57 @@
+{
+  "url": "https://facetoe1.zendesk.com/api/v2/slas/policies/230868.json",
+  "id": 230868,
+  "title": "Incidents",
+  "description": "For urgent incidents, we will respond to tickets in 10 minutes",
+  "position": 1,
+  "filter": {
+    "all": [
+      {
+        "field": "ticket_type_id",
+        "operator": "is",
+        "value": "2"
+      }
+    ],
+    "any": []
+  },
+  "policy_metrics": [
+    {
+      "priority": "normal",
+      "metric": "first_reply_time",
+      "target": 30,
+      "business_hours": false
+    },
+    {
+      "priority": "urgent",
+      "metric": "first_reply_time",
+      "target": 10,
+      "business_hours": false
+    },
+    {
+      "priority": "low",
+      "metric": "requester_wait_time",
+      "target": 180,
+      "business_hours": false
+    },
+    {
+      "priority": "normal",
+      "metric": "requester_wait_time",
+      "target": 160,
+      "business_hours": false
+    },
+    {
+      "priority": "high",
+      "metric": "requester_wait_time",
+      "target": 140,
+      "business_hours": false
+    },
+    {
+      "priority": "urgent",
+      "metric": "requester_wait_time",
+      "target": 120,
+      "business_hours": false
+    }
+  ],
+  "created_at": "2017-04-30T05:02:35Z",
+  "updated_at": "2017-04-30T05:02:35Z"
+}

@@ -1,0 +1,2853 @@
+{
+  "sharing_agreements": {
+    "type": {
+      "type": "string",
+      "comment": "Can be one of the following: 'inbound', 'outbound'"
+    },
+    "remote_subdomain": {
+      "type": "string",
+      "comment": "Subdomain of the remote account or null if not associated with an account"
+    },
+    "created_at": {
+      "type": "date",
+      "comment": "The time the record was created"
+    },
+    "partner_name": {
+      "type": "string",
+      "comment": "Can be one of the following: 'jira', null"
+    },
+    "name": {
+      "type": "string",
+      "comment": "Name of this sharing agreement"
+    },
+    "id": {
+      "type": "integer",
+      "comment": "Automatically assigned upon creation"
+    },
+    "status": {
+      "type": "string",
+      "comment": "Can be one of the following: 'accepted', 'declined', 'pending', 'inactive'"
+    }
+  },
+  "support_addresses": {
+    "brand_id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": ""
+    },
+    "updated_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time the identity got updated"
+    },
+    "spf_status": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "unknown / verified / failed"
+    },
+    "created_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time the identity got created"
+    },
+    "forwarding_status": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "unknown / waiting / verified / failed"
+    },
+    "id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Automatically assigned upon creation"
+    },
+    "email": {
+      "type": "string",
+      "mandatory": "yes",
+      "read-only": "no",
+      "comment": "email (not updateable)"
+    },
+    "name": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "name"
+    },
+    "default": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "default recipient address ? true / false"
+    }
+  },
+  "dynamic_content": {
+    "updated_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "When this record last got updated"
+    },
+    "created_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "When this record was created"
+    },
+    "default_locale_id": {
+      "type": "integer",
+      "mandatory": "yes",
+      "read-only": "no",
+      "comment": "The default locale for the item. Must be one of the locales the account has active."
+    },
+    "variants": {
+      "type": "array",
+      "mandatory": "yes",
+      "read-only": "no",
+      "comment": "All variants within this item"
+    },
+    "name": {
+      "type": "string",
+      "mandatory": "yes",
+      "read-only": "no",
+      "comment": "The unique name of the item"
+    },
+    "id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Automatically assigned when creating items"
+    },
+    "placeholder": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Automatically generated placeholder for the item, derived from name"
+    },
+    "outdated": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Indicates the item has outdated variants within it"
+    },
+    "url": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The API url of this item"
+    }
+  },
+  "group_memberships": {
+    "updated_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time of the last update of the membership"
+    },
+    "created_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time the membership was created"
+    },
+    "group_id": {
+      "type": "integer",
+      "mandatory": "yes",
+      "read-only": "no",
+      "comment": "The id of a group"
+    },
+    "id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Automatically assigned upon creation"
+    },
+    "user_id": {
+      "type": "integer",
+      "mandatory": "yes",
+      "read-only": "no",
+      "comment": "The id of an agent"
+    },
+    "default": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "If true, tickets assigned directly to the agent will assume this membership's group."
+    },
+    "url": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The API url of this record"
+    }
+  },
+  "resource_collections": {
+    "id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Automatically assigned upon creation"
+    },
+    "created_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time the identity got created"
+    },
+    "updated_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time the identity got updated"
+    }
+  },
+  "schedules": {
+    "time_zone": {
+      "type": "string",
+      "comment": "Time zone of the schedule"
+    },
+    "updated_at": {
+      "type": "date",
+      "comment": "Time the schedule was last updated"
+    },
+    "created_at": {
+      "type": "date",
+      "comment": "Time the schedule was created"
+    },
+    "id": {
+      "type": "integer",
+      "comment": "Automatically assigned upon creation"
+    },
+    "intervals": {
+      "type": "array",
+      "comment": "Array of intervals for the schedule"
+    },
+    "name": {
+      "type": "string",
+      "comment": "Name of the schedule"
+    }
+  },
+  "twitter_channel": {
+    "updated_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time of the last update of the handle"
+    },
+    "avatar_url": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The profile image url of the handle"
+    },
+    "created_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time the handle was created"
+    },
+    "screen_name": {
+      "type": "string",
+      "mandatory": "yes",
+      "read-only": "yes",
+      "comment": "The Twitter handle"
+    },
+    "twitter_user_id": {
+      "type": "integer",
+      "mandatory": "yes",
+      "read-only": "yes",
+      "comment": "The country's code"
+    },
+    "id": {
+      "type": "integer",
+      "mandatory": "yes",
+      "read-only": "yes",
+      "comment": "Automatically assigned upon creation"
+    },
+    "name": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The profile name of the handle"
+    },
+    "allow_reply": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "If replies are allowed for this handle"
+    }
+  },
+  "ticket_forms": {
+    "active": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "If the form is set as active"
+    },
+    "restricted_organization_ids": {
+      "type": "array",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "ids of all organizations that this ticket form is restricted to"
+    },
+    "display_name": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The name of the form that is displayed to an end user"
+    },
+    "in_all_organizations": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "Is the form available for use in all organizations on this account"
+    },
+    "end_user_visible": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "Is the form visible to the end user"
+    },
+    "position": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The position of this form among other forms in the account, i.e. dropdown"
+    },
+    "raw_name": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The dynamic content placeholder, if present, or the \"name\" value, if not. See Dynamic Content"
+    },
+    "raw_display_name": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The dynamic content placeholder, if present, or the \"display_name\" value, if not. See Dynamic Content"
+    },
+    "ticket_field_ids": {
+      "type": "array",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "ids of all ticket fields which are in this ticket form"
+    },
+    "name": {
+      "type": "string",
+      "mandatory": "yes",
+      "read-only": "no",
+      "comment": "The name of the form"
+    },
+    "default": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "Is the form the default form for this account"
+    },
+    "in_all_brands": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "Is the form available for use in all brands on this account"
+    },
+    "restricted_brand_ids": {
+      "type": "array",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "ids of all brands that this ticket form is restricted to"
+    }
+  },
+  "attachments": {
+    "content_url": {
+      "type": "string",
+      "read-only": "yes",
+      "comment": "A full URL where the attachment image file can be downloaded"
+    },
+    "size": {
+      "type": "integer",
+      "read-only": "yes",
+      "comment": "The size of the image file in bytes"
+    },
+    "file_name": {
+      "type": "string",
+      "read-only": "yes",
+      "comment": "The name of the image file"
+    },
+    "thumbnails": {
+      "type": "array",
+      "read-only": "yes",
+      "comment": "An array of Photo objects. Note that thumbnails do not have thumbnails."
+    },
+    "inline": {
+      "type": "boolean",
+      "read-only": "yes",
+      "comment": "If true, the attachment is excluded from the attachment list and the attachment's URL can be referenced within the comment of a ticket. Default is false"
+    },
+    "id": {
+      "type": "integer",
+      "read-only": "yes",
+      "comment": "Automatically assigned when created"
+    },
+    "content_type": {
+      "type": "string",
+      "read-only": "yes",
+      "comment": "The content type of the image. Example value: image/png"
+    }
+  },
+  "tickets": {
+    "problem_id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The problem this incident is linked to, if any"
+    },
+    "satisfaction_rating": {
+      "type": "object",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The satisfaction rating of the ticket, if it exists, or the state of satisfaction, 'offered' or 'unoffered'"
+    },
+    "id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Automatically assigned when creating tickets"
+    },
+    "status": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The state of the ticket, \"new\", \"open\", \"pending\", \"hold\", \"solved\", \"closed\""
+    },
+    "description": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The first comment on the ticket"
+    },
+    "url": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The API url of this ticket"
+    },
+    "forum_topic_id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The topic this ticket originated from, if any"
+    },
+    "allow_channelback": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Is false if channelback is disabled, true otherwise - only applicable for channels framework ticket"
+    },
+    "due_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "If this is a ticket of type \"task\" it has a due date.  Due date format uses ISO 8601 format."
+    },
+    "group_id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The group this ticket is assigned to"
+    },
+    "followup_ids": {
+      "type": "array",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The ids of the followups created from this ticket - only applicable for closed tickets"
+    },
+    "brand_id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The id of the brand this ticket is associated with - only applicable for enterprise accounts"
+    },
+    "assignee_id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "What agent is currently assigned to the ticket"
+    },
+    "recipient": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The original recipient e-mail address of the ticket"
+    },
+    "type": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The type of this ticket, i.e. \"problem\", \"incident\", \"question\" or \"task\""
+    },
+    "is_public": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Is true if any comments are public, false otherwise"
+    },
+    "priority": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "Priority, defines the urgency with which the ticket should be addressed: \"urgent\", \"high\", \"normal\", \"low\""
+    },
+    "has_incidents": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Is true of this ticket has been marked as a problem, false otherwise"
+    },
+    "created_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "When this record was created"
+    },
+    "custom_fields": {
+      "type": "array",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The custom fields of the ticket"
+    },
+    "raw_subject": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The dynamic content placeholder, if present, or the \"subject\" value, if not. See Dynamic Content"
+    },
+    "sharing_agreement_ids": {
+      "type": "array",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The ids of the sharing agreements used for this ticket"
+    },
+    "tags": {
+      "type": "array",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The array of tags applied to this ticket"
+    },
+    "submitter_id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The user who submitted the ticket; The submitter always becomes the author of the first comment on the ticket."
+    },
+    "requester_id": {
+      "type": "integer",
+      "mandatory": "yes",
+      "read-only": "no",
+      "comment": "The user who requested this ticket"
+    },
+    "organization_id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "no*",
+      "comment": "The organization of the requester. *Writable only when creating, not when updating"
+    },
+    "external_id": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "An id you can use to link Zendesk Support tickets to local records"
+    },
+    "updated_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "When this record last got updated"
+    },
+    "ticket_form_id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The id of the ticket form to render for this ticket - only applicable for enterprise accounts"
+    },
+    "via": {
+      "type": "Via",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "This object explains how the ticket was created"
+    },
+    "subject": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The value of the subject field for this ticket"
+    },
+    "collaborator_ids": {
+      "type": "array",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "Who are currently CC'ed on the ticket"
+    }
+  },
+  "activity_stream": {
+    "updated_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "When this record last got updated"
+    },
+    "user": {
+      "type": "User",
+      "mandatory": "yes",
+      "read-only": "yes",
+      "comment": "The user this activity pertains to"
+    },
+    "target": {
+      "type": "object",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The target of this activity, a ticket."
+    },
+    "verb": {
+      "type": "string",
+      "mandatory": "yes",
+      "read-only": "yes",
+      "comment": "The type of activity. Can be tickets.assignment, tickets.comment, or  tickets.priority_increase"
+    },
+    "created_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "When this record was created"
+    },
+    "id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Automatically assigned upon creation"
+    },
+    "title": {
+      "type": "string",
+      "mandatory": "yes",
+      "read-only": "yes",
+      "comment": "Description of this activity"
+    },
+    "object": {
+      "type": "object",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The content of this activity. Can be a ticket, comment, or change."
+    },
+    "url": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The API url of this activity"
+    },
+    "actor": {
+      "type": "User",
+      "mandatory": "yes",
+      "read-only": "yes",
+      "comment": "The actor causing the creation of the activity"
+    }
+  },
+  "ticket_comments": {
+    "type": {
+      "type": "string",
+      "read-only": "yes",
+      "comment": "Comment or VoiceComment"
+    },
+    "via": {
+      "type": "object",
+      "read-only": "yes",
+      "comment": "How the comment was created. See Via Object"
+    },
+    "created_at": {
+      "type": "date",
+      "read-only": "yes",
+      "comment": "The time the comment was created"
+    },
+    "html_body": {
+      "type": "string",
+      "read-only": "yes",
+      "comment": "The comment formatted as HTML"
+    },
+    "plain_body": {
+      "type": "string",
+      "read-only": "yes",
+      "comment": "The comment formatted as plain text"
+    },
+    "public": {
+      "type": "boolean",
+      "read-only": "no",
+      "comment": "true if a public comment; false if an internal note"
+    },
+    "metadata": {
+      "type": "object",
+      "read-only": "yes",
+      "comment": "System information (web client, IP address, etc.)"
+    },
+    "id": {
+      "type": "integer",
+      "read-only": "yes",
+      "comment": "Automatically assigned when the comment is created"
+    },
+    "author_id": {
+      "type": "integer",
+      "read-only": "yes",
+      "comment": "The id of the comment author"
+    },
+    "attachments": {
+      "type": "array",
+      "read-only": "yes",
+      "comment": "Attachments, if any. See Attachment"
+    },
+    "body": {
+      "type": "string",
+      "read-only": "yes",
+      "comment": "The comment string"
+    }
+  },
+  "sessions": {
+    "authenticated_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "When the session was created"
+    },
+    "last_seen_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The last approximate time this session was seen. This does not update on every request."
+    },
+    "id": {
+      "type": "integer",
+      "mandatory": "yes",
+      "read-only": "yes",
+      "comment": "Automatically assigned when the session is created"
+    },
+    "user_id": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The id of the user"
+    },
+    "url": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The API URL of this session"
+    }
+  },
+  "organizations": {
+    "tags": {
+      "type": "array",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The tags of the organization"
+    },
+    "created_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time the organization was created"
+    },
+    "details": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "Any details obout the organization, such as the address"
+    },
+    "external_id": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "A unique external id to associate organizations to an external record"
+    },
+    "id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Automatically assigned when the organization is created"
+    },
+    "group_id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "New tickets from users in this organization are automatically put in this group"
+    },
+    "shared_tickets": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "End users in this organization are able to see each other's tickets"
+    },
+    "domain_names": {
+      "type": "array",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "An array of domain names associated with this organization"
+    },
+    "url": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The API url of this organization"
+    },
+    "organization_fields": {
+      "type": "hash",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "Custom fields for this organization"
+    },
+    "updated_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time of the last update of the organization"
+    },
+    "shared_comments": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "End users in this organization are able to see each other's comments on tickets"
+    },
+    "notes": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "Any notes you have about the organization"
+    },
+    "name": {
+      "type": "string",
+      "mandatory": "yes",
+      "read-only": "no",
+      "comment": "A unique name for the organization"
+    }
+  },
+  "oauth_tokens": {
+    "token": {
+      "type": "string",
+      "comment": "The access token"
+    },
+    "created_at": {
+      "type": "date",
+      "comment": "The time the token was created"
+    },
+    "used_at": {
+      "type": "date",
+      "comment": "The latest time this token was used for authentication"
+    },
+    "expires_at": {
+      "type": "date",
+      "comment": "The time the token will expiry"
+    },
+    "client_id": {
+      "type": "integer",
+      "comment": "The id of the client this token belongs to"
+    },
+    "id": {
+      "type": "integer",
+      "comment": "Automatically assigned upon creation"
+    },
+    "user_id": {
+      "type": "integer",
+      "comment": "The id of the user this token authenticates as"
+    },
+    "refresh_token": {
+      "type": "string",
+      "comment": "The refresh token, if generated"
+    },
+    "url": {
+      "type": "string",
+      "comment": "The API url of this record"
+    },
+    "scopes": {
+      "type": "array",
+      "comment": "An array of the valid scopes for this token. See Scopes below"
+    }
+  },
+  "triggers": {
+    "position": {
+      "type": "integer",
+      "comment": "Position of the trigger, determines the order they will execute in"
+    },
+    "active": {
+      "type": "boolean",
+      "comment": "Whether the trigger is active"
+    },
+    "created_at": {
+      "type": "date",
+      "comment": "The time the trigger was created"
+    },
+    "actions": {
+      "type": "Actions",
+      "comment": "An object describing what the trigger will do"
+    },
+    "conditions": {
+      "type": "Conditions",
+      "comment": "An object that describes the conditions under which the trigger will execute"
+    },
+    "id": {
+      "type": "integer",
+      "comment": "Automatically assigned when created"
+    },
+    "title": {
+      "type": "string",
+      "comment": "The title of the trigger"
+    },
+    "updated_at": {
+      "type": "date",
+      "comment": "The time of the last update of the trigger"
+    }
+  },
+  "targets": {
+    "type": {
+      "type": "string",
+      "mandatory": "",
+      "comment": "A pre-defined target, such as \"basecamp_target\". See the additional attributes for the type that follow"
+    },
+    "created_at": {
+      "type": "date",
+      "mandatory": "",
+      "comment": "The time the target was created"
+    },
+    "id": {
+      "type": "integer",
+      "mandatory": "",
+      "comment": "Automatically assigned when created"
+    },
+    "title": {
+      "type": "string",
+      "mandatory": "yes",
+      "comment": "A name for the target"
+    },
+    "active": {
+      "type": "boolean",
+      "mandatory": "",
+      "comment": "Whether or not the target is activated"
+    }
+  },
+  "organization_fields": {
+    "type": {
+      "type": "string",
+      "mandatory": "yes",
+      "read-only": "no",
+      "comment": "Type of the custom field: \"checkbox\", \"date\", \"decimal\", \"dropdown\", \"integer\", \"regexp\", \"text\", or \"textarea\""
+    },
+    "system": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "If true, only active and position values of this field can be changed"
+    },
+    "created_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time the ticket field was created"
+    },
+    "raw_title": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The dynamic content placeholder, if present, or the \"title\" value, if not. See Dynamic Content"
+    },
+    "regexp_for_validation": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "Regular expression field only. The validation pattern for a field value to be deemed valid."
+    },
+    "id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Automatically assigned upon creation"
+    },
+    "title": {
+      "type": "string",
+      "mandatory": "yes",
+      "read-only": "no",
+      "comment": "The title of the custom field"
+    },
+    "raw_description": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The dynamic content placeholder, if present, or the \"description\" value, if not. See Dynamic Content"
+    },
+    "description": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "User-defined description of this field's purpose"
+    },
+    "url": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The URL for this resource"
+    },
+    "position": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "Ordering of the field relative to other fields"
+    },
+    "active": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "If true, this field is available for use"
+    },
+    "custom_field_options": {
+      "type": "array",
+      "mandatory": "yes",
+      "read-only": "no",
+      "comment": "Required and presented for a custom field of type \"dropdown\""
+    },
+    "tag": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "Optional for custom field of type \"checkbox\"; not presented otherwise."
+    },
+    "key": {
+      "type": "string",
+      "mandatory": "on create",
+      "read-only": "no",
+      "comment": "A unique key that identifies this custom field. This is used for updating the field and referencing in placeholders."
+    },
+    "updated_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time of the last update of the ticket field"
+    }
+  },
+  "channel_framework": {
+    "external_resources": {
+      "type": "array",
+      "comments": "The resources to push",
+      "required": "yes"
+    },
+    "request_id": {
+      "type": "string",
+      "comments": "A unique identifier for the push request",
+      "required": "no"
+    },
+    "instance_push_id": {
+      "type": "string",
+      "comments": "The ID of the account to which data will be pushed.  This was passed to the integration service when the administrator set up the account.",
+      "required": "yes"
+    }
+  },
+  "ticket_audits": {
+    "ticket_id": {
+      "type": "integer",
+      "read-only": "yes",
+      "comment": "The ID of the associated ticket"
+    },
+    "created_at": {
+      "type": "date",
+      "read-only": "yes",
+      "comment": "The time the audit was created"
+    },
+    "via": {
+      "type": "Via",
+      "read-only": "yes",
+      "comment": "This object explains how this audit was created"
+    },
+    "id": {
+      "type": "integer",
+      "read-only": "yes",
+      "comment": "Automatically assigned when creating audits"
+    },
+    "author_id": {
+      "type": "integer",
+      "read-only": "yes",
+      "comment": "The user who created the audit"
+    },
+    "events": {
+      "type": "array",
+      "read-only": "yes",
+      "comment": "An array of the events that happened in this audit. See Audit Events"
+    },
+    "metadata": {
+      "type": "hash",
+      "read-only": "yes",
+      "comment": "Metadata for the audit, custom and system data"
+    }
+  },
+  "account_settings": {
+    "favicon_url": {
+      "type": "string",
+      "read-only": "yes",
+      "comment": "The URL for the custom favicon"
+    },
+    "page_background_color": {
+      "type": "string",
+      "read-only": "yes",
+      "comment": "HEX of the page background color"
+    },
+    "text_color": {
+      "type": "string",
+      "read-only": "yes",
+      "comment": "HEX of the text color, usually matched to contrast well with header_color"
+    },
+    "header_color": {
+      "type": "string",
+      "read-only": "no",
+      "comment": "HEX of the header color"
+    },
+    "header_logo_url": {
+      "type": "string",
+      "read-only": "yes",
+      "comment": "The URL for the custom header logo"
+    },
+    "tab_background_color": {
+      "type": "string",
+      "read-only": "yes",
+      "comment": "HEX of tab background color"
+    }
+  },
+  "groups": {
+    "updated_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time of the last update of the group"
+    },
+    "created_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time the group was created"
+    },
+    "id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Automatically assigned when creating groups"
+    },
+    "name": {
+      "type": "string",
+      "mandatory": "yes",
+      "read-only": "no",
+      "comment": "The name of the group"
+    },
+    "deleted": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Deleted groups get marked as such"
+    },
+    "url": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The API url of this group"
+    }
+  },
+  "sla_policies": {
+    "position": {
+      "type": "integer",
+      "comment": "Position of the SLA policy, determines the order they will be matched. If not specified, SLA Policy is added as the last position"
+    },
+    "created_at": {
+      "type": "date",
+      "comment": "The time the SLA policy was created"
+    },
+    "policy_metrics": {
+      "type": "array",
+      "comment": "Array of Policy Metric objects."
+    },
+    "filter": {
+      "type": "Filter",
+      "comment": "An object that describes the conditions that a ticket must match in order for an SLA policy to be applied to that ticket"
+    },
+    "id": {
+      "type": "integer",
+      "comment": "Automatically assigned when created"
+    },
+    "title": {
+      "type": "string",
+      "comment": "The title of the SLA policy"
+    },
+    "updated_at": {
+      "type": "date",
+      "comment": "The time of the last update of the SLA policy"
+    },
+    "description": {
+      "type": "string",
+      "comment": "The description of the SLA policy"
+    }
+  },
+  "ticket_skips": {
+    "ticket_id": {
+      "type": "integer",
+      "comment": "ID of the skipped ticket"
+    },
+    "created_at": {
+      "type": "date",
+      "comment": "Time the skip was created"
+    },
+    "ticket": {
+      "type": "Ticket",
+      "comment": "The skipped ticket"
+    },
+    "id": {
+      "type": "integer",
+      "comment": "Automatically assigned upon creation"
+    },
+    "user_id": {
+      "type": "integer",
+      "comment": "ID of the skipping agent"
+    },
+    "updated_at": {
+      "type": "date",
+      "comment": "Time the skip was last updated"
+    },
+    "reason": {
+      "type": "string",
+      "comment": "Reason for skipping the ticket"
+    }
+  },
+  "suspended_tickets": {
+    "message_id": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The ID of the email, if available"
+    },
+    "id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Automatically assigned"
+    },
+    "updated_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "When this record last got updated"
+    },
+    "url": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The API url of this ticket"
+    },
+    "content": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The content that was flagged"
+    },
+    "brand_id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The id of the brand this ticket is associated with - only applicable for enterprise accounts"
+    },
+    "ticket_id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The ticket ID this suspended email is associated with, if available"
+    },
+    "via": {
+      "type": "Via",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "This object explains how the ticket was created"
+    },
+    "created_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "When this record was created"
+    },
+    "author": {
+      "type": "object",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The author id (if available), name and email"
+    },
+    "subject": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The value of the subject field for this ticket"
+    },
+    "recipient": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The original recipient e-mail address of the ticket"
+    },
+    "cause": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Why the ticket was suspended"
+    }
+  },
+  "audit_logs": {
+    "source_label": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "name of the item being audited"
+    },
+    "changes_description": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "description of the change that occurred"
+    },
+    "created_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time the audit got created"
+    },
+    "actor_id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "id of the user creating the ticket"
+    },
+    "source_id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "id of the item being audited"
+    },
+    "id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Automatically assigned upon creation"
+    },
+    "ip_address": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "ip of the user doing the audit"
+    },
+    "action": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "create/update/destroy"
+    },
+    "source_type": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "type of the item being audited"
+    }
+  },
+  "organization_memberships": {
+    "organization_id": {
+      "type": "integer",
+      "mandatory": "yes",
+      "read-only": "yes",
+      "comment": "The ID of the organization associated with this user, in this membership"
+    },
+    "updated_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "When this record last got updated"
+    },
+    "created_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "When this record was created"
+    },
+    "id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Automatically assigned when creating memberships"
+    },
+    "user_id": {
+      "type": "integer",
+      "mandatory": "yes",
+      "read-only": "yes",
+      "comment": "The ID of the user for whom this memberships belongs"
+    },
+    "default": {
+      "type": "boolean",
+      "mandatory": "yes",
+      "read-only": "no",
+      "comment": "Denotes whether this is the default organization membership for the user"
+    },
+    "url": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The API url of this membership"
+    }
+  },
+  "brands": {
+    "subdomain": {
+      "type": "string",
+      "mandatory": "yes",
+      "read-only": "no",
+      "comment": "The subdomain of the brand (only admins view this key)"
+    },
+    "created_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time the brand was created"
+    },
+    "ticket_form_ids": {
+      "type": "array",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The ids of ticket forms that are available for use by a brand"
+    },
+    "id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Automatically assigned when the brand is created"
+    },
+    "url": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The API url of this brand"
+    },
+    "help_center_state": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The state of the Help Center: enabled, disabled, or restricted"
+    },
+    "logo": {
+      "type": "Attachment",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "Logo image for this brand"
+    },
+    "updated_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time of the last update of the brand"
+    },
+    "active": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "If the brand is set as active"
+    },
+    "has_help_center": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "If the brand has a Help Center"
+    },
+    "host_mapping": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The hostmapping to this brand, if any (only admins view this key)"
+    },
+    "signature_template": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The signature template for a brand"
+    },
+    "name": {
+      "type": "string",
+      "mandatory": "yes",
+      "read-only": "no",
+      "comment": "The name of the brand"
+    },
+    "default": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "Is the brand the default brand for this account"
+    },
+    "brand_url": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The url of the brand"
+    }
+  },
+  "oauth_clients": {
+    "global": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Whether this client is globally accessible. Learn more"
+    },
+    "created_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time the client was created"
+    },
+    "redirect_uri": {
+      "type": "array",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "An array of the valid redirect URIs for this client"
+    },
+    "id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Automatically assigned upon creation"
+    },
+    "description": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "A short description of your client that is displayed to users when they are considering approving access to your application."
+    },
+    "url": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The API url of this record"
+    },
+    "secret": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The client secret. Generated automatically on creation and returned in full only at that time."
+    },
+    "identifier": {
+      "type": "string",
+      "mandatory": "yes",
+      "read-only": "no",
+      "comment": "The unique identifier for this client"
+    },
+    "updated_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time of the last update of the client"
+    },
+    "logo_url": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The API logo url of this record"
+    },
+    "user_id": {
+      "type": "integer",
+      "mandatory": "yes",
+      "read-only": "no",
+      "comment": "The id of the admin who created the client"
+    },
+    "name": {
+      "type": "string",
+      "mandatory": "yes",
+      "read-only": "no",
+      "comment": "The name of this client"
+    },
+    "company": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "Choose a company name to display when users are asked to approve access to your application. The name will help users understand who they are granting access to."
+    }
+  },
+  "automations": {
+    "position": {
+      "type": "integer",
+      "comment": "Position of the automation, determines the order they will execute in"
+    },
+    "active": {
+      "type": "boolean",
+      "comment": "Whether the automation is active"
+    },
+    "created_at": {
+      "type": "date",
+      "comment": "The time the automation was created"
+    },
+    "actions": {
+      "type": "Actions",
+      "comment": "An object describing what the automation will do"
+    },
+    "conditions": {
+      "type": "Conditions",
+      "comment": "An object that describes the conditions under which the automation will execute"
+    },
+    "id": {
+      "type": "integer",
+      "comment": "Automatically assigned when created"
+    },
+    "title": {
+      "type": "string",
+      "comment": "The title of the automation"
+    },
+    "updated_at": {
+      "type": "date",
+      "comment": "The time of the last update of the automation"
+    }
+  },
+  "views": {
+    "position": {
+      "type": "integer",
+      "read-only": "no",
+      "comment": "The position of the view"
+    },
+    "active": {
+      "type": "boolean",
+      "read-only": "no",
+      "comment": "Useful for determining if the view should be displayed"
+    },
+    "created_at": {
+      "type": "date",
+      "read-only": "yes",
+      "comment": "The time the view was created"
+    },
+    "execution": {
+      "type": "Execute",
+      "read-only": "no",
+      "comment": "An object describing how the view should be executed"
+    },
+    "sla_id": {
+      "type": "integer",
+      "read-only": "yes",
+      "comment": "If the view is for an SLA, shows the id"
+    },
+    "conditions": {
+      "type": "Conditions",
+      "read-only": "no",
+      "comment": "An object describing how the view is constructed"
+    },
+    "id": {
+      "type": "integer",
+      "read-only": "yes",
+      "comment": "Automatically assigned when created"
+    },
+    "title": {
+      "type": "string",
+      "read-only": "no",
+      "comment": "The title of the view"
+    },
+    "updated_at": {
+      "type": "date",
+      "read-only": "yes",
+      "comment": "The time of the last update of the view"
+    },
+    "restriction": {
+      "type": "object",
+      "read-only": "no",
+      "comment": "Who may access this account. Will be null when everyone in the account can access it."
+    }
+  },
+  "user_fields": {
+    "type": {
+      "type": "string",
+      "mandatory": "yes",
+      "read-only": "no",
+      "comment": "Type of the custom field: \"checkbox\", \"date\", \"decimal\", \"dropdown\", \"integer\", \"regexp\", \"text\", or \"textarea\""
+    },
+    "system": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "If true, only active and position values of this field can be changed"
+    },
+    "created_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time the ticket field was created"
+    },
+    "raw_title": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The dynamic content placeholder, if present, or the \"title\" value, if not. See Dynamic Content"
+    },
+    "regexp_for_validation": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "Regular expression field only. The validation pattern for a field value to be deemed valid."
+    },
+    "id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Automatically assigned upon creation"
+    },
+    "title": {
+      "type": "string",
+      "mandatory": "yes",
+      "read-only": "no",
+      "comment": "The title of the custom field"
+    },
+    "raw_description": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The dynamic content placeholder, if present, or the \"description\" value, if not. See Dynamic Content"
+    },
+    "description": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "User-defined description of this field's purpose"
+    },
+    "url": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The URL for this resource"
+    },
+    "position": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "Ordering of the field relative to other fields"
+    },
+    "active": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "If true, this field is available for use"
+    },
+    "custom_field_options": {
+      "type": "array",
+      "mandatory": "yes",
+      "read-only": "no",
+      "comment": "Required and presented for a custom field of type \"dropdown\""
+    },
+    "tag": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "Optional for custom field of type \"checkbox\"; not presented otherwise."
+    },
+    "key": {
+      "type": "string",
+      "mandatory": "on create",
+      "read-only": "no",
+      "comment": "A unique key that identifies this custom field. This is used for updating the field and referencing in placeholders."
+    },
+    "updated_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time of the last update of the ticket field"
+    }
+  },
+  "end_user": {
+    "time_zone": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The time-zone of this user"
+    },
+    "email": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The primary email address of this user"
+    },
+    "created_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time the user was created"
+    },
+    "id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Automatically assigned when creating users"
+    },
+    "photo": {
+      "type": "Attachment",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The user's profile picture represented as an Attachment object"
+    },
+    "url": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The API url of this user"
+    },
+    "organization_id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The id of the organization this user is associated with"
+    },
+    "updated_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time of the last update of the user"
+    },
+    "locale_id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The language identifier for this user"
+    },
+    "verified": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "Zendesk Support has verified that this user is who he says he is"
+    },
+    "phone": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The primary phone number of this user. See Phone Number above"
+    },
+    "locale": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The locale for this user"
+    },
+    "name": {
+      "type": "string",
+      "mandatory": "yes",
+      "read-only": "no",
+      "comment": "The name of the user"
+    },
+    "role": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The role of the user. Possible values: \"end-user\", \"agent\", \"admin\""
+    }
+  },
+  "app_locations": {
+    "product_code": {
+      "type": "integer",
+      "comment": "Internal Product ID"
+    },
+    "id": {
+      "type": "integer",
+      "comment": "Internal Location ID"
+    },
+    "name": {
+      "type": "string",
+      "comment": "The unique location key"
+    },
+    "host_application": {
+      "type": "string",
+      "comment": "The unique host application key"
+    },
+    "orderable": {
+      "type": "Boolean",
+      "comment": "True if reordering has any effect"
+    }
+  },
+  "users": {
+    "custom_role_id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "A custom role if the user is an agent on the Enterprise plan"
+    },
+    "shared": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "If the user is shared from a different Zendesk Support instance. Ticket sharing accounts only"
+    },
+    "tags": {
+      "type": "array",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The user's tags. Only present if your account has user tagging enabled"
+    },
+    "time_zone": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The user's time zone. See Time Zone below"
+    },
+    "id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Automatically assigned when the user is created"
+    },
+    "email": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The user's primary email address"
+    },
+    "signature": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The user's signature. Only agents and admins can have signatures"
+    },
+    "url": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The user's API url"
+    },
+    "restricted_agent": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "If the agent has any restrictions; false for admins and unrestricted agents, true for other agents"
+    },
+    "ticket_restriction": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "Specifies which tickets the user has access to. Possible values are: \"organization\", \"groups\", \"assigned\", \"requested\", null"
+    },
+    "active": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "false if the user has been deleted"
+    },
+    "suspended": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "If the agent is suspended. Tickets from suspended users are also suspended, and these users cannot sign in to the end user portal"
+    },
+    "phone": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The user's primary phone number. See Phone Number below"
+    },
+    "notes": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "Any notes you want to store about the user"
+    },
+    "locale": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The user's locale"
+    },
+    "user_fields": {
+      "type": "hash",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "Custom fields for the user"
+    },
+    "chat_only": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Whether or not the user is a chat-only agent"
+    },
+    "name": {
+      "type": "string",
+      "mandatory": "yes",
+      "read-only": "no",
+      "comment": "The user's name"
+    },
+    "two_factor_auth_enabled": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "If two factor authentication is enabled."
+    },
+    "shared_agent": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "If the user is a shared agent from a different Zendesk Support instance. Ticket sharing accounts only"
+    },
+    "created_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time the user was created"
+    },
+    "alias": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "An alias displayed to end users"
+    },
+    "details": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "Any details you want to store about the user, such as an address"
+    },
+    "last_login_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The last time the user signed in to Zendesk Support"
+    },
+    "external_id": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "A unique id you can specify for the user"
+    },
+    "moderator": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "Designates whether the user has forum moderation capabilities"
+    },
+    "photo": {
+      "type": "Attachment",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The user's profile picture represented as an Attachment object"
+    },
+    "organization_id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The id of the organization the user is associated with"
+    },
+    "updated_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time the user was last updated"
+    },
+    "only_private_comments": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "true if the user can only create private comments"
+    },
+    "verified": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "If the user's identity has been verified or not"
+    },
+    "locale_id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The user's language identifier"
+    },
+    "role": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The user's role. Possible values are \"end-user\", \"agent\", or \"admin\""
+    }
+  },
+  "bookmarks": {
+    "ticket": {
+      "type": "object",
+      "mandatory": "n/a",
+      "read-only": "yes",
+      "comment": "An object containing the properties of the bookmarked ticket"
+    },
+    "id": {
+      "type": "integer",
+      "mandatory": "n/a",
+      "read-only": "yes",
+      "comment": "Automatically assigned when the bookmark is created"
+    },
+    "created_at": {
+      "type": "date",
+      "mandatory": "n/a",
+      "read-only": "yes",
+      "comment": "The time the bookmark was created"
+    },
+    "url": {
+      "type": "string",
+      "mandatory": "n/a",
+      "read-only": "yes",
+      "comment": "The API url of this bookmark"
+    }
+  },
+  "macros": {
+    "position": {
+      "type": "integer",
+      "comment": "The position of the macro"
+    },
+    "active": {
+      "type": "boolean",
+      "comment": "Useful for determining if the macro should be displayed"
+    },
+    "created_at": {
+      "type": "date",
+      "comment": "The time the macro was created"
+    },
+    "id": {
+      "type": "integer",
+      "comment": "Automatically assigned when created"
+    },
+    "actions": {
+      "type": "Actions",
+      "comment": "An object describing what the macro will do"
+    },
+    "updated_at": {
+      "type": "date",
+      "comment": "The time of the last update of the macro"
+    },
+    "description": {
+      "type": "string",
+      "comment": "The description of the macro"
+    },
+    "restriction": {
+      "type": "object",
+      "comment": "Who may access this macro. Will be null when everyone in the account can access it"
+    },
+    "title": {
+      "type": "string",
+      "comment": "The title of the macro"
+    }
+  },
+  "user_identities": {
+    "type": {
+      "type": "string",
+      "mandatory": "yes",
+      "read-only": "yes",
+      "comment": "One of \"email\", \"twitter\", \"facebook\", \"google\", or \"phone_number\""
+    },
+    "updated_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time the identity was updated"
+    },
+    "verified": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "If the identity has been verified"
+    },
+    "primary": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "no*",
+      "comment": "If the identity is the primary identity. *Writable only when creating, not when updating. Use the Make Identify Primary endpoint instead"
+    },
+    "value": {
+      "type": "string",
+      "mandatory": "yes",
+      "read-only": "yes",
+      "comment": "The identifier for this identity, such as an email address"
+    },
+    "created_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time the identity was created"
+    },
+    "id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Automatically assigned on creation"
+    },
+    "user_id": {
+      "type": "integer",
+      "mandatory": "yes",
+      "read-only": "yes",
+      "comment": "The id of the user"
+    },
+    "undeliverable_count": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The number of times a non-delivery response was received at that address (maximum 50)"
+    },
+    "deliverable_state": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "One of \"deliverable\" or \"ticket_sharing_partner\""
+    },
+    "url": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The API url of this identity"
+    }
+  },
+  "requests": {
+    "id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Automatically assigned when creating requests"
+    },
+    "status": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The state of the request, \"new\", \"open\", \"pending\", \"hold\", \"solved\", \"closed\""
+    },
+    "description": {
+      "type": "string",
+      "mandatory": "yes",
+      "read-only": "yes",
+      "comment": "The first comment on the request"
+    },
+    "url": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The API url of this request"
+    },
+    "custom_fields": {
+      "type": "Array",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The fields and entries for this request"
+    },
+    "due_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "When the task is due (only applies if the request is of type \"task\")"
+    },
+    "group_id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The id of the assigned group if the field is visible to end users"
+    },
+    "assignee_id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The id of the assignee if the field is visible to end users"
+    },
+    "recipient": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The original recipient e-mail address of the request"
+    },
+    "type": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The type of the request, \"question\", \"incident\", \"problem\", \"task\""
+    },
+    "priority": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The priority of the request, \"low\", \"normal\", \"high\", \"urgent\""
+    },
+    "created_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "When this record was created"
+    },
+    "followup_source_id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The id of the original ticket if this request is a follow-up ticket"
+    },
+    "collaborator_ids": {
+      "type": "array",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Who are currently CC'ed on the ticket"
+    },
+    "requester_id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The id of the requester"
+    },
+    "organization_id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The organization of the requester"
+    },
+    "updated_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "When this record last got updated"
+    },
+    "ticket_form_id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The numeric id of the ticket form associated with this request if the form is visible to end users - only applicable for enterprise accounts"
+    },
+    "via": {
+      "type": "Via",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "This object explains how the request was created"
+    },
+    "solved": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "Whether or not request is solved (an end user can set this if \"can_be_solved_by_me\", above, is true for that user)"
+    },
+    "can_be_solved_by_me": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "If true, end user can mark request as solved."
+    },
+    "subject": {
+      "type": "string",
+      "mandatory": "yes",
+      "read-only": "no",
+      "comment": "The value of the subject field for this request if the subject field is visible to end users; a truncated version of the description otherwise"
+    },
+    "is_public": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Is true if any comments are public, false otherwise"
+    }
+  },
+  "incremental_export": {
+    "count": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The number of results returned for the current request"
+    },
+    "end_time": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The most recent time present in this result set in Unix epoch time; this should be used as the next start_time"
+    },
+    "next_page": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The URL that should be called to get the next set of results"
+    }
+  },
+  "app_location_installations": {
+    "installations": {
+      "type": "array",
+      "comment": "An array of App Installation IDs"
+    },
+    "id": {
+      "type": "integer",
+      "comment": "Internal Location Installation ID"
+    },
+    "created_at": {
+      "type": "date",
+      "comment": "When this record was created"
+    },
+    "location_name": {
+      "type": "string",
+      "comment": "Location name (e.g. nav_bar)"
+    },
+    "updated_at": {
+      "type": "date",
+      "comment": "When this record was last updated"
+    }
+  },
+  "ticket_metric_events": {
+    "type": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "One of the following: activate, pause, fulfill, apply_sla, breach, or update_status. See Metric event types"
+    },
+    "ticket_id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Id of the associated ticket"
+    },
+    "created_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "When the record was created"
+    },
+    "metric": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "One of the following: agent_work_time, pausable_update_time, periodic_update_time, reply_time, requester_wait_time, or resolution_time"
+    },
+    "time": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time the event occurred"
+    },
+    "id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Automatically assigned when the record is created"
+    },
+    "updated_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "When the record was last updated"
+    },
+    "instance_id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The instance of the metric associated with the event. See instance_id"
+    }
+  },
+  "satisfaction_ratings": {
+    "ticket_id": {
+      "type": "integer",
+      "mandatory": "yes",
+      "read-only": "yes",
+      "comment": "The id of ticket being rated"
+    },
+    "comment": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The comment received with this rating, if available"
+    },
+    "created_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time the satisfaction rating got created"
+    },
+    "score": {
+      "type": "string",
+      "mandatory": "yes",
+      "read-only": "yes",
+      "comment": "The rating: \"offered\", \"unoffered\", \"good\" or \"bad\""
+    },
+    "group_id": {
+      "type": "integer",
+      "mandatory": "yes",
+      "read-only": "yes",
+      "comment": "The id of group assigned to at the time of rating"
+    },
+    "id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Automatically assigned upon creation"
+    },
+    "assignee_id": {
+      "type": "integer",
+      "mandatory": "yes",
+      "read-only": "yes",
+      "comment": "The id of agent assigned to at the time of rating"
+    },
+    "updated_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time the satisfaction rating got updated"
+    },
+    "url": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The API url of this rating"
+    },
+    "requester_id": {
+      "type": "integer",
+      "mandatory": "yes",
+      "read-only": "yes",
+      "comment": "The id of ticket requester submitting the rating"
+    }
+  },
+  "ticket_metrics": {
+    "reply_time_in_minutes": {
+      "type": "object",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Number of minutes to the first reply inside and out of business hours"
+    },
+    "replies": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Total number of times ticket was replied to"
+    },
+    "assigned_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "When the ticket was last assigned"
+    },
+    "assignee_stations": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Number of assignees this ticket had"
+    },
+    "created_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "When this record was created"
+    },
+    "latest_comment_added_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "When the latest comment was added"
+    },
+    "requester_updated_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "When the requester last updated the ticket"
+    },
+    "status_updated_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "When the status was last updated"
+    },
+    "id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Automatically assigned"
+    },
+    "group_stations": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Number of groups this ticket passed through"
+    },
+    "full_resolution_time_in_minutes": {
+      "type": "object",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Number of minutes to the full resolution inside and out of business hours"
+    },
+    "initially_assigned_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "When the ticket was initially assigned"
+    },
+    "url": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The API url of this ticket metric"
+    },
+    "requester_wait_time_in_minutes": {
+      "type": "object",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Number of minutes the requester spent waiting inside and out of business hours"
+    },
+    "ticket_id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Id of the associated ticket"
+    },
+    "assignee_updated_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "When the assignee last updated the ticket"
+    },
+    "solved_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "When the ticket was solved"
+    },
+    "first_resolution_time_in_minutes": {
+      "type": "object",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Number of minutes to the first resolution time inside and out of business hours"
+    },
+    "reopens": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Total number of times the ticket was reopened"
+    },
+    "updated_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "When this record last got updated"
+    },
+    "agent_wait_time_in_minutes": {
+      "type": "object",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Number of minutes the agent spent waiting inside and out of business hours"
+    }
+  },
+  "apps": {
+    "retry_in": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Number of seconds after which you may re-check status"
+    },
+    "app_id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The ID of the app created by this job if it exists"
+    },
+    "total": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The total number of tasks this job is batching through"
+    },
+    "message": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Message from the job worker, if any"
+    },
+    "id": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Automatically assigned as job gets enqueued"
+    },
+    "status": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The current status: \"queued\", \"working\", \"failed\", \"completed\", \"killed\""
+    },
+    "url": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The URL to poll for status updates"
+    },
+    "progress": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Number of tasks that have already been completed"
+    }
+  },
+  "ticket_fields": {
+    "editable_in_portal": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "Whether this field is editable by end users"
+    },
+    "title": {
+      "type": "string",
+      "mandatory": "yes",
+      "read-only": "no",
+      "comment": "The title of the ticket field"
+    },
+    "raw_title_in_portal": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The dynamic content placeholder, if present, or the \"title_in_portal\" value, if not. See Dynamic Content"
+    },
+    "id": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Automatically assigned upon creation"
+    },
+    "raw_description": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The dynamic content placeholder, if present, or the \"description\" value, if not. See Dynamic Content"
+    },
+    "description": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The description of the purpose of this ticket field, shown to users"
+    },
+    "url": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The URL for this resource"
+    },
+    "required": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "If it's required for this field to have a value when updated by agents"
+    },
+    "position": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "A relative position for the ticket fields, determines the order of ticket fields on a ticket"
+    },
+    "active": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "Whether this field is available"
+    },
+    "tag": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "A tag value to set for checkbox fields when checked"
+    },
+    "required_in_portal": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "If it's required for this field to have a value when updated by end users"
+    },
+    "type": {
+      "type": "string",
+      "mandatory": "yes",
+      "read-only": "no",
+      "comment": "The type of the ticket field: \"checkbox\", \"date\", \"decimal\", \"integer\", \"regexp\", \"tagger\", \"text\", or \"textarea\""
+    },
+    "removable": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "If this field is not a system basic field that must be present for all tickets on the account"
+    },
+    "created_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time the ticket field was created"
+    },
+    "raw_title": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The dynamic content placeholder, if present, or the \"title\" value, if not. See Dynamic Content"
+    },
+    "system_field_options": {
+      "type": "array",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Presented for a ticket field of type \"tickettype\", \"priority\" or \"status\""
+    },
+    "visible_in_portal": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "Whether this field is available to end users"
+    },
+    "custom_field_options": {
+      "type": "array",
+      "mandatory": "yes",
+      "read-only": "no",
+      "comment": "Required and presented for a ticket field of type \"tagger\""
+    },
+    "title_in_portal": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "The title of the ticket field when shown to end users"
+    },
+    "updated_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time of the last update of the ticket field"
+    },
+    "collapsed_for_agents": {
+      "type": "boolean",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "If this field should be shown to agents by default or be hidden alongside infrequently used fields. Classic interface only"
+    },
+    "regexp_for_validation": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "no",
+      "comment": "Regular expression field only. The validation pattern for a field value to be deemed valid."
+    }
+  },
+  "job_statuses": {
+    "total": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The total number of tasks this job is batching through"
+    },
+    "message": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Message from the job worker, if any"
+    },
+    "id": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Automatically assigned when the job is queued"
+    },
+    "results": {
+      "type": "array",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Result data from processed tasks"
+    },
+    "status": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The current status. One of the following: \"queued\", \"working\", \"failed\", \"completed\", \"killed\""
+    },
+    "url": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The URL to poll for status updates"
+    },
+    "progress": {
+      "type": "integer",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "Number of tasks that have already been completed"
+    }
+  }
+}

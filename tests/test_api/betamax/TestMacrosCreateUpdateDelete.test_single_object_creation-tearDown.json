@@ -1,0 +1,56 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2017-04-23T13:52:09",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"macro\": {\"active\": true, \"created_at\": \"2017-04-23T13:52:17Z\", \"id\": 306018807, \"position\": 10000, \"title\": \"TestMacro\", \"updated_at\": \"2017-04-23T13:52:17Z\", \"url\": \"https://facetoe1.zendesk.com/api/v2/macros/306018807.json\", \"actions\": [{\"field\": \"status\", \"value\": \"solved\"}]}}"
+        },
+        "headers": {
+          "Accept": "*/*",
+          "Accept-Encoding": "gzip, deflate",
+          "Authorization": "Basic ZmFjZXRvZUBmYWNldG9lLmNvbS5hdS90b2tlbjpkbWZIVnh6ak90b0ZsVlhJNnMzeFE2YmQ1dXZ1RG5Sb0kydkZWWW85",
+          "Connection": "keep-alive",
+          "Content-Length": "282",
+          "Content-type": "application/json",
+          "User-Agent": "Zenpy/1.1"
+        },
+        "method": "DELETE",
+        "uri": "https://facetoe1.zendesk.com/api/v2/macros/306018807.json"
+      },
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": ""
+        },
+        "headers": {
+          "Cache-Control": "no-cache",
+          "Connection": "keep-alive",
+          "Date": "Sun, 23 Apr 2017 13:52:18 GMT",
+          "Server": "nginx",
+          "Strict-Transport-Security": "max-age=31536000;",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "SAMEORIGIN",
+          "X-Rack-Cache": "invalidate, pass",
+          "X-Rate-Limit": "400",
+          "X-Rate-Limit-Remaining": "387",
+          "X-Request-Id": "146c3622-08dd-4338-c360-ecf4bbdf6efc",
+          "X-Runtime": "0.176753",
+          "X-UA-Compatible": "IE=Edge,chrome=1",
+          "X-Zendesk-API-Version": "v2",
+          "X-Zendesk-API-Warn": "Removed restricted keys [\"active\", \"created_at\", \"position\", \"title\", \"updated_at\", \"url\", \"actions\", \"macro\"] from parameters according to whitelist",
+          "X-Zendesk-Application-Version": "v20.24",
+          "X-Zendesk-Origin-Server": "app50.pod5.iad1.zdsys.com",
+          "X-Zendesk-Request-Id": "cfb3436c716386edf4ab"
+        },
+        "status": {
+          "code": 204,
+          "message": "No Content"
+        },
+        "url": "https://facetoe1.zendesk.com/api/v2/macros/306018807.json"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.8.0"
+}

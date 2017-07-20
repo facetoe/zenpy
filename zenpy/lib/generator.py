@@ -1,4 +1,8 @@
+import collections
+from abc import abstractmethod
 from datetime import datetime, timedelta
+
+from zenpy.lib.util import as_plural
 
 __author__ = 'facetoe'
 
@@ -7,45 +11,55 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class ResultGenerator(object):
+class BaseResultGenerator(collections.Iterable):
     """
-    Generator for handling pagination.
+    Base class for result generators. Subclasses should implement process_page()
+    and return a list of results. 
     """
 
-    # TODO fix this
-    endpoint_mapping = {
-        'user': 'users',
-        'ticket': 'tickets',
-        'group': 'groups',
-        'results': 'results',
-        'organization': 'organizations',
-        'topic': 'topics',
-        'comment': 'comments',
-        'ticket_event': 'ticket_events',
-        'ticket_audit': 'audits',
-        'tag': 'tags',
-        'suspended_ticket': 'suspended_tickets',
-        'satisfaction_rating': 'satisfaction_ratings',
-        'activity': 'activities',
-        'group_membership': 'group_memberships',
-        'ticket_metric': 'ticket_metrics',
-        'ticket_metric_events': 'ticket_metric_events',
-        'request': 'requests',
-        'user_field': 'user_fields',
-        'organization_field': 'organization_fields',
-        'brand': 'brands',
-        'ticket_field': 'ticket_fields',
-        'organization_membership': 'organization_memberships',
-        'organization_memberships': 'organization_memberships'
-    }
-
-    def __init__(self, api, result_key, _json):
-        self.api = api
-        self._json = _json
-        self.result_key = self.endpoint_mapping[result_key]
-        self.values = _json[self.result_key]
+    def __init__(self, response_handler, response_json):
+        self.response_handler = response_handler
+        self._response_json = response_json
+        self.values = None
         self.position = 0
-        self.update_attrs(self._json)
+        self.update_attrs()
+
+    @abstractmethod
+    def process_page(self):
+        """ Subclasses should do whatever processing is necessary and return a list of the results. """
+
+    def next(self):
+        if self.values is None:
+            self.values = self.process_page()
+        if self.position >= len(self.values):
+            self.handle_pagination()
+        if len(self.values) < 1:
+            raise StopIteration()
+        zenpy_object = self.values[self.position]
+        self.position += 1
+        return zenpy_object
+
+    def handle_pagination(self):
+        """ Handle retrieving and processing the next page of results. """
+        self._response_json = self.get_next_page()
+        self.update_attrs()
+        self.position = 0
+        self.values = self.process_page()
+
+    def update_attrs(self):
+        """ Add attributes such as count/end_time that can be present """
+        for key, value in self._response_json.items():
+            if key != 'results' and type(value) not in (list, dict):
+                setattr(self, key, value)
+
+    def get_next_page(self):
+        """ Retrieve the next page of results. """
+        url = self._response_json.get('next_page', None)
+        if url is None:
+            raise StopIteration()
+        log.debug("GENERATOR: " + url)
+        response = self.response_handler.api._get(url, raw_response=True)
+        return response.json()
 
     def __iter__(self):
         return self
@@ -56,62 +70,56 @@ class ResultGenerator(object):
     def __next__(self):
         return self.next()
 
-    def next(self):
-        # Update end_time etc
-        self.update_attrs(self._json)
 
-        # Pagination
-        if self.position >= len(self.values):
-            end_time = self._json.get('end_time', None)
-            next_page = self._json.get('next_page', None)
+class ZendeskResultGenerator(BaseResultGenerator):
+    """ Generic result generator. """
 
-            # If we are calling an incremental API, make sure to honour the restrictions
-            if end_time:
-                # Incremental APIs return values in blocks of 1000 and the count value is
-                # decremented by 1000 for each block that is consumed. If we have < 1000
-                # then there is nothing left to retrieve.
-                if self._json.get('count', 0) < 1000:
-                    raise StopIteration
+    def __init__(self, response_handler, response_json, response_objects=None, object_type=None):
+        super(ZendeskResultGenerator, self).__init__(response_handler, response_json)
+        self.object_type = object_type or self.response_handler.api.object_type
+        self.values = response_objects or None
 
-                # We can't request updates from an incremental api if the
-                # start_time value is less than 5 minutes in the future.
-                # (end_time is added as start_time to the next_page URL)
-                if (datetime.fromtimestamp(int(end_time)) + timedelta(minutes=5)) > datetime.now():
-                    raise StopIteration
+    def process_page(self):
+        response_objects = self.response_handler.deserialize(self._response_json)
+        return response_objects[as_plural(self.object_type)]
 
-            if next_page:
-                self._json = self._get_as_json(next_page)
-                self.values = self._json[self.result_key]
-                self.position = 0
-            else:
-                raise StopIteration()
+    def get_next_page(self):
+        end_time = self._response_json.get('end_time', None)
+        # If we are calling an incremental API, make sure to honour the restrictions
+        if end_time:
+            # Incremental APIs return values in blocks of 1000 and the count value is
+            # decremented by 1000 for each block that is consumed. If we have < 1000
+            # then there is nothing left to retrieve.
+            if self._response_json.get('count', 0) < 1000:
+                raise StopIteration
 
-        if not self.values:
-            raise StopIteration()
+            # We can't request updates from an incremental api if the
+            # start_time value is less than 5 minutes in the future.
+            if (datetime.fromtimestamp(int(end_time)) + timedelta(minutes=5)) > datetime.now():
+                raise StopIteration
+        return super(ZendeskResultGenerator, self).get_next_page()
 
-        item_json = self.values[self.position]
-        self.position += 1
-        if 'result_type' in item_json:
-            object_type = item_json.pop('result_type')
-        else:
-            # Multiple results have a plural key, however the object_type is singular
-            object_type = self.get_singular(self.result_key)
-        return self.api.object_manager.object_from_json(object_type, item_json)
 
-    def update_attrs(self, _json):
-        # Add attributes such as count/end_time that can be present
-        for key, value in _json.items():
-            if key != self.result_key:
-                setattr(self, key, value)
+class SearchResultGenerator(BaseResultGenerator):
+    """ Result generator for search queries. """
 
-    def _get_as_json(self, url):
-        log.debug("GENERATOR: " + url)
-        response = self.api._get(url)
-        return response.json()
+    def process_page(self):
+        search_results = list()
+        for object_json in self._response_json['results']:
+            object_type = object_json.pop('result_type')
+            search_results.append(self.response_handler.api._object_mapping.object_from_json(object_type, object_json))
+        return search_results
 
-    def get_singular(self, result_key):
-        if result_key.endswith('ies'):
-            object_type = result_key.replace('ies', 'y')
-        else:
-            object_type = result_key[:-1]
-        return object_type
+
+class ChatResultGenerator(BaseResultGenerator):
+    """
+    Generator for ChatApi objects 
+    """
+
+    def process_page(self):
+        return self.response_handler.deserialize(self._response_json)
+
+
+class ViewResultGenerator(BaseResultGenerator):
+    def process_page(self):
+        return self.response_handler.deserialize(self._response_json)
