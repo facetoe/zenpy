@@ -18,8 +18,6 @@ Please report bugs!
     * [Applying a Macro to a ticket](#applying-a-macro-to-a-ticket)
 * [Documentation](#documentation)
 * [Contributions](#contributions)
-* [Hire Me](#hire-me)
-
 
 ## Quickstart
 
@@ -113,9 +111,3 @@ Check out the [documentation](http://docs.facetoe.com.au/) for more info.
 ### Contributions
 Contributions are very welcome. I've written an explanation of the core ideas of the wrapper in the [Contributors Guide](https://github.com/facetoe/zenpy/wiki/Contributors-Guide).
  
-### Hire Me
-
-Looking for a programmer? Hire me! I'm currently looking for work I can do remotely. I have mad skills in Python, Ansible, and Linux to name just a few. Happy to take on small jobs or large projects.
-
-You can contact me at facetoe@facetoe.com.au.
-
