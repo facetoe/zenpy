@@ -12,6 +12,7 @@ Please report bugs!
 * [Examples](#examples)
     * [Creating a ticket with a different requester](#creating-a-ticket-with-a-different-requester)
     * [Commenting on a ticket](#commenting-on-a-ticket)
+    * [Appending tags to a ticket](#appending-tags-to-a-ticket)
     * [Uploading an attachment](#uploading-an-attachment)
     * [Creating a ticket with a custom field set](#creating-a-ticket-with-a-custom-field-set)
     * [Updating a custom field on a ticket](#updating-a-custom-field-on-a-ticket)
@@ -30,7 +31,7 @@ zenpy_client = Zenpy(**credentials)
 zenpy_client.tickets.create(Ticket(subject="Important", description="Thing"))
 
 # Perform a simple search
-for ticket in zenpy_client.search("party", type='ticket', assignee="face"):
+for ticket in zenpy_client.search("PC LOAD LETTER", type='ticket', assignee="facetoe"):
     print(ticket)
 ```
 
@@ -42,10 +43,8 @@ for ticket in zenpy_client.search("party", type='ticket', assignee="face"):
 from zenpy.lib.api_objects import Ticket, User
 
 zenpy_client.tickets.create(
-    Ticket(
-        description='Some description',
-        requester=User(name='bob', email='bob@example.com')
-    )
+    Ticket(description='Some description',
+           requester=User(name='bob', email='bob@example.com'))
 )
 ```
 
@@ -56,6 +55,16 @@ from zenpy.lib.api_objects import Comment
 
 ticket = zenpy_client.tickets(id=some_ticket_id)
 ticket.comment = Comment(body="Important private comment", public=False)
+zenpy_client.tickets.update(ticket)
+```
+
+##### Appending tags to a ticket
+
+```python
+from zenpy.lib.api_objects import Ticket
+
+ticket = zenpy_client.tickets(id=some_ticket_id)
+ticket.tags.extend(['onetag', 'twotag', 'threetag', 'four'])
 zenpy_client.tickets.update(ticket)
 ```
 
