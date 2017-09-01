@@ -2,6 +2,7 @@ import json
 import logging
 from datetime import datetime, date
 from json import JSONEncoder
+
 from time import sleep, time
 
 from zenpy.lib.api_objects import User, Macro, Identity, View
@@ -354,6 +355,32 @@ class CRUDApi(Api):
         return CRUDRequest(self).perform("DELETE", api_objects)
 
 
+class CRUDExternalApi(CRUDApi):
+    """
+    The CRUDExternalApi exposes some extra methods for operating on external ids.
+    """
+
+    def update_by_external_id(self, api_objects):
+        """
+        Update (PUT) one or more API objects by external_id.
+
+        :param api_objects:
+        """
+        if not isinstance(api_objects, collections.Iterable):
+            api_objects = [api_objects]
+        return CRUDRequest(self).perform("PUT", api_objects, update_many_external=True)
+
+    def delete_by_external_id(self, api_objects):
+        """
+        Delete (DELETE) one or more API objects by external_id.
+
+        :param api_objects:
+        """
+        if not isinstance(api_objects, collections.Iterable):
+            api_objects = [api_objects]
+        return CRUDRequest(self).perform("DELETE", api_objects, destroy_many_external=True)
+
+
 class SuspendedTicketApi(Api):
     """
     The SuspendedTicketApi adds some SuspendedTicket specific functionality
@@ -551,7 +578,7 @@ class UserIdentityApi(Api):
         return UserIdentityRequest(self).perform("DELETE", user, identity)
 
 
-class UserApi(IncrementalApi, CRUDApi):
+class UserApi(IncrementalApi, CRUDExternalApi):
     """
     The UserApi adds some User specific functionality
     """
@@ -702,7 +729,7 @@ class EndUserApi(CRUDApi):
         raise ZenpyException("EndUsers cannot create!")
 
 
-class OrganizationApi(TaggableApi, IncrementalApi, CRUDApi):
+class OrganizationApi(TaggableApi, IncrementalApi, CRUDExternalApi):
     def __init__(self, config):
         super(OrganizationApi, self).__init__(config, object_type='organization')
 

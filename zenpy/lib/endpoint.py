@@ -85,6 +85,13 @@ class PrimaryEndpoint(BaseEndpoint):
                 query = "".join([self.endpoint, '/update_many.json'])
             elif key == 'count_many':
                 query = self._many(self.endpoint, value, action='count_many.json?ids=')
+            elif key in ('external_id', 'external_ids'):
+                external_ids = [value] if not is_iterable_but_not_string(value) else value
+                query += self._many(self.endpoint, external_ids, action='show_many.json?external_ids=')
+            elif key == 'update_many_external':
+                query += self._many(self.endpoint, value, action='update_many.json?external_ids=')
+            elif key == 'destroy_many_external':
+                query += self._many(self.endpoint, value, action='destroy_many.json?external_ids=')
             elif key in ('sort_by', 'sort_order'):
                 modifiers.append((key, value))
             elif key == 'permission_set':
