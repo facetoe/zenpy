@@ -282,31 +282,31 @@ class Api(BaseApi):
         return self._query_zendesk(self.endpoint, self.object_type, *args, **kwargs)
 
     def _get_user(self, user_id):
-        return self._query_zendesk(EndpointFactory.users, 'user', id=user_id)
+        return self._query_zendesk(EndpointFactory('users'), 'user', id=user_id)
 
     def _get_users(self, user_ids):
-        return self._query_zendesk(endpoint=EndpointFactory.users, object_type='user', ids=user_ids)
+        return self._query_zendesk(endpoint=EndpointFactory('users'), object_type='user', ids=user_ids)
 
     def _get_comment(self, comment_id):
-        return self._query_zendesk(endpoint=EndpointFactory.tickets.comments, object_type='comment', id=comment_id)
+        return self._query_zendesk(endpoint=EndpointFactory('tickets').comments, object_type='comment', id=comment_id)
 
     def _get_organization(self, organization_id):
-        return self._query_zendesk(endpoint=EndpointFactory.organizations, object_type='organization',
+        return self._query_zendesk(endpoint=EndpointFactory('organizations'), object_type='organization',
                                    id=organization_id)
 
     def _get_group(self, group_id):
-        return self._query_zendesk(endpoint=EndpointFactory.groups, object_type='group', id=group_id)
+        return self._query_zendesk(endpoint=EndpointFactory('groups'), object_type='group', id=group_id)
 
     def _get_brand(self, brand_id):
-        return self._query_zendesk(endpoint=EndpointFactory.brands, object_type='brand', id=brand_id)
+        return self._query_zendesk(endpoint=EndpointFactory('brands'), object_type='brand', id=brand_id)
 
     def _get_ticket(self, ticket_id):
-        return self._query_zendesk(endpoint=EndpointFactory.tickets, object_type='ticket', id=ticket_id)
+        return self._query_zendesk(endpoint=EndpointFactory('tickets'), object_type='ticket', id=ticket_id)
 
     def _get_sharing_agreements(self, sharing_agreement_ids):
         sharing_agreements = []
         for _id in sharing_agreement_ids:
-            sharing_agreement = self._query_zendesk(endpoint=EndpointFactory.sharing_agreements,
+            sharing_agreement = self._query_zendesk(endpoint=EndpointFactory('sharing_agreements'),
                                                     object_type='sharing_agreement',
                                                     id=_id)
             if sharing_agreement:
@@ -333,7 +333,7 @@ class CRUDApi(Api):
 
         :param api_objects: object or objects to create
         """
-        return CRUDRequest(self).post(api_objects)
+        return CRUDRequest(self).post( api_objects)
 
     def update(self, api_objects, **kwargs):
         """
@@ -342,7 +342,7 @@ class CRUDApi(Api):
 
         :param api_objects: object or objects to update
         """
-        return CRUDRequest(self).put(api_objects)
+        return CRUDRequest(self).put( api_objects)
 
     def delete(self, api_objects, **kwargs):
         """
@@ -352,7 +352,7 @@ class CRUDApi(Api):
         :param api_objects: object or objects to delete
         """
 
-        return CRUDRequest(self).delete(api_objects)
+        return CRUDRequest(self).delete( api_objects)
 
 
 class CRUDExternalApi(CRUDApi):
@@ -368,7 +368,7 @@ class CRUDExternalApi(CRUDApi):
         """
         if not isinstance(api_objects, collections.Iterable):
             api_objects = [api_objects]
-        return CRUDRequest(self).put(api_objects, update_many_external=True)
+        return CRUDRequest(self).put( api_objects, update_many_external=True)
 
     def delete_by_external_id(self, api_objects):
         """
@@ -378,7 +378,7 @@ class CRUDExternalApi(CRUDApi):
         """
         if not isinstance(api_objects, collections.Iterable):
             api_objects = [api_objects]
-        return CRUDRequest(self).delete(api_objects, destroy_many_external=True)
+        return CRUDRequest(self).delete( api_objects, destroy_many_external=True)
 
 
 class SuspendedTicketApi(Api):
@@ -392,7 +392,7 @@ class SuspendedTicketApi(Api):
 
         :param tickets: one or more SuspendedTickets to recover
         """
-        return SuspendedTicketRequest(self).put(tickets)
+        return SuspendedTicketRequest(self).put( tickets)
 
     def delete(self, tickets):
         """
@@ -400,7 +400,7 @@ class SuspendedTicketApi(Api):
 
         :param tickets: one or more SuspendedTickets to delete
         """
-        return SuspendedTicketRequest(self).delete(tickets)
+        return SuspendedTicketRequest(self).delete( tickets)
 
 
 class TaggableApi(Api):
@@ -415,7 +415,7 @@ class TaggableApi(Api):
         :param id: the id of the object to tag
         :param tags: array of tags to apply to object
         """
-        return TagRequest(self).put(tags, id)
+        return TagRequest(self).put( tags, id)
 
     def set_tags(self, id, tags):
         """
@@ -424,7 +424,7 @@ class TaggableApi(Api):
         :param _id: the id of the object to tag
         :param tags: array of tags to apply to object
         """
-        return TagRequest(self).post(tags, id)
+        return TagRequest(self).post( tags, id)
 
     def delete_tags(self, id, tags):
         """
@@ -433,7 +433,7 @@ class TaggableApi(Api):
         :param _id: the id of the object to delete tag from
         :param tags: array of tags to delete from object
         """
-        return TagRequest(self).delete(tags, id)
+        return TagRequest(self).delete( tags, id)
 
     def tags(self, ticket_id):
         """
@@ -455,7 +455,7 @@ class RateableApi(Api):
         :param id: id of object to rate
         :param rating: SatisfactionRating
         """
-        return RateRequest(self).post(rating, id)
+        return RateRequest(self).post( rating, id)
 
 
 class IncrementalApi(Api):
@@ -504,7 +504,7 @@ class UserIdentityApi(Api):
             raise ZenpyException("Invalid type - expected Identity received: {}".format(type(identity)))
         if isinstance(user, User):
             user = user.id
-        return UserIdentityRequest(self).post(user, identity)
+        return UserIdentityRequest(self).post( user, identity)
 
     def update(self, user, identity):
         """
@@ -518,7 +518,7 @@ class UserIdentityApi(Api):
             raise ZenpyException("You must pass an Identity object to this endpoint!")
         if isinstance(user, User):
             user = user.id
-        return UserIdentityRequest(self).put(self.endpoint.update, user, identity.id)
+        return UserIdentityRequest(self).put( self.endpoint.update, user, identity.id)
 
     def make_primary(self, user, identity):
         """
@@ -532,7 +532,7 @@ class UserIdentityApi(Api):
             user = user.id
         if isinstance(identity, Identity):
             identity = identity.id
-        return UserIdentityRequest(self).put(self.endpoint.make_primary, user, identity)
+        return UserIdentityRequest(self).put( self.endpoint.make_primary, user, identity)
 
     def request_verification(self, user, identity):
         """
@@ -547,7 +547,7 @@ class UserIdentityApi(Api):
         if isinstance(identity, Identity):
             identity = identity.id
 
-        return UserIdentityRequest(self).put(self.endpoint.request_verification, user, identity)
+        return UserIdentityRequest(self).put( self.endpoint.request_verification, user, identity)
 
     def verify(self, user, identity):
         """
@@ -561,7 +561,7 @@ class UserIdentityApi(Api):
             user = user.id
         if isinstance(identity, Identity):
             identity = identity.id
-        return UserIdentityRequest(self).put(self.endpoint.verify, user, identity)
+        return UserIdentityRequest(self).put( self.endpoint.verify, user, identity)
 
     def delete(self, user, identity):
         """
@@ -575,7 +575,7 @@ class UserIdentityApi(Api):
             user = user.id
         if isinstance(identity, Identity):
             identity = identity.id
-        return UserIdentityRequest(self).delete(user, identity)
+        return UserIdentityRequest(self).delete( user, identity)
 
 
 class UserApi(IncrementalApi, CRUDExternalApi):
@@ -661,7 +661,7 @@ class UserApi(IncrementalApi, CRUDExternalApi):
         :param dest_user: User object or id to merge into
         :return: The merged User
         """
-        return UserMergeRequest(self).put(source_user, dest_user)
+        return UserMergeRequest(self).put( source_user, dest_user)
 
     def user_fields(self, user_id):
         """
@@ -688,7 +688,7 @@ class UserApi(IncrementalApi, CRUDExternalApi):
         :return: the created/updated User or a  JobStatus object if a list was passed
         """
 
-        return CRUDRequest(self).post(users, create_or_update=True)
+        return CRUDRequest(self).post( users, create_or_update=True)
 
 
 class AttachmentApi(Api):
@@ -711,7 +711,7 @@ class AttachmentApi(Api):
         :return: :class:`Upload` object containing a token and other information
                     (see https://developer.zendesk.com/rest_api/docs/core/attachments#uploading-files)
         """
-        return UploadRequest(self).post(fp, token=token, target_name=target_name)
+        return UploadRequest(self).post( fp, token=token, target_name=target_name)
 
 
 class EndUserApi(CRUDApi):
@@ -769,7 +769,7 @@ class OrganizationApi(TaggableApi, IncrementalApi, CRUDExternalApi):
         :return: the created/updated Organization
         """
 
-        return CRUDRequest(self).post(organization, create_or_update=True)
+        return CRUDRequest(self).post( organization, create_or_update=True)
 
 
 class OrganizationMembershipApi(CRUDApi):
@@ -795,7 +795,7 @@ class SatisfactionRatingApi(Api):
         :param ticket_id: id of Ticket to rate
         :param satisfaction_rating: SatisfactionRating object.
         """
-        return SatisfactionRatingRequest(self).post(ticket_id, satisfaction_rating)
+        return SatisfactionRatingRequest(self).post( ticket_id, satisfaction_rating)
 
 
 class MacroApi(CRUDApi):
@@ -897,9 +897,9 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
 
         :return: a JobStatus object
         """
-        return TicketMergeRequest(self).post(target, source,
-                                             target_comment=target_comment,
-                                             source_comment=source_comment)
+        return TicketMergeRequest(self).post( target, source,
+                                                target_comment=target_comment,
+                                                source_comment=source_comment)
 
 
 class TicketImportAPI(CRUDApi):
@@ -1138,13 +1138,13 @@ class ChatApiBase(Api):
         )
 
     def create(self, *args, **kwargs):
-        return self._request_handler(self).post(*args, **kwargs)
+        return self._request_handler(self).post( *args, **kwargs)
 
     def update(self, *args, **kwargs):
-        return self._request_handler(self).put(*args, **kwargs)
+        return self._request_handler(self).put( *args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        return self._request_handler(self).delete(*args, **kwargs)
+        return self._request_handler(self).delete( *args, **kwargs)
 
     def _get_ip_address(self, ips):
         for ip in ips:

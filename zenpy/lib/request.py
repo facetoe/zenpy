@@ -288,7 +288,7 @@ class SatisfactionRatingRequest(BaseZendeskRequest):
 
     def post(self, ticket_id, satisfaction_rating):
         payload = self.build_payload(satisfaction_rating)
-        url = self.api._build_url(EndpointFactory.satisfaction_ratings.create(id=ticket_id))
+        url = self.api._build_url(EndpointFactory('satisfaction_ratings').create(id=ticket_id))
         return self.api._post(url, payload)
 
     def put(self, api_objects, *args, **kwargs):
