@@ -21,16 +21,6 @@ class RequestHandler(object):
     def __init__(self, api):
         self.api = api
 
-    def perform(self, http_method, *args, **kwargs):
-        http_method = http_method.lower()
-        if http_method == 'put':
-            return self.put(*args, **kwargs)
-        elif http_method == 'post':
-            return self.post(*args, **kwargs)
-        elif http_method == 'delete':
-            return self.delete(*args, **kwargs)
-        raise ZenpyException("{} cannot handle HTTP method: {}".format(self.__class__.__name__, http_method))
-
     @abstractmethod
     def put(self, api_objects, *args, **kwargs):
         pass
