@@ -82,7 +82,7 @@ class CRUDRequest(BaseZendeskRequest):
         url = self.api._build_url(endpoint(*args, **kwargs))
         return self.api._post(url, payload)
 
-    def put(self, api_objects, *args, update_many_external=False, **kwargs):
+    def put(self, api_objects, update_many_external=False, *args, **kwargs):
         self.check_type(api_objects)
 
         if update_many_external:
@@ -96,7 +96,7 @@ class CRUDRequest(BaseZendeskRequest):
         url = self.api._build_url(self.api.endpoint(*args, **kwargs))
         return self.api._put(url, payload=payload)
 
-    def delete(self, api_objects, *args, destroy_many_external=False, **kwargs):
+    def delete(self, api_objects, destroy_many_external=False, *args, **kwargs):
         self.check_type(api_objects)
         if destroy_many_external:
             kwargs['destroy_many_external'] = [o.external_id for o in api_objects]
