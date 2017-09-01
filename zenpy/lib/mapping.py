@@ -68,8 +68,7 @@ class ZendeskObjectMapping(object):
         'sharing_agreement': SharingAgreement,
         'macro': Macro,
         'action': Action,
-        'result': None,  # result can represent many things, it is handled in format_key()
-        'macro_result': MacroResult,
+        'result': MacroResult,
         'job_status_result': JobStatusResult,
         'agentmacroreference': AgentMacroReference,
         'identity': Identity,
