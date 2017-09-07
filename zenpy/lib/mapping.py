@@ -61,6 +61,7 @@ class ZendeskObjectMapping(object):
         'user_field': UserField,
         'organization_field': OrganizationField,
         'ticket_field': TicketField,
+        'ticket_form': TicketForm,
         'request': Request,
         'user_related': UserRelated,
         'organization_membership': OrganizationMembership,

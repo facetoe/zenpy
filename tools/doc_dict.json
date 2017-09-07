@@ -359,6 +359,24 @@
       "mandatory": "no",
       "read-only": "yes",
       "comment": "ids of all brands that this ticket form is restricted to"
+    },
+    "updated_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time of the last update of the ticket form"
+    },
+    "created_at": {
+      "type": "date",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The time the ticket form was created"
+    },
+    "url": {
+      "type": "string",
+      "mandatory": "no",
+      "read-only": "yes",
+      "comment": "The API url of this ticket form"
     }
   },
   "attachments": {

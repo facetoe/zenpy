@@ -132,6 +132,8 @@ class Zenpy(object):
 
         self.ticket_fields = Api(config, object_type='ticket_field')
 
+        self.ticket_forms = Api(config, object_type='ticket_form')
+
         self.ticket_import = TicketImportAPI(config)
 
         self.requests = RequestAPI(config)
