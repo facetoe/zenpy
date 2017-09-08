@@ -3082,6 +3082,202 @@ class TicketField(BaseObject):
             self.updated_at = updated
 
 
+class TicketForm(BaseObject):
+    def __init__(self,
+                 api=None,
+                 active=None,
+                 created_at=None,
+                 default=None,
+                 display_name=None,
+                 end_user_visible=None,
+                 id=None,
+                 in_all_brands=None,
+                 in_all_organizations=None,
+                 name=None,
+                 position=None,
+                 raw_display_name=None,
+                 raw_name=None,
+                 restricted_brand_ids=None,
+                 restricted_organization_ids=None,
+                 ticket_field_ids=None,
+                 updated_at=None,
+                 url=None,
+                 **kwargs):
+
+        self.api = api
+
+        # Comment: If the form is set as active
+        # Mandatory: no
+        # Read-only: no
+        # Type: boolean
+        self.active = active
+
+        # Comment: The time the ticket form was created
+        # Mandatory: no
+        # Read-only: yes
+        # Type: date
+        self.created_at = created_at
+
+        # Comment: Is the form the default form for this account
+        # Mandatory: no
+        # Read-only: no
+        # Type: boolean
+        self.default = default
+
+        # Comment: The name of the form that is displayed to an end user
+        # Mandatory: no
+        # Read-only: no
+        # Type: string
+        self.display_name = display_name
+
+        # Comment: Is the form visible to the end user
+        # Mandatory: no
+        # Read-only: no
+        # Type: boolean
+        self.end_user_visible = end_user_visible
+        self.id = id
+
+        # Comment: Is the form available for use in all brands on this account
+        # Mandatory: no
+        # Read-only: no
+        # Type: boolean
+        self.in_all_brands = in_all_brands
+
+        # Comment: Is the form available for use in all organizations on this account
+        # Mandatory: no
+        # Read-only: no
+        # Type: boolean
+        self.in_all_organizations = in_all_organizations
+
+        # Comment: The name of the form
+        # Mandatory: yes
+        # Read-only: no
+        # Type: string
+        self.name = name
+
+        # Comment: The position of this form among other forms in the account, i.e. dropdown
+        # Mandatory: no
+        # Read-only: no
+        # Type: integer
+        self.position = position
+
+        # Comment: The dynamic content placeholder, if present, or the "display_name" value, if not. See Dynamic Content
+        # Mandatory: no
+        # Read-only: no
+        # Type: string
+        self.raw_display_name = raw_display_name
+
+        # Comment: The dynamic content placeholder, if present, or the "name" value, if not. See Dynamic Content
+        # Mandatory: no
+        # Read-only: no
+        # Type: string
+        self.raw_name = raw_name
+
+        # Comment: ids of all brands that this ticket form is restricted to
+        # Mandatory: no
+        # Read-only: yes
+        # Type: array
+        self.restricted_brand_ids = restricted_brand_ids
+
+        # Comment: ids of all organizations that this ticket form is restricted to
+        # Mandatory: no
+        # Read-only: yes
+        # Type: array
+        self.restricted_organization_ids = restricted_organization_ids
+
+        # Comment: ids of all ticket fields which are in this ticket form
+        # Mandatory: no
+        # Read-only: no
+        # Type: array
+        self.ticket_field_ids = ticket_field_ids
+
+        # Comment: The time of the last update of the ticket form
+        # Mandatory: no
+        # Read-only: yes
+        # Type: date
+        self.updated_at = updated_at
+
+        # Comment: The API url of this ticket form
+        # Mandatory: no
+        # Read-only: yes
+        # Type: string
+        self.url = url
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def created(self):
+        """
+        |  Comment: The time the ticket form was created
+        """
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
+
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created
+
+    @property
+    def restricted_brands(self):
+        """
+        |  Comment: ids of all brands that this ticket form is restricted to
+        """
+        if self.api and self.restricted_brand_ids:
+            return self.api._get_restricted_brands(self.restricted_brand_ids)
+
+    @restricted_brands.setter
+    def restricted_brands(self, restricted_brands):
+        if restricted_brands:
+            self.restricted_brand_ids = [o.id for o in restricted_brands]
+            self._restricted_brands = restricted_brands
+
+    @property
+    def restricted_organizations(self):
+        """
+        |  Comment: ids of all organizations that this ticket form is restricted to
+        """
+        if self.api and self.restricted_organization_ids:
+            return self.api._get_restricted_organizations(
+                self.restricted_organization_ids)
+
+    @restricted_organizations.setter
+    def restricted_organizations(self, restricted_organizations):
+        if restricted_organizations:
+            self.restricted_organization_ids = [
+                o.id for o in restricted_organizations
+            ]
+            self._restricted_organizations = restricted_organizations
+
+    @property
+    def ticket_fields(self):
+        """
+        |  Comment: ids of all ticket fields which are in this ticket form
+        """
+        if self.api and self.ticket_field_ids:
+            return self.api._get_ticket_fields(self.ticket_field_ids)
+
+    @ticket_fields.setter
+    def ticket_fields(self, ticket_fields):
+        if ticket_fields:
+            self.ticket_field_ids = [o.id for o in ticket_fields]
+            self._ticket_fields = ticket_fields
+
+    @property
+    def updated(self):
+        """
+        |  Comment: The time of the last update of the ticket form
+        """
+        if self.updated_at:
+            return dateutil.parser.parse(self.updated_at)
+
+    @updated.setter
+    def updated(self, updated):
+        if updated:
+            self.updated_at = updated
+
+
 class TicketMetric(BaseObject):
     def __init__(self,
                  api=None,
