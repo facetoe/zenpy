@@ -320,6 +320,18 @@ class Api(BaseApi):
     def _get_forum(self, forum_id):
         return forum_id
 
+    def _get_restricted_brands(self, brand_ids):
+        for brand_id in brand_ids:
+            yield self._query_zendesk(EndpointFactory('brands'), 'brand', id=brand_id)
+
+    def _get_restricted_organizations(self, organization_ids):
+        for org_id in organization_ids:
+            yield self._query_zendesk(EndpointFactory("organizations"), 'organization', id=org_id)
+
+    def _get_ticket_fields(self, ticket_field_ids):
+        for field_id in ticket_field_ids:
+            yield self._query_zendesk(EndpointFactory('ticket_fields'), 'ticket_field', id=field_id)
+
 
 class CRUDApi(Api):
     """
