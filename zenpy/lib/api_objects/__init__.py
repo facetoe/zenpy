@@ -20,20 +20,13 @@ class BaseObject(object):
         return copy_dict
 
     def __repr__(self):
-        def stringify(item):
+        def formatted(item):
             return item if isinstance(item, int) else "'{}'".format(item)
-        if hasattr(self, 'id'):
-            return "[%s(id=%s)]" % (self.__class__.__name__, stringify(self.id))
-        elif hasattr(self, 'token'):
-            return "[%s(token='%s')]" % (self.__class__.__name__, self.token)
-        elif hasattr(self, 'key'):
-            return "[%s(key='%s')]" % (self.__class__.__name__, self.key)
-        elif hasattr(self, 'name'):
-            return "[%s(name='%s')]" % (self.__class__.__name__, self.name)
-        elif hasattr(self, 'account_key'):
-            return "[%s(account_key='%s')]" % (self.__class__.__name__, self.account_key)
-        else:
-            return "[%s()]" % self.__class__.__name__
+
+        for identifier in ('id', 'token', 'key', 'name', 'account_key'):
+            if hasattr(self, identifier):
+                return "{}({}={})".format(self.__class__.__name__, identifier, formatted(getattr(self, identifier)))
+        return "{}()".format(self.__class__.__name__)
 
 
 
