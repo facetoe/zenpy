@@ -1122,6 +1122,11 @@ class SlaPolicyApi(CRUDApi):
         return self._get(url)
 
 
+class SupportAddressApi(CRUDApi):
+    def __init__(self, config):
+        super(SupportAddressApi, self).__init__(config, object_type='support_address')
+
+
 class ChatApiBase(Api):
     """
     Implements most generic ChatApi functionality. Most if the actual work is delegated to
