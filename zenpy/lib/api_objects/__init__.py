@@ -2225,6 +2225,69 @@ class Status(BaseObject):
             setattr(self, key, value)
 
 
+class SupportAddress(BaseObject):
+    def __init__(self,
+                 api=None,
+                 brand_id=None,
+                 created_at=None,
+                 default=None,
+                 email=None,
+                 forwarding_status=None,
+                 id=None,
+                 name=None,
+                 spf_status=None,
+                 updated_at=None,
+                 **kwargs):
+
+        self.api = api
+        self.brand_id = brand_id
+        self.created_at = created_at
+        self.default = default
+        self.email = email
+        self.forwarding_status = forwarding_status
+        self.id = id
+        self.name = name
+        self.spf_status = spf_status
+        self.updated_at = updated_at
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def brand(self):
+
+        if self.api and self.brand_id:
+            return self.api._get_brand(self.brand_id)
+
+    @brand.setter
+    def brand(self, brand):
+        if brand:
+            self.brand_id = brand.id
+            self._brand = brand
+
+    @property
+    def created(self):
+
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
+
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created
+
+    @property
+    def updated(self):
+
+        if self.updated_at:
+            return dateutil.parser.parse(self.updated_at)
+
+    @updated.setter
+    def updated(self, updated):
+        if updated:
+            self.updated_at = updated
+
+
 class SuspendedTicket(BaseObject):
     def __init__(self,
                  api=None,
