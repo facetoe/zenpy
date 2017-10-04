@@ -1,7 +1,7 @@
 import logging
-import time
 from datetime import datetime
 
+import time
 from dateutil.tz import tzutc
 
 from zenpy.lib.exception import ZenpyException
@@ -58,11 +58,6 @@ class BaseEndpoint(object):
 
 
 class PrimaryEndpoint(BaseEndpoint):
-    """
-    A PrimaryEndpoint takes an id or list of ids and either returns the objects
-    associated with them or performs actions on them (eg, update/delete).
-    """
-
     ISO_8601_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
     def __call__(self, **kwargs):
@@ -119,11 +114,6 @@ class PrimaryEndpoint(BaseEndpoint):
 
 
 class SecondaryEndpoint(BaseEndpoint):
-    """
-    A SecondaryEndpoint takes a single ID and returns the
-    object associated with it.
-    """
-
     def __call__(self, **kwargs):
         if not kwargs:
             raise ZenpyException("This endpoint requires arguments!")
@@ -493,6 +483,22 @@ class EndpointFactory(object):
     views.execute = SecondaryEndpoint('views/%(id)s/execute.json')
     views.export = SecondaryEndpoint('views/%(id)s/export.json')
     views.search = ViewSearchEndpoint('views/search.json?')
+
+    class Dummy(object): pass
+
+    help_centre = Dummy()
+    help_centre.articles = PrimaryEndpoint('articles')
+    help_centre.articles.create = SecondaryEndpoint('sections/%(id)s/articles.json')
+    help_centre.articles.comments = SecondaryEndpoint('articles/%(id)s/comments.json')
+    help_centre.articles.comments_update = MultipleIDEndpoint('articles/{}/comments/{}.json')
+    help_centre.articles.comment_show = MultipleIDEndpoint('articles/{}/comments/{}.json')
+    help_centre.categories = PrimaryEndpoint('categories')
+    help_centre.categories.articles = SecondaryEndpoint('categories/%(id)s/articles.json')
+    help_centre.categories.sections = SecondaryEndpoint('categories/%(id)s/sections.json')
+    help_centre.sections = PrimaryEndpoint('sections')
+    help_centre.sections.articles = SecondaryEndpoint('sections/%(id)s/articles.json')
+
+    help_centre.user_comments = SecondaryEndpoint('users/%(id)s/comments.json')
 
     def __new__(cls, endpoint_name):
         return getattr(cls, endpoint_name)

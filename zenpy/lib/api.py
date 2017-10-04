@@ -6,9 +6,10 @@ from json import JSONEncoder
 from time import sleep, time
 
 from zenpy.lib.api_objects import User, Macro, Identity, View
+from zenpy.lib.api_objects.help_centre_objects import Section, Article, Comment
 from zenpy.lib.cache import query_cache
 from zenpy.lib.exception import *
-from zenpy.lib.mapping import ZendeskObjectMapping, ChatObjectMapping
+from zenpy.lib.mapping import ZendeskObjectMapping, ChatObjectMapping, HelpCentreObjectMapping
 from zenpy.lib.request import *
 from zenpy.lib.response import *
 from zenpy.lib.util import as_plural
@@ -161,7 +162,7 @@ class BaseApi(object):
             self.callsafety['lastcalltime'] = time()
             self.callsafety['lastlimitremaining'] = int(response.headers.get('X-Rate-Limit-Remaining', 0))
 
-    def _process_response(self, response):
+    def _process_response(self, response, object_mapping=None):
         """
         Attempt to find a ResponseHandler that knows how to process this response.
         If no handler can be found, raise an Exception.
@@ -173,7 +174,7 @@ class BaseApi(object):
         for handler in self._response_handlers:
             if handler.applies_to(self, response):
                 log.debug("{} matched: {}".format(handler.__name__, pretty_response))
-                return handler(self).build(response)
+                return handler(self, object_mapping).build(response)
         raise ZenpyException("Could not handle response: {}".format(pretty_response))
 
     def _serialize(self, zenpy_object):
@@ -235,11 +236,14 @@ class BaseApi(object):
             except ValueError:
                 response.raise_for_status()
 
-    def _build_url(self, endpoint=''):
+    def _build_url(self, endpoint='', template=None):
         """ Build complete URL """
         if not issubclass(type(self), ChatApiBase) and not self.subdomain:
             raise ZenpyException("subdomain is required when accessing the Zendesk API!")
-        return "/".join((self._url_template % vars(self), endpoint))
+
+        if template is None:
+            template = self._url_template
+        return "/".join((template % vars(self), endpoint))
 
 
 class Api(BaseApi):
@@ -1198,3 +1202,98 @@ class ChatApi(ChatApiBase):
     def search(self, *args, **kwargs):
         url = self._build_url(self.endpoint.search(*args, **kwargs))
         return self._get(url)
+
+
+class HelpCentreApiBase(Api):
+    def __init__(self, config, endpoint, object_type):
+        super(HelpCentreApiBase, self).__init__(config, object_type=object_type, endpoint=endpoint)
+        self._object_mapping = HelpCentreObjectMapping(self)
+        self._url_template = "%(protocol)s://%(subdomain)s.zendesk.com/%(api_prefix)s/help_center%(locale)s"
+        self.locale = ''
+
+    def _process_response(self, response):
+        if get_endpoint_path(self, response).startswith('/help_center'):
+            object_mapping = self._object_mapping
+        else:
+            object_mapping = ZendeskObjectMapping(self)
+        return super(HelpCentreApiBase, self)._process_response(response, object_mapping)
+
+    def _build_url(self, endpoint='', template=None):
+        if endpoint.startswith('users/') and not endpoint.endswith('comments.json'):
+            template = "%(protocol)s://%(subdomain)s.zendesk.com/%(api_prefix)s"
+        return super(HelpCentreApiBase, self)._build_url(endpoint, template=template)
+
+
+class ArticleApi(HelpCentreApiBase):
+    def create(self, section, article):
+        if isinstance(section, Section):
+            section = section.id
+        return CRUDRequest(self).post(article, create=True, id=section)
+
+    def update(self, article):
+        return CRUDRequest(self).put(article)
+
+    def archive(self, article):
+        return CRUDRequest(self).delete(article)
+
+    def comments(self, article):
+        if isinstance(article, Article):
+            article = article.id
+        return self._query_zendesk(self.endpoint.comments, object_type='comment', id=article)
+
+
+class CommentApi(HelpCentreApiBase):
+    def __call__(self, article, comment):
+        if isinstance(article, Article):
+            article = article.id
+        if isinstance(comment, Comment):
+            comment = comment.id
+
+        url = self._build_url(self.endpoint.comment_show(article, comment))
+        return self._get(url)
+
+    def create(self, article, comment):
+        if isinstance(article, Article):
+            article = article.id
+        if comment.locale is None:
+            raise ZenpyException(
+                "locale is required when creating comments - "
+                "https://developer.zendesk.com/rest_api/docs/help_center/comments#create-comment"
+            )
+        return HelpdeskCommentRequest(self).post(self.endpoint.comments, article, comment)
+
+    def update(self, article, comment):
+        if isinstance(article, Article):
+            article = article.id
+        return HelpdeskCommentRequest(self).put(self.endpoint.comments_update, article, comment)
+
+
+class CategoryApi(HelpCentreApiBase, CRUDApi):
+    def articles(self, category_id):
+        return self._query_zendesk(self.endpoint.articles, 'article', id=category_id)
+
+    def sections(self, category_id):
+        return self._query_zendesk(self.endpoint.sections, 'section', id=category_id)
+
+
+class SectionApi(HelpCentreApiBase, CRUDApi):
+    def articles(self, section_id):
+        return self._query_zendesk(self.endpoint.articles, 'article', id=section_id)
+
+
+class HelpCentreApi(HelpCentreApiBase):
+    def __init__(self, config):
+        super(HelpCentreApi, self).__init__(config, endpoint=EndpointFactory('help_centre'), object_type='help_centre')
+
+        self.articles = ArticleApi(config, self.endpoint.articles, object_type='article')
+        self.sections = SectionApi(config, self.endpoint.sections, object_type='section')
+        self.categories = CategoryApi(config, self.endpoint.categories, object_type='category')
+        self.comments = CommentApi(config, self.endpoint.articles, object_type='comment')
+
+    def __call__(self, *args, **kwargs):
+        raise NotImplementedError("Cannot directly call the HelpCentreApi!")
+
+    def comments(self, user):
+        if isinstance(user, User):
+            user = user.id
+        return self._query_zendesk(self.endpoint.user_comments, object_type='comment', id=user)

@@ -2,7 +2,7 @@ from abc import abstractmethod
 
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.generator import SearchResultGenerator, ZendeskResultGenerator, ChatResultGenerator, ViewResultGenerator
-from zenpy.lib.util import as_singular, as_plural
+from zenpy.lib.util import as_singular, as_plural, get_endpoint_path
 
 
 class ResponseHandler(object):
@@ -16,8 +16,9 @@ class ResponseHandler(object):
     specific first.
     """
 
-    def __init__(self, api):
+    def __init__(self, api, object_mapping=None):
         self.api = api
+        self.object_mapping = object_mapping or api._object_mapping
 
     @staticmethod
     @abstractmethod
@@ -35,11 +36,6 @@ class ResponseHandler(object):
         Usually this boils down to deciding whether or not we should return a ResultGenerator
         of a particular type, a list of objects or a single object.
         """
-
-
-def get_endpoint_path(api, response):
-    """ Return the section of the URL from 'api/v2' to the end. """
-    return response.request.url.split(api.api_prefix)[-1]
 
 
 class GenericZendeskResponseHandler(ResponseHandler):
@@ -62,15 +58,15 @@ class GenericZendeskResponseHandler(ResponseHandler):
         """
         response_objects = dict()
         if all((t in response_json for t in ('ticket', 'audit'))):
-            response_objects["ticket_audit"] = self.api._object_mapping.object_from_json(
+            response_objects["ticket_audit"] = self.object_mapping.object_from_json(
                 "ticket_audit",
                 response_json
             )
 
         # Locate and store the single objects.
-        for zenpy_object_name in self.api._object_mapping.class_mapping:
+        for zenpy_object_name in self.object_mapping.class_mapping:
             if zenpy_object_name in response_json:
-                zenpy_object = self.api._object_mapping.object_from_json(
+                zenpy_object = self.object_mapping.object_from_json(
                     zenpy_object_name,
                     response_json[zenpy_object_name]
                 )
@@ -80,10 +76,10 @@ class GenericZendeskResponseHandler(ResponseHandler):
         for key, value in response_json.items():
             if isinstance(value, list):
                 zenpy_object_name = as_singular(key)
-                if zenpy_object_name in self.api._object_mapping.class_mapping:
+                if zenpy_object_name in self.object_mapping.class_mapping:
                     response_objects[key] = []
                     for object_json in response_json[key]:
-                        zenpy_object = self.api._object_mapping.object_from_json(
+                        zenpy_object = self.object_mapping.object_from_json(
                             zenpy_object_name,
                             object_json
                         )
@@ -111,12 +107,12 @@ class GenericZendeskResponseHandler(ResponseHandler):
             return zenpy_objects[self.api.object_type]
 
         # Could be anything, if we know of this object then return it.
-        for zenpy_object_name in self.api._object_mapping.class_mapping:
+        for zenpy_object_name in self.object_mapping.class_mapping:
             if zenpy_object_name in zenpy_objects:
                 return zenpy_objects[zenpy_object_name]
 
         # Maybe a collection of known objects?
-        for zenpy_object_name in self.api._object_mapping.class_mapping:
+        for zenpy_object_name in self.object_mapping.class_mapping:
             plural_zenpy_object_name = as_plural(zenpy_object_name)
             if plural_zenpy_object_name in zenpy_objects:
                 return ZendeskResultGenerator(self, response_json, object_type=plural_zenpy_object_name)
@@ -152,7 +148,7 @@ class ViewResponseHandler(GenericZendeskResponseHandler):
         if 'rows' in response_json:
             views = list()
             for row in response_json['rows']:
-                views.append(self.api._object_mapping.object_from_json('view_row', row))
+                views.append(self.object_mapping.object_from_json('view_row', row))
             return views
         elif 'views' in deserialized_response:
             return deserialized_response['views']
@@ -253,7 +249,7 @@ class SlaPolicyResponseHandler(GenericZendeskResponseHandler):
 
     def deserialize(self, response_json):
         if 'definitions' in response_json:
-            definitions = self.api._object_mapping.object_from_json('definitions', response_json['definitions'])
+            definitions = self.object_mapping.object_from_json('definitions', response_json['definitions'])
             return dict(definitions=definitions)
         return super(SlaPolicyResponseHandler, self).deserialize(response_json)
 
@@ -285,7 +281,7 @@ class ChatResponseHandler(ResponseHandler):
         else:
             raise ZenpyException("Unexpected response: {}".format(response_json))
         for chat in chat_list:
-            chats.append(self.api._object_mapping.object_from_json('chat', chat))
+            chats.append(self.object_mapping.object_from_json('chat', chat))
         return chats
 
     def build(self, response):
@@ -293,7 +289,7 @@ class ChatResponseHandler(ResponseHandler):
         if 'chats' in response_json or 'docs' in response_json:
             return ChatResultGenerator(self, response_json)
         else:
-            return self.api._object_mapping.object_from_json('chat', response_json)
+            return self.object_mapping.object_from_json('chat', response_json)
 
 
 class AccountResponseHandler(ResponseHandler):
@@ -305,7 +301,7 @@ class AccountResponseHandler(ResponseHandler):
         return endpoint_name.startswith('/account')
 
     def deserialize(self, response_json):
-        return self.api._object_mapping.object_from_json('account', response_json)
+        return self.object_mapping.object_from_json('account', response_json)
 
     def build(self, response):
         return self.deserialize(response.json())
@@ -321,7 +317,7 @@ class ChatSearchResponseHandler(ResponseHandler):
     def deserialize(self, response_json):
         search_results = list()
         for result in response_json['results']:
-            search_results.append(self.api._object_mapping.object_from_json('search_result', result))
+            search_results.append(self.object_mapping.object_from_json('search_result', result))
         return search_results
 
     def build(self, response):
@@ -338,10 +334,10 @@ class ChatApiResponseHandler(ResponseHandler):
     def deserialize(self, response_json):
         agents = list()
         if isinstance(response_json, dict):
-            return self.api._object_mapping.object_from_json(self.object_type, response_json)
+            return self.object_mapping.object_from_json(self.object_type, response_json)
         else:
             for agent in response_json:
-                agents.append(self.api._object_mapping.object_from_json(self.object_type, agent))
+                agents.append(self.object_mapping.object_from_json(self.object_type, agent))
             return agents
 
     def build(self, response):

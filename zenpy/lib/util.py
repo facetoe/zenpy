@@ -56,3 +56,8 @@ def as_plural(result_key):
         return result_key + 's'
     else:
         return result_key
+
+
+def get_endpoint_path(api, response):
+    """ Return the section of the URL from 'api/v2' to the end. """
+    return response.request.url.split(api.api_prefix)[-1]

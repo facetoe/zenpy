@@ -108,7 +108,6 @@ cache_mapping = {
     'group': ZenpyCache('LRUCache', maxsize=10000),
     'brand': ZenpyCache('LRUCache', maxsize=10000),
     'ticket': ZenpyCache('TTLCache', maxsize=10000, ttl=30),
-    'comment': ZenpyCache('LRUCache', maxsize=10000),
     'request': ZenpyCache('LRUCache', maxsize=10000),
     'user_field': ZenpyCache('TTLCache', maxsize=10000, ttl=30),
     'organization_field': ZenpyCache('LRUCache', maxsize=10000),

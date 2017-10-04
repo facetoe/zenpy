@@ -21,7 +21,8 @@ from zenpy.lib.api import (
     ViewApi,
     SlaPolicyApi,
     ChatApi,
-    GroupMembershipApi)
+    GroupMembershipApi,
+    HelpCentreApi)
 from zenpy.lib.cache import ZenpyCache, cache_mapping, purge_cache
 from zenpy.lib.endpoint import EndpointFactory
 from zenpy.lib.exception import ZenpyException
@@ -143,6 +144,8 @@ class Zenpy(object):
         self.views = ViewApi(config)
 
         self.sla_policies = SlaPolicyApi(config)
+
+        self.help_center = HelpCentreApi(config)
 
     def _init_session(self, email, token, oath_token, password, session):
         if not session:

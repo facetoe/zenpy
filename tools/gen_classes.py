@@ -330,3 +330,4 @@ def process_specification_directory(glob_pattern, outfile_name, write_baseclass=
 
 process_specification_directory('zendesk/*.json', 'api_objects/__init__.py')
 process_specification_directory('chat/*.json', 'api_objects/chat_objects.py', write_baseclass=False)
+process_specification_directory('help_centre/*.json', 'api_objects/help_centre_objects.py', write_baseclass=False)

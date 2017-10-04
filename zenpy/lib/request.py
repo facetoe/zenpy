@@ -1,7 +1,6 @@
 import collections
-from abc import abstractmethod
-
 import os
+from abc import abstractmethod
 
 from zenpy.lib.api_objects import BaseObject, Ticket
 from zenpy.lib.api_objects.chat_objects import Shortcut, Trigger
@@ -67,6 +66,7 @@ class CRUDRequest(BaseZendeskRequest):
         self.check_type(api_objects)
 
         create_or_update = kwargs.pop('create_or_update', False)
+        create = kwargs.pop('create', False)
         if isinstance(api_objects, collections.Iterable) and create_or_update:
             kwargs['create_or_update_many'] = True
             endpoint = self.api.endpoint.create_or_update_many
@@ -75,6 +75,8 @@ class CRUDRequest(BaseZendeskRequest):
             endpoint = self.api.endpoint
         elif create_or_update:
             endpoint = self.api.endpoint.create_or_update
+        elif create:
+            endpoint = self.api.endpoint.create
         else:
             endpoint = self.api.endpoint
 
@@ -381,3 +383,18 @@ class AgentRequest(PersonRequest):
 
 class VisitorRequest(PersonRequest):
     pass
+
+
+class HelpdeskCommentRequest(BaseZendeskRequest):
+    def put(self, endpoint, article, comment):
+        url = self.api._build_url(endpoint(article, comment.id))
+        payload = self.build_payload(comment)
+        return self.api._put(url, payload)
+
+    def post(self, endpoint, article, comment):
+        url = self.api._build_url(endpoint(id=article))
+        payload = self.build_payload(comment)
+        return self.api._post(url, payload)
+
+    def delete(self, api_objects, *args, **kwargs):
+        pass
