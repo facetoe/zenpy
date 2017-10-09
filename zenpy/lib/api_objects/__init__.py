@@ -2225,7 +2225,7 @@ class Status(BaseObject):
             setattr(self, key, value)
 
 
-class SupportAddress(BaseObject):
+class RecipientAddress(BaseObject):
     def __init__(self,
                  api=None,
                  brand_id=None,

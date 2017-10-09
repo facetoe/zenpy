@@ -22,7 +22,7 @@ from zenpy.lib.api import (
     SlaPolicyApi,
     ChatApi,
     GroupMembershipApi,
-    SupportAddressApi)
+    RecipientAddressApi)
 from zenpy.lib.cache import ZenpyCache, cache_mapping, purge_cache
 from zenpy.lib.endpoint import EndpointFactory
 from zenpy.lib.exception import ZenpyException
@@ -145,7 +145,7 @@ class Zenpy(object):
 
         self.sla_policies = SlaPolicyApi(config)
 
-        self.support_addresses = SupportAddressApi(config)
+        self.recipient_addresses = RecipientAddressApi(config)
 
     def _init_session(self, email, token, oath_token, password, session):
         if not session:

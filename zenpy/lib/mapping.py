@@ -81,7 +81,7 @@ class ZendeskObjectMapping(object):
         'sla_policy': SlaPolicy,
         'policy_metric': PolicyMetric,
         'definitions': Definitions,
-        'recipient_address': SupportAddress
+        'recipient_address': RecipientAddress
     }
 
     def __init__(self, api):
