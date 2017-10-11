@@ -493,6 +493,7 @@ class EndpointFactory(object):
     views.execute = SecondaryEndpoint('views/%(id)s/execute.json')
     views.export = SecondaryEndpoint('views/%(id)s/export.json')
     views.search = ViewSearchEndpoint('views/search.json?')
+    recipient_addresses = PrimaryEndpoint('recipient_addresses')
 
     def __new__(cls, endpoint_name):
         return getattr(cls, endpoint_name)

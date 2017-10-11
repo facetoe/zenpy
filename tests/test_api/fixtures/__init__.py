@@ -92,6 +92,11 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
     # from the ZenpyType.
     expected_single_result_type = None
 
+    # Kwargs whose values should not be changed in the the update request.
+    # Some fields in update requests cannot have their value changed
+    # due to Zendesk API constraints.
+    ignore_update_kwargs = []
+
     def setUp(self):
         super(ModifiableApiTestCase, self).setUp()
         self.created_objects = []
@@ -206,7 +211,7 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
 
         new_kwargs = self.object_kwargs.copy()
         for attr_name in new_kwargs:
-            if isinstance(new_kwargs[attr_name], basestring):
+            if isinstance(new_kwargs[attr_name], basestring) and attr_name not in self.ignore_update_kwargs:
                 new_kwargs[attr_name] += hash_of(new_kwargs[attr_name])
                 setattr(zenpy_object, attr_name, new_kwargs[attr_name])
         return zenpy_object, new_kwargs
