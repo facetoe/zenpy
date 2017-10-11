@@ -1,6 +1,6 @@
 from test_api.fixtures.__init__ import SingleCreateApiTestCase, CRUDApiTestCase, \
     SingleUpdateApiTestCase, SingleDeleteApiTestCase
-from zenpy.lib.api_objects import Ticket, TicketAudit, Group, User, Organization, Macro
+from zenpy.lib.api_objects import Ticket, TicketAudit, Group, User, Organization, Macro, RecipientAddress
 
 
 class TestTicketCreateUpdateDelete(CRUDApiTestCase):
@@ -41,3 +41,11 @@ class TestMacrosCreateUpdateDelete(SingleUpdateApiTestCase, SingleCreateApiTestC
     ZenpyType = Macro
     object_kwargs = dict(title='TestMacro', actions=[{"field": "status", "value": "solved"}])
     api_name = 'macros'
+
+
+class TestRecipientAddressCreateUpdateDelete(SingleUpdateApiTestCase, SingleCreateApiTestCase):
+    __test__ = True
+    ZenpyType = RecipientAddress
+    object_kwargs = dict(name='Sales', email='help@omniwearshop.com')
+    ignore_update_kwargs = ['email']  # Email value cannot be changed after creation
+    api_name = 'recipient_addresses'
