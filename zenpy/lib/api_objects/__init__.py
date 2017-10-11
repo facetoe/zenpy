@@ -2230,7 +2230,7 @@ class RecipientAddress(BaseObject):
                  api=None,
                  brand_id=None,
                  created_at=None,
-                 default=None,
+                 default=False,
                  email=None,
                  forwarding_status=None,
                  id=None,
