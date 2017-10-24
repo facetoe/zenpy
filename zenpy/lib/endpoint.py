@@ -284,7 +284,7 @@ class RequestSearchEndpoint(BaseEndpoint):
 
 
 class SatisfactionRatingEndpoint(BaseEndpoint):
-    def __call__(self, score=None, sort_order=None):
+    def __call__(self, score=None, sort_order=None, start_time=None, end_time=None):
         if sort_order not in ('asc', 'desc'):
             raise ZenpyException("sort_order must be one of (asc, desc)")
 
@@ -296,8 +296,14 @@ class SatisfactionRatingEndpoint(BaseEndpoint):
 
         if sort_order:
             result += '&sort_order={}'.format(sort_order)
-        return result
 
+        if start_time:
+            result += '&start_time={}'.format(start_time)
+
+        if end_time:
+            result += '&end_time={}'.format(end_time)
+
+        return result
 
 class MacroEndpoint(BaseEndpoint):
     def __call__(self, sort_order=None, sort_by=None, **kwargs):
