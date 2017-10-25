@@ -1,7 +1,14 @@
+import datetime
+import logging
+import time
 import re
+import pytz
 
 FIRST_CAP_REGEX = re.compile('(.)([A-Z][a-z]+)')
 ALL_CAP_REGEX = re.compile('([a-z0-9])([A-Z])')
+
+
+log = logging.getLogger(__name__)
 
 
 def to_snake_case(name):
@@ -9,6 +16,23 @@ def to_snake_case(name):
     s1 = FIRST_CAP_REGEX.sub(r'\1_\2', name)
     return ALL_CAP_REGEX.sub(r'\1_\2', s1).lower()
 
+
+def to_unix_ts(dttm_obj):
+    """Given a datetime object, returns its value as a unix timestamp"""
+    if isinstance(dttm_obj, datetime.datetime):
+        if is_timezone_aware(dttm_obj):
+            dttm_obj = dttm_obj.astimezone(pytz.utc)
+        else:
+            log.warning(
+                "Non timezone-aware datetime object passed to IncrementalEndpoint. "
+                "The Zendesk API expects UTC time, if this is not the case results will be incorrect!"
+            )
+        unix_time = (pytz.utc.localize(dttm_obj) - \
+                     pytz.utc.localize(datetime.datetime(1970, 1 ,1))).total_seconds()
+    else:
+        unix_time = dttm_obj
+
+    return int(unix_time)
 
 def get_object_type(zenpy_object):
     """ Given an instance of a Zenpy object, return it's object type """

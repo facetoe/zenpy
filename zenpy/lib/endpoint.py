@@ -5,7 +5,8 @@ from datetime import datetime
 from dateutil.tz import tzutc
 
 from zenpy.lib.exception import ZenpyException
-from zenpy.lib.util import is_timezone_aware, is_iterable_but_not_string
+from zenpy.lib.util import is_timezone_aware, is_iterable_but_not_string, \
+    to_unix_ts
 
 __author__ = 'facetoe'
 
@@ -146,17 +147,12 @@ class IncrementalEndpoint(BaseEndpoint):
         if not start_time:
             raise ZenpyException("Incremental Endoint requires a start_time parameter!")
 
-        if isinstance(start_time, datetime):
-            if is_timezone_aware(start_time):
-                start_time = start_time.astimezone(tzutc())
-            else:
-                log.warning(
-                    "Non timezone-aware datetime object passed to IncrementalEndpoint. "
-                    "The Zendesk API expects UTC time, if this is not the case results will be incorrect!"
-                )
-            unix_time = time.mktime(start_time.timetuple())
+        elif isinstance(start_time, datetime):
+            unix_time = to_unix_ts(start_time)
+
         else:
             unix_time = start_time
+
         query = "start_time=%s" % str(unix_time)
         return self.endpoint + query + self._format_sideload(self.sideload, seperator='&')
 
@@ -298,10 +294,10 @@ class SatisfactionRatingEndpoint(BaseEndpoint):
             result += '&sort_order={}'.format(sort_order)
 
         if start_time:
-            result += '&start_time={}'.format(start_time)
+            result += '&start_time={}'.format(to_unix_ts(start_time))
 
         if end_time:
-            result += '&end_time={}'.format(end_time)
+            result += '&end_time={}'.format(to_unix_ts(end_time))
 
         return result
 
