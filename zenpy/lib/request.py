@@ -15,21 +15,11 @@ class RequestHandler(object):
     """
     Abstraction of a request to either the Zendesk API or the Chat API. Only POST, PUT and
     DELETE are handled. Subclasses implement the logic needed to correctly serialize the request
-    to JSON and send off to the relevant API. 
+    to JSON and send off to the relevant API.
     """
 
     def __init__(self, api):
         self.api = api
-
-    def perform(self, http_method, *args, **kwargs):
-        http_method = http_method.lower()
-        if http_method == 'put':
-            return self.put(*args, **kwargs)
-        elif http_method == 'post':
-            return self.post(*args, **kwargs)
-        elif http_method == 'delete':
-            return self.delete(*args, **kwargs)
-        raise ZenpyException("{} cannot handle HTTP method: {}".format(self.__class__.__name__, http_method))
 
     @abstractmethod
     def put(self, api_objects, *args, **kwargs):
@@ -46,7 +36,7 @@ class RequestHandler(object):
 
 class BaseZendeskRequest(RequestHandler):
     """
-    Base class for Zendesk requests. Provides a few handy methods. 
+    Base class for Zendesk requests. Provides a few handy methods.
     """
 
     def build_payload(self, api_objects):
@@ -70,7 +60,7 @@ class BaseZendeskRequest(RequestHandler):
 
 class CRUDRequest(BaseZendeskRequest):
     """
-    Generic CRUD request. Most CRUD operations are handled by this class. 
+    Generic CRUD request. Most CRUD operations are handled by this class.
     """
 
     def post(self, api_objects, *args, **kwargs):
@@ -92,9 +82,12 @@ class CRUDRequest(BaseZendeskRequest):
         url = self.api._build_url(endpoint(*args, **kwargs))
         return self.api._post(url, payload)
 
-    def put(self, api_objects, *args, **kwargs):
+    def put(self, api_objects, update_many_external=False, *args, **kwargs):
         self.check_type(api_objects)
-        if isinstance(api_objects, collections.Iterable):
+
+        if update_many_external:
+            kwargs['update_many_external'] = [o.external_id for o in api_objects]
+        elif isinstance(api_objects, collections.Iterable):
             kwargs['update_many'] = True
         else:
             kwargs['id'] = api_objects.id
@@ -103,9 +96,11 @@ class CRUDRequest(BaseZendeskRequest):
         url = self.api._build_url(self.api.endpoint(*args, **kwargs))
         return self.api._put(url, payload=payload)
 
-    def delete(self, api_objects, *args, **kwargs):
+    def delete(self, api_objects, destroy_many_external=False, *args, **kwargs):
         self.check_type(api_objects)
-        if isinstance(api_objects, collections.Iterable):
+        if destroy_many_external:
+            kwargs['destroy_many_external'] = [o.external_id for o in api_objects]
+        elif isinstance(api_objects, collections.Iterable):
             kwargs['destroy_ids'] = [i.id for i in api_objects]
         else:
             kwargs['id'] = api_objects.id
@@ -118,7 +113,7 @@ class CRUDRequest(BaseZendeskRequest):
 
 class SuspendedTicketRequest(BaseZendeskRequest):
     """
-    Handle updating and deleting SuspendedTickets. 
+    Handle updating and deleting SuspendedTickets.
     """
 
     def post(self, api_objects, *args, **kwargs):
@@ -293,7 +288,7 @@ class SatisfactionRatingRequest(BaseZendeskRequest):
 
     def post(self, ticket_id, satisfaction_rating):
         payload = self.build_payload(satisfaction_rating)
-        url = self.api._build_url(EndpointFactory.satisfaction_ratings.create(id=ticket_id))
+        url = self.api._build_url(EndpointFactory('satisfaction_ratings').create(id=ticket_id))
         return self.api._post(url, payload)
 
     def put(self, api_objects, *args, **kwargs):

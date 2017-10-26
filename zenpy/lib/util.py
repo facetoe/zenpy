@@ -61,6 +61,8 @@ def as_singular(result_key):
         return re.sub('ies$', 'y', result_key)
     elif result_key.endswith('uses'):
         return re.sub("uses$", "us", result_key)
+    elif result_key.endswith('addresses'):  # Special case for '*addresses'
+        return result_key[:-2]
     elif result_key.endswith('s'):
         return result_key[:-1]
     else:
@@ -74,6 +76,8 @@ def as_plural(result_key):
     # Not at all guaranteed to work in all cases...
     if result_key.endswith('y'):
         return re.sub("y$", "ies", result_key)
+    elif result_key.endswith('address'):
+        return result_key + 'es'
     elif result_key.endswith('us'):
         return re.sub("us$", "uses", result_key)
     elif not result_key.endswith('s'):

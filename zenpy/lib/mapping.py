@@ -61,6 +61,7 @@ class ZendeskObjectMapping(object):
         'user_field': UserField,
         'organization_field': OrganizationField,
         'ticket_field': TicketField,
+        'ticket_form': TicketForm,
         'request': Request,
         'user_related': UserRelated,
         'organization_membership': OrganizationMembership,
@@ -68,8 +69,7 @@ class ZendeskObjectMapping(object):
         'sharing_agreement': SharingAgreement,
         'macro': Macro,
         'action': Action,
-        'result': None,  # result can represent many things, it is handled in format_key()
-        'macro_result': MacroResult,
+        'result': MacroResult,
         'job_status_result': JobStatusResult,
         'agentmacroreference': AgentMacroReference,
         'identity': Identity,
@@ -80,7 +80,8 @@ class ZendeskObjectMapping(object):
         'export': Export,
         'sla_policy': SlaPolicy,
         'policy_metric': PolicyMetric,
-        'definitions': Definitions
+        'definitions': Definitions,
+        'recipient_address': RecipientAddress
     }
 
     def __init__(self, api):

@@ -86,6 +86,13 @@ class PrimaryEndpoint(BaseEndpoint):
                 query = "".join([self.endpoint, '/update_many.json'])
             elif key == 'count_many':
                 query = self._many(self.endpoint, value, action='count_many.json?ids=')
+            elif key in ('external_id', 'external_ids'):
+                external_ids = [value] if not is_iterable_but_not_string(value) else value
+                query += self._many(self.endpoint, external_ids, action='show_many.json?external_ids=')
+            elif key == 'update_many_external':
+                query += self._many(self.endpoint, value, action='update_many.json?external_ids=')
+            elif key == 'destroy_many_external':
+                query += self._many(self.endpoint, value, action='destroy_many.json?external_ids=')
             elif key in ('sort_by', 'sort_order'):
                 modifiers.append((key, value))
             elif key == 'permission_set':
@@ -144,7 +151,7 @@ class IncrementalEndpoint(BaseEndpoint):
     """
 
     def __call__(self, start_time=None):
-        if not start_time:
+        if start_time is None:
             raise ZenpyException("Incremental Endoint requires a start_time parameter!")
 
         elif isinstance(start_time, datetime):
@@ -429,6 +436,7 @@ class EndpointFactory(object):
     suspended_tickets.recover = SecondaryEndpoint('suspended_tickets/%(id)s/recover.json')
     tags = PrimaryEndpoint('tags')
     ticket_fields = PrimaryEndpoint('ticket_fields')
+    ticket_forms = PrimaryEndpoint('ticket_forms')
     ticket_import = PrimaryEndpoint('imports/tickets')
     ticket_metrics = PrimaryEndpoint('ticket_metrics')
     tickets = PrimaryEndpoint('tickets',
@@ -487,6 +495,7 @@ class EndpointFactory(object):
     views.execute = SecondaryEndpoint('views/%(id)s/execute.json')
     views.export = SecondaryEndpoint('views/%(id)s/export.json')
     views.search = ViewSearchEndpoint('views/search.json?')
+    recipient_addresses = PrimaryEndpoint('recipient_addresses')
 
     def __new__(cls, endpoint_name):
         return getattr(cls, endpoint_name)

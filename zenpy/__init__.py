@@ -21,7 +21,8 @@ from zenpy.lib.api import (
     ViewApi,
     SlaPolicyApi,
     ChatApi,
-    GroupMembershipApi)
+    GroupMembershipApi,
+    RecipientAddressApi)
 from zenpy.lib.cache import ZenpyCache, cache_mapping, purge_cache
 from zenpy.lib.endpoint import EndpointFactory
 from zenpy.lib.exception import ZenpyException
@@ -132,6 +133,8 @@ class Zenpy(object):
 
         self.ticket_fields = Api(config, object_type='ticket_field')
 
+        self.ticket_forms = Api(config, object_type='ticket_form')
+
         self.ticket_import = TicketImportAPI(config)
 
         self.requests = RequestAPI(config)
@@ -141,6 +144,8 @@ class Zenpy(object):
         self.views = ViewApi(config)
 
         self.sla_policies = SlaPolicyApi(config)
+
+        self.recipient_addresses = RecipientAddressApi(config)
 
     def _init_session(self, email, token, oath_token, password, session):
         if not session:
