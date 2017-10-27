@@ -65,7 +65,12 @@ class BaseResultGenerator(collections.Iterable):
         return self
 
     def __len__(self):
-        return getattr(self, 'count', len(self.values))
+        if hasattr(self, 'count'):
+            return self.count
+        elif self.values is not None:
+            return len(self.values)
+        else:
+            return 0
 
     def __next__(self):
         return self.next()
