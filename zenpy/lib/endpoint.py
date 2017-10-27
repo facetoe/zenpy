@@ -5,7 +5,8 @@ from datetime import datetime
 from dateutil.tz import tzutc
 
 from zenpy.lib.exception import ZenpyException
-from zenpy.lib.util import is_timezone_aware, is_iterable_but_not_string
+from zenpy.lib.util import is_timezone_aware, is_iterable_but_not_string, \
+    to_unix_ts
 
 __author__ = 'facetoe'
 
@@ -153,17 +154,12 @@ class IncrementalEndpoint(BaseEndpoint):
         if start_time is None:
             raise ZenpyException("Incremental Endoint requires a start_time parameter!")
 
-        if isinstance(start_time, datetime):
-            if is_timezone_aware(start_time):
-                start_time = start_time.astimezone(tzutc())
-            else:
-                log.warning(
-                    "Non timezone-aware datetime object passed to IncrementalEndpoint. "
-                    "The Zendesk API expects UTC time, if this is not the case results will be incorrect!"
-                )
-            unix_time = time.mktime(start_time.timetuple())
+        elif isinstance(start_time, datetime):
+            unix_time = to_unix_ts(start_time)
+
         else:
             unix_time = start_time
+
         query = "start_time=%s" % str(unix_time)
         return self.endpoint + query + self._format_sideload(self.sideload, seperator='&')
 
@@ -291,7 +287,7 @@ class RequestSearchEndpoint(BaseEndpoint):
 
 
 class SatisfactionRatingEndpoint(BaseEndpoint):
-    def __call__(self, score=None, sort_order=None):
+    def __call__(self, score=None, sort_order=None, start_time=None, end_time=None):
         if sort_order not in ('asc', 'desc'):
             raise ZenpyException("sort_order must be one of (asc, desc)")
 
@@ -303,8 +299,14 @@ class SatisfactionRatingEndpoint(BaseEndpoint):
 
         if sort_order:
             result += '&sort_order={}'.format(sort_order)
-        return result
 
+        if start_time:
+            result += '&start_time={}'.format(to_unix_ts(start_time))
+
+        if end_time:
+            result += '&end_time={}'.format(to_unix_ts(end_time))
+
+        return result
 
 class MacroEndpoint(BaseEndpoint):
     def __call__(self, sort_order=None, sort_by=None, **kwargs):
