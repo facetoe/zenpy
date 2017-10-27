@@ -191,7 +191,7 @@ class UserIdentityRequest(BaseZendeskRequest):
 
     def put(self, endpoint, user, identity):
         payload = self.build_payload(identity)
-        url = self.api._build_url(endpoint(user, identity))
+        url = self.api._build_url(endpoint(user, identity.id))
         return self.api._put(url, payload=payload)
 
     def delete(self, user, identity):

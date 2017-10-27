@@ -530,7 +530,7 @@ class UserIdentityApi(Api):
             raise ZenpyException("You must pass an Identity object to this endpoint!")
         if isinstance(user, User):
             user = user.id
-        return UserIdentityRequest(self).put(self.endpoint.update, user, identity.id)
+        return UserIdentityRequest(self).put(self.endpoint.update, user, identity)
 
     def make_primary(self, user, identity):
         """
