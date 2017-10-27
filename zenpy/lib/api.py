@@ -6,7 +6,8 @@ from json import JSONEncoder
 from time import sleep, time
 
 from zenpy.lib.api_objects import User, Macro, Identity, View
-from zenpy.lib.api_objects.help_centre_objects import Section, Article, Comment, ArticleAttachment, Label, Category
+from zenpy.lib.api_objects.help_centre_objects import Section, Article, Comment, ArticleAttachment, Label, Category, \
+    Translation
 from zenpy.lib.cache import query_cache
 from zenpy.lib.exception import *
 from zenpy.lib.mapping import ZendeskObjectMapping, ChatObjectMapping, HelpCentreObjectMapping
@@ -1201,11 +1202,12 @@ class HelpCentreApiBase(Api):
         self._response_handlers = (MissingTranslationHandler,) + self._response_handlers
 
         self._object_mapping = HelpCentreObjectMapping(self)
-        self._url_template = "%(protocol)s://%(subdomain)s.zendesk.com/%(api_prefix)s/help_center%(locale)s"
+        self._url_template = "%(protocol)s://%(subdomain)s.zendesk.com/%(api_prefix)s%(locale)s"
         self.locale = ''
 
     def _process_response(self, response):
-        if get_endpoint_path(self, response).startswith('/help_center'):
+        endpoint_path = get_endpoint_path(self, response)
+        if endpoint_path.startswith('/help_center') or endpoint_path.startswith('/community'):
             object_mapping = self._object_mapping
         else:
             object_mapping = ZendeskObjectMapping(self)
@@ -1229,6 +1231,14 @@ class TranslationApi(Api):
     @extract_id(Article, Section, Category)
     def create_translation(self, help_centre_object, translation):
         return TranslationRequest(self).post(self.endpoint.create_translation, help_centre_object, translation)
+
+    @extract_id(Article, Section, Category)
+    def update_translation(self, help_centre_object, translation):
+        return TranslationRequest(self).put(self.endpoint.update_translation, help_centre_object, translation)
+
+    @extract_id(Translation)
+    def delete_translation(self, translation):
+        return TranslationRequest(self).delete(self.endpoint.delete_translation, translation)
 
 
 class ArticleApi(HelpCentreApiBase, TranslationApi):
@@ -1270,6 +1280,15 @@ class ArticleApi(HelpCentreApiBase, TranslationApi):
     @extract_id(Article)
     def labels(self, article):
         return self._query_zendesk(self.endpoint.labels, object_type='label', id=article)
+
+    @extract_id(Article)
+    def show_translation(self, article, locale):
+        url = self._build_url(self.endpoint.show_translation(article, locale))
+        return self._get(url)
+
+    def search(self, *args, **kwargs):
+        url = self._build_url(self.endpoint.search(*args, **kwargs))
+        return self._get(url)
 
 
 class CommentApi(HelpCentreApiBase):
@@ -1361,6 +1380,10 @@ class LabelApi(HelpCentreApiBase):
         return HelpCentreRequest(self).delete(self.endpoint.delete, article, label)
 
 
+class TopicApi(HelpCentreApiBase, CRUDApi):
+    pass
+
+
 class HelpCentreApi(HelpCentreApiBase):
     def __init__(self, config):
         super(HelpCentreApi, self).__init__(config, endpoint=EndpointFactory('help_centre'), object_type='help_centre')
@@ -1371,6 +1394,7 @@ class HelpCentreApi(HelpCentreApiBase):
         self.categories = CategoryApi(config, self.endpoint.categories, object_type='category')
         self.attachments = ArticleAttachmentApi(config, self.endpoint.attachments, object_type='article_attachment')
         self.labels = LabelApi(config, self.endpoint.labels, object_type='label')
+        self.topics = TopicApi(config, self.endpoint.topics, object_type='topic')
 
     def __call__(self, *args, **kwargs):
         raise NotImplementedError("Cannot directly call the HelpCentreApi!")

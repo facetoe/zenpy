@@ -1,5 +1,7 @@
 import re
 
+ZENDESK_DATE_FORMAT = "%Y-%m-%d"
+
 FIRST_CAP_REGEX = re.compile('(.)([A-Z][a-z]+)')
 ALL_CAP_REGEX = re.compile('([a-z0-9])([A-Z])')
 

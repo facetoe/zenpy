@@ -421,6 +421,17 @@ class TranslationRequest(HelpCentreRequest):
     def build_payload(self, translation):
         return {get_object_type(translation): self.api._serialize(translation)}
 
+    def put(self, endpoint, help_centre_object_id, translation):
+        if translation.locale is None:
+            raise ZenpyException("Locale can not be None when updating translation!")
+        url = self.api._build_url(endpoint(help_centre_object_id, translation.locale))
+        payload = self.build_payload(translation)
+        return self.api._put(url, payload=payload)
+
+    def delete(self, endpoint, translation):
+        url = self.api._build_url(endpoint(id=translation))
+        return self.api._delete(url)
+
 
 class HelpdeskAttachmentRequest(BaseZendeskRequest):
     def delete(self, endpoint, article_attachment):

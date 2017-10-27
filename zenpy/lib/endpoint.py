@@ -5,7 +5,7 @@ import time
 from dateutil.tz import tzutc
 
 from zenpy.lib.exception import ZenpyException
-from zenpy.lib.util import is_timezone_aware, is_iterable_but_not_string
+from zenpy.lib.util import is_timezone_aware, is_iterable_but_not_string, ZENDESK_DATE_FORMAT
 
 __author__ = 'facetoe'
 
@@ -207,8 +207,6 @@ class SearchEndpoint(BaseEndpoint):
 
     """
 
-    ZENDESK_DATE_FORMAT = "%Y-%m-%d"
-
     def __call__(self, *args, **kwargs):
 
         renamed_kwargs = dict()
@@ -216,7 +214,7 @@ class SearchEndpoint(BaseEndpoint):
         sort_order = list()
         for key, value in kwargs.items():
             if isinstance(value, datetime):
-                kwargs[key] = value.strftime(self.ZENDESK_DATE_FORMAT)
+                kwargs[key] = value.strftime(ZENDESK_DATE_FORMAT)
             elif is_iterable_but_not_string(value) and key == 'ids':
                 kwargs[key] = self._format_many(value)
 
@@ -262,7 +260,7 @@ class SearchEndpoint(BaseEndpoint):
         elif not all([isinstance(d, datetime) for d in values]):
             raise ZenpyException("*_between only works with dates!")
         key = key.replace('_between', '')
-        dates = [v.strftime(self.ZENDESK_DATE_FORMAT) for v in values]
+        dates = [v.strftime(ZENDESK_DATE_FORMAT) for v in values]
         return "%s>%s %s<%s" % (key, dates[0], key, dates[1])
 
     def format_or(self, key, values):
@@ -280,6 +278,20 @@ class RequestSearchEndpoint(BaseEndpoint):
             result.append("%s=%s" % (key, value))
         query += '&' + "&".join(result)
         return self.endpoint + query
+
+
+class HelpDeskSearchEndpoint(BaseEndpoint):
+    def __call__(self, query='', **kwargs):
+        query = 'query={}&'.format(query)
+        processed_kwargs = dict()
+        for key, value in kwargs.items():
+            if isinstance(value, datetime):
+                processed_kwargs[key] = value.strftime(ZENDESK_DATE_FORMAT)
+            elif is_iterable_but_not_string(value):
+                processed_kwargs[key] = ",".join(value)
+            else:
+                processed_kwargs[key] = value
+        return self.endpoint + query + '&'.join(("{}={}".format(k, v) for k, v in processed_kwargs.items()))
 
 
 class SatisfactionRatingEndpoint(BaseEndpoint):
@@ -489,41 +501,52 @@ class EndpointFactory(object):
     class Dummy(object): pass
 
     help_centre = Dummy()
-    help_centre.articles = PrimaryEndpoint('articles')
-    help_centre.articles.create = SecondaryEndpoint('sections/%(id)s/articles.json')
-    help_centre.articles.comments = SecondaryEndpoint('articles/%(id)s/comments.json')
-    help_centre.articles.comments_update = MultipleIDEndpoint('articles/{}/comments/{}.json')
-    help_centre.articles.comments_delete = MultipleIDEndpoint('articles/{}/comments/{}.json')
-    help_centre.articles.comment_show = MultipleIDEndpoint('articles/{}/comments/{}.json')
-    help_centre.articles.user_comments = SecondaryEndpoint('users/%(id)s/comments.json')
-    help_centre.articles.labels = SecondaryEndpoint('articles/%(id)s/labels.json')
-    help_centre.articles.translations = SecondaryEndpoint('articles/%(id)s/translations.json')
-    help_centre.articles.create_translation = SecondaryEndpoint('articles/%(id)s/translations.json')
-    help_centre.articles.missing_translations = SecondaryEndpoint('articles/%(id)s/translations/missing.json')
+    help_centre.articles = PrimaryEndpoint('help_center/articles')
+    help_centre.articles.create = SecondaryEndpoint('help_center/sections/%(id)s/articles.json')
+    help_centre.articles.comments = SecondaryEndpoint('help_center/articles/%(id)s/comments.json')
+    help_centre.articles.comments_update = MultipleIDEndpoint('help_center/articles/{}/comments/{}.json')
+    help_centre.articles.comments_delete = MultipleIDEndpoint('help_center/articles/{}/comments/{}.json')
+    help_centre.articles.comment_show = MultipleIDEndpoint('help_center/articles/{}/comments/{}.json')
+    help_centre.articles.user_comments = SecondaryEndpoint('help_center/users/%(id)s/comments.json')
+    help_centre.articles.labels = SecondaryEndpoint('help_center/articles/%(id)s/labels.json')
+    help_centre.articles.translations = SecondaryEndpoint('help_center/articles/%(id)s/translations.json')
+    help_centre.articles.create_translation = SecondaryEndpoint('help_center/articles/%(id)s/translations.json')
+    help_centre.articles.missing_translations = SecondaryEndpoint(
+        'help_center/articles/%(id)s/translations/missing.json')
+    help_centre.articles.update_translation = MultipleIDEndpoint('help_center/articles/{}/translations/{}.json')
+    help_centre.articles.show_translation = MultipleIDEndpoint('help_center/articles/{}/translations/{}.json')
+    help_centre.articles.delete_translation = SecondaryEndpoint('help_center/translations/%(id)s.json')
+    help_centre.articles.search = HelpDeskSearchEndpoint('help_center/articles/search.json?')
 
-    help_centre.labels = PrimaryEndpoint('articles/labels')
-    help_centre.labels.create = SecondaryEndpoint('articles/%(id)s/labels.json')
-    help_centre.labels.delete = MultipleIDEndpoint('articles/{}/labels/{}.json')
+    help_centre.labels = PrimaryEndpoint('help_center/articles/labels')
+    help_centre.labels.create = SecondaryEndpoint('help_center/articles/%(id)s/labels.json')
+    help_centre.labels.delete = MultipleIDEndpoint('help_center/articles/{}/labels/{}.json')
 
-    help_centre.attachments = SecondaryEndpoint('articles/%(id)s/attachments.json')
-    help_centre.attachments.inline = SecondaryEndpoint('articles/%(id)s/attachments/inline.json')
-    help_centre.attachments.block = SecondaryEndpoint('articles/%(id)s/attachments/block.json')
-    help_centre.attachments.create = SecondaryEndpoint('articles/%(id)s/attachments.json')
-    help_centre.attachments.create_unassociated = PrimaryEndpoint('articles/attachments')
-    help_centre.attachments.delete = SecondaryEndpoint('articles/attachments/%(id)s.json')
+    help_centre.attachments = SecondaryEndpoint('help_center/articles/%(id)s/attachments.json')
+    help_centre.attachments.inline = SecondaryEndpoint('help_center/articles/%(id)s/attachments/inline.json')
+    help_centre.attachments.block = SecondaryEndpoint('help_center/articles/%(id)s/attachments/block.json')
+    help_centre.attachments.create = SecondaryEndpoint('help_center/articles/%(id)s/attachments.json')
+    help_centre.attachments.create_unassociated = PrimaryEndpoint('help_center/articles/attachments')
+    help_centre.attachments.delete = SecondaryEndpoint('help_center/articles/attachments/%(id)s.json')
 
-    help_centre.categories = PrimaryEndpoint('categories')
-    help_centre.categories.articles = SecondaryEndpoint('categories/%(id)s/articles.json')
-    help_centre.categories.sections = SecondaryEndpoint('categories/%(id)s/sections.json')
-    help_centre.categories.translations = SecondaryEndpoint('categories/%(id)s/translations.json')
-    help_centre.categories.create_translation = SecondaryEndpoint('categories/%(id)s/translations.json')
-    help_centre.categories.missing_translations = SecondaryEndpoint('categories/%(id)s/translations/missing.json')
+    help_centre.categories = PrimaryEndpoint('help_center/categories')
+    help_centre.categories.articles = SecondaryEndpoint('help_center/categories/%(id)s/articles.json')
+    help_centre.categories.sections = SecondaryEndpoint('help_center/categories/%(id)s/sections.json')
+    help_centre.categories.translations = SecondaryEndpoint('help_center/categories/%(id)s/translations.json')
+    help_centre.categories.create_translation = SecondaryEndpoint('help_center/categories/%(id)s/translations.json')
+    help_centre.categories.missing_translations = SecondaryEndpoint('help_center/categories/%(id)s/translations/missing.json')
+    help_centre.categories.update_translation = MultipleIDEndpoint('help_center/categories/{}/translations/{}.json')
+    help_centre.categories.delete_translation = SecondaryEndpoint('help_center/translations/%(id)s.json')
 
-    help_centre.sections = PrimaryEndpoint('sections')
-    help_centre.sections.articles = SecondaryEndpoint('sections/%(id)s/articles.json')
-    help_centre.sections.translations = SecondaryEndpoint('sections/%(id)s/translations.json')
-    help_centre.sections.create_translation = SecondaryEndpoint('sections/%(id)s/translations.json')
-    help_centre.sections.missing_translations = SecondaryEndpoint('sections/%(id)s/translations/missing.json')
+    help_centre.sections = PrimaryEndpoint('help_center/sections')
+    help_centre.sections.articles = SecondaryEndpoint('help_center/sections/%(id)s/articles.json')
+    help_centre.sections.translations = SecondaryEndpoint('help_center/sections/%(id)s/translations.json')
+    help_centre.sections.create_translation = SecondaryEndpoint('help_center/sections/%(id)s/translations.json')
+    help_centre.sections.missing_translations = SecondaryEndpoint('help_center/sections/%(id)s/translations/missing.json')
+    help_centre.sections.update_translation = MultipleIDEndpoint('help_center/sections/{}/translations/{}.json')
+    help_centre.sections.delete_translation = SecondaryEndpoint('help_center/translations/%(id)s.json')
+
+    help_centre.topics = PrimaryEndpoint("community/topics")
 
     def __new__(cls, endpoint_name):
         return getattr(cls, endpoint_name)

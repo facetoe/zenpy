@@ -404,6 +404,85 @@ class Section(BaseObject):
             self._user_segment = user_segment
 
 
+class Topic(BaseObject):
+    def __init__(self,
+                 api=None,
+                 community_id=None,
+                 created_at=None,
+                 description=None,
+                 follower_count=None,
+                 html_url=None,
+                 id=None,
+                 name=None,
+                 position=None,
+                 updated_at=None,
+                 url=None,
+                 user_segment_id=None,
+                 **kwargs):
+
+        self.api = api
+        self.community_id = community_id
+        self.created_at = created_at
+        self.description = description
+        self.follower_count = follower_count
+        self.html_url = html_url
+        self.id = id
+        self.name = name
+        self.position = position
+        self.updated_at = updated_at
+        self.url = url
+        self.user_segment_id = user_segment_id
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def community(self):
+
+        if self.api and self.community_id:
+            return self.api._get_community(self.community_id)
+
+    @community.setter
+    def community(self, community):
+        if community:
+            self.community_id = community.id
+            self._community = community
+
+    @property
+    def created(self):
+
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
+
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created
+
+    @property
+    def updated(self):
+
+        if self.updated_at:
+            return dateutil.parser.parse(self.updated_at)
+
+    @updated.setter
+    def updated(self, updated):
+        if updated:
+            self.updated_at = updated
+
+    @property
+    def user_segment(self):
+
+        if self.api and self.user_segment_id:
+            return self.api._get_user_segment(self.user_segment_id)
+
+    @user_segment.setter
+    def user_segment(self, user_segment):
+        if user_segment:
+            self.user_segment_id = user_segment.id
+            self._user_segment = user_segment
+
+
 class Translation(BaseObject):
     def __init__(self,
                  api=None,
