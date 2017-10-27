@@ -396,5 +396,49 @@ class HelpdeskCommentRequest(BaseZendeskRequest):
         payload = self.build_payload(comment)
         return self.api._post(url, payload)
 
-    def delete(self, api_objects, *args, **kwargs):
-        pass
+    def delete(self, endpoint, article, comment):
+        url = self.api._build_url(endpoint(article, comment))
+        return self.api._delete(url)
+
+
+class HelpCentreRequest(BaseZendeskRequest):
+    def put(self, endpoint, article, api_object):
+        url = self.api._build_url(endpoint(article, api_object))
+        payload = self.build_payload(api_object)
+        return self.api._put(url, payload)
+
+    def post(self, endpoint, article, api_object):
+        url = self.api._build_url(endpoint(id=article))
+        payload = self.build_payload(api_object)
+        return self.api._post(url, payload)
+
+    def delete(self, endpoint, article, api_object):
+        url = self.api._build_url(endpoint(article, api_object))
+        return self.api._delete(url)
+
+
+class TranslationRequest(HelpCentreRequest):
+    def build_payload(self, translation):
+        return {get_object_type(translation): self.api._serialize(translation)}
+
+
+class HelpdeskAttachmentRequest(BaseZendeskRequest):
+    def delete(self, endpoint, article_attachment):
+        url = self.api._build_url(endpoint(id=article_attachment))
+        return self.api._delete(url)
+
+    def put(self, api_objects, *args, **kwargs):
+        raise NotImplementedError("You cannot update HelpCentre attachments!")
+
+    def post(self, endpoint, attachment, article=None, inline=False):
+        if article:
+            url = self.api._build_url(endpoint(id=article))
+        else:
+            url = self.api._build_url(endpoint())
+
+        if hasattr(attachment, 'read'):
+            return self.api._post(url, payload={}, files=dict(file=attachment))
+        elif os.path.isfile(attachment):
+            with open(attachment, 'rb') as fp:
+                return self.api._post(url, payload={}, files=dict(file=fp))
+        raise ValueError("Attachment is not a file-like object or valid path!")

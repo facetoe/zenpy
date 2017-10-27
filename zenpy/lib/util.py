@@ -61,3 +61,18 @@ def as_plural(result_key):
 def get_endpoint_path(api, response):
     """ Return the section of the URL from 'api/v2' to the end. """
     return response.request.url.split(api.api_prefix)[-1]
+
+
+def extract_id(*object_types):
+    def outer(func):
+        def inner(*args, **kwargs):
+            def id_of(x):
+                return x.id if type(x) in object_types else x
+
+            new_args = [id_of(arg) for arg in args]
+            new_kwargs = {k: id_of(v) for k, v in kwargs.items()}
+            return func(*new_args, **new_kwargs)
+
+        return inner
+
+    return outer

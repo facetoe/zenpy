@@ -6,13 +6,13 @@ from json import JSONEncoder
 from time import sleep, time
 
 from zenpy.lib.api_objects import User, Macro, Identity, View
-from zenpy.lib.api_objects.help_centre_objects import Section, Article, Comment
+from zenpy.lib.api_objects.help_centre_objects import Section, Article, Comment, ArticleAttachment, Label, Category
 from zenpy.lib.cache import query_cache
 from zenpy.lib.exception import *
 from zenpy.lib.mapping import ZendeskObjectMapping, ChatObjectMapping, HelpCentreObjectMapping
 from zenpy.lib.request import *
 from zenpy.lib.response import *
-from zenpy.lib.util import as_plural
+from zenpy.lib.util import as_plural, extract_id
 
 __author__ = 'facetoe'
 
@@ -61,13 +61,11 @@ class BaseApi(object):
             HTTPOKResponseHandler,
         )
 
-    def _post(self, url, payload, data=None):
-        headers = {'Content-Type': 'application/octet-stream'} if data else None
+    def _post(self, url, payload, **kwargs):
         response = self._call_api(self.session.post, url,
                                   json=self._serialize(payload),
-                                  data=data,
-                                  headers=headers,
-                                  timeout=self.timeout)
+                                  timeout=self.timeout,
+                                  **kwargs)
         return self._process_response(response)
 
     def _put(self, url, payload):
@@ -1182,21 +1180,13 @@ class ChatApi(ChatApiBase):
         super(ChatApi, self).__init__(config, endpoint=endpoint)
 
         self.accounts = ChatApiBase(config, endpoint.account, request_handler=AccountRequest)
-
         self.agents = AgentApi(config, endpoint.agents)
-
         self.visitors = ChatApiBase(config, endpoint.visitors, request_handler=VisitorRequest)
-
         self.shortcuts = ChatApiBase(config, endpoint.shortcuts)
-
         self.triggers = ChatApiBase(config, endpoint.triggers)
-
         self.bans = ChatApiBase(config, endpoint.bans)
-
         self.departments = ChatApiBase(config, endpoint.departments)
-
         self.goals = ChatApiBase(config, endpoint.goals)
-
         self.stream = ChatApiBase(config, endpoint.stream)
 
     def search(self, *args, **kwargs):
@@ -1207,6 +1197,9 @@ class ChatApi(ChatApiBase):
 class HelpCentreApiBase(Api):
     def __init__(self, config, endpoint, object_type):
         super(HelpCentreApiBase, self).__init__(config, object_type=object_type, endpoint=endpoint)
+
+        self._response_handlers = (MissingTranslationHandler,) + self._response_handlers
+
         self._object_mapping = HelpCentreObjectMapping(self)
         self._url_template = "%(protocol)s://%(subdomain)s.zendesk.com/%(api_prefix)s/help_center%(locale)s"
         self.locale = ''
@@ -1224,37 +1217,72 @@ class HelpCentreApiBase(Api):
         return super(HelpCentreApiBase, self)._build_url(endpoint, template=template)
 
 
-class ArticleApi(HelpCentreApiBase):
+class TranslationApi(Api):
+    @extract_id(Article, Section, Category)
+    def translations(self, help_centre_object):
+        return self._query_zendesk(self.endpoint.translations, object_type='translation', id=help_centre_object)
+
+    @extract_id(Article, Section, Category)
+    def missing_translations(self, help_centre_object):
+        return self._query_zendesk(self.endpoint.missing_translations, object_type='translation', id=help_centre_object)
+
+    @extract_id(Article, Section, Category)
+    def create_translation(self, help_centre_object, translation):
+        return TranslationRequest(self).post(self.endpoint.create_translation, help_centre_object, translation)
+
+
+class ArticleApi(HelpCentreApiBase, TranslationApi):
+    @extract_id(Section)
     def create(self, section, article):
-        if isinstance(section, Section):
-            section = section.id
+        """
+        Create (POST) an Article - https://developer.zendesk.com/rest_api/docs/help_center/articles#create-article
+
+        :param section: Section ID or object
+        :param article: Article to create
+        """
         return CRUDRequest(self).post(article, create=True, id=section)
 
     def update(self, article):
+        """
+        Update (PUT) and Article - https://developer.zendesk.com/rest_api/docs/help_center/articles#update-article
+
+        :param article: Article to update
+        """
         return CRUDRequest(self).put(article)
 
     def archive(self, article):
+        """
+        Archive (DELETE) an Article - https://developer.zendesk.com/rest_api/docs/help_center/articles#archive-article
+
+        :param article: Article to archive
+        """
         return CRUDRequest(self).delete(article)
 
+    @extract_id(Article)
     def comments(self, article):
-        if isinstance(article, Article):
-            article = article.id
+        """
+        Retrieve comments for an article
+
+        :param article: Article ID or object
+        """
         return self._query_zendesk(self.endpoint.comments, object_type='comment', id=article)
+
+    @extract_id(Article)
+    def labels(self, article):
+        return self._query_zendesk(self.endpoint.labels, object_type='label', id=article)
 
 
 class CommentApi(HelpCentreApiBase):
-    def __call__(self, article, comment):
-        if isinstance(article, Article):
-            article = article.id
-        if isinstance(comment, Comment):
-            comment = comment.id
+    def __call__(self, *args, **kwargs):
+        raise ZenpyException("You cannot directly call this Api!")
 
+    @extract_id(Article, Comment)
+    def show(self, article, comment):
         url = self._build_url(self.endpoint.comment_show(article, comment))
         return self._get(url)
 
+    @extract_id(Article)
     def create(self, article, comment):
-        if isinstance(article, Article):
-            article = article.id
         if comment.locale is None:
             raise ZenpyException(
                 "locale is required when creating comments - "
@@ -1262,13 +1290,20 @@ class CommentApi(HelpCentreApiBase):
             )
         return HelpdeskCommentRequest(self).post(self.endpoint.comments, article, comment)
 
+    @extract_id(Article)
     def update(self, article, comment):
-        if isinstance(article, Article):
-            article = article.id
         return HelpdeskCommentRequest(self).put(self.endpoint.comments_update, article, comment)
 
+    @extract_id(Article, Comment)
+    def delete(self, article, comment):
+        return HelpdeskCommentRequest(self).delete(self.endpoint.comments_delete, article, comment)
 
-class CategoryApi(HelpCentreApiBase, CRUDApi):
+    @extract_id(User)
+    def user_comments(self, user):
+        return self._query_zendesk(self.endpoint.user_comments, object_type='comment', id=user)
+
+
+class CategoryApi(HelpCentreApiBase, CRUDApi, TranslationApi):
     def articles(self, category_id):
         return self._query_zendesk(self.endpoint.articles, 'article', id=category_id)
 
@@ -1276,9 +1311,54 @@ class CategoryApi(HelpCentreApiBase, CRUDApi):
         return self._query_zendesk(self.endpoint.sections, 'section', id=category_id)
 
 
-class SectionApi(HelpCentreApiBase, CRUDApi):
-    def articles(self, section_id):
-        return self._query_zendesk(self.endpoint.articles, 'article', id=section_id)
+class SectionApi(HelpCentreApiBase, CRUDApi, TranslationApi):
+    @extract_id(Section)
+    def articles(self, section):
+        return self._query_zendesk(self.endpoint.articles, 'article', id=section)
+
+
+class ArticleAttachmentApi(HelpCentreApiBase):
+    @extract_id(Article)
+    def __call__(self, article):
+        return self._query_zendesk(self.endpoint, 'article_attachment', id=article)
+
+    @extract_id(Article)
+    def inline(self, article):
+        return self._query_zendesk(self.endpoint.inline, 'article_attachment', id=article)
+
+    @extract_id(Article)
+    def block(self, article):
+        return self._query_zendesk(self.endpoint.block, 'article_attachment', id=article)
+
+    @extract_id(ArticleAttachment)
+    def show(self, attachment):
+        return self._query_zendesk(self.endpoint, 'article_attachment', id=attachment)
+
+    @extract_id(Article)
+    def create(self, article, attachment, inline=False):
+        return HelpdeskAttachmentRequest(self).post(self.endpoint.create,
+                                                    article=article,
+                                                    attachment=attachment,
+                                                    inline=inline)
+
+    def create_unassociated(self, attachment, inline=False):
+        return HelpdeskAttachmentRequest(self).post(self.endpoint.create_unassociated,
+                                                    attachment=attachment,
+                                                    inline=inline)
+
+    @extract_id(ArticleAttachment)
+    def delete(self, article_attachment):
+        return HelpdeskAttachmentRequest(self).delete(self.endpoint.delete, article_attachment)
+
+
+class LabelApi(HelpCentreApiBase):
+    @extract_id(Article)
+    def create(self, article, label):
+        return HelpCentreRequest(self).post(self.endpoint.create, article, label)
+
+    @extract_id(Article, Label)
+    def delete(self, article, label):
+        return HelpCentreRequest(self).delete(self.endpoint.delete, article, label)
 
 
 class HelpCentreApi(HelpCentreApiBase):
@@ -1286,14 +1366,11 @@ class HelpCentreApi(HelpCentreApiBase):
         super(HelpCentreApi, self).__init__(config, endpoint=EndpointFactory('help_centre'), object_type='help_centre')
 
         self.articles = ArticleApi(config, self.endpoint.articles, object_type='article')
+        self.comments = CommentApi(config, self.endpoint.articles, object_type='comment')
         self.sections = SectionApi(config, self.endpoint.sections, object_type='section')
         self.categories = CategoryApi(config, self.endpoint.categories, object_type='category')
-        self.comments = CommentApi(config, self.endpoint.articles, object_type='comment')
+        self.attachments = ArticleAttachmentApi(config, self.endpoint.attachments, object_type='article_attachment')
+        self.labels = LabelApi(config, self.endpoint.labels, object_type='label')
 
     def __call__(self, *args, **kwargs):
         raise NotImplementedError("Cannot directly call the HelpCentreApi!")
-
-    def comments(self, user):
-        if isinstance(user, User):
-            user = user.id
-        return self._query_zendesk(self.endpoint.user_comments, object_type='comment', id=user)

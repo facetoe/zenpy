@@ -101,6 +101,43 @@ class Article(BaseObject):
             self.updated_at = updated
 
 
+class ArticleAttachment(BaseObject):
+    def __init__(self,
+                 api=None,
+                 article_id=None,
+                 content_type=None,
+                 content_url=None,
+                 file_name=None,
+                 id=None,
+                 inline=None,
+                 size=None,
+                 **kwargs):
+
+        self.api = api
+        self.article_id = article_id
+        self.content_type = content_type
+        self.content_url = content_url
+        self.file_name = file_name
+        self.id = id
+        self.inline = inline
+        self.size = size
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def article(self):
+
+        if self.api and self.article_id:
+            return self.api._get_article(self.article_id)
+
+    @article.setter
+    def article(self, article):
+        if article:
+            self.article_id = article.id
+            self._article = article
+
+
 class Category(BaseObject):
     def __init__(self,
                  api=None,
@@ -237,6 +274,49 @@ class Comment(BaseObject):
             self.updated_at = updated
 
 
+class Label(BaseObject):
+    def __init__(self,
+                 api=None,
+                 created_at=None,
+                 id=None,
+                 name=None,
+                 updated_at=None,
+                 url=None,
+                 **kwargs):
+
+        self.api = api
+        self.created_at = created_at
+        self.id = id
+        self.name = name
+        self.updated_at = updated_at
+        self.url = url
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def created(self):
+
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
+
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created
+
+    @property
+    def updated(self):
+
+        if self.updated_at:
+            return dateutil.parser.parse(self.updated_at)
+
+    @updated.setter
+    def updated(self, updated):
+        if updated:
+            self.updated_at = updated
+
+
 class Section(BaseObject):
     def __init__(self,
                  api=None,
@@ -322,3 +402,102 @@ class Section(BaseObject):
         if user_segment:
             self.user_segment_id = user_segment.id
             self._user_segment = user_segment
+
+
+class Translation(BaseObject):
+    def __init__(self,
+                 api=None,
+                 body=None,
+                 created_at=None,
+                 created_by_id=None,
+                 draft=None,
+                 hidden=None,
+                 html_url=None,
+                 id=None,
+                 locale=None,
+                 outdated=None,
+                 source_id=None,
+                 source_type=None,
+                 title=None,
+                 updated_at=None,
+                 updated_by_id=None,
+                 url=None,
+                 **kwargs):
+
+        self.api = api
+        self.body = body
+        self.created_at = created_at
+        self.created_by_id = created_by_id
+        self.draft = draft
+        self.hidden = hidden
+        self.html_url = html_url
+        self.id = id
+        self.locale = locale
+        self.outdated = outdated
+        self.source_id = source_id
+        self.source_type = source_type
+        self.title = title
+        self.updated_at = updated_at
+        self.updated_by_id = updated_by_id
+        self.url = url
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def created(self):
+
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
+
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created
+
+    @property
+    def created_by(self):
+
+        if self.api and self.created_by_id:
+            return self.api._get_created_by(self.created_by_id)
+
+    @created_by.setter
+    def created_by(self, created_by):
+        if created_by:
+            self.created_by_id = created_by.id
+            self._created_by = created_by
+
+    @property
+    def source(self):
+
+        if self.api and self.source_id:
+            return self.api._get_source(self.source_id)
+
+    @source.setter
+    def source(self, source):
+        if source:
+            self.source_id = source.id
+            self._source = source
+
+    @property
+    def updated(self):
+
+        if self.updated_at:
+            return dateutil.parser.parse(self.updated_at)
+
+    @updated.setter
+    def updated(self, updated):
+        if updated:
+            self.updated_at = updated
+
+    @property
+    def updated_by(self):
+
+        if self.api and self.updated_by_id:
+            return self.api._get_updated_by(self.updated_by_id)
+
+    @updated_by.setter
+    def updated_by(self, updated_by):
+        if updated_by:
+            self.updated_by_id = updated_by.id
+            self._updated_by = updated_by

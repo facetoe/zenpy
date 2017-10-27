@@ -87,6 +87,8 @@ class PrimaryEndpoint(BaseEndpoint):
                 query += self._many(self.endpoint, value, action='update_many.json?external_ids=')
             elif key == 'destroy_many_external':
                 query += self._many(self.endpoint, value, action='destroy_many.json?external_ids=')
+            elif key == 'label_names':
+                query += "label_names={}".format(",".join(value))
             elif key in ('sort_by', 'sort_order'):
                 modifiers.append((key, value))
             elif key == 'permission_set':
@@ -491,14 +493,37 @@ class EndpointFactory(object):
     help_centre.articles.create = SecondaryEndpoint('sections/%(id)s/articles.json')
     help_centre.articles.comments = SecondaryEndpoint('articles/%(id)s/comments.json')
     help_centre.articles.comments_update = MultipleIDEndpoint('articles/{}/comments/{}.json')
+    help_centre.articles.comments_delete = MultipleIDEndpoint('articles/{}/comments/{}.json')
     help_centre.articles.comment_show = MultipleIDEndpoint('articles/{}/comments/{}.json')
+    help_centre.articles.user_comments = SecondaryEndpoint('users/%(id)s/comments.json')
+    help_centre.articles.labels = SecondaryEndpoint('articles/%(id)s/labels.json')
+    help_centre.articles.translations = SecondaryEndpoint('articles/%(id)s/translations.json')
+    help_centre.articles.create_translation = SecondaryEndpoint('articles/%(id)s/translations.json')
+    help_centre.articles.missing_translations = SecondaryEndpoint('articles/%(id)s/translations/missing.json')
+
+    help_centre.labels = PrimaryEndpoint('articles/labels')
+    help_centre.labels.create = SecondaryEndpoint('articles/%(id)s/labels.json')
+    help_centre.labels.delete = MultipleIDEndpoint('articles/{}/labels/{}.json')
+
+    help_centre.attachments = SecondaryEndpoint('articles/%(id)s/attachments.json')
+    help_centre.attachments.inline = SecondaryEndpoint('articles/%(id)s/attachments/inline.json')
+    help_centre.attachments.block = SecondaryEndpoint('articles/%(id)s/attachments/block.json')
+    help_centre.attachments.create = SecondaryEndpoint('articles/%(id)s/attachments.json')
+    help_centre.attachments.create_unassociated = PrimaryEndpoint('articles/attachments')
+    help_centre.attachments.delete = SecondaryEndpoint('articles/attachments/%(id)s.json')
+
     help_centre.categories = PrimaryEndpoint('categories')
     help_centre.categories.articles = SecondaryEndpoint('categories/%(id)s/articles.json')
     help_centre.categories.sections = SecondaryEndpoint('categories/%(id)s/sections.json')
+    help_centre.categories.translations = SecondaryEndpoint('categories/%(id)s/translations.json')
+    help_centre.categories.create_translation = SecondaryEndpoint('categories/%(id)s/translations.json')
+    help_centre.categories.missing_translations = SecondaryEndpoint('categories/%(id)s/translations/missing.json')
+
     help_centre.sections = PrimaryEndpoint('sections')
     help_centre.sections.articles = SecondaryEndpoint('sections/%(id)s/articles.json')
-
-    help_centre.user_comments = SecondaryEndpoint('users/%(id)s/comments.json')
+    help_centre.sections.translations = SecondaryEndpoint('sections/%(id)s/translations.json')
+    help_centre.sections.create_translation = SecondaryEndpoint('sections/%(id)s/translations.json')
+    help_centre.sections.missing_translations = SecondaryEndpoint('sections/%(id)s/translations/missing.json')
 
     def __new__(cls, endpoint_name):
         return getattr(cls, endpoint_name)

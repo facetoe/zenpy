@@ -169,8 +169,7 @@ class Zenpy(object):
             else:
                 raise ZenpyException("Invalid arguments to _init_session()!")
 
-        headers = {'Content-type': 'application/json',
-                   'User-Agent': 'Zenpy/1.2'}
+        headers = {'User-Agent': 'Zenpy/1.2'}
         session.headers.update(headers)
         return session
 

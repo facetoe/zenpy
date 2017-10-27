@@ -398,3 +398,15 @@ class GoalResponseHandler(ChatApiResponseHandler):
     @staticmethod
     def applies_to(api, response):
         return get_endpoint_path(api, response).startswith('/goals')
+
+
+class MissingTranslationHandler(ResponseHandler):
+    @staticmethod
+    def applies_to(api, response):
+        return 'translations/missing.json' in get_endpoint_path(api, response)
+
+    def build(self, response):
+        return self.deserialize(response.json())
+
+    def deserialize(self, response_json):
+        return response_json['locales']

@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 class BaseResultGenerator(collections.Iterable):
     """
     Base class for result generators. Subclasses should implement process_page()
-    and return a list of results. 
+    and return a list of results.
     """
 
     def __init__(self, response_handler, response_json):
@@ -65,7 +65,7 @@ class BaseResultGenerator(collections.Iterable):
         return self
 
     def __len__(self):
-        return self.count
+        return getattr(self, 'count', len(self.values))
 
     def __next__(self):
         return self.next()
@@ -113,7 +113,7 @@ class SearchResultGenerator(BaseResultGenerator):
 
 class ChatResultGenerator(BaseResultGenerator):
     """
-    Generator for ChatApi objects 
+    Generator for ChatApi objects
     """
 
     def process_page(self):
