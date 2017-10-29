@@ -411,6 +411,11 @@ class EndpointFactory(object):
     macros = MacroEndpoint('macros', sideload=['app_installation', 'categories', 'permissions', 'usage_1h', 'usage_24h',
                                                'usage_7d', 'usage_30d'])
     macros.apply = SecondaryEndpoint('macros/%(id)s/apply.json')
+
+
+    nps = PrimaryEndpoint('nps')
+    nps.recipients_incremental = IncrementalEndpoint('nps/incremental/recipients.json?')
+    nps.responses_incremental = IncrementalEndpoint('nps/incremental/responses.json?')
     organization_memberships = PrimaryEndpoint('organization_memberships')
     organizations = PrimaryEndpoint('organizations', ['abilities'])
     organizations.external = SecondaryEndpoint('organizations/search.json?external_id=%(id)s')
