@@ -1204,3 +1204,22 @@ class ChatApi(ChatApiBase):
     def search(self, *args, **kwargs):
         url = self._build_url(self.endpoint.search(*args, **kwargs))
         return self._get(url)
+
+
+class NpsApi(Api):
+    def __init__(self, config):
+        super(NpsApi, self).__init__(config, object_type='nps')
+    
+    def recipients_incremental(self, start_time):
+        """
+        Retrieve NPS Recipients incremental
+        :param start_time: time to retrieve events from.
+        """
+        return self._query_zendesk(self.endpoint.recipients_incremental, 'recipients', start_time=start_time)
+
+    def responses_incremental(self, start_time):
+        """
+        Retrieve NPS Responses incremental
+        :param start_time: time to retrieve events from.
+        """
+        return self._query_zendesk(self.endpoint.responses_incremental, 'responses', start_time=start_time)
