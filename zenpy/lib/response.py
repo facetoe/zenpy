@@ -269,6 +269,21 @@ class SlaPolicyResponseHandler(GenericZendeskResponseHandler):
         raise ZenpyException("Could not handle response: {}".format(response_json))
 
 
+class RequestCommentResponseHandler(GenericZendeskResponseHandler):
+    @staticmethod
+    def applies_to(api, response):
+        endpoint_path = get_endpoint_path(api, response)
+        return endpoint_path.startswith('/requests') and endpoint_path.endswith('comments.json')
+
+    def deserialize(self, response_json):
+        return super(RequestCommentResponseHandler, self).deserialize(response_json)
+
+    def build(self, response):
+        response_json = response.json()
+        response_objects = self.deserialize(response_json)
+        return ZendeskResultGenerator(self, response_json, response_objects['comments'], object_type='comment')
+
+
 class ChatResponseHandler(ResponseHandler):
     """ Handles Chat responses. """
 

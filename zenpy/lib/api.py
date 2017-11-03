@@ -56,6 +56,7 @@ class BaseApi(object):
             CombinationResponseHandler,
             ViewResponseHandler,
             SlaPolicyResponseHandler,
+            RequestCommentResponseHandler,
             GenericZendeskResponseHandler,
             HTTPOKResponseHandler,
         )
