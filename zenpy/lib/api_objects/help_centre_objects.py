@@ -317,6 +317,97 @@ class Label(BaseObject):
             self.updated_at = updated
 
 
+class Post(BaseObject):
+    def __init__(self,
+                 api=None,
+                 author_id=None,
+                 closed=None,
+                 comment_count=None,
+                 created_at=None,
+                 details=None,
+                 featured=None,
+                 follower_count=None,
+                 html_url=None,
+                 id=None,
+                 pinned=None,
+                 status=None,
+                 title=None,
+                 topic_id=None,
+                 updated_at=None,
+                 url=None,
+                 vote_count=None,
+                 vote_sum=None,
+                 **kwargs):
+
+        self.api = api
+        self.author_id = author_id
+        self.closed = closed
+        self.comment_count = comment_count
+        self.created_at = created_at
+        self.details = details
+        self.featured = featured
+        self.follower_count = follower_count
+        self.html_url = html_url
+        self.id = id
+        self.pinned = pinned
+        self.status = status
+        self.title = title
+        self.topic_id = topic_id
+        self.updated_at = updated_at
+        self.url = url
+        self.vote_count = vote_count
+        self.vote_sum = vote_sum
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def author(self):
+
+        if self.api and self.author_id:
+            return self.api._get_user(self.author_id)
+
+    @author.setter
+    def author(self, author):
+        if author:
+            self.author_id = author.id
+            self._author = author
+
+    @property
+    def created(self):
+
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
+
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created
+
+    @property
+    def topic(self):
+
+        if self.api and self.topic_id:
+            return self.api._get_topic(self.topic_id)
+
+    @topic.setter
+    def topic(self, topic):
+        if topic:
+            self.topic_id = topic.id
+            self._topic = topic
+
+    @property
+    def updated(self):
+
+        if self.updated_at:
+            return dateutil.parser.parse(self.updated_at)
+
+    @updated.setter
+    def updated(self, updated):
+        if updated:
+            self.updated_at = updated
+
+
 class Section(BaseObject):
     def __init__(self,
                  api=None,
@@ -402,6 +493,77 @@ class Section(BaseObject):
         if user_segment:
             self.user_segment_id = user_segment.id
             self._user_segment = user_segment
+
+
+class Subscription(BaseObject):
+    def __init__(self,
+                 api=None,
+                 content_id=None,
+                 created_at=None,
+                 id=None,
+                 locale=None,
+                 updated_at=None,
+                 url=None,
+                 user_id=None,
+                 **kwargs):
+
+        self.api = api
+        self.content_id = content_id
+        self.created_at = created_at
+        self.id = id
+        self.locale = locale
+        self.updated_at = updated_at
+        self.url = url
+        self.user_id = user_id
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def content(self):
+
+        if self.api and self.content_id:
+            return self.api._get_content(self.content_id)
+
+    @content.setter
+    def content(self, content):
+        if content:
+            self.content_id = content.id
+            self._content = content
+
+    @property
+    def created(self):
+
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
+
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created
+
+    @property
+    def updated(self):
+
+        if self.updated_at:
+            return dateutil.parser.parse(self.updated_at)
+
+    @updated.setter
+    def updated(self, updated):
+        if updated:
+            self.updated_at = updated
+
+    @property
+    def user(self):
+
+        if self.api and self.user_id:
+            return self.api._get_user(self.user_id)
+
+    @user.setter
+    def user(self, user):
+        if user:
+            self.user_id = user.id
+            self._user = user
 
 
 class Topic(BaseObject):

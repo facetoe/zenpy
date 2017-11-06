@@ -417,6 +417,18 @@ class HelpCentreRequest(BaseZendeskRequest):
         return self.api._delete(url)
 
 
+class PostCommentRequest(HelpCentreRequest):
+    def put(self, endpoint, post, comment):
+        url = self.api._build_url(endpoint(post, comment.id))
+        payload = self.build_payload(comment)
+        return self.api._put(url, payload)
+
+
+class SubscriptionRequest(HelpCentreRequest):
+    def build_payload(self, translation):
+        return {get_object_type(translation): self.api._serialize(translation)}
+
+
 class TranslationRequest(HelpCentreRequest):
     def build_payload(self, translation):
         return {get_object_type(translation): self.api._serialize(translation)}

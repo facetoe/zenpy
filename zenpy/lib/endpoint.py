@@ -89,6 +89,8 @@ class PrimaryEndpoint(BaseEndpoint):
                 query += self._many(self.endpoint, value, action='destroy_many.json?external_ids=')
             elif key == 'label_names':
                 query += "label_names={}".format(",".join(value))
+            elif key == 'filter_by':
+                query += 'filter_by={}'.format(value)
             elif key in ('sort_by', 'sort_order'):
                 modifiers.append((key, value))
             elif key == 'permission_set':
@@ -517,6 +519,8 @@ class EndpointFactory(object):
     help_centre.articles.show_translation = MultipleIDEndpoint('help_center/articles/{}/translations/{}.json')
     help_centre.articles.delete_translation = SecondaryEndpoint('help_center/translations/%(id)s.json')
     help_centre.articles.search = HelpDeskSearchEndpoint('help_center/articles/search.json?')
+    help_centre.articles.subscriptions = SecondaryEndpoint('help_center/articles/%(id)s/subscriptions.json')
+    help_centre.articles.subscriptions_delete = MultipleIDEndpoint('help_center/articles/{}/subscriptions/{}.json')
 
     help_centre.labels = PrimaryEndpoint('help_center/articles/labels')
     help_centre.labels.create = SecondaryEndpoint('help_center/articles/%(id)s/labels.json')
@@ -534,7 +538,8 @@ class EndpointFactory(object):
     help_centre.categories.sections = SecondaryEndpoint('help_center/categories/%(id)s/sections.json')
     help_centre.categories.translations = SecondaryEndpoint('help_center/categories/%(id)s/translations.json')
     help_centre.categories.create_translation = SecondaryEndpoint('help_center/categories/%(id)s/translations.json')
-    help_centre.categories.missing_translations = SecondaryEndpoint('help_center/categories/%(id)s/translations/missing.json')
+    help_centre.categories.missing_translations = SecondaryEndpoint(
+        'help_center/categories/%(id)s/translations/missing.json')
     help_centre.categories.update_translation = MultipleIDEndpoint('help_center/categories/{}/translations/{}.json')
     help_centre.categories.delete_translation = SecondaryEndpoint('help_center/translations/%(id)s.json')
 
@@ -542,11 +547,26 @@ class EndpointFactory(object):
     help_centre.sections.articles = SecondaryEndpoint('help_center/sections/%(id)s/articles.json')
     help_centre.sections.translations = SecondaryEndpoint('help_center/sections/%(id)s/translations.json')
     help_centre.sections.create_translation = SecondaryEndpoint('help_center/sections/%(id)s/translations.json')
-    help_centre.sections.missing_translations = SecondaryEndpoint('help_center/sections/%(id)s/translations/missing.json')
+    help_centre.sections.missing_translations = SecondaryEndpoint(
+        'help_center/sections/%(id)s/translations/missing.json')
     help_centre.sections.update_translation = MultipleIDEndpoint('help_center/sections/{}/translations/{}.json')
     help_centre.sections.delete_translation = SecondaryEndpoint('help_center/translations/%(id)s.json')
+    help_centre.sections.subscriptions = SecondaryEndpoint('help_center/sections/%(id)s/subscriptions.json')
+    help_centre.sections.subscriptions_delete = MultipleIDEndpoint('help_center/sections/{}/subscriptions/{}.json')
 
     help_centre.topics = PrimaryEndpoint("community/topics")
+    help_centre.topics.posts = SecondaryEndpoint('community/topics/%(id)s/posts.json')
+    help_centre.topics.subscriptions = SecondaryEndpoint('community/topics/%(id)s/subscriptions.json')
+    help_centre.topics.subscriptions_delete = MultipleIDEndpoint('community/topics/{}/subscriptions/{}.json')
+
+    help_centre.posts = PrimaryEndpoint('community/posts', sideload=['users', 'topics'])
+    help_centre.posts.subscriptions = SecondaryEndpoint('community/posts/%(id)s/subscriptions.json')
+    help_centre.posts.subscriptions_delete = MultipleIDEndpoint('community/posts/{}/subscriptions/{}.json')
+
+    help_centre.post_comments = SecondaryEndpoint('community/posts/%(id)s/comments.json')
+    help_centre.post_comments.delete = MultipleIDEndpoint('community/posts/{}/comments/{}.json')
+    help_centre.post_comments.update = MultipleIDEndpoint('community/posts/{}/comments/{}.json')
+
 
     def __new__(cls, endpoint_name):
         return getattr(cls, endpoint_name)

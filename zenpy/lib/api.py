@@ -7,7 +7,7 @@ from time import sleep, time
 
 from zenpy.lib.api_objects import User, Macro, Identity, View
 from zenpy.lib.api_objects.help_centre_objects import Section, Article, Comment, ArticleAttachment, Label, Category, \
-    Translation
+    Translation, Topic, Post, Subscription
 from zenpy.lib.cache import query_cache
 from zenpy.lib.exception import *
 from zenpy.lib.mapping import ZendeskObjectMapping, ChatObjectMapping, HelpCentreObjectMapping
@@ -1241,7 +1241,21 @@ class TranslationApi(Api):
         return TranslationRequest(self).delete(self.endpoint.delete_translation, translation)
 
 
-class ArticleApi(HelpCentreApiBase, TranslationApi):
+class SubscriptionApi(Api):
+    @extract_id(Article, Section, Post, Topic)
+    def subscriptions(self, help_centre_object):
+        return self._query_zendesk(self.endpoint.subscriptions, object_type='subscriptions', id=help_centre_object)
+
+    @extract_id(Article, Section, Post, Topic)
+    def create_subscription(self, help_centre_object, subscription):
+        return SubscriptionRequest(self).post(self.endpoint.subscriptions, help_centre_object, subscription)
+
+    @extract_id(Article, Section, Post, Topic, Subscription)
+    def delete_subscription(self, help_centre_object, subscription):
+        return SubscriptionRequest(self).delete(self.endpoint.subscriptions_delete, help_centre_object, subscription)
+
+
+class ArticleApi(HelpCentreApiBase, TranslationApi, SubscriptionApi):
     @extract_id(Section)
     def create(self, section, article):
         """
@@ -1330,13 +1344,13 @@ class CategoryApi(HelpCentreApiBase, CRUDApi, TranslationApi):
         return self._query_zendesk(self.endpoint.sections, 'section', id=category_id)
 
 
-class SectionApi(HelpCentreApiBase, CRUDApi, TranslationApi):
+class SectionApi(HelpCentreApiBase, CRUDApi, TranslationApi, SubscriptionApi):
     @extract_id(Section)
     def articles(self, section):
         return self._query_zendesk(self.endpoint.articles, 'article', id=section)
 
 
-class ArticleAttachmentApi(HelpCentreApiBase):
+class ArticleAttachmentApi(HelpCentreApiBase, SubscriptionApi):
     @extract_id(Article)
     def __call__(self, article):
         return self._query_zendesk(self.endpoint, 'article_attachment', id=article)
@@ -1380,8 +1394,33 @@ class LabelApi(HelpCentreApiBase):
         return HelpCentreRequest(self).delete(self.endpoint.delete, article, label)
 
 
-class TopicApi(HelpCentreApiBase, CRUDApi):
+class TopicApi(HelpCentreApiBase, CRUDApi, SubscriptionApi):
+    @extract_id(Topic)
+    def posts(self, topic):
+        url = self._build_url(self.endpoint.posts(id=topic))
+        return self._get(url)
+
+
+class PostApi(HelpCentreApiBase, CRUDApi, SubscriptionApi):
     pass
+
+
+class PostCommentApi(HelpCentreApiBase):
+    @extract_id(Post)
+    def __call__(self, post):
+        return super(PostCommentApi, self).__call__(id=post)
+
+    @extract_id(Post)
+    def create(self, post, comment):
+        return PostCommentRequest(self).post(self.endpoint, post, comment)
+
+    @extract_id(Post)
+    def update(self, post, comment):
+        return PostCommentRequest(self).put(self.endpoint.update, post, comment)
+
+    @extract_id(Post, Comment)
+    def delete(self, post, comment):
+        return PostCommentRequest(self).delete(self.endpoint.delete, post, comment)
 
 
 class HelpCentreApi(HelpCentreApiBase):
@@ -1395,6 +1434,8 @@ class HelpCentreApi(HelpCentreApiBase):
         self.attachments = ArticleAttachmentApi(config, self.endpoint.attachments, object_type='article_attachment')
         self.labels = LabelApi(config, self.endpoint.labels, object_type='label')
         self.topics = TopicApi(config, self.endpoint.topics, object_type='topic')
+        self.posts = PostApi(config, self.endpoint.posts, object_type='post')
+        self.post_comments = PostCommentApi(config, self.endpoint.post_comments, object_type='comment')
 
     def __call__(self, *args, **kwargs):
         raise NotImplementedError("Cannot directly call the HelpCentreApi!")
