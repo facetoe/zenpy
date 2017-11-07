@@ -521,6 +521,12 @@ class EndpointFactory(object):
     help_centre.articles.search = HelpDeskSearchEndpoint('help_center/articles/search.json?')
     help_centre.articles.subscriptions = SecondaryEndpoint('help_center/articles/%(id)s/subscriptions.json')
     help_centre.articles.subscriptions_delete = MultipleIDEndpoint('help_center/articles/{}/subscriptions/{}.json')
+    help_centre.articles.votes = SecondaryEndpoint('help_center//articles/%(id)s/votes.json')
+    help_centre.articles.votes.up = SecondaryEndpoint('help_center/articles/%(id)s/up.json')
+    help_centre.articles.votes.down = SecondaryEndpoint('help_center/articles/%(id)s/down.json')
+    help_centre.articles.comment_votes = MultipleIDEndpoint('help_center/articles/{}/comments/{}/votes.json')
+    help_centre.articles.comment_votes.up = MultipleIDEndpoint('help_center/articles/{}/comments/{}/up.json')
+    help_centre.articles.comment_votes.down = MultipleIDEndpoint('help_center/articles/{}/comments/{}/down.json')
 
     help_centre.labels = PrimaryEndpoint('help_center/articles/labels')
     help_centre.labels.create = SecondaryEndpoint('help_center/articles/%(id)s/labels.json')
@@ -563,10 +569,16 @@ class EndpointFactory(object):
     help_centre.posts.subscriptions = SecondaryEndpoint('community/posts/%(id)s/subscriptions.json')
     help_centre.posts.subscriptions_delete = MultipleIDEndpoint('community/posts/{}/subscriptions/{}.json')
 
-    help_centre.post_comments = SecondaryEndpoint('community/posts/%(id)s/comments.json')
-    help_centre.post_comments.delete = MultipleIDEndpoint('community/posts/{}/comments/{}.json')
-    help_centre.post_comments.update = MultipleIDEndpoint('community/posts/{}/comments/{}.json')
+    help_centre.posts.comments = SecondaryEndpoint('community/posts/%(id)s/comments.json')
+    help_centre.posts.comments.delete = MultipleIDEndpoint('community/posts/{}/comments/{}.json')
+    help_centre.posts.comments.update = MultipleIDEndpoint('community/posts/{}/comments/{}.json')
 
+    help_centre.posts.votes = SecondaryEndpoint('community/posts/%(id)s/votes.json')
+    help_centre.posts.votes.up = SecondaryEndpoint('community/posts/%(id)s/up.json')
+    help_centre.posts.votes.down = SecondaryEndpoint('community/posts/%(id)s/down.json')
+    help_centre.posts.comments.comment_votes = MultipleIDEndpoint('community/posts/{}/comments/{}/votes.json')
+    help_centre.posts.comments.comment_votes.up = MultipleIDEndpoint('community/posts/{}/comments/{}/up.json')
+    help_centre.posts.comments.comment_votes.down = MultipleIDEndpoint('community/posts/{}/comments/{}/down.json')
 
     def __new__(cls, endpoint_name):
         return getattr(cls, endpoint_name)

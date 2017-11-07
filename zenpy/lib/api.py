@@ -1255,7 +1255,41 @@ class SubscriptionApi(Api):
         return SubscriptionRequest(self).delete(self.endpoint.subscriptions_delete, help_centre_object, subscription)
 
 
-class ArticleApi(HelpCentreApiBase, TranslationApi, SubscriptionApi):
+class VoteApi(Api):
+    @extract_id(Article, Post, Comment)
+    def votes(self, help_centre_object):
+        url = self._build_url(self.endpoint.votes(id=help_centre_object))
+        return self._get(url)
+
+    @extract_id(Article, Post, Comment)
+    def vote_up(self, help_centre_object):
+        url = self._build_url(self.endpoint.votes.up(id=help_centre_object))
+        return self._post(url, payload={})
+
+    @extract_id(Article, Post, Comment)
+    def vote_down(self, help_centre_object):
+        url = self._build_url(self.endpoint.votes.down(id=help_centre_object))
+        return self._post(url, payload={})
+
+
+class VoteCommentApi(Api):
+    @extract_id(Article, Post, Comment)
+    def comment_votes(self, help_centre_object, comment):
+        url = self._build_url(self.endpoint.comment_votes(help_centre_object, comment))
+        return self._get(url)
+
+    @extract_id(Article, Post, Comment)
+    def vote_comment_up(self, help_centre_object, comment):
+        url = self._build_url(self.endpoint.comment_votes.up(help_centre_object, comment))
+        return self._post(url, payload={})
+
+    @extract_id(Article, Post, Comment)
+    def vote_comment_down(self, help_centre_object, comment):
+        url = self._build_url(self.endpoint.comment_votes.down(help_centre_object, comment))
+        return self._post(url, payload={})
+
+
+class ArticleApi(HelpCentreApiBase, TranslationApi, SubscriptionApi, VoteApi, VoteCommentApi):
     @extract_id(Section)
     def create(self, section, article):
         """
@@ -1401,11 +1435,7 @@ class TopicApi(HelpCentreApiBase, CRUDApi, SubscriptionApi):
         return self._get(url)
 
 
-class PostApi(HelpCentreApiBase, CRUDApi, SubscriptionApi):
-    pass
-
-
-class PostCommentApi(HelpCentreApiBase):
+class PostCommentApi(HelpCentreApiBase, VoteCommentApi):
     @extract_id(Post)
     def __call__(self, post):
         return super(PostCommentApi, self).__call__(id=post)
@@ -1423,6 +1453,14 @@ class PostCommentApi(HelpCentreApiBase):
         return PostCommentRequest(self).delete(self.endpoint.delete, post, comment)
 
 
+class PostApi(HelpCentreApiBase, CRUDApi, SubscriptionApi, VoteApi):
+    comments = None
+
+    def __init__(self, config, endpoint, object_type):
+        super(PostApi, self).__init__(config, endpoint, object_type)
+        self.comments = PostCommentApi(config, endpoint.comments, 'post')
+
+
 class HelpCentreApi(HelpCentreApiBase):
     def __init__(self, config):
         super(HelpCentreApi, self).__init__(config, endpoint=EndpointFactory('help_centre'), object_type='help_centre')
@@ -1435,7 +1473,6 @@ class HelpCentreApi(HelpCentreApiBase):
         self.labels = LabelApi(config, self.endpoint.labels, object_type='label')
         self.topics = TopicApi(config, self.endpoint.topics, object_type='topic')
         self.posts = PostApi(config, self.endpoint.posts, object_type='post')
-        self.post_comments = PostCommentApi(config, self.endpoint.post_comments, object_type='comment')
 
     def __call__(self, *args, **kwargs):
         raise NotImplementedError("Cannot directly call the HelpCentreApi!")

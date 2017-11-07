@@ -418,6 +418,9 @@ class HelpCentreRequest(BaseZendeskRequest):
 
 
 class PostCommentRequest(HelpCentreRequest):
+    def build_payload(self, translation):
+        return {get_object_type(translation): self.api._serialize(translation)}
+
     def put(self, endpoint, post, comment):
         url = self.api._build_url(endpoint(post, comment.id))
         payload = self.build_payload(comment)

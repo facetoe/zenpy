@@ -742,3 +742,76 @@ class Translation(BaseObject):
         if updated_by:
             self.updated_by_id = updated_by.id
             self._updated_by = updated_by
+
+
+class Vote(BaseObject):
+    def __init__(self,
+                 api=None,
+                 created_at=None,
+                 id=None,
+                 item_id=None,
+                 item_type=None,
+                 updated_at=None,
+                 url=None,
+                 user_id=None,
+                 value=None,
+                 **kwargs):
+
+        self.api = api
+        self.created_at = created_at
+        self.id = id
+        self.item_id = item_id
+        self.item_type = item_type
+        self.updated_at = updated_at
+        self.url = url
+        self.user_id = user_id
+        self.value = value
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def created(self):
+
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
+
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created
+
+    @property
+    def item(self):
+
+        if self.api and self.item_id:
+            return self.api._get_item(self.item_id)
+
+    @item.setter
+    def item(self, item):
+        if item:
+            self.item_id = item.id
+            self._item = item
+
+    @property
+    def updated(self):
+
+        if self.updated_at:
+            return dateutil.parser.parse(self.updated_at)
+
+    @updated.setter
+    def updated(self, updated):
+        if updated:
+            self.updated_at = updated
+
+    @property
+    def user(self):
+
+        if self.api and self.user_id:
+            return self.api._get_user(self.user_id)
+
+    @user.setter
+    def user(self, user):
+        if user:
+            self.user_id = user.id
+            self._user = user
