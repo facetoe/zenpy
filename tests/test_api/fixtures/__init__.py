@@ -1,4 +1,6 @@
 import hashlib
+from operator import attrgetter
+
 from test_api import configure
 from time import sleep
 from unittest import TestCase
@@ -19,7 +21,7 @@ class ZenpyApiTestCase(TestCase):
 
     def generate_cassette_name(self):
         """
-        Taken from BetamaxTestCase. 
+        Taken from BetamaxTestCase.
         """
         cls = getattr(self, '__class__')
         test = self._testMethodName
@@ -139,9 +141,8 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
     @property
     def api(self):
         """ Return the current Api under test. """
-        if not hasattr(self.zenpy_client, self.api_name):
-            raise Exception("Zenpy has not Api named: {}".format(self.api_name))
-        return getattr(self.zenpy_client, self.api_name)
+        f = attrgetter(self.api_name)
+        return f(self.zenpy_client)
 
     @property
     def single_response_type(self):
@@ -149,9 +150,9 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
         return self.expected_single_result_type or self.ZenpyType
 
     def unpack_object(self, zenpy_object):
-        """ 
-        If we have a nested object, return the nested object we are interested in. 
-        Otherwise just return the passed object. 
+        """
+        If we have a nested object, return the nested object we are interested in.
+        Otherwise just return the passed object.
         """
         if hasattr(zenpy_object, self.api.object_type):
             obj = getattr(zenpy_object, self.api.object_type)
@@ -179,10 +180,10 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
             return result
 
     def instantiate_zenpy_object(self, format_val=None, dummy=False):
-        """ 
-        Create a Zenpy object of type ZenpyType with obj_kwargs passed to __init__. 
-        Any values with the formatter "{}" will be replaced with format_val. 
-        
+        """
+        Create a Zenpy object of type ZenpyType with obj_kwargs passed to __init__.
+        Any values with the formatter "{}" will be replaced with format_val.
+
         If dummy is True, simply return object (for testing type checking).
         """
         obj_kwargs = self.object_kwargs.copy()
@@ -196,8 +197,8 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
         return self.ZenpyType(**obj_kwargs) if not dummy else None
 
     def modify_object(self, zenpy_object):
-        """ 
-        Given a Zenpy object, modify it by hashing it's kwargs and appending the result to the 
+        """
+        Given a Zenpy object, modify it by hashing it's kwargs and appending the result to the
         existing values.
         """
 
