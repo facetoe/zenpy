@@ -31,8 +31,8 @@ log = logging.getLogger(__name__)
 class BaseEndpoint(object):
     """
     BaseEndpoint supplies common formatting operations.
-   
     """
+    
     ISO_8601_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
     
     def __init__(self, endpoint, sideload=None):
