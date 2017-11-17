@@ -31,8 +31,10 @@ log = logging.getLogger(__name__)
 class BaseEndpoint(object):
     """
     BaseEndpoint supplies common formatting operations.
+   
     """
-
+    ISO_8601_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
+    
     def __init__(self, endpoint, sideload=None):
         self.endpoint = endpoint
         self.sideload = sideload or []
@@ -62,9 +64,7 @@ class PrimaryEndpoint(BaseEndpoint):
     """
     A PrimaryEndpoint takes an id or list of ids and either returns the objects
     associated with them or performs actions on them (eg, update/delete).
-    """
-
-    ISO_8601_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
+    """ 
 
     def __call__(self, **kwargs):
         query = ""
@@ -211,7 +211,7 @@ class SearchEndpoint(BaseEndpoint):
 
     """
 
-    ZENDESK_DATE_FORMAT_NAIVE = "%Y-%m-%dT%H:%M:%SZ"
+    ZENDESK_DATE_FORMAT = "%Y-%m-%d"
 
     def __call__(self, *args, **kwargs):
 
@@ -267,7 +267,7 @@ class SearchEndpoint(BaseEndpoint):
             raise ZenpyException("*_between only works with dates!")
         key = key.replace('_between', '')
         if values[0].tzinfo is None or values[1].tzinfo is None:
-            dates = [v.strftime(self.ZENDESK_DATE_FORMAT_NAIVE) for v in values]
+            dates = [v.strftime(self.ISO_8601_FORMAT) for v in values]
         else:
             dates = [str(v.replace(microsecond=0).isoformat()) for v in values]
         return "%s>%s %s<%s" % (key, dates[0], key, dates[1])
