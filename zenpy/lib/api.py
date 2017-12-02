@@ -1209,7 +1209,10 @@ class ChatApi(ChatApiBase):
 class NpsApi(Api):
     def __init__(self, config):
         super(NpsApi, self).__init__(config, object_type='nps')
-    
+
+    def __call__(self, *args, **kwargs):
+        raise ZenpyException("You cannot call this endpoint directly!")
+
     def recipients_incremental(self, start_time):
         """
         Retrieve NPS Recipients incremental
