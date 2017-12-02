@@ -253,7 +253,6 @@ BASE_CLASS = """
 
 import dateutil.parser
 
-
 class BaseObject(object):
     def to_dict(self):
         copy_dict = self.__dict__.copy()
@@ -268,13 +267,17 @@ class BaseObject(object):
         return copy_dict
 
     def __repr__(self):
+        class_name = type(self).__name__
+        if class_name in ('UserField',):
+            return "{}()".format(class_name)
+
         def formatted(item):
-            return item if isinstance(item, int) else "'{}'".format(item)
+            return item if (isinstance(item, int) or item is None) else "'{}'".format(item)
 
         for identifier in ('id', 'token', 'key', 'name', 'account_key'):
             if hasattr(self, identifier):
-                return "{}({}={})".format(self.__class__.__name__, identifier, formatted(getattr(self, identifier)))
-        return "{}()".format(self.__class__.__name__)
+                return "{}({}={})".format(class_name, identifier, formatted(getattr(self, identifier)))
+        return "{}()".format(class_name)
 """
 
 parser = OptionParser()
