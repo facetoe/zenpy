@@ -32,9 +32,9 @@ class BaseEndpoint(object):
     """
     BaseEndpoint supplies common formatting operations.
     """
-    
+
     ISO_8601_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
-    
+
     def __init__(self, endpoint, sideload=None):
         self.endpoint = endpoint
         self.sideload = sideload or []
@@ -64,7 +64,7 @@ class PrimaryEndpoint(BaseEndpoint):
     """
     A PrimaryEndpoint takes an id or list of ids and either returns the objects
     associated with them or performs actions on them (eg, update/delete).
-    """ 
+    """
 
     def __call__(self, **kwargs):
         query = ""

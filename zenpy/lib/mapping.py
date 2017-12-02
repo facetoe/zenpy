@@ -90,10 +90,10 @@ class ZendeskObjectMapping(object):
         self.api = api
 
     def object_from_json(self, object_type, object_json):
-        """ 
-        Given a blob of JSON representing a Zenpy object, recursively deserialize it and 
+        """
+        Given a blob of JSON representing a Zenpy object, recursively deserialize it and
          any nested objects it contains. This method also adds the deserialized object
-         to the relevant cache if applicable. 
+         to the relevant cache if applicable.
         """
         if not isinstance(object_json, dict):
             return object_json
@@ -134,7 +134,7 @@ class ZendeskObjectMapping(object):
 class ChatObjectMapping(ZendeskObjectMapping):
     """
     Handle converting Chat API objects to Python ones. This class exists
-    mainly to prevent namespace collisions between the two APIs. 
+    mainly to prevent namespace collisions between the two APIs.
     """
     class_mapping = {
         'chat': Chat,
