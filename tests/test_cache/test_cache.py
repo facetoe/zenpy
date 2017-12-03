@@ -54,11 +54,6 @@ class TestCacheModuleMethods(TestCase):
         ticket = self.cache_item(id=cache_key)
         self.assertIs(query_cache(get_object_type(ticket), cache_key), ticket)
 
-    def test_cache_object_with_non_id(self):
-        cache_key = 'somekey'
-        user_field = self.cache_item(UserField, key=cache_key)
-        self.assertIs(query_cache(get_object_type(user_field), cache_key), user_field)
-
     def test_remove_from_cache(self):
         cache_key = 1
         zenpy_object = self.cache_item(id=cache_key)
