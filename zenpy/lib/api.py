@@ -1460,8 +1460,6 @@ class PostCommentApi(HelpCentreApiBase, VoteCommentApi):
 
 
 class PostApi(HelpCentreApiBase, CRUDApi, SubscriptionApi, VoteApi):
-    comments = None
-
     def __init__(self, config, endpoint, object_type):
         super(PostApi, self).__init__(config, endpoint, object_type)
         self.comments = PostCommentApi(config, endpoint.comments, 'post')
@@ -1482,6 +1480,7 @@ class HelpCentreApi(HelpCentreApiBase):
 
     def __call__(self, *args, **kwargs):
         raise NotImplementedError("Cannot directly call the HelpCentreApi!")
+
 
 class NpsApi(Api):
     def __init__(self, config):
