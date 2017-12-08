@@ -2,9 +2,11 @@
 
 # Zenpy
 
-Zenpy is a Python wrapper for the Zendesk and Chat APIs. The goal of the project is to make it possible to write clean, fast, Pythonic code when interacting with Zendesk progmatically. The wrapper tries to keep API calls to a minimum. Wherever it makes sense objects are cached, and attributes of objects that would trigger an API call are evaluated lazily. 
+Zenpy is a Python wrapper for the Zendesk, Chat and HelpCentre APIs. The goal of the project is to make it possible to write clean, fast, Pythonic code when interacting with Zendesk progmatically. The wrapper tries to keep API calls to a minimum. Wherever it makes sense objects are cached, and attributes of objects that would trigger an API call are evaluated lazily. 
 
-Zenpy supports both Python2 and Python3. 
+Zenpy supports both Python2 and Python3.
+
+**Note:** HelpCentre API support is in beta.
 
 Please report bugs!
 
