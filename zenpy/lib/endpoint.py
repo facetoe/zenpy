@@ -1,11 +1,9 @@
 import logging
 from datetime import datetime
 
-import time
-from dateutil.tz import tzutc
 
 from zenpy.lib.exception import ZenpyException
-from zenpy.lib.util import is_timezone_aware, is_iterable_but_not_string, ZENDESK_DATE_FORMAT
+from zenpy.lib.util import is_iterable_but_not_string, to_unix_ts
 
 __author__ = 'facetoe'
 
@@ -31,6 +29,8 @@ class BaseEndpoint(object):
     """
     BaseEndpoint supplies common formatting operations.
     """
+
+    ISO_8601_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
     def __init__(self, endpoint, sideload=None):
         self.endpoint = endpoint
@@ -59,6 +59,9 @@ class BaseEndpoint(object):
 
 class PrimaryEndpoint(BaseEndpoint):
     ISO_8601_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
+    """
+    The PrimaryEndpoint handles the most common endpoint operations.
+    """
 
     def __call__(self, **kwargs):
         query = ""
@@ -147,17 +150,12 @@ class IncrementalEndpoint(BaseEndpoint):
         if start_time is None:
             raise ZenpyException("Incremental Endoint requires a start_time parameter!")
 
-        if isinstance(start_time, datetime):
-            if is_timezone_aware(start_time):
-                start_time = start_time.astimezone(tzutc())
-            else:
-                log.warning(
-                    "Non timezone-aware datetime object passed to IncrementalEndpoint. "
-                    "The Zendesk API expects UTC time, if this is not the case results will be incorrect!"
-                )
-            unix_time = time.mktime(start_time.timetuple())
+        elif isinstance(start_time, datetime):
+            unix_time = to_unix_ts(start_time)
+
         else:
             unix_time = start_time
+
         query = "start_time=%s" % str(unix_time)
         return self.endpoint + query + self._format_sideload(self.sideload, seperator='&')
 
@@ -262,7 +260,10 @@ class SearchEndpoint(BaseEndpoint):
         elif not all([isinstance(d, datetime) for d in values]):
             raise ZenpyException("*_between only works with dates!")
         key = key.replace('_between', '')
-        dates = [v.strftime(ZENDESK_DATE_FORMAT) for v in values]
+        if values[0].tzinfo is None or values[1].tzinfo is None:
+            dates = [v.strftime(self.ISO_8601_FORMAT) for v in values]
+        else:
+            dates = [str(v.replace(microsecond=0).isoformat()) for v in values]
         return "%s>%s %s<%s" % (key, dates[0], key, dates[1])
 
     def format_or(self, key, values):
@@ -297,7 +298,7 @@ class HelpDeskSearchEndpoint(BaseEndpoint):
 
 
 class SatisfactionRatingEndpoint(BaseEndpoint):
-    def __call__(self, score=None, sort_order=None):
+    def __call__(self, score=None, sort_order=None, start_time=None, end_time=None):
         if sort_order not in ('asc', 'desc'):
             raise ZenpyException("sort_order must be one of (asc, desc)")
 
@@ -309,8 +310,14 @@ class SatisfactionRatingEndpoint(BaseEndpoint):
 
         if sort_order:
             result += '&sort_order={}'.format(sort_order)
-        return result
 
+        if start_time:
+            result += '&start_time={}'.format(to_unix_ts(start_time))
+
+        if end_time:
+            result += '&end_time={}'.format(to_unix_ts(end_time))
+
+        return result
 
 class MacroEndpoint(BaseEndpoint):
     def __call__(self, sort_order=None, sort_by=None, **kwargs):
@@ -415,6 +422,11 @@ class EndpointFactory(object):
     macros = MacroEndpoint('macros', sideload=['app_installation', 'categories', 'permissions', 'usage_1h', 'usage_24h',
                                                'usage_7d', 'usage_30d'])
     macros.apply = SecondaryEndpoint('macros/%(id)s/apply.json')
+
+
+    nps = PrimaryEndpoint('nps')
+    nps.recipients_incremental = IncrementalEndpoint('nps/incremental/recipients.json?')
+    nps.responses_incremental = IncrementalEndpoint('nps/incremental/responses.json?')
     organization_memberships = PrimaryEndpoint('organization_memberships')
     organizations = PrimaryEndpoint('organizations', ['abilities'])
     organizations.external = SecondaryEndpoint('organizations/search.json?external_id=%(id)s')
@@ -499,6 +511,7 @@ class EndpointFactory(object):
     views.execute = SecondaryEndpoint('views/%(id)s/execute.json')
     views.export = SecondaryEndpoint('views/%(id)s/export.json')
     views.search = ViewSearchEndpoint('views/search.json?')
+    recipient_addresses = PrimaryEndpoint('recipient_addresses')
 
     class Dummy(object): pass
 

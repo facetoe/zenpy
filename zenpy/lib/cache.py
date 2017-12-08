@@ -109,8 +109,6 @@ cache_mapping = {
     'brand': ZenpyCache('LRUCache', maxsize=10000),
     'ticket': ZenpyCache('TTLCache', maxsize=10000, ttl=30),
     'request': ZenpyCache('LRUCache', maxsize=10000),
-    'user_field': ZenpyCache('TTLCache', maxsize=10000, ttl=30),
-    'organization_field': ZenpyCache('LRUCache', maxsize=10000),
     'ticket_field': ZenpyCache('LRUCache', maxsize=10000),
     'sharing_agreement': ZenpyCache('TTLCache', maxsize=10000, ttl=6000),
     'identity': ZenpyCache('LRUCache', maxsize=10000)
@@ -182,8 +180,7 @@ def should_cache(zenpy_object):
 
 def _cache_key_attribute(object_type):
     """ Return the attribute used as the cache_key for a particular object type. """
-    if object_type in ('user_field', 'organization_field'):
-        key = 'key'
-    else:
-        key = 'id'
-    return key
+    # This function used to return the key for objects that are not referenced by id.
+    # These objects are no longer cached (UserField, OrganizationalField) and so the
+    # function has no purpose anymore. I'm leaving it here in case it comes in handy again
+    return 'id'

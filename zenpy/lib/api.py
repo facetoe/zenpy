@@ -58,6 +58,7 @@ class BaseApi(object):
             CombinationResponseHandler,
             ViewResponseHandler,
             SlaPolicyResponseHandler,
+            RequestCommentResponseHandler,
             GenericZendeskResponseHandler,
             HTTPOKResponseHandler,
         )
@@ -533,7 +534,7 @@ class UserIdentityApi(Api):
             raise ZenpyException("You must pass an Identity object to this endpoint!")
         if isinstance(user, User):
             user = user.id
-        return UserIdentityRequest(self).put(self.endpoint.update, user, identity.id)
+        return UserIdentityRequest(self).put(self.endpoint.update, user, identity)
 
     def make_primary(self, user, identity):
         """
@@ -1125,6 +1126,11 @@ class SlaPolicyApi(CRUDApi):
         return self._get(url)
 
 
+class RecipientAddressApi(CRUDApi):
+    def __init__(self, config):
+        super(RecipientAddressApi, self).__init__(config, object_type='recipient_address')
+
+
 class ChatApiBase(Api):
     """
     Implements most generic ChatApi functionality. Most if the actual work is delegated to
@@ -1476,3 +1482,24 @@ class HelpCentreApi(HelpCentreApiBase):
 
     def __call__(self, *args, **kwargs):
         raise NotImplementedError("Cannot directly call the HelpCentreApi!")
+
+class NpsApi(Api):
+    def __init__(self, config):
+        super(NpsApi, self).__init__(config, object_type='nps')
+
+    def __call__(self, *args, **kwargs):
+        raise ZenpyException("You cannot call this endpoint directly!")
+
+    def recipients_incremental(self, start_time):
+        """
+        Retrieve NPS Recipients incremental
+        :param start_time: time to retrieve events from.
+        """
+        return self._query_zendesk(self.endpoint.recipients_incremental, 'recipients', start_time=start_time)
+
+    def responses_incremental(self, start_time):
+        """
+        Retrieve NPS Responses incremental
+        :param start_time: time to retrieve events from.
+        """
+        return self._query_zendesk(self.endpoint.responses_incremental, 'responses', start_time=start_time)

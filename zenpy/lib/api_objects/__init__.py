@@ -5,7 +5,6 @@
 
 import dateutil.parser
 
-
 class BaseObject(object):
     def to_dict(self):
         copy_dict = self.__dict__.copy()
@@ -20,13 +19,17 @@ class BaseObject(object):
         return copy_dict
 
     def __repr__(self):
+        class_name = type(self).__name__
+        if class_name in ('UserField',):
+            return "{}()".format(class_name)
+
         def formatted(item):
-            return item if isinstance(item, int) else "'{}'".format(item)
+            return item if (isinstance(item, int) or item is None) else "'{}'".format(item)
 
         for identifier in ('id', 'token', 'key', 'name', 'account_key'):
             if hasattr(self, identifier):
-                return "{}({}={})".format(self.__class__.__name__, identifier, formatted(getattr(self, identifier)))
-        return "{}()".format(self.__class__.__name__)
+                return "{}({}={})".format(class_name, identifier, formatted(getattr(self, identifier)))
+        return "{}()".format(class_name)
 
 
 
@@ -1664,6 +1667,169 @@ class PushEvent(BaseObject):
             setattr(self, key, value)
 
 
+class Recipient(BaseObject):
+    def __init__(self,
+                 api=None,
+                 created_at=None,
+                 delivered_at=None,
+                 delivery_id=None,
+                 id=None,
+                 survey_id=None,
+                 survey_name=None,
+                 updated_at=None,
+                 user_email=None,
+                 user_id=None,
+                 user_name=None,
+                 **kwargs):
+
+        self.api = api
+        self.created_at = created_at
+        self.delivered_at = delivered_at
+        self.delivery_id = delivery_id
+        self.id = id
+        self.survey_id = survey_id
+        self.survey_name = survey_name
+        self.updated_at = updated_at
+        self.user_email = user_email
+        self.user_id = user_id
+        self.user_name = user_name
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def created(self):
+
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
+
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created
+
+    @property
+    def delivered(self):
+
+        if self.delivered_at:
+            return dateutil.parser.parse(self.delivered_at)
+
+    @delivered.setter
+    def delivered(self, delivered):
+        if delivered:
+            self.delivered_at = delivered
+
+    @property
+    def delivery(self):
+
+        if self.api and self.delivery_id:
+            return self.api._get_delivery(self.delivery_id)
+
+    @delivery.setter
+    def delivery(self, delivery):
+        if delivery:
+            self.delivery_id = delivery.id
+            self._delivery = delivery
+
+    @property
+    def survey(self):
+
+        if self.api and self.survey_id:
+            return self.api._get_survey(self.survey_id)
+
+    @survey.setter
+    def survey(self, survey):
+        if survey:
+            self.survey_id = survey.id
+            self._survey = survey
+
+    @property
+    def updated(self):
+
+        if self.updated_at:
+            return dateutil.parser.parse(self.updated_at)
+
+    @updated.setter
+    def updated(self, updated):
+        if updated:
+            self.updated_at = updated
+
+    @property
+    def user(self):
+
+        if self.api and self.user_id:
+            return self.api._get_user(self.user_id)
+
+    @user.setter
+    def user(self, user):
+        if user:
+            self.user_id = user.id
+            self._user = user
+
+
+class RecipientAddress(BaseObject):
+    def __init__(self,
+                 api=None,
+                 brand_id=None,
+                 created_at=None,
+                 default=None,
+                 email=None,
+                 forwarding_status=None,
+                 id=None,
+                 name=None,
+                 spf_status=None,
+                 updated_at=None,
+                 **kwargs):
+
+        self.api = api
+        self.brand_id = brand_id
+        self.created_at = created_at
+        self.default = default
+        self.email = email
+        self.forwarding_status = forwarding_status
+        self.id = id
+        self.name = name
+        self.spf_status = spf_status
+        self.updated_at = updated_at
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def brand(self):
+
+        if self.api and self.brand_id:
+            return self.api._get_brand(self.brand_id)
+
+    @brand.setter
+    def brand(self, brand):
+        if brand:
+            self.brand_id = brand.id
+            self._brand = brand
+
+    @property
+    def created(self):
+
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
+
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created
+
+    @property
+    def updated(self):
+
+        if self.updated_at:
+            return dateutil.parser.parse(self.updated_at)
+
+    @updated.setter
+    def updated(self, updated):
+        if updated:
+            self.updated_at = updated
+
+
 class Request(BaseObject):
     def __init__(self,
                  api=None,
@@ -1889,6 +2055,111 @@ class Request(BaseObject):
     def updated(self, updated):
         if updated:
             self.updated_at = updated
+
+
+class Response(BaseObject):
+    def __init__(self,
+                 api=None,
+                 comment=None,
+                 delivered_at=None,
+                 delivery_id=None,
+                 id=None,
+                 rated_at=None,
+                 rating=None,
+                 recipient_id=None,
+                 survey_id=None,
+                 survey_name=None,
+                 user_email=None,
+                 user_id=None,
+                 user_name=None,
+                 **kwargs):
+
+        self.api = api
+        self.comment = comment
+        self.delivered_at = delivered_at
+        self.delivery_id = delivery_id
+        self.id = id
+        self.rated_at = rated_at
+        self.rating = rating
+        self.recipient_id = recipient_id
+        self.survey_id = survey_id
+        self.survey_name = survey_name
+        self.user_email = user_email
+        self.user_id = user_id
+        self.user_name = user_name
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def delivered(self):
+
+        if self.delivered_at:
+            return dateutil.parser.parse(self.delivered_at)
+
+    @delivered.setter
+    def delivered(self, delivered):
+        if delivered:
+            self.delivered_at = delivered
+
+    @property
+    def delivery(self):
+
+        if self.api and self.delivery_id:
+            return self.api._get_delivery(self.delivery_id)
+
+    @delivery.setter
+    def delivery(self, delivery):
+        if delivery:
+            self.delivery_id = delivery.id
+            self._delivery = delivery
+
+    @property
+    def rated(self):
+
+        if self.rated_at:
+            return dateutil.parser.parse(self.rated_at)
+
+    @rated.setter
+    def rated(self, rated):
+        if rated:
+            self.rated_at = rated
+
+    @property
+    def recipient(self):
+
+        if self.api and self.recipient_id:
+            return self.api._get_recipient(self.recipient_id)
+
+    @recipient.setter
+    def recipient(self, recipient):
+        if recipient:
+            self.recipient_id = recipient.id
+            self._recipient = recipient
+
+    @property
+    def survey(self):
+
+        if self.api and self.survey_id:
+            return self.api._get_survey(self.survey_id)
+
+    @survey.setter
+    def survey(self, survey):
+        if survey:
+            self.survey_id = survey.id
+            self._survey = survey
+
+    @property
+    def user(self):
+
+        if self.api and self.user_id:
+            return self.api._get_user(self.user_id)
+
+    @user.setter
+    def user(self, user):
+        if user:
+            self.user_id = user.id
+            self._user = user
 
 
 class SatisfactionRating(BaseObject):
