@@ -371,6 +371,10 @@ class CRUDApi(Api):
         return CRUDRequest(self).delete(api_objects)
 
 
+class TicketFieldApi(CRUDApi):
+    pass
+
+
 class CRUDExternalApi(CRUDApi):
     """
     The CRUDExternalApi exposes some extra methods for operating on external ids.

@@ -24,7 +24,7 @@ from zenpy.lib.api import (
     GroupMembershipApi,
     HelpCentreApi,
     RecipientAddressApi,
-    NpsApi)
+    NpsApi, TicketFieldApi)
 from zenpy.lib.cache import ZenpyCache, cache_mapping, purge_cache
 from zenpy.lib.endpoint import EndpointFactory
 from zenpy.lib.exception import ZenpyException
@@ -113,7 +113,7 @@ class Zenpy(object):
         self.group_memberships = GroupMembershipApi(config)
         self.end_user = EndUserApi(config)
         self.ticket_metrics = Api(config, object_type='ticket_metric')
-        self.ticket_fields = Api(config, object_type='ticket_field')
+        self.ticket_fields = TicketFieldApi(config, object_type='ticket_field')
         self.ticket_forms = Api(config, object_type='ticket_form')
         self.ticket_import = TicketImportAPI(config)
         self.requests = RequestAPI(config)

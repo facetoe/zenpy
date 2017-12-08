@@ -1,0 +1,115 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2017-12-08T23:16:59",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"ticket_field\": {\"type\": \"text\", \"title\": \"I AM A TEST\"}}"
+        },
+        "headers": {
+          "Accept": "*/*",
+          "Accept-Encoding": "gzip, deflate",
+          "Authorization": "Basic <ZENPY-CREDENTIALS>",
+          "Connection": "keep-alive",
+          "Content-Length": "58",
+          "Content-Type": "application/json",
+          "User-Agent": "Zenpy/1.2"
+        },
+        "method": "POST",
+        "uri": "https://zenpydevhelp.zendesk.com/api/v2/ticket_fields.json?&include="
+      },
+      "response": {
+        "body": {
+          "encoding": "UTF-8",
+          "string": "{\"ticket_field\":{\"url\":\"https://zenpydevhelp.zendesk.com/api/v2/ticket_fields/114102633011.json\",\"id\":114102633011,\"type\":\"text\",\"title\":\"I AM A TEST\",\"raw_title\":\"I AM A TEST\",\"description\":\"I AM A TEST\",\"raw_description\":\"I AM A TEST\",\"position\":9999,\"active\":true,\"required\":false,\"collapsed_for_agents\":false,\"regexp_for_validation\":null,\"title_in_portal\":\"I AM A TEST\",\"raw_title_in_portal\":\"I AM A TEST\",\"visible_in_portal\":false,\"editable_in_portal\":false,\"required_in_portal\":false,\"tag\":null,\"created_at\":\"2017-12-08T23:16:59Z\",\"updated_at\":\"2017-12-08T23:16:59Z\",\"removable\":true}}"
+        },
+        "headers": {
+          "Cache-Control": "max-age=0, private, must-revalidate",
+          "Connection": "keep-alive",
+          "Content-Length": "591",
+          "Content-Type": "application/json; charset=UTF-8",
+          "Date": "Fri, 08 Dec 2017 23:16:59 GMT",
+          "ETag": "\"44a6dc74e7aac5ce2afaf4836a4afa2e\"",
+          "Location": "https://zenpydevhelp.zendesk.com/api/v2/ticket_fields/114102633011.json",
+          "Server": "nginx",
+          "Strict-Transport-Security": "max-age=31536000;",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "SAMEORIGIN",
+          "X-Rack-Cache": "invalidate, pass",
+          "X-Rate-Limit": "700",
+          "X-Rate-Limit-Remaining": "694",
+          "X-Request-Id": "164dc477-7291-4c6b-ccfa-b8ca3a6b1a08",
+          "X-Runtime": "0.661639",
+          "X-UA-Compatible": "IE=Edge,chrome=1",
+          "X-Zendesk-API-Version": "v2",
+          "X-Zendesk-Application-Version": "v52.15",
+          "X-Zendesk-Origin-Server": "app35.pod13.usw2.zdsys.com",
+          "X-Zendesk-Request-Id": "68d105df32e6cacb3b6f"
+        },
+        "status": {
+          "code": 201,
+          "message": "Created"
+        },
+        "url": "https://zenpydevhelp.zendesk.com/api/v2/ticket_fields.json?&include="
+      }
+    },
+    {
+      "recorded_at": "2017-12-08T23:17:01",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"ticket_field\": {\"raw_title\": \"I AM A TEST\", \"description\": \"I AM A TEST\", \"title\": \"I AM A TEST408baae298e40e7beba372405b3258045fddea1b\", \"url\": \"https://zenpydevhelp.zendesk.com/api/v2/ticket_fields/114102633011.json\", \"type\": \"text372ea08cab33e71c02c651dbc83a474d32c676ea\", \"created_at\": \"2017-12-08T23:16:59Z\", \"required\": false, \"updated_at\": \"2017-12-08T23:16:59Z\", \"required_in_portal\": false, \"id\": 114102633011, \"active\": true, \"raw_title_in_portal\": \"I AM A TEST\", \"title_in_portal\": \"I AM A TEST\", \"collapsed_for_agents\": false, \"position\": 9999, \"removable\": true, \"visible_in_portal\": false, \"raw_description\": \"I AM A TEST\", \"editable_in_portal\": false}}"
+        },
+        "headers": {
+          "Accept": "*/*",
+          "Accept-Encoding": "gzip, deflate",
+          "Authorization": "Basic <ZENPY-CREDENTIALS>",
+          "Connection": "keep-alive",
+          "Content-Length": "669",
+          "Content-Type": "application/json",
+          "User-Agent": "Zenpy/1.2"
+        },
+        "method": "PUT",
+        "uri": "https://zenpydevhelp.zendesk.com/api/v2/ticket_fields/114102633011.json&include="
+      },
+      "response": {
+        "body": {
+          "base64_string": "H4sIAAAAAAAAA4VRsVbDMAz8lT7PaROnUGi2DgwMTGRiyROJkoq6sbGV0NLXf0clhdchFG/S6XR38kExlRvkoiY0lcoOqvNGZWrN7EIWx5/Yun2F/RqNm0lRYdjMSruNwVHcp/ElO8Ra3+gkXcznidazt2BbFSmSrZf9SPHeoUgw7lhwJjan8nGyepqsJvnDcy5dDx/FOCIOSk+OSbaPsa7hzgYaiEt5kYKSqRdx9h2KJr535FH81mCCNEprDLiAVVFbX0CDLYdf0GODO/eN9GCogmFx2xlzDlVQWzjrGU4H/SPelZmeAr0avJw4+8KKGMahnwwjLIZGZYO90iOwxAIWZ2mi76Y6nSb3eTrP9CK7Xb7ID3ROIv0z43Fr+5OT4YTH4xdOkl80TwIAAA==",
+          "encoding": "UTF-8",
+          "string": ""
+        },
+        "headers": {
+          "Cache-Control": "max-age=0, private, must-revalidate",
+          "Connection": "keep-alive",
+          "Content-Encoding": "gzip",
+          "Content-Type": "application/json; charset=UTF-8",
+          "Date": "Fri, 08 Dec 2017 23:17:00 GMT",
+          "ETag": "W/\"44a6dc74e7aac5ce2afaf4836a4afa2e\"",
+          "Server": "nginx",
+          "Strict-Transport-Security": "max-age=31536000;",
+          "Transfer-Encoding": "chunked",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "SAMEORIGIN",
+          "X-Rack-Cache": "invalidate, pass",
+          "X-Rate-Limit": "700",
+          "X-Rate-Limit-Remaining": "699",
+          "X-Request-Id": "03fdf94c-744c-4f27-cfd2-b8ca3a6b1a08",
+          "X-Runtime": "0.235943",
+          "X-UA-Compatible": "IE=Edge,chrome=1",
+          "X-Zendesk-API-Version": "v2",
+          "X-Zendesk-API-Warn": "Removed restricted keys [\"ticket_field.url\", \"ticket_field.type\", \"ticket_field.created_at\", \"ticket_field.updated_at\", \"ticket_field.id\", \"ticket_field.removable\"] from parameters according to whitelist",
+          "X-Zendesk-Application-Version": "v52.15",
+          "X-Zendesk-Origin-Server": "app10.pod13.usw2.zdsys.com",
+          "X-Zendesk-Request-Id": "510d983347f576cef610"
+        },
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "url": "https://zenpydevhelp.zendesk.com/api/v2/ticket_fields/114102633011.json&include="
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.8.0"
+}
