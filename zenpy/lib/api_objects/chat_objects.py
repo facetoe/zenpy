@@ -165,8 +165,8 @@ class Chat(BaseObject):
     @property
     def end_timestamp(self):
 
-        if self.end_timestamp:
-            return dateutil.parser.parse(self.end_timestamp)
+        if self._end_timestamp:
+            return dateutil.parser.parse(self._end_timestamp)
 
     @end_timestamp.setter
     def end_timestamp(self, end_timestamp):

@@ -351,6 +351,12 @@ class Api(BaseApi):
     def _get_sla(self, sla_id):
         return self._query_zendesk(EndpointFactory('sla_policies'), 'sla_policy', id=sla_id)
 
+    def _get_department(self, department_id):
+        return self._query_zendesk(EndpointFactory('chats').departments, 'department',id=department_id)
+
+    def _get_zendesk_ticket(self, ticket_id):
+        return self._query_zendesk(EndpointFactory('tickets'), 'ticket', id=ticket_id)
+
     # TODO: Need Enterprise account to implement this
     def _get_custom_role(self, custom_role_id):
         pass

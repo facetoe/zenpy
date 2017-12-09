@@ -164,7 +164,7 @@ class Attribute(object):
         if attr_name == 'from':
             attr_name = 'from_'
 
-        self.key = '_{}'.format(attr_name) if attr_name == 'timestamp' else attr_name
+        self.key = '_{}'.format(attr_name) if attr_name.endswith('timestamp') else attr_name
         self.attr_docs = attr_docs
         self.object_type = self.get_object_type(attr_name)
         self.object_name = self.get_object_name(attr_name, attr_value)
@@ -220,13 +220,6 @@ class Attribute(object):
             return True
         elif self.object_type == 'date':
             return True
-        # if any([isinstance(attr_value, t) for t in (dict, list)]):
-        #     return True
-        # elif self.object_type == 'date':
-        #     return True
-        # elif attr_name.endswith('_id') and isinstance(attr_value, int):
-        #     return True
-        # else:
         return False
 
     def __str__(self):

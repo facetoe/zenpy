@@ -1,5 +1,6 @@
 from test_api.fixtures import ZenpyApiTestCase
 from zenpy.lib import api_objects
+from zenpy.lib.api_objects import chat_objects
 from zenpy.lib.api_objects import BaseObject
 
 
@@ -13,6 +14,9 @@ class TestProperties(ZenpyApiTestCase):
 
     def test_zendesk_object_properties_implemented(self):
         self.properties_are_implemented(api_objects)
+
+    def test_chat_object_properties_implemented(self):
+        self.properties_are_implemented(chat_objects)
 
     def properties_are_implemented(self, mod):
         for cls in self.iter_classes(mod):
