@@ -336,6 +336,32 @@ class Api(BaseApi):
         for field_id in ticket_field_ids:
             yield self._query_zendesk(EndpointFactory('ticket_fields'), 'ticket_field', id=field_id)
 
+    def _get_view(self, view_id):
+        return self._query_zendesk(EndpointFactory('views'), 'view', id=view_id)
+
+    def _get_topic(self, forum_topic_id):
+        return self._query_zendesk(EndpointFactory('help_centre').topics, 'topic', id=forum_topic_id)
+
+    def _get_category(self, category_id):
+        return self._query_zendesk(EndpointFactory('help_centre').categories, 'category', id=category_id)
+
+    def _get_macro(self, macro_id):
+        return self._query_zendesk(EndpointFactory('macros'), 'macro', id=macro_id)
+
+    def _get_sla(self, sla_id):
+        return self._query_zendesk(EndpointFactory('sla_policies'), 'sla_policy', id=sla_id)
+
+    # TODO: Need Enterprise account to implement this
+    def _get_custom_role(self, custom_role_id):
+        pass
+
+    # TODO: Implement these methods when the NPS API is done
+    def _get_delivery(self, delivery_id):
+        pass
+
+    def _get_survey(self, survery_id):
+        pass
+
 
 class CRUDApi(Api):
     """

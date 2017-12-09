@@ -632,18 +632,6 @@ class FacebookCommentEvent(BaseObject):
             self.author_id = author.id
             self._author = author
 
-    @property
-    def graph_object(self):
-
-        if self.api and self.graph_object_id:
-            return self.api._get_graph_object(self.graph_object_id)
-
-    @graph_object.setter
-    def graph_object(self, graph_object):
-        if graph_object:
-            self.graph_object_id = graph_object.id
-            self._graph_object = graph_object
-
 
 class FacebookEvent(BaseObject):
     def __init__(self,
@@ -666,91 +654,6 @@ class FacebookEvent(BaseObject):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
-
-
-class Forum(BaseObject):
-    def __init__(self,
-                 api=None,
-                 access=None,
-                 category_id=None,
-                 created_at=None,
-                 description=None,
-                 forum_type=None,
-                 id=None,
-                 locale_id=None,
-                 locked=None,
-                 name=None,
-                 organization_id=None,
-                 position=None,
-                 tags=None,
-                 updated_at=None,
-                 url=None,
-                 **kwargs):
-
-        self.api = api
-        self.access = access
-        self.category_id = category_id
-        self.created_at = created_at
-        self.description = description
-        self.forum_type = forum_type
-        self.id = id
-        self.locale_id = locale_id
-        self.locked = locked
-        self.name = name
-        self.organization_id = organization_id
-        self.position = position
-        self.tags = tags
-        self.updated_at = updated_at
-        self.url = url
-
-        for key, value in kwargs.items():
-            setattr(self, key, value)
-
-    @property
-    def category(self):
-
-        if self.api and self.category_id:
-            return self.api._get_category(self.category_id)
-
-    @category.setter
-    def category(self, category):
-        if category:
-            self.category_id = category.id
-            self._category = category
-
-    @property
-    def created(self):
-
-        if self.created_at:
-            return dateutil.parser.parse(self.created_at)
-
-    @created.setter
-    def created(self, created):
-        if created:
-            self.created_at = created
-
-    @property
-    def organization(self):
-
-        if self.api and self.organization_id:
-            return self.api._get_organization(self.organization_id)
-
-    @organization.setter
-    def organization(self, organization):
-        if organization:
-            self.organization_id = organization.id
-            self._organization = organization
-
-    @property
-    def updated(self):
-
-        if self.updated_at:
-            return dateutil.parser.parse(self.updated_at)
-
-    @updated.setter
-    def updated(self, updated):
-        if updated:
-            self.updated_at = updated
 
 
 class Group(BaseObject):
@@ -1321,20 +1224,6 @@ class Organization(BaseObject):
     def created(self, created):
         if created:
             self.created_at = created
-
-    @property
-    def external(self):
-        """
-        |  Comment: A unique external id to associate organizations to an external record
-        """
-        if self.api and self.external_id:
-            return self.api._get_external(self.external_id)
-
-    @external.setter
-    def external(self, external):
-        if external:
-            self.external_id = external.id
-            self._external = external
 
     @property
     def group(self):
@@ -2129,7 +2018,7 @@ class Response(BaseObject):
     def recipient(self):
 
         if self.api and self.recipient_id:
-            return self.api._get_recipient(self.recipient_id)
+            return self.api._get_user(self.recipient_id)
 
     @recipient.setter
     def recipient(self, recipient):
@@ -2973,20 +2862,6 @@ class Ticket(BaseObject):
     def due(self, due):
         if due:
             self.due_at = due
-
-    @property
-    def external(self):
-        """
-        |  Comment: An id you can use to link Zendesk Support tickets to local records
-        """
-        if self.api and self.external_id:
-            return self.api._get_external(self.external_id)
-
-    @external.setter
-    def external(self, external):
-        if external:
-            self.external_id = external.id
-            self._external = external
 
     @property
     def forum_topic(self):
@@ -3855,18 +3730,6 @@ class TicketSharingEvent(BaseObject):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    @property
-    def agreement(self):
-
-        if self.api and self.agreement_id:
-            return self.api._get_agreement(self.agreement_id)
-
-    @agreement.setter
-    def agreement(self, agreement):
-        if agreement:
-            self.agreement_id = agreement.id
-            self._agreement = agreement
-
 
 class Topic(BaseObject):
     def __init__(self,
@@ -4285,20 +4148,6 @@ class User(BaseObject):
         if custom_role:
             self.custom_role_id = custom_role.id
             self._custom_role = custom_role
-
-    @property
-    def external(self):
-        """
-        |  Comment: A unique id you can specify for the user
-        """
-        if self.api and self.external_id:
-            return self.api._get_external(self.external_id)
-
-    @external.setter
-    def external(self, external):
-        if external:
-            self.external_id = external.id
-            self._external = external
 
     @property
     def last_login(self):
