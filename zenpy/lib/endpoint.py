@@ -572,11 +572,13 @@ class EndpointFactory(object):
     help_centre.sections.delete_translation = SecondaryEndpoint('help_center/translations/%(id)s.json')
     help_centre.sections.subscriptions = SecondaryEndpoint('help_center/sections/%(id)s/subscriptions.json')
     help_centre.sections.subscriptions_delete = MultipleIDEndpoint('help_center/sections/{}/subscriptions/{}.json')
+    help_centre.sections.access_policies = SecondaryEndpoint('help_center/sections/%(id)s/access_policy.json')
 
     help_centre.topics = PrimaryEndpoint("community/topics")
     help_centre.topics.posts = SecondaryEndpoint('community/topics/%(id)s/posts.json')
     help_centre.topics.subscriptions = SecondaryEndpoint('community/topics/%(id)s/subscriptions.json')
     help_centre.topics.subscriptions_delete = MultipleIDEndpoint('community/topics/{}/subscriptions/{}.json')
+    help_centre.topics.access_policies = SecondaryEndpoint('community/topics/%(id)s/access_policy.json')
 
     help_centre.posts = PrimaryEndpoint('community/posts', sideload=['users', 'topics'])
     help_centre.posts.subscriptions = SecondaryEndpoint('community/posts/%(id)s/subscriptions.json')

@@ -371,10 +371,6 @@ class CRUDApi(Api):
         return CRUDRequest(self).delete(api_objects)
 
 
-class TicketFieldApi(CRUDApi):
-    pass
-
-
 class CRUDExternalApi(CRUDApi):
     """
     The CRUDExternalApi exposes some extra methods for operating on external ids.
@@ -938,6 +934,10 @@ class TicketImportAPI(CRUDApi):
         raise ZenpyException("You cannot delete objects using the ticket_import endpoint!")
 
 
+class TicketFieldApi(CRUDApi):
+    pass
+
+
 class RequestAPI(CRUDApi):
     def __init__(self, config):
         super(RequestAPI, self).__init__(config, object_type='request')
@@ -1388,7 +1388,17 @@ class CategoryApi(HelpCentreApiBase, CRUDApi, TranslationApi):
         return self._query_zendesk(self.endpoint.sections, 'section', id=category_id)
 
 
-class SectionApi(HelpCentreApiBase, CRUDApi, TranslationApi, SubscriptionApi):
+class AccessPolicyApi(Api):
+    @extract_id(Topic, Section)
+    def access_policies(self, help_centre_object):
+        return self._query_zendesk(self.endpoint.access_policies, 'access_policy', id=help_centre_object)
+
+    @extract_id(Topic, Section)
+    def update_access_policy(self, help_centre_object, access_policy):
+        return AccessPolicyRequest(self).put(self.endpoint.access_policies, help_centre_object, access_policy)
+
+
+class SectionApi(HelpCentreApiBase, CRUDApi, TranslationApi, SubscriptionApi, AccessPolicyApi):
     @extract_id(Section)
     def articles(self, section):
         return self._query_zendesk(self.endpoint.articles, 'article', id=section)

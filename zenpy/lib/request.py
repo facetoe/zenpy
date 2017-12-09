@@ -432,6 +432,22 @@ class SubscriptionRequest(HelpCentreRequest):
         return {get_object_type(translation): self.api._serialize(translation)}
 
 
+class AccessPolicyRequest(BaseZendeskRequest):
+    def put(self, endpoint, help_centre_object, access_policy):
+        payload = self.build_payload(access_policy)
+        url = self.api._build_url(endpoint(id=help_centre_object))
+        return self.api._put(url, payload=payload)
+
+    def delete(self, api_objects, *args, **kwargs):
+        raise NotImplementedError("Cannot delete access policies!")
+
+    def post(self, api_objects, *args, **kwargs):
+        raise NotImplementedError("POST not supported for access policies!")
+
+    def build_payload(self, help_centre_object):
+        return {get_object_type(help_centre_object): self.api._serialize(help_centre_object)}
+
+
 class TranslationRequest(HelpCentreRequest):
     def build_payload(self, translation):
         return {get_object_type(translation): self.api._serialize(translation)}

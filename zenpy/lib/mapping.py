@@ -4,7 +4,7 @@ import zenpy
 from zenpy.lib.api_objects import *
 from zenpy.lib.api_objects.chat_objects import *
 from zenpy.lib.api_objects.help_centre_objects import Article, Category, Section, Label, Translation, Topic, Post, \
-    Subscription, Vote
+    Subscription, Vote, AccessPolicy
 from zenpy.lib.cache import add_to_cache
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.util import as_singular, get_object_type
@@ -177,5 +177,6 @@ class HelpCentreObjectMapping(ZendeskObjectMapping):
         'topic': zenpy.lib.api_objects.help_centre_objects.Topic,
         'post': Post,
         'subscription': Subscription,
-        'vote': Vote
+        'vote': Vote,
+        'access_policy': AccessPolicy
     }

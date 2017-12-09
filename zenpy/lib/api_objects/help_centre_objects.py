@@ -2,6 +2,55 @@ from zenpy.lib.api_objects import BaseObject
 import dateutil.parser
 
 
+class AccessPolicy(BaseObject):
+    def __init__(self,
+                 api=None,
+                 manageable_by=None,
+                 required_tags=None,
+                 restricted_to_group_ids=None,
+                 restricted_to_organization_ids=None,
+                 viewable_by=None,
+                 **kwargs):
+
+        self.api = api
+        self.manageable_by = manageable_by
+        self.required_tags = required_tags
+        self.restricted_to_group_ids = restricted_to_group_ids
+        self.restricted_to_organization_ids = restricted_to_organization_ids
+        self.viewable_by = viewable_by
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def restricted_to_groups(self):
+
+        if self.api and self.restricted_to_group_ids:
+            return self.api._get_restricted_to_groups(
+                self.restricted_to_group_ids)
+
+    @restricted_to_groups.setter
+    def restricted_to_groups(self, restricted_to_groups):
+        if restricted_to_groups:
+            self.restricted_to_group_ids = [o.id for o in restricted_to_groups]
+            self._restricted_to_groups = restricted_to_groups
+
+    @property
+    def restricted_to_organizations(self):
+
+        if self.api and self.restricted_to_organization_ids:
+            return self.api._get_restricted_to_organizations(
+                self.restricted_to_organization_ids)
+
+    @restricted_to_organizations.setter
+    def restricted_to_organizations(self, restricted_to_organizations):
+        if restricted_to_organizations:
+            self.restricted_to_organization_ids = [
+                o.id for o in restricted_to_organizations
+            ]
+            self._restricted_to_organizations = restricted_to_organizations
+
+
 class Article(BaseObject):
     def __init__(self,
                  api=None,
