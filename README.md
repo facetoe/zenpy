@@ -34,7 +34,8 @@ zenpy_client.tickets.create(Ticket(subject="Important", description="Thing"))
 
 # Perform a simple search
 for ticket in zenpy_client.search("PC LOAD LETTER", type='ticket', assignee="facetoe"):
-    print(ticket)
+    # No need to mess around with ids, linked objects can be accessed directly.
+    print(ticket.requester)
 ```
 
 ## Examples
