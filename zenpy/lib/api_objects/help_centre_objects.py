@@ -793,6 +793,81 @@ class Translation(BaseObject):
             self._updated_by = updated_by
 
 
+class UserSegment(BaseObject):
+    def __init__(self,
+                 api=None,
+                 built_in=None,
+                 created_at=None,
+                 group_ids=None,
+                 id=None,
+                 name=None,
+                 organization_ids=None,
+                 tags=None,
+                 updated_at=None,
+                 user_type=None,
+                 **kwargs):
+
+        self.api = api
+        self.built_in = built_in
+        self.created_at = created_at
+        self.group_ids = group_ids
+        self.id = id
+        self.name = name
+        self.organization_ids = organization_ids
+        self.tags = tags
+        self.updated_at = updated_at
+        self.user_type = user_type
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def created(self):
+
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
+
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created
+
+    @property
+    def groups(self):
+
+        if self.api and self.group_ids:
+            return self.api._get_groups(self.group_ids)
+
+    @groups.setter
+    def groups(self, groups):
+        if groups:
+            self.group_ids = [o.id for o in groups]
+            self._groups = groups
+
+    @property
+    def organizations(self):
+
+        if self.api and self.organization_ids:
+            return self.api._get_organizations(self.organization_ids)
+
+    @organizations.setter
+    def organizations(self, organizations):
+        if organizations:
+            self.organization_ids = [o.id for o in organizations]
+            self._organizations = organizations
+
+    @property
+    def updated(self):
+
+        if self.updated_at:
+            return dateutil.parser.parse(self.updated_at)
+
+    @updated.setter
+    def updated(self, updated):
+        if updated:
+            self.updated_at = updated
+
+
 class Vote(BaseObject):
     def __init__(self,
                  api=None,

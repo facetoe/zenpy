@@ -595,5 +595,10 @@ class EndpointFactory(object):
     help_centre.posts.comments.comment_votes.up = MultipleIDEndpoint('community/posts/{}/comments/{}/up.json')
     help_centre.posts.comments.comment_votes.down = MultipleIDEndpoint('community/posts/{}/comments/{}/down.json')
 
+    help_centre.user_segments = PrimaryEndpoint('help_center/user_segments')
+    help_centre.user_segments.applicable = PrimaryEndpoint('help_center/user_segments/applicable')
+    help_centre.user_segments.sections = SecondaryEndpoint('help_center/user_segments/%(id)s/sections.json')
+    help_centre.user_segments.topics = SecondaryEndpoint('help_center/user_segments/%(id)s/topics.json')
+
     def __new__(cls, endpoint_name):
         return getattr(cls, endpoint_name)

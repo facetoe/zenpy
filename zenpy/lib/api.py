@@ -352,7 +352,7 @@ class Api(BaseApi):
         return self._query_zendesk(EndpointFactory('sla_policies'), 'sla_policy', id=sla_id)
 
     def _get_department(self, department_id):
-        return self._query_zendesk(EndpointFactory('chats').departments, 'department',id=department_id)
+        return self._query_zendesk(EndpointFactory('chats').departments, 'department', id=department_id)
 
     def _get_zendesk_ticket(self, ticket_id):
         return self._query_zendesk(EndpointFactory('tickets'), 'ticket', id=ticket_id)
@@ -1511,6 +1511,19 @@ class PostApi(HelpCentreApiBase, CRUDApi, SubscriptionApi, VoteApi):
         self.comments = PostCommentApi(config, endpoint.comments, 'post')
 
 
+class UserSegmentApi(HelpCentreApiBase, CRUDApi):
+    def applicable(self):
+        return self._query_zendesk(self.endpoint.applicable, object_type='user_segment')
+
+    @extract_id(Section)
+    def sections(self, section):
+        return self._query_zendesk(self.endpoint.sections, object_type='section', id=section)
+
+    @extract_id(Topic)
+    def topics(self, topic):
+        return self._query_zendesk(self.endpoint.topics, object_type='topic', id=topic)
+
+
 class HelpCentreApi(HelpCentreApiBase):
     def __init__(self, config):
         super(HelpCentreApi, self).__init__(config, endpoint=EndpointFactory('help_centre'), object_type='help_centre')
@@ -1523,6 +1536,7 @@ class HelpCentreApi(HelpCentreApiBase):
         self.labels = LabelApi(config, self.endpoint.labels, object_type='label')
         self.topics = TopicApi(config, self.endpoint.topics, object_type='topic')
         self.posts = PostApi(config, self.endpoint.posts, object_type='post')
+        self.user_segments = UserSegmentApi(config, self.endpoint.user_segments, object_type='user_segment')
 
     def __call__(self, *args, **kwargs):
         raise NotImplementedError("Cannot directly call the HelpCentreApi!")
