@@ -300,18 +300,6 @@ class Comment(BaseObject):
             self.created_at = created
 
     @property
-    def source(self):
-
-        if self.api and self.source_id:
-            return self.api._get_source(self.source_id)
-
-    @source.setter
-    def source(self, source):
-        if source:
-            self.source_id = source.id
-            self._source = source
-
-    @property
     def updated(self):
 
         if self.updated_at:
@@ -569,18 +557,6 @@ class Subscription(BaseObject):
             setattr(self, key, value)
 
     @property
-    def content(self):
-
-        if self.api and self.content_id:
-            return self.api._get_content(self.content_id)
-
-    @content.setter
-    def content(self, content):
-        if content:
-            self.content_id = content.id
-            self._content = content
-
-    @property
     def created(self):
 
         if self.created_at:
@@ -646,18 +622,6 @@ class Topic(BaseObject):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
-
-    @property
-    def community(self):
-
-        if self.api and self.community_id:
-            return self.api._get_community(self.community_id)
-
-    @community.setter
-    def community(self, community):
-        if community:
-            self.community_id = community.id
-            self._community = community
 
     @property
     def created(self):
@@ -749,25 +713,13 @@ class Translation(BaseObject):
     def created_by(self):
 
         if self.api and self.created_by_id:
-            return self.api._get_created_by(self.created_by_id)
+            return self.api._get_user(self.created_by_id)
 
     @created_by.setter
     def created_by(self, created_by):
         if created_by:
             self.created_by_id = created_by.id
             self._created_by = created_by
-
-    @property
-    def source(self):
-
-        if self.api and self.source_id:
-            return self.api._get_source(self.source_id)
-
-    @source.setter
-    def source(self, source):
-        if source:
-            self.source_id = source.id
-            self._source = source
 
     @property
     def updated(self):
@@ -784,7 +736,7 @@ class Translation(BaseObject):
     def updated_by(self):
 
         if self.api and self.updated_by_id:
-            return self.api._get_updated_by(self.updated_by_id)
+            return self.api._get_user(self.updated_by_id)
 
     @updated_by.setter
     def updated_by(self, updated_by):
@@ -904,18 +856,6 @@ class Vote(BaseObject):
     def created(self, created):
         if created:
             self.created_at = created
-
-    @property
-    def item(self):
-
-        if self.api and self.item_id:
-            return self.api._get_item(self.item_id)
-
-    @item.setter
-    def item(self, item):
-        if item:
-            self.item_id = item.id
-            self._item = item
 
     @property
     def updated(self):

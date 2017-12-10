@@ -174,7 +174,8 @@ class Attribute(object):
 
     def get_object_type(self, attr_name):
         if attr_name in ('assignee_id', 'submitter_id', 'requester_id',
-                         'author_id', 'updater_id', 'recipient_id'):
+                         'author_id', 'updater_id', 'recipient_id',
+                         'created_by_id', 'updated_by_id'):
             object_type = 'user'
         elif attr_name in ('photo',):
             object_type = 'attachment'
@@ -214,7 +215,8 @@ class Attribute(object):
         return attr_name
 
     def get_is_property(self, attr_name):
-        if attr_name in ('locale_id', 'external_id', 'graph_object_id', 'agreement_id'):
+        if attr_name in ('locale_id', 'external_id', 'graph_object_id',
+                         'agreement_id', 'content_id', 'item_id', 'source_id', 'community_id'):
             return False
         if attr_name.endswith('_id') or attr_name.endswith('_ids'):
             return True

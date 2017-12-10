@@ -18,8 +18,8 @@ class TestProperties(ZenpyApiTestCase):
     def test_chat_object_properties_implemented(self):
         self.check_properties_are_implemented(chat_objects)
 
-    # def test_help_centre_properties_implemented(self):
-    #     self.check_properties_are_implemented(help_centre_objects)
+    def test_help_centre_properties_implemented(self):
+        self.check_properties_are_implemented(help_centre_objects)
 
     def check_properties_are_implemented(self, object_module):
         for cls in iter_classes(object_module):

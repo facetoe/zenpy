@@ -357,6 +357,15 @@ class Api(BaseApi):
     def _get_zendesk_ticket(self, ticket_id):
         return self._query_zendesk(EndpointFactory('tickets'), 'ticket', id=ticket_id)
 
+    def _get_user_segment(self, user_segment_id):
+        return self._query_zendesk(EndpointFactory('help_centre').user_segments, 'segment', id=user_segment_id)
+
+    def _get_section(self, section_id):
+        return self._query_zendesk(EndpointFactory('help_centre').sections, 'section', id=section_id)
+
+    def _get_article(self, article_id):
+        return self._query_zendesk(EndpointFactory('help_centre').articles, 'article', id=article_id)
+
     # TODO: Need Enterprise account to implement this
     def _get_custom_role(self, custom_role_id):
         pass
