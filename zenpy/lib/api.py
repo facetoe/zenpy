@@ -547,7 +547,7 @@ class UserIdentityApi(Api):
         if isinstance(identity, Identity):
             identity = identity.id
 
-        url = self.endpoint.show(user, identity)
+        url = self._build_url(self.endpoint.show(user, identity))
         return self._get(url)
 
     def create(self, user, identity):
