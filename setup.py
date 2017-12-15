@@ -14,7 +14,8 @@ setup(
     install_requires=[
         'requests>=2.7.0',
         'python-dateutil>=2.4.0',
-        'cachetools>=1.0.3'
+        'cachetools>=1.0.3',
+        'pytz>=2017.3'
     ],
     keywords=['zendesk', 'api', 'wrapper'],
     classifiers=[
