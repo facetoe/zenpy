@@ -3,8 +3,8 @@ import logging
 import zenpy
 from zenpy.lib.api_objects import *
 from zenpy.lib.api_objects.chat_objects import *
-from zenpy.lib.api_objects.help_centre_objects import Article, Category, Section, Label, Translation, Topic, Post, \
-    Subscription, Vote, AccessPolicy, UserSegment, ArticleAttachment, Comment
+from zenpy.lib.api_objects.help_centre_objects import Article, Category, Section, Label, Translation, Topic as HelpCentreTopic, Post, \
+    Subscription, Vote, AccessPolicy, UserSegment, ArticleAttachment, Comment as HelpCentreComment
 from zenpy.lib.cache import add_to_cache
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.util import as_singular, get_object_type
@@ -170,11 +170,11 @@ class HelpCentreObjectMapping(ZendeskObjectMapping):
         'article': Article,
         'category': Category,
         'section': Section,
-        'comment': Comment,
+        'comment': HelpCentreComment,
         'article_attachment': ArticleAttachment,
         'label': Label,
         'translation': Translation,
-        'topic': Topic,
+        'topic': HelpCentreTopic,
         'post': Post,
         'subscription': Subscription,
         'vote': Vote,
