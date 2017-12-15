@@ -536,6 +536,7 @@ class UserIdentityApi(Api):
                                               object_type='identity',
                                               endpoint=EndpointFactory('users').identities)
 
+    @extract_id(User, Identity)
     def show(self, user, identity):
         """
         Show the specified identity for the specified user.
@@ -544,14 +545,10 @@ class UserIdentityApi(Api):
         :param identity: identity id object
         :return: Identity
         """
-        if isinstance(user, User):
-            user = user.id
-        if isinstance(identity, Identity):
-            identity = identity.id
-
         url = self._build_url(self.endpoint.show(user, identity))
         return self._get(url)
 
+    @extract_id(User)
     def create(self, user, identity):
         """
         Create an additional identity for the specified user
@@ -559,12 +556,9 @@ class UserIdentityApi(Api):
         :param user: User id or object
         :param identity: Identity object to be created
         """
-        if not isinstance(identity, Identity):
-            raise ZenpyException("Invalid type - expected Identity received: {}".format(type(identity)))
-        if isinstance(user, User):
-            user = user.id
         return UserIdentityRequest(self).post(user, identity)
 
+    @extract_id(User)
     def update(self, user, identity):
         """
         Update specified identity for the specified user
@@ -573,12 +567,9 @@ class UserIdentityApi(Api):
         :param identity: Identity object to be updated.
         :return: The updated Identity
         """
-        if not isinstance(identity, Identity):
-            raise ZenpyException("You must pass an Identity object to this endpoint!")
-        if isinstance(user, User):
-            user = user.id
         return UserIdentityRequest(self).put(self.endpoint.update, user, identity)
 
+    @extract_id(User, Identity)
     def make_primary(self, user, identity):
         """
         Set the specified user as primary for the specified user.
@@ -587,12 +578,9 @@ class UserIdentityApi(Api):
         :param identity: Identity object or id
         :return: list of user's Identities
         """
-        if isinstance(user, User):
-            user = user.id
-        if isinstance(identity, Identity):
-            identity = identity.id
         return UserIdentityRequest(self).put(self.endpoint.make_primary, user, identity)
 
+    @extract_id(User, Identity)
     def request_verification(self, user, identity):
         """
         Sends the user a verification email with a link to verify ownership of the email address.
@@ -601,13 +589,9 @@ class UserIdentityApi(Api):
         :param identity: Identity id or object
         :return: requests Response object
         """
-        if isinstance(user, User):
-            user = user.id
-        if isinstance(identity, Identity):
-            identity = identity.id
-
         return UserIdentityRequest(self).put(self.endpoint.request_verification, user, identity)
 
+    @extract_id(User, Identity)
     def verify(self, user, identity):
         """
         Verify an identity for a user
@@ -616,12 +600,9 @@ class UserIdentityApi(Api):
         :param identity: Identity id or object
         :return: the verified Identity
         """
-        if isinstance(user, User):
-            user = user.id
-        if isinstance(identity, Identity):
-            identity = identity.id
         return UserIdentityRequest(self).put(self.endpoint.verify, user, identity)
 
+    @extract_id(User, Identity)
     def delete(self, user, identity):
         """
         Deletes the identity for a given user
@@ -630,10 +611,6 @@ class UserIdentityApi(Api):
         :param identity: Identity id or object
         :return: requests Response object
         """
-        if isinstance(user, User):
-            user = user.id
-        if isinstance(identity, Identity):
-            identity = identity.id
         return UserIdentityRequest(self).delete(user, identity)
 
 

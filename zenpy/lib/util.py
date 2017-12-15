@@ -92,6 +92,9 @@ def get_endpoint_path(api, response):
 
 
 def extract_id(*object_types):
+    """
+    Decorator for extracting id from passed parameters for specific types.
+    """
     def outer(func):
         def inner(*args, **kwargs):
             def id_of(x):
