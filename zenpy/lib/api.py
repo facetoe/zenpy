@@ -64,9 +64,11 @@ class BaseApi(object):
         )
 
     def _post(self, url, payload, **kwargs):
+        headers = {'Content-Type': 'application/octet-stream'} if 'data' in kwargs else None
         response = self._call_api(self.session.post, url,
                                   json=self._serialize(payload),
                                   timeout=self.timeout,
+                                  headers=headers,
                                   **kwargs)
         return self._process_response(response)
 
