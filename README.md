@@ -11,6 +11,8 @@ Zenpy supports both Python2 and Python3.
 Please report bugs!
 
 * [Quickstart](#quickstart)
+* [Experimental features in master](#experimental-features-in-master)
+    * [Pagination via Python slices](#pagination)
 * [Examples](#examples)
     * [Creating a ticket with a different requester](#creating-a-ticket-with-a-different-requester)
     * [Commenting on a ticket](#commenting-on-a-ticket)
@@ -38,6 +40,34 @@ for ticket in zenpy_client.search("PC LOAD LETTER", type='ticket', assignee="fac
     # No need to mess around with ids, linked objects can be accessed directly.
     print(ticket.requester)
 ```
+
+## Experimental features in master
+#### Pagination
+
+Added experimental support for pagination using Python slices. Currently has a few limitations:
+
+* Does not support negative values (no fancy slicing)
+* Always pulls the first 100 objects (sometimes one extra API call than necessary)
+* Does not currently support multiple accesses
+
+Usage:
+```python
+ticket_generator = zenpy_client.tickets()
+
+# Arguments to slice are [start:stop:page_size], they are all optional
+tickets = ticket_generator[3950:4000:50]
+print(tickets)
+
+# Normal Python slice semantics, the following examples do what you would expect
+tickets = ticket_generator[200:]
+tickets = ticket_generator[:200]
+tickets = ticket_generator[::]
+
+# Also supports indexing (Don't know why anyone would want to though)
+ticket = ticket_generator[746]
+print(ticket)
+```
+
 
 ## Examples
 

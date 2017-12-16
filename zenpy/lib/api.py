@@ -80,8 +80,8 @@ class BaseApi(object):
         response = self._call_api(self.session.delete, url, json=payload, timeout=self.timeout)
         return self._process_response(response)
 
-    def _get(self, url, raw_response=False):
-        response = self._call_api(self.session.get, url, timeout=self.timeout)
+    def _get(self, url, raw_response=False, **kwargs):
+        response = self._call_api(self.session.get, url, timeout=self.timeout, **kwargs)
         if raw_response:
             return response
         else:

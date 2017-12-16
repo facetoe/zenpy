@@ -1,8 +1,16 @@
+from __future__ import division
+
 import collections
+import re
 from abc import abstractmethod
 from datetime import datetime, timedelta
 
+from future.standard_library import install_aliases
+
 from zenpy.lib.util import as_plural
+
+install_aliases()
+from math import ceil
 
 __author__ = 'facetoe'
 
@@ -23,6 +31,7 @@ class BaseResultGenerator(collections.Iterable):
         self.values = None
         self.position = 0
         self.update_attrs()
+        self._has_sliced = False
 
     @abstractmethod
     def process_page(self):
@@ -39,9 +48,9 @@ class BaseResultGenerator(collections.Iterable):
         self.position += 1
         return zenpy_object
 
-    def handle_pagination(self):
+    def handle_pagination(self, page_num=None, page_size=None):
         """ Handle retrieving and processing the next page of results. """
-        self._response_json = self.get_next_page()
+        self._response_json = self.get_next_page(page_num=page_num, page_size=page_size)
         self.update_attrs()
         self.position = 0
         self.values = self.process_page()
@@ -52,14 +61,86 @@ class BaseResultGenerator(collections.Iterable):
             if key != 'results' and type(value) not in (list, dict):
                 setattr(self, key, value)
 
-    def get_next_page(self):
+    def get_next_page(self, page_num, page_size):
         """ Retrieve the next page of results. """
         url = self._response_json.get('next_page', None)
         if url is None:
             raise StopIteration()
-        log.debug("GENERATOR: " + url)
-        response = self.response_handler.api._get(url, raw_response=True)
+        params, url = self.process_url(page_num, page_size, url)
+        response = self.response_handler.api._get(url, raw_response=True, params=params)
         return response.json()
+
+    def process_url(self, page_num, page_size, url):
+        """ When slicing, remove the per_page and page parameters and pass to requests in the params dict """
+        params = dict()
+        if page_num is not None:
+            url = re.sub('page=\d+', '', url)
+            params['page'] = page_num
+        if page_size is not None:
+            url = re.sub('per_page=\d+', '', url)
+            params['per_page'] = page_size
+        return params, url
+
+    def __getitem__(self, item):
+        if isinstance(item, slice):
+            return self._handle_slice(item)
+        elif isinstance(item, int):
+            if item > len(self):
+                raise IndexError("out of range: {} > {}".format(item, len(self)))
+            elif item < 1:
+                raise ValueError("index values must be positive")
+            return self._handle_slice(slice(item - 1, item))[0]
+        raise TypeError("only slices are supported!")
+
+    def _handle_slice(self, slice_object):
+        if self._has_sliced:
+            raise RuntimeError("the current slice implementation does not support multiple accesses!")
+        start, stop, step = slice_object.start or 0, \
+                            slice_object.stop or len(self), \
+                            slice_object.step or 100
+        if any((val < 0 for val in (start, stop, step))):
+            raise ValueError("negative values not supported in slice operations!")
+
+        if 'incremental' in self._response_json.get("next_page", ''):
+            raise RuntimeError("incremental APIs do not support slicing!")
+
+        if self.values is None:
+            self.values = self.process_page()
+
+        values_length = len(self.values)
+        if start > values_length or stop > values_length:
+            result = self._retrieve_slice(start, stop, step)
+        else:
+            result = self.values[start:stop:step]
+        self._has_sliced = True
+        return result
+
+    def _retrieve_slice(self, start, stop, page_size):
+        # Calculate our range of pages.
+        min_page = int(ceil(start / page_size))
+        max_page = int(ceil(stop / page_size)) + 1
+
+        # Calculate the lower and upper bounds for the final slice.
+        padding = ((max_page - min_page) - 1) * page_size
+        lower = start % page_size or page_size
+        upper = (stop % page_size or page_size) + padding
+
+        # If we can use these objects, use them.
+        consume_first_page = False
+        if start <= len(self.values):
+            consume_first_page = True
+
+        # Gather all the objects in the range we want.
+        sliced_values = list()
+        for i, page_num in enumerate(range(min_page, max_page)):
+            if i == 0 and consume_first_page:
+                sliced_values.extend(self.values)
+            else:
+                self.handle_pagination(page_num=page_num, page_size=page_size)
+                sliced_values.extend(self.values)
+
+        # Finally return the range of objects the user requested.
+        return sliced_values[lower:upper]
 
     def __iter__(self):
         return self
@@ -88,7 +169,7 @@ class ZendeskResultGenerator(BaseResultGenerator):
         response_objects = self.response_handler.deserialize(self._response_json)
         return response_objects[as_plural(self.object_type)]
 
-    def get_next_page(self):
+    def get_next_page(self, page_num=None, page_size=None):
         end_time = self._response_json.get('end_time', None)
         # If we are calling an incremental API, make sure to honour the restrictions
         if end_time:
@@ -102,7 +183,7 @@ class ZendeskResultGenerator(BaseResultGenerator):
             # start_time value is less than 5 minutes in the future.
             if (datetime.fromtimestamp(int(end_time)) + timedelta(minutes=5)) > datetime.now():
                 raise StopIteration
-        return super(ZendeskResultGenerator, self).get_next_page()
+        return super(ZendeskResultGenerator, self).get_next_page(page_num, page_size)
 
 
 class SearchResultGenerator(BaseResultGenerator):
