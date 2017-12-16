@@ -19,6 +19,7 @@ Please report bugs!
     * [Creating a ticket with a custom field set](#creating-a-ticket-with-a-custom-field-set)
     * [Updating a custom field on a ticket](#updating-a-custom-field-on-a-ticket)
     * [Applying a Macro to a ticket](#applying-a-macro-to-a-ticket)
+    * [Adding a photo to a user](#adding-a-photo-to-a-user)
 * [Documentation](#documentation)
 * [Contributions](#contributions)
 
@@ -114,6 +115,14 @@ macro_result = zenpy_client.tickets.show_macro_effect(ticket_id_or_object, macro
 
 # Update the ticket to actually change the ticket. 
 zenpy_client.tickets.update(macro_result.ticket)
+```
+
+##### Adding a photo to a user
+
+```python
+user = zenpy_client.users(id=user_id)
+user.remote_photo_url = 'http://domain/example_photo.jpg'
+zenpy_client.users.update(user)
 ```
 
 ## Documentation
