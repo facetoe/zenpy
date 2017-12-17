@@ -6,14 +6,32 @@
 import dateutil.parser
 
 class BaseObject(object):
-    def to_dict(self):
-        copy_dict = self.__dict__.copy()
-        for key in list(copy_dict.keys()):
-            if copy_dict[key] is None or key == 'api':
-                del copy_dict[key]
-                continue
+    """
+    Base for all Zenpy objects. Keeps track of which attributes have been modified.
+    """
 
-            if key.startswith('_'):
+    def __new__(cls, *args, **kwargs):
+        instance = super(BaseObject, cls).__new__(cls)
+        instance.__dict__['_dirty_attributes'] = set()
+        return instance
+
+    def __setattr__(self, key, value):
+        self.__dict__['_dirty_attributes'].add(key)
+        self.__dict__[key] = value
+
+    def _clean_dirty(self):
+        self.__dict__['_dirty_attributes'].clear()
+
+    def to_dict(self, serialize=False):
+        copy_dict = self.__dict__.copy()
+        for key in list(copy_dict):
+            if serialize and key == 'id':
+                continue
+            elif copy_dict[key] is None or key in ('api', '_dirty_attributes'):
+                del copy_dict[key]
+            elif serialize and key not in self._dirty_attributes:
+                del copy_dict[key]
+            elif key.startswith('_'):
                 copy_dict[key[1:]] = copy_dict[key]
                 del copy_dict[key]
         return copy_dict

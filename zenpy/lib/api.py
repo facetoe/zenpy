@@ -13,7 +13,7 @@ from zenpy.lib.exception import *
 from zenpy.lib.mapping import ZendeskObjectMapping, ChatObjectMapping, HelpCentreObjectMapping
 from zenpy.lib.request import *
 from zenpy.lib.response import *
-from zenpy.lib.util import as_plural, extract_id
+from zenpy.lib.util import as_plural, extract_id, is_iterable_but_not_string
 
 __author__ = 'facetoe'
 
@@ -25,11 +25,13 @@ class ZenpyObjectEncoder(JSONEncoder):
 
     def default(self, o):
         if hasattr(o, 'to_dict'):
-            return o.to_dict()
+            return o.to_dict(serialize=True)
         elif isinstance(o, datetime):
             return o.date().isoformat()
         elif isinstance(o, date):
             return o.isoformat()
+        elif is_iterable_but_not_string(o):
+            return list(o)
 
 
 class BaseApi(object):
@@ -62,6 +64,10 @@ class BaseApi(object):
             GenericZendeskResponseHandler,
             HTTPOKResponseHandler,
         )
+        # An object is considered dirty when it has modifications. We want to ensure that it is successfully
+        # accepted by Zendesk before cleaning it's dirty attributes, so we store it here until the response
+        # is successfully processed, and then call the objects _clean_dirty() method.
+        self._dirty_object = None
 
     def _post(self, url, payload, **kwargs):
         headers = {'Content-Type': 'application/octet-stream'} if 'data' in kwargs else None
@@ -176,11 +182,34 @@ class BaseApi(object):
         for handler in self._response_handlers:
             if handler.applies_to(self, response):
                 log.debug("{} matched: {}".format(handler.__name__, pretty_response))
-                return handler(self, object_mapping).build(response)
+                r = handler(self, object_mapping).build(response)
+                self._clean_dirty_objects()
+                return r
         raise ZenpyException("Could not handle response: {}".format(pretty_response))
+
+    def _clean_dirty_objects(self):
+        """
+        Clear all dirty attributes for the last object or list of objects successfully submitted to Zendesk.
+        """
+        if self._dirty_object is None:
+            return
+        if not is_iterable_but_not_string(self._dirty_object):
+            self._dirty_object = [self._dirty_object]
+
+        log.debug("Cleaning objects: {}".format(self._dirty_object))
+        for o in self._dirty_object:
+            if not isinstance(o, BaseObject):
+                log.warning("Non-zenpy object found in _dirty_object list {}. This should never happen!".format(o))
+                continue
+            o._clean_dirty()
+        self._dirty_object = None
 
     def _serialize(self, zenpy_object):
         """ Serialize a Zenpy object to JSON """
+        # If it's a dict this object has already been serialized.
+        if not type(zenpy_object) == dict:
+            log.debug("Setting dirty object: {}".format(zenpy_object))
+            self._dirty_object = zenpy_object
         return json.loads(json.dumps(zenpy_object, cls=ZenpyObjectEncoder))
 
     def _query_zendesk(self, endpoint, object_type, *endpoint_args, **endpoint_kwargs):

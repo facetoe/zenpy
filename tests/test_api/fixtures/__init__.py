@@ -199,7 +199,11 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
                     raise Exception("Formatter found in object_kwargs but format_val is None!")
                 obj_kwargs[key] = value.format(format_val)
 
-        return self.ZenpyType(**obj_kwargs) if not dummy else None
+        zenpy_object = self.ZenpyType(**obj_kwargs) if not dummy else None
+        if zenpy_object:
+            # Ensure creating a new object sets the passed attributes as dirty.
+            self.assertTrue(all(k in zenpy_object.to_dict(serialize=True) for k in obj_kwargs))
+        return zenpy_object
 
     def modify_object(self, zenpy_object):
         """
@@ -215,6 +219,8 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
             if isinstance(new_kwargs[attr_name], basestring) and attr_name not in self.ignore_update_kwargs:
                 new_kwargs[attr_name] += hash_of(new_kwargs[attr_name])
                 setattr(zenpy_object, attr_name, new_kwargs[attr_name])
+                self.assertTrue(attr_name in zenpy_object._dirty_attributes,
+                                msg="Object modification failed to set _dirty_attributes!")
         return zenpy_object, new_kwargs
 
     def verify_object_updated(self, new_kwargs, zenpy_object):
@@ -226,6 +232,8 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
             if isinstance(attr, basestring):
                 self.assertEqual(getattr(updated_object, attr_name), new_kwargs[attr_name])
                 self.assertCacheUpdated(updated_object, attr_name, attr)
+        # Ensure that updating the object cleared the dirty attributes.
+        self.assertFalse(updated_object._dirty_attributes)
 
     def create_dummy_objects(self):
         """ Create some dummy objects for checking invalid types. """
