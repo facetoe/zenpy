@@ -1,11 +1,16 @@
+from __future__ import division
+
 import collections
 import re
 from abc import abstractmethod
 from datetime import datetime, timedelta
 
-from math import ceil
+from future.standard_library import install_aliases
 
 from zenpy.lib.util import as_plural
+
+install_aliases()
+from math import ceil
 
 __author__ = 'facetoe'
 
@@ -108,15 +113,16 @@ class BaseResultGenerator(collections.Iterable):
         page_size = 1000 if is_incremental else 100
 
         # Calculate our range of pages.
-        min_page = int(ceil(start // page_size))
-        max_page = int(ceil(stop // page_size)) + 2
+        min_page = int(ceil(start / page_size))
+        max_page = int(ceil(stop / page_size)) + 1
 
-        print(min_page, max_page)
+        print(min_page, max_page, start, stop)
 
         # Calculate the lower and upper bounds for the final slice.
         padding = ((max_page - min_page) - 1) * page_size
         lower = start % page_size or page_size
         upper = (stop % page_size or page_size) + padding
+
 
         # If we can use these objects, use them.
         consume_first_page = False

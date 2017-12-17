@@ -48,4 +48,13 @@ class TestTicketGeneratorSlice(ZenpyApiTestCase):
             self.assertTrue(len(values) == 2)
             for i, n in enumerate(range(100, 102)):
                 self.assertIsInstance(values[i], Ticket)
-                self.assertTrue(values[i].id == n, msg="expected Ticket id: {}, found: {}, values: {}".format(n, values[i], values))
+                self.assertTrue(values[i].id == n,
+                                msg="expected Ticket id: {}, found: {}, values: {}".format(n, values[i], values))
+
+    def test_ticket_slice_on_lower_boundry(self):
+        with self.recorder.use_cassette(self.generate_cassette_name(), serialize_with='prettyjson'):
+            ticket_generator = self.zenpy_client.tickets()
+            values = ticket_generator[100:101]
+            self.assertTrue(len(values) == 1)
+            self.assertIsInstance(values[0], Ticket)
+            self.assertTrue(values[0].id == 101)
