@@ -13,8 +13,6 @@ import logging
 
 log = logging.getLogger(__name__)
 
-PAGE_SIZE = 100
-
 
 class BaseResultGenerator(collections.Iterable):
     """
@@ -70,10 +68,10 @@ class BaseResultGenerator(collections.Iterable):
     def process_url(self, page_num, page_size, url):
         """ When slicing, remove the per_page and page parameters and pass to requests in the params dict """
         params = dict()
-        if page_num:
+        if page_num is None:
             url = re.sub('page=\d+', '', url)
             params['page'] = page_num
-        if page_size:
+        if page_size is None:
             url = re.sub('per_page=\d+', '', url)
             params['per_page'] = page_size
         return params, url
@@ -97,16 +95,21 @@ class BaseResultGenerator(collections.Iterable):
 
         values_length = len(self.values)
         if start > values_length or stop > values_length:
-            result = self._retrieve_slice(start, stop, step)
+            url = self._response_json.get("next_page", '')
+            is_incremental = 'incremental' in url
+            result = self._retrieve_slice(start, stop, step, is_incremental)
         else:
             result = self.values[start:stop:step]
         self._has_sliced = True
         return result
 
-    def _retrieve_slice(self, start, stop, step):
+    def _retrieve_slice(self, start, stop, step, is_incremental):
+
+        page_size = 1000 if is_incremental else 100
+
         # Calculate our range of pages.
-        min_page = math.ceil(start / PAGE_SIZE)
-        max_page = math.ceil(stop / PAGE_SIZE) + 1
+        min_page = math.ceil(start / page_size)
+        max_page = math.ceil(stop / page_size) + 1
 
         # In python2 math.ceil returns a float, which messes everything up. Sigh.
         if isinstance(min_page, float):
@@ -115,9 +118,9 @@ class BaseResultGenerator(collections.Iterable):
             max_page = int(max_page) + 1
 
         # Calculate the lower and upper bounds for the final slice.
-        padding = ((max_page - min_page) - 1) * PAGE_SIZE
-        lower = start % PAGE_SIZE or PAGE_SIZE
-        upper = (stop % PAGE_SIZE or PAGE_SIZE) + padding
+        padding = ((max_page - min_page) - 1) * page_size
+        lower = start % page_size or page_size
+        upper = (stop % page_size or page_size) + padding
 
         # If we can use these objects, use them.
         consume_first_page = False
@@ -130,7 +133,7 @@ class BaseResultGenerator(collections.Iterable):
             if i == 0 and consume_first_page:
                 sliced_values.extend(self.values)
             else:
-                self.handle_pagination(page_num=page_num, page_size=PAGE_SIZE)
+                self.handle_pagination(page_num=page_num, page_size=page_size)
                 sliced_values.extend(self.values)
 
         # Finally return the range of objects the user requested.
@@ -163,7 +166,7 @@ class ZendeskResultGenerator(BaseResultGenerator):
         response_objects = self.response_handler.deserialize(self._response_json)
         return response_objects[as_plural(self.object_type)]
 
-    def get_next_page(self, page_num=None, page_size=PAGE_SIZE):
+    def get_next_page(self, page_num=None, page_size=None):
         end_time = self._response_json.get('end_time', None)
         # If we are calling an incremental API, make sure to honour the restrictions
         if end_time:
