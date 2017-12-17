@@ -68,10 +68,10 @@ class BaseResultGenerator(collections.Iterable):
     def process_url(self, page_num, page_size, url):
         """ When slicing, remove the per_page and page parameters and pass to requests in the params dict """
         params = dict()
-        if page_num is None:
+        if page_num is not None:
             url = re.sub('page=\d+', '', url)
             params['page'] = page_num
-        if page_size is None:
+        if page_size is not None:
             url = re.sub('per_page=\d+', '', url)
             params['per_page'] = page_size
         return params, url
