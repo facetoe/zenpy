@@ -91,7 +91,7 @@ class BaseResultGenerator(collections.Iterable):
             raise RuntimeError("the current slice implementation does not support multiple accesses!")
         start, stop, step = slice_object.start or 0, \
                             slice_object.stop or len(self), \
-                            slice_object.step or 1
+                            slice_object.step or 100
         if any((val < 0 for val in (start, stop, step))):
             raise ValueError("negative values not supported in slice operations!")
 
@@ -109,9 +109,7 @@ class BaseResultGenerator(collections.Iterable):
         self._has_sliced = True
         return result
 
-    def _retrieve_slice(self, start, stop, step):
-
-        page_size = 100
+    def _retrieve_slice(self, start, stop, page_size):
 
         # Calculate our range of pages.
         min_page = int(ceil(start / page_size))
@@ -137,7 +135,7 @@ class BaseResultGenerator(collections.Iterable):
                 sliced_values.extend(self.values)
 
         # Finally return the range of objects the user requested.
-        return sliced_values[lower:upper:step]
+        return sliced_values[lower:upper]
 
     def __iter__(self):
         return self
