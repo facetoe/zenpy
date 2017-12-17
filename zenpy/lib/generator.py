@@ -110,7 +110,6 @@ class BaseResultGenerator(collections.Iterable):
         return result
 
     def _retrieve_slice(self, start, stop, page_size):
-
         # Calculate our range of pages.
         min_page = int(ceil(start / page_size))
         max_page = int(ceil(stop / page_size)) + 1
