@@ -13,6 +13,7 @@ Please report bugs!
 * [Quickstart](#quickstart)
 * [Experimental features in master](#experimental-features-in-master)
     * [Pagination via Python slices](#pagination)
+    * [Incremental object updates](#incremental-object-updates)
 * [Examples](#examples)
     * [Creating a ticket with a different requester](#creating-a-ticket-with-a-different-requester)
     * [Commenting on a ticket](#commenting-on-a-ticket)
@@ -66,6 +67,19 @@ tickets = ticket_generator[::]
 # Also supports indexing (Don't know why anyone would want to though)
 ticket = ticket_generator[746]
 print(ticket)
+```
+
+#### Incremental object updates
+Previously when executing code such as:
+
+```python
+ticket = zenpy_client.tickets(id=1)
+ticket.status = 'pending'
+zenpy_client.tickets.update(ticket)
+```
+Every object attribute was sent off to Zendesk. This led to subtle bugs and is inefficient. Now, only those objects that have been modified will be sent. You can see which attributes will be sent as follows:
+```python
+print(zenpy_object.to_dict(serialize=True))
 ```
 
 
