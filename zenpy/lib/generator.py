@@ -94,31 +94,31 @@ class BaseResultGenerator(collections.Iterable):
 
     def _handle_slice(self, slice_object):
         if self._has_sliced:
-            raise RuntimeError("the current slice implementation does not support multiple accesses!")
-        start, stop, step = slice_object.start or 0, \
+            raise NotImplementedError("the current slice implementation does not support multiple accesses!")
+        start, stop, page_size = slice_object.start or 0, \
                             slice_object.stop or len(self), \
                             slice_object.step or 100
-        if any((val < 0 for val in (start, stop, step))):
+        if any((val < 0 for val in (start, stop, page_size))):
             raise ValueError("negative values not supported in slice operations!")
 
         if 'incremental' in self._response_json.get("next_page", ''):
-            raise RuntimeError("incremental APIs do not support slicing!")
+            raise NotImplementedError("the current slice implementation does not support incremental APIs!")
 
         if self.values is None:
             self.values = self.process_page()
 
         values_length = len(self.values)
         if start > values_length or stop > values_length:
-            result = self._retrieve_slice(start, stop, step)
+            result = self._retrieve_slice(start, stop, page_size)
         else:
-            result = self.values[start:stop:step]
+            result = self.values[start:stop]
         self._has_sliced = True
         return result
 
     def _retrieve_slice(self, start, stop, page_size):
         # Calculate our range of pages.
-        min_page = int(ceil(start / page_size))
-        max_page = int(ceil(stop / page_size)) + 1
+        min_page = ceil(start / page_size)
+        max_page = ceil(stop / page_size) + 1
 
         # Calculate the lower and upper bounds for the final slice.
         padding = ((max_page - min_page) - 1) * page_size
@@ -131,16 +131,16 @@ class BaseResultGenerator(collections.Iterable):
             consume_first_page = True
 
         # Gather all the objects in the range we want.
-        sliced_values = list()
+        to_slice = list()
         for i, page_num in enumerate(range(min_page, max_page)):
             if i == 0 and consume_first_page:
-                sliced_values.extend(self.values)
+                to_slice.extend(self.values)
             else:
                 self.handle_pagination(page_num=page_num, page_size=page_size)
-                sliced_values.extend(self.values)
+                to_slice.extend(self.values)
 
         # Finally return the range of objects the user requested.
-        return sliced_values[lower:upper]
+        return to_slice[lower:upper]
 
     def __iter__(self):
         return self
