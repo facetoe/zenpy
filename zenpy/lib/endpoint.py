@@ -89,6 +89,8 @@ class PrimaryEndpoint(BaseEndpoint):
                 modifiers.append((key, value))
             elif key == 'permission_set':
                 modifiers.append(('permission_set', value))
+            elif key == 'page':
+                modifiers.append((key, value))
             elif key == 'role':
                 if isinstance(value, basestring):
                     value = [value]
