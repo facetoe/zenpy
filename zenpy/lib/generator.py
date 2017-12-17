@@ -95,22 +95,23 @@ class BaseResultGenerator(collections.Iterable):
         if any((val < 0 for val in (start, stop, step))):
             raise ValueError("negative values not supported in slice operations!")
 
+        if 'incremental' in self._response_json.get("next_page", ''):
+            raise RuntimeError("incremental APIs do not support slicing!")
+
         if self.values is None:
             self.values = self.process_page()
 
         values_length = len(self.values)
         if start > values_length or stop > values_length:
-            url = self._response_json.get("next_page", '')
-            is_incremental = 'incremental' in url
-            result = self._retrieve_slice(start, stop, step, is_incremental)
+            result = self._retrieve_slice(start, stop, step)
         else:
             result = self.values[start:stop:step]
         self._has_sliced = True
         return result
 
-    def _retrieve_slice(self, start, stop, step, is_incremental):
+    def _retrieve_slice(self, start, stop, step):
 
-        page_size = 1000 if is_incremental else 100
+        page_size = 100
 
         # Calculate our range of pages.
         min_page = int(ceil(start / page_size))
