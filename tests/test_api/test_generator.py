@@ -25,36 +25,35 @@ class TestTicketGeneratorSlice(ZenpyApiTestCase):
         with self.recorder.use_cassette(self.generate_cassette_name(), serialize_with='prettyjson'):
             ticket_generator = self.zenpy_client.tickets()
             values = ticket_generator[:1]
+            self.check_slice_range(values, range(1, 2))
 
-            self.assertTrue(len(values) == 1)
-            ticket = values[0]
-            self.assertIsInstance(ticket, Ticket)
-            self.assertTrue(ticket.id == 1)
-
-    def test_ticket_slice_lower_page_size_boundry(self):
+    def test_ticket_slice_lower_page_size_boundary(self):
         with self.recorder.use_cassette(self.generate_cassette_name(), serialize_with='prettyjson'):
             ticket_generator = self.zenpy_client.tickets()
             values = ticket_generator[99:100]
+            self.check_slice_range(values, range(100, 101))
 
-            self.assertTrue(len(values) == 1)
-            ticket = values[0]
-            self.assertIsInstance(ticket, Ticket)
-            self.assertTrue(ticket.id == 100)
-
-    def test_ticket_slice_cross_page_size_boundry(self):
+    def test_ticket_slice_cross_page_size_boundary(self):
         with self.recorder.use_cassette(self.generate_cassette_name(), serialize_with='prettyjson'):
             ticket_generator = self.zenpy_client.tickets()
             values = ticket_generator[99:101]
-            self.assertTrue(len(values) == 2)
-            for i, n in enumerate(range(100, 102)):
-                self.assertIsInstance(values[i], Ticket)
-                self.assertTrue(values[i].id == n,
-                                msg="expected Ticket id: {}, found: {}, values: {}".format(n, values[i], values))
+            self.check_slice_range(values, range(100, 102))
 
-    def test_ticket_slice_on_lower_boundry(self):
+    def test_ticket_slice_on_lower_boundary(self):
         with self.recorder.use_cassette(self.generate_cassette_name(), serialize_with='prettyjson'):
             ticket_generator = self.zenpy_client.tickets()
             values = ticket_generator[100:101]
-            self.assertTrue(len(values) == 1)
-            self.assertIsInstance(values[0], Ticket)
-            self.assertTrue(values[0].id == 101)
+            self.check_slice_range(values, range(101, 102))
+
+    def test_ticket_slice_exact_page_size_boundary(self):
+        with self.recorder.use_cassette(self.generate_cassette_name(), serialize_with='prettyjson'):
+            ticket_generator = self.zenpy_client.tickets()
+            values = ticket_generator[100:200]
+            self.check_slice_range(values, range(101, 201))
+
+    def check_slice_range(self, values, slice_range):
+        self.assertEqual(len(values), len(slice_range))
+        for i, n in enumerate(slice_range):
+            self.assertIsInstance(values[i], Ticket)
+            self.assertTrue(values[i].id == n,
+                            msg="expected Ticket id: {}, found: {}, values: {}".format(n, values[i], values))

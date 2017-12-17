@@ -116,13 +116,10 @@ class BaseResultGenerator(collections.Iterable):
         min_page = int(ceil(start / page_size))
         max_page = int(ceil(stop / page_size)) + 1
 
-        print(min_page, max_page, start, stop)
-
         # Calculate the lower and upper bounds for the final slice.
         padding = ((max_page - min_page) - 1) * page_size
         lower = start % page_size or page_size
         upper = (stop % page_size or page_size) + padding
-
 
         # If we can use these objects, use them.
         consume_first_page = False
