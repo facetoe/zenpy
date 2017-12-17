@@ -3,7 +3,7 @@ import re
 from abc import abstractmethod
 from datetime import datetime, timedelta
 
-import math
+from math import ceil
 
 from zenpy.lib.util import as_plural
 
@@ -108,14 +108,10 @@ class BaseResultGenerator(collections.Iterable):
         page_size = 1000 if is_incremental else 100
 
         # Calculate our range of pages.
-        min_page = math.ceil(start / page_size)
-        max_page = math.ceil(stop / page_size) + 1
+        min_page = int(ceil(start // page_size))
+        max_page = int(ceil(stop // page_size)) + 2
 
-        # In python2 math.ceil returns a float, which messes everything up. Sigh.
-        if isinstance(min_page, float):
-            min_page = int(min_page) + 1
-        if isinstance(max_page, float):
-            max_page = int(max_page) + 1
+        print(min_page, max_page)
 
         # Calculate the lower and upper bounds for the final slice.
         padding = ((max_page - min_page) - 1) * page_size
