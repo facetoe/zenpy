@@ -67,7 +67,7 @@ author = u'Facetoe'
 # built documents.
 #
 # The short X.Y version.
-version = '1.2.2'
+version = '1.2.5'
 # The full version, including alpha/beta/rc tags.
 release = '1.2'
 

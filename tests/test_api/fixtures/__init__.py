@@ -1,4 +1,6 @@
 import hashlib
+from operator import attrgetter
+
 from test_api import configure
 from time import sleep
 from unittest import TestCase
@@ -19,7 +21,7 @@ class ZenpyApiTestCase(TestCase):
 
     def generate_cassette_name(self):
         """
-        Taken from BetamaxTestCase. 
+        Taken from BetamaxTestCase.
         """
         cls = getattr(self, '__class__')
         test = self._testMethodName
@@ -92,6 +94,11 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
     # from the ZenpyType.
     expected_single_result_type = None
 
+    # Kwargs whose values should not be changed in the the update request.
+    # Some fields in update requests cannot have their value changed
+    # due to Zendesk API constraints.
+    ignore_update_kwargs = []
+
     def setUp(self):
         super(ModifiableApiTestCase, self).setUp()
         self.created_objects = []
@@ -139,9 +146,8 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
     @property
     def api(self):
         """ Return the current Api under test. """
-        if not hasattr(self.zenpy_client, self.api_name):
-            raise Exception("Zenpy has not Api named: {}".format(self.api_name))
-        return getattr(self.zenpy_client, self.api_name)
+        f = attrgetter(self.api_name)
+        return f(self.zenpy_client)
 
     @property
     def single_response_type(self):
@@ -149,9 +155,9 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
         return self.expected_single_result_type or self.ZenpyType
 
     def unpack_object(self, zenpy_object):
-        """ 
-        If we have a nested object, return the nested object we are interested in. 
-        Otherwise just return the passed object. 
+        """
+        If we have a nested object, return the nested object we are interested in.
+        Otherwise just return the passed object.
         """
         if hasattr(zenpy_object, self.api.object_type):
             obj = getattr(zenpy_object, self.api.object_type)
@@ -179,10 +185,10 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
             return result
 
     def instantiate_zenpy_object(self, format_val=None, dummy=False):
-        """ 
-        Create a Zenpy object of type ZenpyType with obj_kwargs passed to __init__. 
-        Any values with the formatter "{}" will be replaced with format_val. 
-        
+        """
+        Create a Zenpy object of type ZenpyType with obj_kwargs passed to __init__.
+        Any values with the formatter "{}" will be replaced with format_val.
+
         If dummy is True, simply return object (for testing type checking).
         """
         obj_kwargs = self.object_kwargs.copy()
@@ -193,11 +199,15 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
                     raise Exception("Formatter found in object_kwargs but format_val is None!")
                 obj_kwargs[key] = value.format(format_val)
 
-        return self.ZenpyType(**obj_kwargs) if not dummy else None
+        zenpy_object = self.ZenpyType(**obj_kwargs) if not dummy else None
+        if zenpy_object:
+            # Ensure creating a new object sets the passed attributes as dirty.
+            self.assertTrue(all(k in zenpy_object.to_dict(serialize=True) for k in obj_kwargs))
+        return zenpy_object
 
     def modify_object(self, zenpy_object):
-        """ 
-        Given a Zenpy object, modify it by hashing it's kwargs and appending the result to the 
+        """
+        Given a Zenpy object, modify it by hashing it's kwargs and appending the result to the
         existing values.
         """
 
@@ -206,9 +216,11 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
 
         new_kwargs = self.object_kwargs.copy()
         for attr_name in new_kwargs:
-            if isinstance(new_kwargs[attr_name], basestring):
+            if isinstance(new_kwargs[attr_name], basestring) and attr_name not in self.ignore_update_kwargs:
                 new_kwargs[attr_name] += hash_of(new_kwargs[attr_name])
                 setattr(zenpy_object, attr_name, new_kwargs[attr_name])
+                self.assertTrue(attr_name in zenpy_object._dirty_attributes,
+                                msg="Object modification failed to set _dirty_attributes!")
         return zenpy_object, new_kwargs
 
     def verify_object_updated(self, new_kwargs, zenpy_object):
@@ -220,6 +232,8 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
             if isinstance(attr, basestring):
                 self.assertEqual(getattr(updated_object, attr_name), new_kwargs[attr_name])
                 self.assertCacheUpdated(updated_object, attr_name, attr)
+        # Ensure that updating the object cleared the dirty attributes.
+        self.assertFalse(updated_object._dirty_attributes)
 
     def create_dummy_objects(self):
         """ Create some dummy objects for checking invalid types. """

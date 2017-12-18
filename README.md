@@ -2,24 +2,29 @@
 
 # Zenpy
 
-Zenpy is a Python wrapper for the Zendesk and Chat APIs. The goal of the project is to make it possible to write clean, fast, Pythonic code when interacting with Zendesk progmatically. The wrapper tries to keep API calls to a minimum. Wherever it makes sense objects are cached, and attributes of objects that would trigger an API call are evaluated lazily. 
+Zenpy is a Python wrapper for the Zendesk, Chat and HelpCentre APIs. The goal of the project is to make it possible to write clean, fast, Pythonic code when interacting with Zendesk progmatically. The wrapper tries to keep API calls to a minimum. Wherever it makes sense objects are cached, and attributes of objects that would trigger an API call are evaluated lazily. 
 
-Zenpy supports both Python2 and Python3. 
+Zenpy supports both Python2 and Python3.
+
+**Note:** HelpCentre API support is in beta.
 
 Please report bugs!
 
 * [Quickstart](#quickstart)
+* [Experimental features in master](#experimental-features-in-master)
+    * [Pagination via Python slices](#pagination)
+    * [Incremental object updates](#incremental-object-updates)
 * [Examples](#examples)
     * [Creating a ticket with a different requester](#creating-a-ticket-with-a-different-requester)
     * [Commenting on a ticket](#commenting-on-a-ticket)
+    * [Appending tags to a ticket](#appending-tags-to-a-ticket)
     * [Uploading an attachment](#uploading-an-attachment)
     * [Creating a ticket with a custom field set](#creating-a-ticket-with-a-custom-field-set)
     * [Updating a custom field on a ticket](#updating-a-custom-field-on-a-ticket)
     * [Applying a Macro to a ticket](#applying-a-macro-to-a-ticket)
+    * [Adding a photo to a user](#adding-a-photo-to-a-user)
 * [Documentation](#documentation)
 * [Contributions](#contributions)
-* [Hire Me](#hire-me)
-
 
 ## Quickstart
 
@@ -32,9 +37,51 @@ zenpy_client = Zenpy(**credentials)
 zenpy_client.tickets.create(Ticket(subject="Important", description="Thing"))
 
 # Perform a simple search
-for ticket in zenpy_client.search("party", type='ticket', assignee="face"):
-    print(ticket)
+for ticket in zenpy_client.search("PC LOAD LETTER", type='ticket', assignee="facetoe"):
+    # No need to mess around with ids, linked objects can be accessed directly.
+    print(ticket.requester)
 ```
+
+## Experimental features in master
+#### Pagination
+
+Added experimental support for pagination using Python slices. Currently has a few limitations:
+
+* Does not support negative values (no fancy slicing)
+* Always pulls the first 100 objects (sometimes one extra API call than necessary)
+* Does not currently support multiple accesses
+
+Usage:
+```python
+ticket_generator = zenpy_client.tickets()
+
+# Arguments to slice are [start:stop:page_size], they are all optional
+tickets = ticket_generator[3950:4000:50]
+print(tickets)
+
+# Normal Python slice semantics, the following examples do what you would expect
+tickets = ticket_generator[200:]
+tickets = ticket_generator[:200]
+tickets = ticket_generator[::]
+
+# Also supports indexing (Don't know why anyone would want to though)
+ticket = ticket_generator[746]
+print(ticket)
+```
+
+#### Incremental object updates
+Previously when executing code such as:
+
+```python
+ticket = zenpy_client.tickets(id=1)
+ticket.status = 'pending'
+zenpy_client.tickets.update(ticket)
+```
+Every object attribute was sent off to Zendesk. This led to subtle bugs and is inefficient. Now, only those objects that have been modified will be sent. You can see which attributes will be sent as follows:
+```python
+print(zenpy_object.to_dict(serialize=True))
+```
+
 
 ## Examples
 
@@ -44,10 +91,8 @@ for ticket in zenpy_client.search("party", type='ticket', assignee="face"):
 from zenpy.lib.api_objects import Ticket, User
 
 zenpy_client.tickets.create(
-    Ticket(
-        description='Some description',
-        requester=User(name='bob', email='bob@example.com')
-    )
+    Ticket(description='Some description',
+           requester=User(name='bob', email='bob@example.com'))
 )
 ```
 
@@ -58,6 +103,16 @@ from zenpy.lib.api_objects import Comment
 
 ticket = zenpy_client.tickets(id=some_ticket_id)
 ticket.comment = Comment(body="Important private comment", public=False)
+zenpy_client.tickets.update(ticket)
+```
+
+##### Appending tags to a ticket
+
+```python
+from zenpy.lib.api_objects import Ticket
+
+ticket = zenpy_client.tickets(id=some_ticket_id)
+ticket.tags.extend(['onetag', 'twotag', 'threetag', 'four'])
 zenpy_client.tickets.update(ticket)
 ```
 
@@ -106,6 +161,14 @@ macro_result = zenpy_client.tickets.show_macro_effect(ticket_id_or_object, macro
 zenpy_client.tickets.update(macro_result.ticket)
 ```
 
+##### Adding a photo to a user
+
+```python
+user = zenpy_client.users(id=user_id)
+user.remote_photo_url = 'http://domain/example_photo.jpg'
+zenpy_client.users.update(user)
+```
+
 ## Documentation
 
 Check out the [documentation](http://docs.facetoe.com.au/) for more info.
@@ -113,9 +176,3 @@ Check out the [documentation](http://docs.facetoe.com.au/) for more info.
 ### Contributions
 Contributions are very welcome. I've written an explanation of the core ideas of the wrapper in the [Contributors Guide](https://github.com/facetoe/zenpy/wiki/Contributors-Guide).
  
-### Hire Me
-
-Looking for a programmer? Hire me! I'm currently looking for work I can do remotely. I have mad skills in Python, Ansible, and Linux to name just a few. Happy to take on small jobs or large projects.
-
-You can contact me at facetoe@facetoe.com.au.
-

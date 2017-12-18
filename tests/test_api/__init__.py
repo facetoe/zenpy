@@ -15,7 +15,7 @@ if os.path.exists(cred_path):
         credentials = json.load(f)
 else:
     credentials = {
-        "subdomain": "zenpytesthelp",
+        "subdomain": "d3v-zenpydev",
         "email": "example@example.com",
         "token": "not really a token"
     }

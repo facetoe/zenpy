@@ -105,5 +105,4 @@ def extract_id(*object_types):
             return func(*new_args, **new_kwargs)
 
         return inner
-
     return outer

@@ -1,7 +1,10 @@
 import logging
 
+import zenpy
 from zenpy.lib.api_objects import *
 from zenpy.lib.api_objects.chat_objects import *
+from zenpy.lib.api_objects.help_centre_objects import Article, Category, Section, Label, Translation, Topic, Post, \
+    Subscription, Vote, AccessPolicy, UserSegment
 from zenpy.lib.cache import add_to_cache
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.util import as_singular, get_object_type
@@ -61,6 +64,7 @@ class ZendeskObjectMapping(object):
         'user_field': UserField,
         'organization_field': OrganizationField,
         'ticket_field': TicketField,
+        'ticket_form': TicketForm,
         'request': Request,
         'user_related': UserRelated,
         'organization_membership': OrganizationMembership,
@@ -68,8 +72,7 @@ class ZendeskObjectMapping(object):
         'sharing_agreement': SharingAgreement,
         'macro': Macro,
         'action': Action,
-        'result': None,  # result can represent many things, it is handled in format_key()
-        'macro_result': MacroResult,
+        'result': MacroResult,
         'job_status_result': JobStatusResult,
         'agentmacroreference': AgentMacroReference,
         'identity': Identity,
@@ -80,17 +83,20 @@ class ZendeskObjectMapping(object):
         'export': Export,
         'sla_policy': SlaPolicy,
         'policy_metric': PolicyMetric,
-        'definitions': Definitions
+        'definitions': Definitions,
+        'recipient_address': RecipientAddress,
+        'recipient': Recipient,
+        'response': Response
     }
 
     def __init__(self, api):
         self.api = api
 
     def object_from_json(self, object_type, object_json):
-        """ 
-        Given a blob of JSON representing a Zenpy object, recursively deserialize it and 
+        """
+        Given a blob of JSON representing a Zenpy object, recursively deserialize it and
          any nested objects it contains. This method also adds the deserialized object
-         to the relevant cache if applicable. 
+         to the relevant cache if applicable.
         """
         if not isinstance(object_json, dict):
             return object_json
@@ -103,13 +109,14 @@ class ZendeskObjectMapping(object):
                     value = self.object_from_json(key, value)
                 elif as_singular(key) in self.class_mapping:
                     value = self.object_from_json(as_singular(key), value)
-            elif isinstance(value, list) and self.format_key(as_singular(key), parent=obj) in self.class_mapping:
-
+            elif isinstance(value, list) \
+                    and self.format_key(as_singular(key), parent=obj) in self.class_mapping:
                 zenpy_objects = list()
                 for item in value:
                     zenpy_objects.append(self.object_from_json(self.format_key(as_singular(key), parent=obj), item))
                 value = zenpy_objects
             setattr(obj, key, value)
+        obj._clean_dirty()
         add_to_cache(obj)
         return obj
 
@@ -131,7 +138,7 @@ class ZendeskObjectMapping(object):
 class ChatObjectMapping(ZendeskObjectMapping):
     """
     Handle converting Chat API objects to Python ones. This class exists
-    mainly to prevent namespace collisions between the two APIs. 
+    mainly to prevent namespace collisions between the two APIs.
     """
     class_mapping = {
         'chat': Chat,
@@ -157,3 +164,21 @@ class ChatObjectMapping(ZendeskObjectMapping):
 
     def __init__(self, api):
         super(ChatObjectMapping, self).__init__(api)
+
+
+class HelpCentreObjectMapping(ZendeskObjectMapping):
+    class_mapping = {
+        'article': Article,
+        'category': Category,
+        'section': Section,
+        'comment': zenpy.lib.api_objects.help_centre_objects.Comment,
+        'article_attachment': zenpy.lib.api_objects.help_centre_objects.ArticleAttachment,
+        'label': Label,
+        'translation': Translation,
+        'topic': zenpy.lib.api_objects.help_centre_objects.Topic,
+        'post': Post,
+        'subscription': Subscription,
+        'vote': Vote,
+        'access_policy': AccessPolicy,
+        'user_segment': UserSegment
+    }
