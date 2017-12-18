@@ -138,9 +138,11 @@ class IncrementalEndpoint(BaseEndpoint):
     """
     An IncrementalEndpoint takes a start_time parameter
     for querying the incremental api endpoint.
+
     Note: The Zendesk API expects UTC time. If a timezone aware datetime object is passed
     Zenpy will convert it to UTC, however if a naive object or unix timestamp is passed there is nothing
     Zenpy can do. It is recommended to always pass timezone aware objects to this endpoint.
+
     :param start_time: Unix timestamp or datetime object
     """
 
@@ -173,6 +175,7 @@ class SearchEndpoint(BaseEndpoint):
     """
     The search endpoint accepts all the parameters defined in the Zendesk `Search Documentation <https://developer.zendesk.com/rest_api/docs/core/search>`_.
     Zenpy defines several keywords that are mapped to the Zendesk comparison operators:
+
     +-----------------+------------------+
     | **Keyword**     | **Operator**     |
     +-----------------+------------------+
@@ -190,12 +193,18 @@ class SearchEndpoint(BaseEndpoint):
     +-----------------+------------------+
     | \*_between      | > < (dates only) |
     +-----------------+------------------+
+
     For example the call:
+
     .. code:: python
+
       zenpy.search("zenpy", created_between=[yesterday, today], type='ticket', minus='negated')
+
     Would generate the following API call:
     ::
         /api/v2/search.json?query=zenpy+created>2015-08-29 created<2015-08-30+type:ticket+-negated
+
+
     """
 
     def __call__(self, *args, **kwargs):
