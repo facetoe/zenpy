@@ -1,11 +1,9 @@
 import logging
-import time
 from datetime import datetime
 
-from dateutil.tz import tzutc
 
 from zenpy.lib.exception import ZenpyException
-from zenpy.lib.util import is_timezone_aware, is_iterable_but_not_string
+from zenpy.lib.util import is_iterable_but_not_string, to_unix_ts
 
 __author__ = 'facetoe'
 
@@ -31,6 +29,8 @@ class BaseEndpoint(object):
     """
     BaseEndpoint supplies common formatting operations.
     """
+
+    ISO_8601_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
     def __init__(self, endpoint, sideload=None):
         self.endpoint = endpoint
@@ -58,12 +58,10 @@ class BaseEndpoint(object):
 
 
 class PrimaryEndpoint(BaseEndpoint):
-    """
-    A PrimaryEndpoint takes an id or list of ids and either returns the objects
-    associated with them or performs actions on them (eg, update/delete).
-    """
-
     ISO_8601_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
+    """
+    The PrimaryEndpoint handles the most common endpoint operations.
+    """
 
     def __call__(self, **kwargs):
         query = ""
@@ -85,12 +83,21 @@ class PrimaryEndpoint(BaseEndpoint):
                 query = "".join([self.endpoint, '/update_many.json'])
             elif key == 'count_many':
                 query = self._many(self.endpoint, value, action='count_many.json?ids=')
+            elif key in ('external_id', 'external_ids'):
+                external_ids = [value] if not is_iterable_but_not_string(value) else value
+                query += self._many(self.endpoint, external_ids, action='show_many.json?external_ids=')
+            elif key == 'update_many_external':
+                query += self._many(self.endpoint, value, action='update_many.json?external_ids=')
+            elif key == 'destroy_many_external':
+                query += self._many(self.endpoint, value, action='destroy_many.json?external_ids=')
+            elif key == 'label_names':
+                query += "label_names={}".format(",".join(value))
+            elif key == 'filter_by':
+                query += 'filter_by={}'.format(value)
             elif key in ('sort_by', 'sort_order'):
                 modifiers.append((key, value))
             elif key == 'permission_set':
                 modifiers.append(('permission_set', value))
-            elif key == 'page':
-                modifiers.append((key, value))
             elif key == 'role':
                 if isinstance(value, basestring):
                     value = [value]
@@ -114,11 +121,6 @@ class PrimaryEndpoint(BaseEndpoint):
 
 
 class SecondaryEndpoint(BaseEndpoint):
-    """
-    A SecondaryEndpoint takes a single ID and returns the
-    object associated with it.
-    """
-
     def __call__(self, **kwargs):
         if not kwargs:
             raise ZenpyException("This endpoint requires arguments!")
@@ -136,29 +138,22 @@ class IncrementalEndpoint(BaseEndpoint):
     """
     An IncrementalEndpoint takes a start_time parameter
     for querying the incremental api endpoint.
-
     Note: The Zendesk API expects UTC time. If a timezone aware datetime object is passed
     Zenpy will convert it to UTC, however if a naive object or unix timestamp is passed there is nothing
     Zenpy can do. It is recommended to always pass timezone aware objects to this endpoint.
-
     :param start_time: Unix timestamp or datetime object
     """
 
     def __call__(self, start_time=None):
-        if not start_time:
+        if start_time is None:
             raise ZenpyException("Incremental Endoint requires a start_time parameter!")
 
-        if isinstance(start_time, datetime):
-            if is_timezone_aware(start_time):
-                start_time = start_time.astimezone(tzutc())
-            else:
-                log.warning(
-                    "Non timezone-aware datetime object passed to IncrementalEndpoint. "
-                    "The Zendesk API expects UTC time, if this is not the case results will be incorrect!"
-                )
-            unix_time = time.mktime(start_time.timetuple())
+        elif isinstance(start_time, datetime):
+            unix_time = to_unix_ts(start_time)
+
         else:
             unix_time = start_time
+
         query = "start_time=%s" % str(unix_time)
         return self.endpoint + query + self._format_sideload(self.sideload, seperator='&')
 
@@ -178,7 +173,6 @@ class SearchEndpoint(BaseEndpoint):
     """
     The search endpoint accepts all the parameters defined in the Zendesk `Search Documentation <https://developer.zendesk.com/rest_api/docs/core/search>`_.
     Zenpy defines several keywords that are mapped to the Zendesk comparison operators:
-
     +-----------------+------------------+
     | **Keyword**     | **Operator**     |
     +-----------------+------------------+
@@ -196,21 +190,13 @@ class SearchEndpoint(BaseEndpoint):
     +-----------------+------------------+
     | \*_between      | > < (dates only) |
     +-----------------+------------------+
-
     For example the call:
-
     .. code:: python
-
       zenpy.search("zenpy", created_between=[yesterday, today], type='ticket', minus='negated')
-
     Would generate the following API call:
     ::
         /api/v2/search.json?query=zenpy+created>2015-08-29 created<2015-08-30+type:ticket+-negated
-
-
     """
-
-    ZENDESK_DATE_FORMAT = "%Y-%m-%d"
 
     def __call__(self, *args, **kwargs):
 
@@ -219,7 +205,7 @@ class SearchEndpoint(BaseEndpoint):
         sort_order = list()
         for key, value in kwargs.items():
             if isinstance(value, datetime):
-                kwargs[key] = value.strftime(self.ZENDESK_DATE_FORMAT)
+                kwargs[key] = value.strftime(ZENDESK_DATE_FORMAT)
             elif is_iterable_but_not_string(value) and key == 'ids':
                 kwargs[key] = self._format_many(value)
 
@@ -265,7 +251,10 @@ class SearchEndpoint(BaseEndpoint):
         elif not all([isinstance(d, datetime) for d in values]):
             raise ZenpyException("*_between only works with dates!")
         key = key.replace('_between', '')
-        dates = [v.strftime(self.ZENDESK_DATE_FORMAT) for v in values]
+        if values[0].tzinfo is None or values[1].tzinfo is None:
+            dates = [v.strftime(self.ISO_8601_FORMAT) for v in values]
+        else:
+            dates = [str(v.replace(microsecond=0).isoformat()) for v in values]
         return "%s>%s %s<%s" % (key, dates[0], key, dates[1])
 
     def format_or(self, key, values):
@@ -285,8 +274,22 @@ class RequestSearchEndpoint(BaseEndpoint):
         return self.endpoint + query
 
 
+class HelpDeskSearchEndpoint(BaseEndpoint):
+    def __call__(self, query='', **kwargs):
+        query = 'query={}&'.format(query)
+        processed_kwargs = dict()
+        for key, value in kwargs.items():
+            if isinstance(value, datetime):
+                processed_kwargs[key] = value.strftime(ZENDESK_DATE_FORMAT)
+            elif is_iterable_but_not_string(value):
+                processed_kwargs[key] = ",".join(value)
+            else:
+                processed_kwargs[key] = value
+        return self.endpoint + query + '&'.join(("{}={}".format(k, v) for k, v in processed_kwargs.items()))
+
+
 class SatisfactionRatingEndpoint(BaseEndpoint):
-    def __call__(self, score=None, sort_order=None):
+    def __call__(self, score=None, sort_order=None, start_time=None, end_time=None):
         if sort_order not in ('asc', 'desc'):
             raise ZenpyException("sort_order must be one of (asc, desc)")
 
@@ -298,8 +301,14 @@ class SatisfactionRatingEndpoint(BaseEndpoint):
 
         if sort_order:
             result += '&sort_order={}'.format(sort_order)
-        return result
 
+        if start_time:
+            result += '&start_time={}'.format(to_unix_ts(start_time))
+
+        if end_time:
+            result += '&end_time={}'.format(to_unix_ts(end_time))
+
+        return result
 
 class MacroEndpoint(BaseEndpoint):
     def __call__(self, sort_order=None, sort_by=None, **kwargs):
@@ -404,6 +413,11 @@ class EndpointFactory(object):
     macros = MacroEndpoint('macros', sideload=['app_installation', 'categories', 'permissions', 'usage_1h', 'usage_24h',
                                                'usage_7d', 'usage_30d'])
     macros.apply = SecondaryEndpoint('macros/%(id)s/apply.json')
+
+
+    nps = PrimaryEndpoint('nps')
+    nps.recipients_incremental = IncrementalEndpoint('nps/incremental/recipients.json?')
+    nps.responses_incremental = IncrementalEndpoint('nps/incremental/responses.json?')
     organization_memberships = PrimaryEndpoint('organization_memberships')
     organizations = PrimaryEndpoint('organizations', ['abilities'])
     organizations.external = SecondaryEndpoint('organizations/search.json?external_id=%(id)s')
@@ -429,6 +443,7 @@ class EndpointFactory(object):
     suspended_tickets.recover = SecondaryEndpoint('suspended_tickets/%(id)s/recover.json')
     tags = PrimaryEndpoint('tags')
     ticket_fields = PrimaryEndpoint('ticket_fields')
+    ticket_forms = PrimaryEndpoint('ticket_forms')
     ticket_import = PrimaryEndpoint('imports/tickets')
     ticket_metrics = PrimaryEndpoint('ticket_metrics')
     tickets = PrimaryEndpoint('tickets',
@@ -487,6 +502,94 @@ class EndpointFactory(object):
     views.execute = SecondaryEndpoint('views/%(id)s/execute.json')
     views.export = SecondaryEndpoint('views/%(id)s/export.json')
     views.search = ViewSearchEndpoint('views/search.json?')
+    recipient_addresses = PrimaryEndpoint('recipient_addresses')
+
+    class Dummy(object): pass
+
+    help_centre = Dummy()
+    help_centre.articles = PrimaryEndpoint('help_center/articles')
+    help_centre.articles.create = SecondaryEndpoint('help_center/sections/%(id)s/articles.json')
+    help_centre.articles.comments = SecondaryEndpoint('help_center/articles/%(id)s/comments.json')
+    help_centre.articles.comments_update = MultipleIDEndpoint('help_center/articles/{}/comments/{}.json')
+    help_centre.articles.comments_delete = MultipleIDEndpoint('help_center/articles/{}/comments/{}.json')
+    help_centre.articles.comment_show = MultipleIDEndpoint('help_center/articles/{}/comments/{}.json')
+    help_centre.articles.user_comments = SecondaryEndpoint('help_center/users/%(id)s/comments.json')
+    help_centre.articles.labels = SecondaryEndpoint('help_center/articles/%(id)s/labels.json')
+    help_centre.articles.translations = SecondaryEndpoint('help_center/articles/%(id)s/translations.json')
+    help_centre.articles.create_translation = SecondaryEndpoint('help_center/articles/%(id)s/translations.json')
+    help_centre.articles.missing_translations = SecondaryEndpoint(
+        'help_center/articles/%(id)s/translations/missing.json')
+    help_centre.articles.update_translation = MultipleIDEndpoint('help_center/articles/{}/translations/{}.json')
+    help_centre.articles.show_translation = MultipleIDEndpoint('help_center/articles/{}/translations/{}.json')
+    help_centre.articles.delete_translation = SecondaryEndpoint('help_center/translations/%(id)s.json')
+    help_centre.articles.search = HelpDeskSearchEndpoint('help_center/articles/search.json?')
+    help_centre.articles.subscriptions = SecondaryEndpoint('help_center/articles/%(id)s/subscriptions.json')
+    help_centre.articles.subscriptions_delete = MultipleIDEndpoint('help_center/articles/{}/subscriptions/{}.json')
+    help_centre.articles.votes = SecondaryEndpoint('help_center//articles/%(id)s/votes.json')
+    help_centre.articles.votes.up = SecondaryEndpoint('help_center/articles/%(id)s/up.json')
+    help_centre.articles.votes.down = SecondaryEndpoint('help_center/articles/%(id)s/down.json')
+    help_centre.articles.comment_votes = MultipleIDEndpoint('help_center/articles/{}/comments/{}/votes.json')
+    help_centre.articles.comment_votes.up = MultipleIDEndpoint('help_center/articles/{}/comments/{}/up.json')
+    help_centre.articles.comment_votes.down = MultipleIDEndpoint('help_center/articles/{}/comments/{}/down.json')
+
+    help_centre.labels = PrimaryEndpoint('help_center/articles/labels')
+    help_centre.labels.create = SecondaryEndpoint('help_center/articles/%(id)s/labels.json')
+    help_centre.labels.delete = MultipleIDEndpoint('help_center/articles/{}/labels/{}.json')
+
+    help_centre.attachments = SecondaryEndpoint('help_center/articles/%(id)s/attachments.json')
+    help_centre.attachments.inline = SecondaryEndpoint('help_center/articles/%(id)s/attachments/inline.json')
+    help_centre.attachments.block = SecondaryEndpoint('help_center/articles/%(id)s/attachments/block.json')
+    help_centre.attachments.create = SecondaryEndpoint('help_center/articles/%(id)s/attachments.json')
+    help_centre.attachments.create_unassociated = PrimaryEndpoint('help_center/articles/attachments')
+    help_centre.attachments.delete = SecondaryEndpoint('help_center/articles/attachments/%(id)s.json')
+
+    help_centre.categories = PrimaryEndpoint('help_center/categories')
+    help_centre.categories.articles = SecondaryEndpoint('help_center/categories/%(id)s/articles.json')
+    help_centre.categories.sections = SecondaryEndpoint('help_center/categories/%(id)s/sections.json')
+    help_centre.categories.translations = SecondaryEndpoint('help_center/categories/%(id)s/translations.json')
+    help_centre.categories.create_translation = SecondaryEndpoint('help_center/categories/%(id)s/translations.json')
+    help_centre.categories.missing_translations = SecondaryEndpoint(
+        'help_center/categories/%(id)s/translations/missing.json')
+    help_centre.categories.update_translation = MultipleIDEndpoint('help_center/categories/{}/translations/{}.json')
+    help_centre.categories.delete_translation = SecondaryEndpoint('help_center/translations/%(id)s.json')
+
+    help_centre.sections = PrimaryEndpoint('help_center/sections')
+    help_centre.sections.articles = SecondaryEndpoint('help_center/sections/%(id)s/articles.json')
+    help_centre.sections.translations = SecondaryEndpoint('help_center/sections/%(id)s/translations.json')
+    help_centre.sections.create_translation = SecondaryEndpoint('help_center/sections/%(id)s/translations.json')
+    help_centre.sections.missing_translations = SecondaryEndpoint(
+        'help_center/sections/%(id)s/translations/missing.json')
+    help_centre.sections.update_translation = MultipleIDEndpoint('help_center/sections/{}/translations/{}.json')
+    help_centre.sections.delete_translation = SecondaryEndpoint('help_center/translations/%(id)s.json')
+    help_centre.sections.subscriptions = SecondaryEndpoint('help_center/sections/%(id)s/subscriptions.json')
+    help_centre.sections.subscriptions_delete = MultipleIDEndpoint('help_center/sections/{}/subscriptions/{}.json')
+    help_centre.sections.access_policies = SecondaryEndpoint('help_center/sections/%(id)s/access_policy.json')
+
+    help_centre.topics = PrimaryEndpoint("community/topics")
+    help_centre.topics.posts = SecondaryEndpoint('community/topics/%(id)s/posts.json')
+    help_centre.topics.subscriptions = SecondaryEndpoint('community/topics/%(id)s/subscriptions.json')
+    help_centre.topics.subscriptions_delete = MultipleIDEndpoint('community/topics/{}/subscriptions/{}.json')
+    help_centre.topics.access_policies = SecondaryEndpoint('community/topics/%(id)s/access_policy.json')
+
+    help_centre.posts = PrimaryEndpoint('community/posts', sideload=['users', 'topics'])
+    help_centre.posts.subscriptions = SecondaryEndpoint('community/posts/%(id)s/subscriptions.json')
+    help_centre.posts.subscriptions_delete = MultipleIDEndpoint('community/posts/{}/subscriptions/{}.json')
+
+    help_centre.posts.comments = SecondaryEndpoint('community/posts/%(id)s/comments.json')
+    help_centre.posts.comments.delete = MultipleIDEndpoint('community/posts/{}/comments/{}.json')
+    help_centre.posts.comments.update = MultipleIDEndpoint('community/posts/{}/comments/{}.json')
+
+    help_centre.posts.votes = SecondaryEndpoint('community/posts/%(id)s/votes.json')
+    help_centre.posts.votes.up = SecondaryEndpoint('community/posts/%(id)s/up.json')
+    help_centre.posts.votes.down = SecondaryEndpoint('community/posts/%(id)s/down.json')
+    help_centre.posts.comments.comment_votes = MultipleIDEndpoint('community/posts/{}/comments/{}/votes.json')
+    help_centre.posts.comments.comment_votes.up = MultipleIDEndpoint('community/posts/{}/comments/{}/up.json')
+    help_centre.posts.comments.comment_votes.down = MultipleIDEndpoint('community/posts/{}/comments/{}/down.json')
+
+    help_centre.user_segments = PrimaryEndpoint('help_center/user_segments')
+    help_centre.user_segments.applicable = PrimaryEndpoint('help_center/user_segments/applicable')
+    help_centre.user_segments.sections = SecondaryEndpoint('help_center/user_segments/%(id)s/sections.json')
+    help_centre.user_segments.topics = SecondaryEndpoint('help_center/user_segments/%(id)s/topics.json')
 
     def __new__(cls, endpoint_name):
         return getattr(cls, endpoint_name)
