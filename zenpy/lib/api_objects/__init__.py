@@ -4,7 +4,6 @@
 ######################################################################
 
 import dateutil.parser
-
 from zenpy.lib.proxy import ProxyDict, ProxyList
 
 
@@ -56,6 +55,7 @@ class BaseObject(object):
             if hasattr(self, identifier):
                 return "{}({}={})".format(class_name, identifier, formatted(getattr(self, identifier)))
         return "{}()".format(class_name)
+
 
 
 

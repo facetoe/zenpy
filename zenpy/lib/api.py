@@ -11,6 +11,7 @@ from zenpy.lib.api_objects.help_centre_objects import Section, Article, Comment,
 from zenpy.lib.cache import query_cache
 from zenpy.lib.exception import *
 from zenpy.lib.mapping import ZendeskObjectMapping, ChatObjectMapping, HelpCentreObjectMapping
+from zenpy.lib.proxy import ProxyList, ProxyDict
 from zenpy.lib.request import *
 from zenpy.lib.response import *
 from zenpy.lib.util import as_plural, extract_id, is_iterable_but_not_string
@@ -30,6 +31,10 @@ class ZenpyObjectEncoder(JSONEncoder):
             return o.date().isoformat()
         elif isinstance(o, date):
             return o.isoformat()
+        elif isinstance(o, ProxyDict):
+            return dict(o)
+        elif isinstance(o, ProxyList):
+            return list(o)
         elif is_iterable_but_not_string(o):
             return list(o)
 
