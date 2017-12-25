@@ -57,13 +57,6 @@ class TestTicketGeneratorSlice(ZenpyApiTestCase):
             values = ticket_generator[3950:4000:50]
             self.check_slice_range(values, range(3951, 4001))
 
-    def test_ticket_slice_index(self):
-        with self.recorder.use_cassette(self.generate_cassette_name(), serialize_with='prettyjson'):
-            ticket_generator = self.zenpy_client.tickets()
-            ticket = ticket_generator[3951]
-            self.assertIsInstance(ticket, Ticket)
-            self.assertEqual(ticket.id, 3951)
-
     def check_slice_range(self, values, slice_range):
         self.assertEqual(len(values), len(slice_range))
         for i, n in enumerate(slice_range):

@@ -63,10 +63,6 @@ print(tickets)
 tickets = ticket_generator[200:]
 tickets = ticket_generator[:200]
 tickets = ticket_generator[::]
-
-# Also supports indexing (Don't know why anyone would want to though)
-ticket = ticket_generator[746]
-print(ticket)
 ```
 
 #### Incremental object updates

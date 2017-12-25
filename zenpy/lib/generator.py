@@ -84,12 +84,6 @@ class BaseResultGenerator(collections.Iterable):
     def __getitem__(self, item):
         if isinstance(item, slice):
             return self._handle_slice(item)
-        elif isinstance(item, int):
-            if item > len(self):
-                raise IndexError("out of range: {} > {}".format(item, len(self)))
-            elif item < 1:
-                raise ValueError("index values must be positive")
-            return self._handle_slice(slice(item - 1, item))[0]
         raise TypeError("only slices are supported!")
 
     def _handle_slice(self, slice_object):
