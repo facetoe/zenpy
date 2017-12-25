@@ -5,6 +5,9 @@
 
 import dateutil.parser
 
+from zenpy.lib.proxy import ProxyDict, ProxyList
+
+
 class BaseObject(object):
     """
     Base for all Zenpy objects. Keeps track of which attributes have been modified.
@@ -21,11 +24,16 @@ class BaseObject(object):
 
     def _clean_dirty(self):
         self.__dict__['_dirty_attributes'].clear()
+        for key, val in vars(self).items():
+            if type(val) in (ProxyDict, ProxyList):
+                val._clean_dirty()
 
     def to_dict(self, serialize=False):
         copy_dict = self.__dict__.copy()
-        for key in list(copy_dict):
+        for key, value in vars(self).items():
             if serialize and key == 'id':
+                continue
+            elif serialize and getattr(value, '_dirty', False):
                 continue
             elif copy_dict[key] is None or key in ('api', '_dirty_attributes'):
                 del copy_dict[key]

@@ -1,3 +1,4 @@
+from zenpy.lib.proxy import ProxyDict, ProxyList
 from test_api.fixtures import ZenpyApiTestCase
 from zenpy.lib import api_objects
 from zenpy.lib.api_objects import BaseObject
@@ -38,7 +39,7 @@ class TestProperties(ZenpyApiTestCase):
 
 def iter_classes(mod):
     for cls in vars(mod).values():
-        if isinstance(cls, type) and cls is not BaseObject:
+        if isinstance(cls, type) and cls not in (BaseObject, ProxyDict, ProxyList):
             yield cls
 
 

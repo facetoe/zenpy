@@ -7,6 +7,7 @@ from zenpy.lib.api_objects.help_centre_objects import Article, Category, Section
     Subscription, Vote, AccessPolicy, UserSegment
 from zenpy.lib.cache import add_to_cache
 from zenpy.lib.exception import ZenpyException
+from zenpy.lib.proxy import ProxyDict, ProxyList
 from zenpy.lib.util import as_singular, get_object_type
 
 log = logging.getLogger(__name__)
@@ -109,14 +110,20 @@ class ZendeskObjectMapping(object):
                     value = self.object_from_json(key, value)
                 elif as_singular(key) in self.class_mapping:
                     value = self.object_from_json(as_singular(key), value)
-            elif isinstance(value, list) \
-                    and self.format_key(as_singular(key), parent=obj) in self.class_mapping:
+            elif isinstance(value, list) and self.format_key(as_singular(key), parent=obj) in self.class_mapping:
                 zenpy_objects = list()
                 for item in value:
                     zenpy_objects.append(self.object_from_json(self.format_key(as_singular(key), parent=obj), item))
                 value = zenpy_objects
+
+            if isinstance(obj, dict):
+                value = ProxyDict(obj)
+            elif isinstance(value, list):
+                value = ProxyList(value)
             setattr(obj, key, value)
-        obj._clean_dirty()
+
+        if hasattr(obj, '_clean_dirty'):
+            obj._clean_dirty()
         add_to_cache(obj)
         return obj
 
