@@ -11,7 +11,7 @@ Zenpy supports both Python2 and Python3.
 Please report bugs!
 
 * [Quickstart](#quickstart)
-* [Experimental features in master](#experimental-features-in-master)
+* [New Features](#new-features)
     * [Pagination via Python slices](#pagination)
     * [Incremental object updates](#incremental-object-updates)
 * [Examples](#examples)
@@ -42,7 +42,7 @@ for ticket in zenpy_client.search("PC LOAD LETTER", type='ticket', assignee="fac
     print(ticket.requester)
 ```
 
-## Experimental features in master
+## New Features
 #### Pagination
 
 Added experimental support for pagination using Python slices. Currently has a few limitations:
