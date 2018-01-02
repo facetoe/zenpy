@@ -11,3 +11,5 @@ install:
   - pip install coverage
   - pip install python-coveralls
 script: "nosetests --with-coverage --cover-package=zenpy -v --stop"
+after_success:
+  - coveralls
