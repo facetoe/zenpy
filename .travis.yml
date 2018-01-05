@@ -6,4 +6,10 @@ python:
   - "3.5"
   - "3.6"
   - "3.7-dev"
-script: "nosetests -v --stop"
+install:
+  - pip install -r requirements.txt
+  - pip install coverage
+  - pip install python-coveralls
+script: "nosetests --with-coverage --cover-package=zenpy -v --stop"
+after_success:
+  - coveralls

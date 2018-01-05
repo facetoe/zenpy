@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/facetoe/zenpy.svg?branch=master)](https://travis-ci.org/facetoe/zenpy)
+[![Coverage Status](https://coveralls.io/repos/github/facetoe/zenpy/badge.svg?branch=master&service=github)](https://coveralls.io/github/facetoe/zenpy?branch=master&service=github)
 
 # Zenpy
 
