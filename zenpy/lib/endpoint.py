@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+from datetime import date
 
 
 from zenpy.lib.exception import ZenpyException
