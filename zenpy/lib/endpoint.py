@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+from datetime import date
 
 
 from zenpy.lib.exception import ZenpyException
@@ -208,15 +209,19 @@ class SearchEndpoint(BaseEndpoint):
 
 
     """
-
+    ZENDESK_DATE_FORMAT = "%Y-%m-%d"
+    ISO_8601_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
+    
     def __call__(self, *args, **kwargs):
 
         renamed_kwargs = dict()
         modifiers = list()
         sort_order = list()
         for key, value in kwargs.items():
-            if isinstance(value, datetime):
-                kwargs[key] = value.strftime(ZENDESK_DATE_FORMAT)
+            if isinstance(value, date):
+                kwargs[key] = value.strftime(self.ZENDESK_DATE_FORMAT)
+            elif isinstance(key, datetime):
+                kwargs[key] = value.strftime(self.ISO_8601_FORMAT)
             elif is_iterable_but_not_string(value) and key == 'ids':
                 kwargs[key] = self._format_many(value)
 
