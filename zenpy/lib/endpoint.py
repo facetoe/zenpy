@@ -32,6 +32,7 @@ class BaseEndpoint(object):
     """
 
     ISO_8601_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
+    ZENDESK_DATE_FORMAT = "%Y-%m-%d"
 
     def __init__(self, endpoint, sideload=None):
         self.endpoint = endpoint
@@ -209,9 +210,7 @@ class SearchEndpoint(BaseEndpoint):
 
 
     """
-    ZENDESK_DATE_FORMAT = "%Y-%m-%d"
-    ISO_8601_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
-    
+
     def __call__(self, *args, **kwargs):
 
         renamed_kwargs = dict()
