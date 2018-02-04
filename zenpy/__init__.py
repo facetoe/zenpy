@@ -89,8 +89,8 @@ class Zenpy(object):
             subdomain=subdomain,
             session=session,
             timeout=timeout,
-            ratelimit=ratelimit,
-            ratelimit_budget=ratelimit_budget
+            ratelimit=int(ratelimit) if ratelimit is not None else None,
+            ratelimit_budget=int(ratelimit_budget) if ratelimit_budget is not None else None
         )
 
         self.users = UserApi(config)
