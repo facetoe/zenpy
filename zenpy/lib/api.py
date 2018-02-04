@@ -783,6 +783,30 @@ class AttachmentApi(Api):
         """
         return UploadRequest(self).post(fp, token=token, target_name=target_name)
 
+    def download(self, attachment_id, destination):
+        """
+        Download an attachment from Zendesk.
+
+
+        :param attachment_id: id of the attachment to download
+        :param destination: destination path. If a directory, the file will be placed in the directory with
+                            the filename from the Atttachment object.
+        :return: the path the file was written to
+        """
+        attachment = self(id=attachment_id)
+        if os.path.isdir(destination):
+            destination = os.path.join(destination, attachment.file_name)
+        return self._download_file(attachment.content_url, destination)
+
+    def _download_file(self, source_url, destination_path):
+        r = self.session.get(source_url, stream=True)
+        with open(destination_path, 'wb') as f:
+            # chunk_size of None will read data as it arrives in whatever size the chunks are received.
+            for chunk in r.iter_content(chunk_size=None):
+                if chunk:
+                    f.write(chunk)
+        return destination_path
+
 
 class EndUserApi(CRUDApi):
     """
