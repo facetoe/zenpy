@@ -12,8 +12,6 @@ The wrapper supports both reading and writing from the API.
 
 :class:`Zenpy` supports both Python2 and Python3.
 
-:class:`Zenpy` is still in beta, so please report any bugs!
-
 -  `Installation <#installation>`__
 -  `Usage <#usage>`__
 -  `Searching the API <#searching-the-api>`__
@@ -275,6 +273,58 @@ The last ``end_time`` value can be retrieved from the generator:
 
 Passing this value to a new call as the ``start_time`` will return items
 created or modified since that point in time.
+
+
+Pagination
+----------
+
+Pagination in Zenpy is supported via Python slices. The current implementation has a few limitations:
+
+* Does not support negative values (no fancy slicing)
+* Always pulls the first 100 objects (sometimes one extra API call than necessary)
+* Does not support multiple accesses of the same slice
+
+Example Usage:
+
+.. code:: python
+
+    ticket_generator = zenpy_client.tickets()
+
+    # Arguments to slice are [start:stop:page_size], they are all optional
+    tickets = ticket_generator[3950:4000:50]
+    print(tickets)
+
+    # The following examples do what you would expect
+    tickets = ticket_generator[240:]
+    tickets = ticket_generator[:207]
+    tickets = ticket_generator[::]
+
+
+Cursor Based Generators
+-----------------------
+
+Zendesk uses cursor based pagination for the TicketAudit endpoint. The use of a cursor allows you to change
+the direction in which you consume objects. This is supported in Zenpy via the reversed() Python method:
+
+.. code:: python
+
+    audit_generator = zenpy_client.tickets.audits()
+    # You can retrieve the cursor values from the generator.
+    print(audit_generator.after_cursor, audit_generator.before_cursor)
+
+    # Iterate over the last 1000 audits.
+    for audit in audit_generator:
+        print(audit)
+
+    # You can pass an explicit cursor value to consume audits create after that point.
+    for audit in zenpy_client.tickets.audits(cursor='fDE1MTc2MjkwNTQuMHx8'):
+        print(audit)
+
+    # Reversing the generator reverses the direction in which you consume objects. The
+    # following grabs objects from just before the cursor value until the beginning of time.
+    for audit in reversed(zenpy_client.tickets.audits(cursor='fDE1MTc2MjkwNTQuMHx8')):
+        print(audit)
+
 
 Rate Limiting
 -------------

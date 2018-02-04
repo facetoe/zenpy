@@ -82,6 +82,24 @@ the serialized ticket will include the additional information::
 	}
 
 
+Api Object Modifications
+------------------------
+
+When updating an object, only the id and those attributes that have been modified will be sent to Zendesk. For example, the following code will only print the user's id.
+
+.. code:: python
+
+    user = zenpy_client.users.me()
+    print(user.to_dict(serialize=True))
+
+Whereas the following will also include the name attribute, as it has been modified:
+
+.. code:: python
+
+    user = zenpy_client.users.me()
+    user.name = "Batman"
+    print(user.to_dict(serialize=True))
+
 
 
 Api Object Reference

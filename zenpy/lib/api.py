@@ -955,6 +955,7 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         For example:
 
         .. code-block:: python
+
             for audit in reversed(zenpy_client.tickets.audits()):
                 print(audit)
 
