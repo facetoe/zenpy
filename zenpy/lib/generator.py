@@ -99,6 +99,9 @@ class BaseResultGenerator(collections.Iterable):
         if 'incremental' in self._response_json.get("next_page", ''):
             raise NotImplementedError("the current slice implementation does not support incremental APIs!")
 
+        if self._response_json.get("before_cursor", None):
+            raise NotImplementedError("cursor based pagination cannot be sliced!")
+
         if self.values is None:
             self.values = self.process_page()
 
