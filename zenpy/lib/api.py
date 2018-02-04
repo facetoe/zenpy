@@ -943,13 +943,14 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         """
         return self._query_zendesk(self.endpoint.recent, 'ticket', id=None)
 
-    def comments(self, ticket_id):
+    @extract_id(Ticket)
+    def comments(self, ticket):
         """
         Retrieve the comments for a ticket.
 
-        :param ticket_id: ticket id
+        :param ticket: Ticket object or id
         """
-        return self._query_zendesk(self.endpoint.comments, 'comment', id=ticket_id)
+        return self._query_zendesk(self.endpoint.comments, 'comment', id=ticket)
 
     def events(self, start_time):
         """
