@@ -242,12 +242,6 @@ class UserMergeRequest(BaseZendeskRequest):
     """ Handles merging two users. """
 
     def put(self, source, destination):
-        self.check_type(destination)
-        if issubclass(type(source), BaseObject):
-            source = source.id
-        if issubclass(type(destination), BaseObject):
-            destination = destination.id
-
         url = self.api._build_url(self.api.endpoint.merge(id=source))
         payload = {self.api.object_type: dict(id=destination)}
         return self.api._put(url, payload=payload)
@@ -263,15 +257,8 @@ class TicketMergeRequest(RequestHandler):
     """ Handles merging one or more tickets.  """
 
     def post(self, target, source, target_comment=None, source_comment=None):
-        if isinstance(target, Ticket):
-            target = target.id
-        if isinstance(source, Ticket):
-            source_ids = [source.id]
-        else:
-            source_ids = [t.id if isinstance(t, Ticket) else t for t in source]
-
         payload = dict(
-            ids=source_ids,
+            ids=source,
             target_comment=target_comment,
             source_comment=source_comment
         )

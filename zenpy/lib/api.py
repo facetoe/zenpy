@@ -5,7 +5,7 @@ from json import JSONEncoder
 
 from time import sleep, time
 
-from zenpy.lib.api_objects import User, Macro, Identity, View
+from zenpy.lib.api_objects import User, Macro, Identity, View, Organization, Group, GroupMembership
 from zenpy.lib.api_objects.help_centre_objects import Section, Article, Comment, ArticleAttachment, Label, Category, \
     Translation, Topic, Post, Subscription
 from zenpy.lib.cache import query_cache
@@ -657,65 +657,72 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
         super(UserApi, self).__init__(config, object_type='user')
         self.identities = UserIdentityApi(config)
 
-    def groups(self, user_id):
+    @extract_id(User)
+    def groups(self, user):
         """
         Retrieve the groups for this user.
 
-        :param user_id: user id
+        :param user: User object or id
         """
-        return self._query_zendesk(self.endpoint.groups, 'group', id=user_id)
+        return self._query_zendesk(self.endpoint.groups, 'group', id=user)
 
-    def organizations(self, user_id):
+    @extract_id(User)
+    def organizations(self, user):
         """
         Retrieve the organizations for this user.
 
-        :param user_id: user id
+        :param user: User object or id
         """
-        return self._query_zendesk(self.endpoint.organizations, 'organization', id=user_id)
+        return self._query_zendesk(self.endpoint.organizations, 'organization', id=user)
 
-    def requested(self, user_id):
+    @extract_id(User)
+    def requested(self, user):
         """
         Retrieve the requested tickets for this user.
 
-        :param user_id: user id
+        :param user: User object or id
         """
-        return self._query_zendesk(self.endpoint.requested, 'ticket', id=user_id)
+        return self._query_zendesk(self.endpoint.requested, 'ticket', id=user)
 
-    def cced(self, user_id):
+    @extract_id(User)
+    def cced(self, user):
         """
         Retrieve the tickets this user is cc'd into.
 
-        :param user_id: user id
+        :param user: User object or id
         """
-        return self._query_zendesk(self.endpoint.cced, 'ticket', id=user_id)
+        return self._query_zendesk(self.endpoint.cced, 'ticket', id=user)
 
-    def assigned(self, user_id):
+    @extract_id(User)
+    def assigned(self, user):
         """
         Retrieve the assigned tickets for this user.
 
-        :param user_id: user id
+        :param user: User object or id
         """
-        return self._query_zendesk(self.endpoint.assigned, 'ticket', id=user_id)
+        return self._query_zendesk(self.endpoint.assigned, 'ticket', id=user)
 
-    def group_memberships(self, user_id):
+    @extract_id(User)
+    def group_memberships(self, user):
         """
         Retrieve the group memberships for this user.
 
-        :param user_id: user id
+        :param user: User object or id
         """
-        return self._query_zendesk(self.endpoint.group_memberships, 'group_membership', id=user_id)
+        return self._query_zendesk(self.endpoint.group_memberships, 'group_membership', id=user)
 
     def requests(self, **kwargs):
         return self._query_zendesk(self.endpoint.requests, 'request', **kwargs)
 
-    def related(self, user_id):
+    @extract_id(User)
+    def related(self, user):
         """
         Returns the UserRelated information for the requested User
 
-        :param user_id: User id
+        :param user: User object or id
         :return: UserRelated
         """
-        return self._query_zendesk(self.endpoint.related, 'user_related', id=user_id)
+        return self._query_zendesk(self.endpoint.related, 'user_related', id=user)
 
     def me(self):
         """
@@ -723,6 +730,7 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
         """
         return self._query_zendesk(self.endpoint.me, 'user', id=None)
 
+    @extract_id(User)
     def merge(self, source_user, dest_user):
         """
         Merge the user provided in source_user into dest_user
@@ -733,21 +741,23 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
         """
         return UserMergeRequest(self).put(source_user, dest_user)
 
-    def user_fields(self, user_id):
+    @extract_id(User)
+    def user_fields(self, user):
         """
         Retrieve the user fields for this user.
 
-        :param user_id: user id
+        :param user: User object or id
         """
-        return self._query_zendesk(self.endpoint.user_fields, 'user_field', id=user_id)
+        return self._query_zendesk(self.endpoint.user_fields, 'user_field', id=user)
 
-    def organization_memberships(self, user_id):
+    @extract_id(User)
+    def organization_memberships(self, user):
         """
         Retrieve the organization memberships for this user.
 
-        :param user_id: user id
+        :param user: User object or id
         """
-        return self._query_zendesk(self.endpoint.organization_memberships, 'organization_membership', id=user_id)
+        return self._query_zendesk(self.endpoint.organization_memberships, 'organization_membership', id=user)
 
     def create_or_update(self, users):
         """
@@ -827,21 +837,23 @@ class OrganizationApi(TaggableApi, IncrementalApi, CRUDExternalApi):
     def __init__(self, config):
         super(OrganizationApi, self).__init__(config, object_type='organization')
 
-    def organization_fields(self, org_id):
+    @extract_id(Organization)
+    def organization_fields(self, organization):
         """
         Retrieve the organization fields for this organization.
 
-        :param org_id: organization id
+        :param organization: Organization object or id
         """
-        return self._query_zendesk(self.endpoint.organization_fields, 'organization_field', id=org_id)
+        return self._query_zendesk(self.endpoint.organization_fields, 'organization_field', id=organization)
 
-    def organization_memberships(self, org_id):
+    @extract_id(Organization)
+    def organization_memberships(self, organization):
         """
         Retrieve the organization fields for this organization.
 
-        :param org_id: organization id
+        :param organization: Organization object or id
         """
-        return self._query_zendesk(self.endpoint.organization_memberships, 'organization_membership', id=org_id)
+        return self._query_zendesk(self.endpoint.organization_memberships, 'organization_membership', id=organization)
 
     def external(self, external_id):
         """
@@ -882,28 +894,30 @@ class SatisfactionRatingApi(Api):
     def __init__(self, config):
         super(SatisfactionRatingApi, self).__init__(config, object_type='satisfaction_rating')
 
-    def create(self, ticket_id, satisfaction_rating):
+    @extract_id(Ticket)
+    def create(self, ticket, satisfaction_rating):
         """
         Create/update a Satisfaction Rating for a ticket.
 
-        :param ticket_id: id of Ticket to rate
+        :param ticket: Ticket object or id
         :param satisfaction_rating: SatisfactionRating object.
         """
-        return SatisfactionRatingRequest(self).post(ticket_id, satisfaction_rating)
+        return SatisfactionRatingRequest(self).post(ticket, satisfaction_rating)
 
 
 class MacroApi(CRUDApi):
     def __init__(self, config):
         super(MacroApi, self).__init__(config, object_type='macro')
 
-    def apply(self, macro_id):
+    @extract_id(Macro)
+    def apply(self, macro):
         """
         Show what a macro would do - https://developer.zendesk.com/rest_api/docs/core/macros#show-changes-to-ticket
 
-        :param macro_id: id of macro to test
+        :param macro: Macro object or id.
         """
 
-        return self._query_zendesk(self.endpoint.apply, 'result', id=macro_id)
+        return self._query_zendesk(self.endpoint.apply, 'result', id=macro)
 
 
 class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
@@ -914,13 +928,14 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
     def __init__(self, config):
         super(TicketApi, self).__init__(config, object_type='ticket')
 
-    def organizations(self, org_id):
+    @extract_id(Organization)
+    def organizations(self, organization):
         """
         Retrieve the tickets for this organization.
 
-        :param org_id: organization id
+        :param organization: Organization object or id
         """
-        return self._query_zendesk(self.endpoint.organizations, 'ticket', id=org_id)
+        return self._query_zendesk(self.endpoint.organizations, 'ticket', id=organization)
 
     def recent(self):
         """
@@ -944,7 +959,8 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         """
         return self._query_zendesk(self.endpoint.events, 'ticket_event', start_time=start_time)
 
-    def audits(self, ticket_id=None, **kwargs):
+    @extract_id(Ticket)
+    def audits(self, ticket=None, **kwargs):
         """
         Retrieve TicketAudits. If ticket_id is passed, return the tickets for a specific audit.
 
@@ -961,19 +977,20 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
 
         See the Zendesk docs for information on additional parameters - https://developer.zendesk.com/rest_api/docs/core/ticket_audits#pagination
 
-        :param ticket_id: ticket id
+        :param ticket: Ticket object or id
         """
-        if ticket_id is not None:
-            return self._query_zendesk(self.endpoint.audits, 'ticket_audit', id=ticket_id)
+        if ticket is not None:
+            return self._query_zendesk(self.endpoint.audits, 'ticket_audit', id=ticket)
         else:
             return self._query_zendesk(self.endpoint.audits.cursor, 'ticket_audit', **kwargs)
 
-    def metrics(self, ticket_id):
+    @extract_id(Ticket)
+    def metrics(self, ticket):
         """
         Retrieve TicketMetric.
-        :param ticket_id: ticket id
+        :param ticket: Ticket object or id
         """
-        return self._query_zendesk(self.endpoint.metrics, 'ticket_metric', id=ticket_id)
+        return self._query_zendesk(self.endpoint.metrics, 'ticket_metric', id=ticket)
 
     def metrics_incremental(self, start_time):
         """
@@ -982,6 +999,7 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         """
         return self._query_zendesk(self.endpoint.metrics.incremental, 'ticket_metric_events', start_time=start_time)
 
+    @extract_id(Ticket, Macro)
     def show_macro_effect(self, ticket, macro):
         """
         Apply macro to ticket. Returns what it *would* do, does not alter the ticket.
@@ -990,13 +1008,10 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         :param macro: Macro or macro id to use
         """
 
-        if isinstance(ticket, Ticket):
-            ticket = ticket.id
-        if isinstance(macro, Macro):
-            macro = macro.id
         url = self._build_url(self.endpoint.macro(ticket, macro))
         return self._get(url)
 
+    @extract_id(Ticket)
     def merge(self, target, source,
               target_comment=None, source_comment=None):
         """
@@ -1082,21 +1097,23 @@ class GroupApi(CRUDApi):
     def __init__(self, config):
         super(GroupApi, self).__init__(config, object_type='group')
 
-    def memberships(self, group_id):
+    @extract_id(Group)
+    def memberships(self, group):
         """
         Return the GroupMemberships for this group
 
-        :param group_id
+        :param group: Group object or id
         """
-        return self._get(self._build_url(self.endpoint.memberships(id=group_id)))
+        return self._get(self._build_url(self.endpoint.memberships(id=group)))
 
-    def memberships_assignable(self, group_id):
+    @extract_id(Group)
+    def memberships_assignable(self, group):
         """
         Return memberships that are assignable for this group.
 
-        :param group_id: group or group_id
+        :param group: Group object or id
         """
-        return self._get(self._build_url(self.endpoint.memberships_assignable(id=group_id)))
+        return self._get(self._build_url(self.endpoint.memberships_assignable(id=group)))
 
 
 class ViewApi(CRUDApi):
@@ -1115,59 +1132,50 @@ class ViewApi(CRUDApi):
         """
         return self._get(self._build_url(self.endpoint.compact()))
 
+    @extract_id(View)
     def execute(self, view):
         """
         Execute a view.
 
         :param view: View or view id
         """
-        if isinstance(view, View):
-            view = view.id
         return self._get(self._build_url(self.endpoint.execute(id=view)))
 
+    @extract_id(View)
     def tickets(self, view):
         """
         Return the tickets in a view.
 
         :param view: View or view id
         """
-        if isinstance(view, View):
-            view = view.id
         return self._get(self._build_url(self.endpoint.tickets(id=view)))
 
+    @extract_id(View)
     def count(self, view):
         """
         Return a ViewCount for a view.
 
         :param view: View or view id
         """
-        if isinstance(view, View):
-            view = view.id
         return self._get(self._build_url(self.endpoint.count(id=view)))
 
+    @extract_id(View)
     def count_many(self, views):
         """
         Return many ViewCounts.
 
         :param views: iterable of View or view ids
         """
-        if not isinstance(views, collections.Iterable):
-            raise ZenpyException("count_many() requires an iterable!")
-        ids = []
-        for v in views:
-            ids.append(v.id if isinstance(v, View) else v)
-        return self._get(self._build_url(self.endpoint(count_many=ids)))
+        return self._get(self._build_url(self.endpoint(count_many=views)))
 
+    @extract_id(View)
     def export(self, view):
         """
         Export a view. Returns an Export object.
 
         :param view: View or view id
         :return:
-        :return:
         """
-        if isinstance(view, View):
-            view = view.id
         return self._get(self._build_url(self.endpoint.export(id=view)))
 
     def search(self, *args, **kwargs):
@@ -1197,14 +1205,15 @@ class GroupMembershipApi(CRUDApi):
         """
         return self._get(self._build_url(self.endpoint.assignable()))
 
-    def make_default(self, user_id, group_membership_id):
+    @extract_id(User, GroupMembership)
+    def make_default(self, user, group_membership):
         """
         Set the passed GroupMembership as default for the specified user.
 
-        :param user_id:
-        :param group_membership_id:
+        :param user: User object or id
+        :param group_membership: GroupMembership object or id
         """
-        return self._put(self._build_url(self.endpoint.make_default(user_id, group_membership_id)), payload={})
+        return self._put(self._build_url(self.endpoint.make_default(user, group_membership)), payload={})
 
 
 class SlaPolicyApi(CRUDApi):
