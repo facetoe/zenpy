@@ -32,6 +32,7 @@ class BaseResultGenerator(collections.Iterable):
         self.position = 0
         self.update_attrs()
         self._has_sliced = False
+        self.next_page_attr = 'next_page'
 
     @abstractmethod
     def process_page(self):
@@ -63,7 +64,7 @@ class BaseResultGenerator(collections.Iterable):
 
     def get_next_page(self, page_num, page_size):
         """ Retrieve the next page of results. """
-        url = self._response_json.get('next_page', None)
+        url = self._response_json.get(self.next_page_attr, None)
         if url is None:
             raise StopIteration()
         params, url = self.process_url(page_num, page_size, url)
@@ -90,8 +91,8 @@ class BaseResultGenerator(collections.Iterable):
         if self._has_sliced:
             raise NotImplementedError("the current slice implementation does not support multiple accesses!")
         start, stop, page_size = slice_object.start or 0, \
-                            slice_object.stop or len(self), \
-                            slice_object.step or 100
+                                 slice_object.stop or len(self), \
+                                 slice_object.step or 100
         if any((val < 0 for val in (start, stop, page_size))):
             raise ValueError("negative values not supported in slice operations!")
 
@@ -189,6 +190,32 @@ class SearchResultGenerator(BaseResultGenerator):
             object_type = object_json.pop('result_type')
             search_results.append(self.response_handler.api._object_mapping.object_from_json(object_type, object_json))
         return search_results
+
+
+class TicketAuditGenerator(ZendeskResultGenerator):
+    def __init__(self, response_handler, response_json):
+        super(TicketAuditGenerator, self).__init__(response_handler, response_json,
+                                                   response_objects=None,
+                                                   object_type='audit')
+        self.next_page_attr = 'after_url'
+
+    def get_next_page(self, page_num=None, page_size=None):
+        return super(TicketAuditGenerator, self).get_next_page()
+
+    def __reversed__(self):
+        # Flip the direction we grab pages.
+        self.next_page_attr = 'before_url' if self.next_page_attr == 'after_url' else 'after_url'
+
+        # Special case for when the generator is reversed before consuming any values.
+        if self.values is None:
+            self.values = list(reversed(self.process_page()))
+        # Not all values were consumed, begin returning items at position -1.
+        elif self.position != 0:
+            self.values = list(reversed(self.values[:self.position - 2]))
+            self.position = 0
+        else:
+            self.handle_pagination()
+        return iter(self)
 
 
 class ChatResultGenerator(BaseResultGenerator):

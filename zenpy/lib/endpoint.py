@@ -2,7 +2,6 @@ import logging
 from datetime import datetime
 from datetime import date
 
-
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.util import is_iterable_but_not_string, to_unix_ts
 
@@ -111,6 +110,10 @@ class PrimaryEndpoint(BaseEndpoint):
                 modifiers.append((key, value.strftime(self.ISO_8601_FORMAT)))
             elif key == 'async':
                 modifiers.append(('async', str(value).lower()))
+            elif key == 'limit':
+                modifiers.append(('limit', value))
+            elif key == 'cursor':
+                modifiers.append(('cursor', value))
 
         if modifiers:
             query += '&' + "&".join(["%s=%s" % (k, v) for k, v in modifiers])
@@ -325,6 +328,7 @@ class SatisfactionRatingEndpoint(BaseEndpoint):
 
         return result
 
+
 class MacroEndpoint(BaseEndpoint):
     def __call__(self, sort_order=None, sort_by=None, **kwargs):
         kwargs.pop('sideload', None)
@@ -429,7 +433,6 @@ class EndpointFactory(object):
                                                'usage_7d', 'usage_30d'])
     macros.apply = SecondaryEndpoint('macros/%(id)s/apply.json')
 
-
     nps = PrimaryEndpoint('nps')
     nps.recipients_incremental = IncrementalEndpoint('nps/incremental/recipients.json?')
     nps.responses_incremental = IncrementalEndpoint('nps/incremental/responses.json?')
@@ -467,6 +470,7 @@ class EndpointFactory(object):
                                'metric_events', 'slas'])
     tickets.audits = SecondaryEndpoint('tickets/%(id)s/audits.json',
                                        sideload=['users', 'organizations', 'groups', 'tickets'])
+    tickets.audits.cursor = PrimaryEndpoint('ticket_audits')
     tickets.comments = SecondaryEndpoint('tickets/%(id)s/comments.json')
     tickets.events = IncrementalEndpoint('incremental/ticket_events.json?', sideload=['comment_events'])
     tickets.incremental = IncrementalEndpoint('incremental/tickets.json?',

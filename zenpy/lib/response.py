@@ -1,7 +1,8 @@
 from abc import abstractmethod
 
 from zenpy.lib.exception import ZenpyException
-from zenpy.lib.generator import SearchResultGenerator, ZendeskResultGenerator, ChatResultGenerator, ViewResultGenerator
+from zenpy.lib.generator import SearchResultGenerator, ZendeskResultGenerator, ChatResultGenerator, ViewResultGenerator, \
+    TicketAuditGenerator
 from zenpy.lib.util import as_singular, as_plural, get_endpoint_path
 
 
@@ -94,6 +95,10 @@ class GenericZendeskResponseHandler(ResponseHandler):
         :param response: the requests Response object.
         """
         response_json = response.json()
+
+        # Special case for ticket audits.
+        if get_endpoint_path(self.api, response).startswith('/ticket_audits.json'):
+            return TicketAuditGenerator(self, response_json)
 
         zenpy_objects = self.deserialize(response_json)
 

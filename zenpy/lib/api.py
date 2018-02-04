@@ -915,16 +915,33 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
     def events(self, start_time):
         """
         Retrieve TicketEvents
+
         :param start_time: time to retrieve events from.
         """
         return self._query_zendesk(self.endpoint.events, 'ticket_event', start_time=start_time)
 
-    def audits(self, ticket_id):
+    def audits(self, ticket_id=None, **kwargs):
         """
-        Retrieve TicketAudits.
+        Retrieve TicketAudits. If ticket_id is passed, return the tickets for a specific audit.
+
+        If ticket_id is None, a TicketAuditGenerator is returned to handle pagination. The way this generator
+        works is a different to the other Zenpy generators as it is cursor based, allowing you to change the
+        direction that you are consuming objects. This is done with the reversed() python method.
+
+        For example:
+
+        .. code-block:: python
+            for audit in reversed(zenpy_client.tickets.audits()):
+                print(audit)
+
+        See the Zendesk docs for information on additional parameters - https://developer.zendesk.com/rest_api/docs/core/ticket_audits#pagination
+
         :param ticket_id: ticket id
         """
-        return self._query_zendesk(self.endpoint.audits, 'ticket_audit', id=ticket_id)
+        if ticket_id is not None:
+            return self._query_zendesk(self.endpoint.audits, 'ticket_audit', id=ticket_id)
+        else:
+            return self._query_zendesk(self.endpoint.audits.cursor, 'ticket_audit', **kwargs)
 
     def metrics(self, ticket_id):
         """
