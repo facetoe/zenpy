@@ -96,7 +96,8 @@ class BaseResultGenerator(collections.Iterable):
         if any((val < 0 for val in (start, stop, page_size))):
             raise ValueError("negative values not supported in slice operations!")
 
-        if 'incremental' in self._response_json.get("next_page", ''):
+        next_page = self._response_json.get("next_page")
+        if next_page and 'incremental' in next_page:
             raise NotImplementedError("the current slice implementation does not support incremental APIs!")
 
         if self._response_json.get("before_cursor", None):
