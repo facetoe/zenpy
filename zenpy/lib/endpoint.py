@@ -155,7 +155,7 @@ class IncrementalEndpoint(BaseEndpoint):
 
     def __call__(self, start_time=None):
         if start_time is None:
-            raise ZenpyException("Incremental Endoint requires a start_time parameter!")
+            raise ZenpyException("Incremental Endpoint requires a start_time parameter!")
 
         elif isinstance(start_time, datetime):
             unix_time = to_unix_ts(start_time)
