@@ -298,7 +298,7 @@ class HelpDeskSearchEndpoint(BaseEndpoint):
         processed_kwargs = dict()
         for key, value in kwargs.items():
             if isinstance(value, datetime):
-                processed_kwargs[key] = value.strftime(ZENDESK_DATE_FORMAT)
+                processed_kwargs[key] = value.strftime(self.ZENDESK_DATE_FORMAT)
             elif is_iterable_but_not_string(value):
                 processed_kwargs[key] = ",".join(value)
             else:
