@@ -100,6 +100,25 @@ Whereas the following will also include the name attribute, as it has been modif
     user.name = "Batman"
     print(user.to_dict(serialize=True))
 
+This is also true of attributes of objects that are lists or dicts, however the implementation might lead to some surprises. Consider the following:
+
+.. code:: python
+
+    ticket = zenpy_client.tickets(id=1)
+    ticket.custom_fields[0]['value'] = 'I am modified'
+    print(ticket.to_dict(serialize=True))
+
+Here we modify the first element of the custom_fields list. How can Zenpy know that this has happened? The answer is proxy objects:
+
+.. code:: python
+
+    print(type(ticket.custom_fields))
+    >> <class 'zenpy.lib.proxy.ProxyList'>
+
+    print(type(ticket.custom_fields[0]))
+    >> <class 'zenpy.lib.proxy.ProxyDict'>
+
+The way this works is when an element is retrieved from a list, it checks whether or not it is a list or dict. If it is, then the list or dict is wrapped in a Proxy class which executes a callback on modification so that the parent knows it has been modified. As a result, we can detect changes to lists or dicts and properly update Zendesk when they occur.
 
 
 Api Object Reference
