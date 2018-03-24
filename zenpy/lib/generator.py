@@ -212,10 +212,10 @@ class TicketAuditGenerator(ZendeskResultGenerator):
 
         # Special case for when the generator is reversed before consuming any values.
         if self.values is None:
-            self.values = list(reversed(self.process_page()))
+            self.values = list(self.process_page())
         # Not all values were consumed, begin returning items at position -1.
         elif self.position != 0:
-            self.values = list(reversed(self.values[:self.position - 2]))
+            self.values = list(self.values[:self.position - 2])
             self.position = 0
         else:
             self.handle_pagination()
