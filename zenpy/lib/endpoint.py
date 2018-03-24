@@ -46,7 +46,7 @@ class BaseEndpoint(object):
 
     @staticmethod
     def _format(*args, **kwargs):
-        return '+'.join(['%s%s' % (key, value) for (key, value) in kwargs.items()] + [a for a in args])
+        return ' '.join(['%s%s' % (key, value) for (key, value) in kwargs.items()] + [a for a in args])
 
     @staticmethod
     def _format_many(items):
