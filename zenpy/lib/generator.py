@@ -227,6 +227,10 @@ class ChatResultGenerator(BaseResultGenerator):
     Generator for ChatApi objects
     """
 
+    def __init__(self, response_handler, response_json):
+        super(ChatResultGenerator, self).__init__(response_handler, response_json)
+        self.next_page_attr = 'next_url'
+
     def process_page(self):
         return self.response_handler.deserialize(self._response_json)
 
