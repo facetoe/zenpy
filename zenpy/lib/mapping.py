@@ -90,8 +90,11 @@ class ZendeskObjectMapping(object):
         'response': Response
     }
 
+    skip_attrs = []
+
     def __init__(self, api):
         self.api = api
+        self.skip_attrs = ['user_fields', 'organization_fields']
 
     def object_from_json(self, object_type, object_json):
         """
@@ -104,28 +107,31 @@ class ZendeskObjectMapping(object):
         ZenpyClass = self.class_for_type(object_type)
         obj = ZenpyClass(api=self.api)
         for key, value in object_json.items():
+            if key not in self.skip_attrs:
+                key, value = self._deserialize(key, obj, value)
             if isinstance(value, dict):
-                key = self.format_key(key, parent=obj)
-                if key in self.class_mapping:
-                    value = self.object_from_json(key, value)
-                elif as_singular(key) in self.class_mapping:
-                    value = self.object_from_json(as_singular(key), value)
-            elif isinstance(value, list) and self.format_key(as_singular(key), parent=obj) in self.class_mapping:
-                zenpy_objects = list()
-                for item in value:
-                    zenpy_objects.append(self.object_from_json(self.format_key(as_singular(key), parent=obj), item))
-                value = zenpy_objects
-
-            if isinstance(obj, dict):
-                value = ProxyDict(obj)
+                value = ProxyDict(value)
             elif isinstance(value, list):
                 value = ProxyList(value)
             setattr(obj, key, value)
-
         if hasattr(obj, '_clean_dirty'):
             obj._clean_dirty()
         add_to_cache(obj)
         return obj
+
+    def _deserialize(self, key, obj, value):
+        if isinstance(value, dict):
+            key = self.format_key(key, parent=obj)
+            if key in self.class_mapping:
+                value = self.object_from_json(key, value)
+            elif as_singular(key) in self.class_mapping:
+                value = self.object_from_json(as_singular(key), value)
+        elif isinstance(value, list) and self.format_key(as_singular(key), parent=obj) in self.class_mapping:
+            zenpy_objects = list()
+            for item in value:
+                zenpy_objects.append(self.object_from_json(self.format_key(as_singular(key), parent=obj), item))
+            value = zenpy_objects
+        return key, value
 
     def class_for_type(self, object_type):
         """ Given an object_type return the class associated with it. """
@@ -168,9 +174,6 @@ class ChatObjectMapping(ZendeskObjectMapping):
         'department': Department,
         'goal': Goal
     }
-
-    def __init__(self, api):
-        super(ChatObjectMapping, self).__init__(api)
 
 
 class HelpCentreObjectMapping(ZendeskObjectMapping):
