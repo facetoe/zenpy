@@ -1,35 +1,29 @@
-try:
-    from UserDict import UserDict
-except ImportError:
-    from collections import UserDict
-
-
-class ProxyDict(UserDict):
+class ProxyDict(dict):
     """
     Proxy for dict, records when the dictionary has been modified.
     """
 
-    def __init__(self, *args, dirty_callback=None, **kwargs):
-        self.dirty_callback = dirty_callback
-        super(ProxyDict, self).__init__(*args, **kwargs)
-        self.data.update(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        self.dirty_callback = kwargs.pop('dirty_callback', None)
+        super(dict, self).__init__()
+        dict.update(self, *args, **kwargs)
         self._set_dirty()
 
     def update(self, *args, **kwargs):
-        self.data.update(*args, **kwargs)
+        dict.update(self, *args, **kwargs)
         self._set_dirty()
 
     def pop(self, key, default=None):
-        self.data.pop(key, default=default)
+        dict.pop(self, key, default=default)
         self._set_dirty()
 
     def popitem(self):
-        r = self.data.popitem()
+        r = dict.popitem(self)
         self._set_dirty()
         return r
 
     def clear(self):
-        self.data.clear()
+        dict.clear(self)
         self._set_dirty()
 
     def _clean_dirty(self):
@@ -44,29 +38,23 @@ class ProxyDict(UserDict):
         def dirty_callback():
             self._set_dirty()
 
-        element = self.data[k]
+        element = dict.__getitem__(self, k)
         if isinstance(element, list):
             element = ProxyList(element, dirty_callback=dirty_callback)
-            self.data[k] = element
+            dict.__setitem__(self, k, element)
         elif isinstance(element, dict):
             element = ProxyDict(element, dirty_callback=dirty_callback)
-            self.data[k] = element
+            dict.__setitem__(self, k, element)
         elif getattr(element, '_dirty_callback', None) is not None:
             element._dirty_callback = dirty_callback
-        return self.data[k]
-
-    def __iter__(self):
-        return iter(self.data)
-
-    def __len__(self):
-        return len(self.data)
+        return self[k]
 
     def __delitem__(self, k):
-        del self.data[k]
+        dict.__delitem__(self, k)
         self._set_dirty()
 
     def __setitem__(self, k, v):
-        self.data[k] = v
+        dict.__setitem__(self, k, v)
         self._set_dirty()
 
 
