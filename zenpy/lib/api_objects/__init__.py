@@ -12,13 +12,16 @@ class BaseObject(object):
     Base for all Zenpy objects. Keeps track of which attributes have been modified.
     """
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, *args, dirty_callback=None, **kwargs):
         instance = super(BaseObject, cls).__new__(cls)
         instance.__dict__['_dirty_attributes'] = set()
+        instance.__dict__['_dirty_callback'] = dirty_callback
         return instance
 
     def __setattr__(self, key, value):
         self.__dict__['_dirty_attributes'].add(key)
+        if self._dirty_callback is not None:
+            self._dirty_callback()
         object.__setattr__(self, key, value)
 
     def _clean_dirty(self):
