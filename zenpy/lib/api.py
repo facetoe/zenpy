@@ -279,7 +279,10 @@ class BaseApi(object):
 
         if template is None:
             template = self._url_template
-        return "/".join((template % vars(self), endpoint))
+
+        endpoint.netloc = '{}.zendesk.com'.format(self.subdomain)
+        endpoint.prefix_path(self.api_prefix)
+        return endpoint.build()
 
 
 class Api(BaseApi):
@@ -295,28 +298,6 @@ class Api(BaseApi):
         self.endpoint = endpoint or EndpointFactory(as_plural(object_type))
         super(Api, self).__init__(**config)
         self._object_mapping = ZendeskObjectMapping(self)
-
-    def append_sideload(self, sideload, method_name=None):
-        """ Append a sideload to the list of sideloads. """
-        self.get_sideloads(method_name).append(sideload)
-
-    def remove_sideload(self, sideload, method_name=None):
-        """ Remove a sideload from the list of sideloads. """
-        self.get_sideloads(method_name).remove(sideload)
-
-    def get_sideloads(self, method_name=None):
-        """
-        Return the list of sideloads for this API. If method_name is passed,
-        return the list of sideloads available to that method. For example:
-            zenpy_client.tickets.get_sideloads(method_name='incremental')
-        will return the sideloads for the incremental method.
-        """
-        if method_name:
-            if not hasattr(self.endpoint, method_name):
-                raise ZenpyException("{} has no method named '{}'".format(self.endpoint, method_name))
-            return getattr(self.endpoint, method_name).sideload
-        else:
-            return self.endpoint.sideload
 
     def __call__(self, *args, **kwargs):
         return self._query_zendesk(self.endpoint, self.object_type, *args, **kwargs)
@@ -787,7 +768,7 @@ class AttachmentApi(Api):
         :param fp: file object, StringIO instance, content, or file path to be
                    uploaded
         :param token: upload token for uploading multiple files
-        :param target_name: name of the file inside Zendesk
+        :param target_name: name of the file inside¡ Zendesk
         :return: :class:`Upload` object containing a token and other information
                     (see https://developer.zendesk.com/rest_api/docs/core/attachments#uploading-files)
         """
@@ -1330,7 +1311,7 @@ class HelpCentreApiBase(Api):
         return super(HelpCentreApiBase, self)._process_response(response, object_mapping)
 
     def _build_url(self, endpoint='', template=None):
-        if endpoint.startswith('users/') and not endpoint.endswith('comments.json'):
+        if endpoint.path.startswith('users/') and not endpoint.path.endswith('comments.json'):
             template = "%(protocol)s://%(subdomain)s.zendesk.com/%(api_prefix)s"
         return super(HelpCentreApiBase, self)._build_url(endpoint, template=template)
 

@@ -22,7 +22,37 @@ else:
     bytes = str
     basestring = basestring
 
+try:
+    from urllib import urlencode
+    from urlparse import urlunsplit, SplitResult
+except ImportError:
+    from urllib.parse import urlencode
+    from urllib.parse import urlunsplit, SplitResult
+
 log = logging.getLogger(__name__)
+
+
+class Url(object):
+    def __init__(self, path, params=None, netloc=None):
+        self.scheme = 'https'
+        self.path = path
+        self.params = params or {}
+        self.netloc = netloc
+
+    def build(self):
+        query = "&".join({"{}={}".format(k, v) for k, v in self.params.items()})
+        return urlunsplit(SplitResult(
+            scheme=self.scheme,
+            netloc=self.netloc,
+            path=self.path,
+            query=query,
+            fragment=None))
+
+    def prefix_path(self, prefix):
+        self.path = "{}/{}".format(prefix, self.path)
+
+    def __str__(self):
+        return "{}({})".format(type(self).__name__, ", ".join({"{}={}".format(k, v) for k, v in vars(self).items()}))
 
 
 class BaseEndpoint(object):
@@ -33,29 +63,8 @@ class BaseEndpoint(object):
     ISO_8601_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
     ZENDESK_DATE_FORMAT = "%Y-%m-%d"
 
-    def __init__(self, endpoint, sideload=None):
+    def __init__(self, endpoint):
         self.endpoint = endpoint
-        self.sideload = sideload or []
-
-    @staticmethod
-    def _single(endpoint, user_id):
-        return "%s/%s%s" % (endpoint, user_id, '.json')
-
-    def _many(self, endpoint, user_ids, action='show_many.json?ids='):
-        return "%s/%s%s" % (endpoint, action, self._format_many(user_ids))
-
-    @staticmethod
-    def _format(*args, **kwargs):
-        return ' '.join(['%s%s' % (key, value) for (key, value) in kwargs.items()] + [a for a in args])
-
-    @staticmethod
-    def _format_many(items):
-        return ",".join([str(i) for i in items])
-
-    def _format_sideload(self, items, seperator='&'):
-        if isinstance(items, basestring):
-            items = [items]
-        return '%sinclude=%s' % (seperator, self._format_many(items))
 
 
 class PrimaryEndpoint(BaseEndpoint):
@@ -65,80 +74,74 @@ class PrimaryEndpoint(BaseEndpoint):
     """
 
     def __call__(self, **kwargs):
-        query = ""
         modifiers = []
+        parameters = {}
+        path = self.endpoint
         for key, value in kwargs.items():
             if key == 'id':
-                query += self._single(self.endpoint, value)
+                path += "/{}.json".format(value)
             elif key == 'ids':
-                query += self._many(self.endpoint, value)
+                path += '/show_many.json'
+                parameters[key] = ",".join(map(str, value))
             elif key == 'destroy_ids':
-                query += self._many(self.endpoint, value, action='destroy_many.json?ids=')
+                path += '/destroy_many.json'
+                parameters['ids'] = ",".join(map(str, value))
             elif key == 'create_many':
-                query = "".join([self.endpoint, '/create_many.json'])
-            elif key == 'create_or_update_many':
-                query = self.endpoint
+                path += '/create_many.json'
+            elif key == '/create_or_update_many':
+                path = self.endpoint
             elif key == 'recover_ids':
-                query = self._many(self.endpoint, value, action='recover_many.json?ids=')
+                path += '/recover_many.json'
+                parameters[key] = ",".join(map(str, value))
             elif key == 'update_many':
-                query = "".join([self.endpoint, '/update_many.json'])
+                path += '/update_many.json'
+                parameters[key] = ",".join(map(str, value))
             elif key == 'count_many':
-                query = self._many(self.endpoint, value, action='count_many.json?ids=')
+                path += '/count_many.json'
+                parameters[key] = ",".join(map(str, value))
             elif key in ('external_id', 'external_ids'):
                 external_ids = [value] if not is_iterable_but_not_string(value) else value
-                query += self._many(self.endpoint, external_ids, action='show_many.json?external_ids=')
+                path += '/show_many.json'
+                parameters['external_ids'] = ",".join(external_ids)
             elif key == 'update_many_external':
-                query += self._many(self.endpoint, value, action='update_many.json?external_ids=')
+                path += '/update_many.json'
+                parameters['external_ids'] = ",".join(map(str, value))
             elif key == 'destroy_many_external':
-                query += self._many(self.endpoint, value, action='destroy_many.json?external_ids=')
+                path += '/destroy_many.json'
+                parameters['external_ids'] = ",".join(map(str, value))
             elif key == 'label_names':
-                query += "label_names={}".format(",".join(value))
-            elif key == 'filter_by':
-                query += 'filter_by={}'.format(value)
-            elif key in ('sort_by', 'sort_order'):
-                modifiers.append((key, value))
-            elif key == 'permission_set':
-                modifiers.append(('permission_set', value))
-            elif key == 'page':
-                modifiers.append((key, value))
-            elif key == 'role':
-                if isinstance(value, basestring):
-                    value = [value]
-                for role in value:
-                    modifiers.append(('role[]', role))
+                parameters[key] = ",".join(value)
+            elif key in ('sort_by', 'sort_order', 'permission_set', 'page', 'limit', 'cursor', 'filter_by',):
+                parameters[key] = value
             elif key == 'since':
-                modifiers.append((key, value.strftime(self.ISO_8601_FORMAT)))
+                parameters[key] = value.strftime(self.ISO_8601_FORMAT)
             elif key == 'async':
-                modifiers.append(('async', str(value).lower()))
-            elif key == 'limit':
-                modifiers.append(('limit', value))
-            elif key == 'cursor':
-                modifiers.append(('cursor', value))
+                parameters[key] = str(value).lower()
 
-        if modifiers:
-            query += '&' + "&".join(["%s=%s" % (k, v) for k, v in modifiers])
+            # this is a bit of a hack
+            elif key == 'role':
+                if isinstance(value, basestring) or len(value) == 1:
+                    parameters['role[]'] = value
+                else:
+                    parameters['role[]'] = value[0] + '&' + "&".join(('role[]={}'.format(role) for role in value[1:]))
 
-        if self.endpoint not in query:
-            query = self.endpoint + '.json?' + query
-
-        if 'sideload' in kwargs and not kwargs['sideload']:
-            return query
-        else:
-            return query + self._format_sideload(self.sideload)
+        if path == self.endpoint:
+            path += '.json'
+        return Url(path=path, params=parameters)
 
 
 class SecondaryEndpoint(BaseEndpoint):
     def __call__(self, **kwargs):
         if not kwargs:
             raise ZenpyException("This endpoint requires arguments!")
-        return self.endpoint % kwargs
+        return Url(self.endpoint % kwargs)
 
 
 class MultipleIDEndpoint(BaseEndpoint):
     def __call__(self, *args):
         if not args or len(args) < 2:
             raise ZenpyException("This endpoint requires at least two arguments!")
-        return self.endpoint.format(*args)
+        return Url(self.endpoint.format(*args))
 
 
 class IncrementalEndpoint(BaseEndpoint):
@@ -159,23 +162,14 @@ class IncrementalEndpoint(BaseEndpoint):
 
         elif isinstance(start_time, datetime):
             unix_time = to_unix_ts(start_time)
-
         else:
             unix_time = start_time
-
-        query = "start_time=%s" % str(unix_time)
-        return self.endpoint + query + self._format_sideload(self.sideload, seperator='&')
+        return Url(self.endpoint, params=dict(start_time=str(unix_time)))
 
 
 class AttachmentEndpoint(BaseEndpoint):
     def __call__(self, **kwargs):
-        query = self.endpoint
-        for key, value in kwargs.items():
-            if value:
-                if '&' not in query:
-                    query += '&'
-                query += '{}={}'.format(key, value)
-        return query
+        return Url(self.endpoint, params={k: v for k, v in kwargs.items() if v is not None})
 
 
 class SearchEndpoint(BaseEndpoint):
@@ -214,23 +208,22 @@ class SearchEndpoint(BaseEndpoint):
 
     """
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, query=None, **kwargs):
 
         renamed_kwargs = dict()
         modifiers = list()
-        sort_order = list()
+        params = dict()
         for key, value in kwargs.items():
             if isinstance(value, date):
                 kwargs[key] = value.strftime(self.ZENDESK_DATE_FORMAT)
             elif isinstance(key, datetime):
                 kwargs[key] = value.strftime(self.ISO_8601_FORMAT)
             elif is_iterable_but_not_string(value) and key == 'ids':
-                kwargs[key] = self._format_many(value)
-
+                kwargs[key] = ", ".join(map(str, value))
             if key.endswith('_between'):
                 modifiers.append(self.format_between(key, value))
             elif key in ('sort_by', 'sort_order'):
-                sort_order.append("%s=%s" % (key, value))
+                params[key] = value
             elif key.endswith('_after'):
                 renamed_kwargs[key.replace('_after', '>')] = kwargs[key]
             elif key.endswith('_before'):
@@ -249,17 +242,13 @@ class SearchEndpoint(BaseEndpoint):
             else:
                 renamed_kwargs.update({key + ':': '"%s"' % value})
 
-        query = self.endpoint + 'query='
-        if args:
-            query += ' '.join(args) + '+'
+        search_query = ['%s%s' % (key, value) for (key, value) in renamed_kwargs.items()]
+        search_query.extend(modifiers)
+        if query:
+            search_query.append(query)
+        params['query'] = ' '.join(search_query)
 
-        sort_section = ""
-        if sort_order:
-            sort_section += '&' + "&".join(sort_order)
-
-        search_parameters = self._format(*modifiers, **renamed_kwargs)
-
-        return "%(query)s%(search_parameters)s%(sort_section)s" % locals()
+        return Url(self.endpoint, params)
 
     def format_between(self, key, values):
         if not is_iterable_but_not_string(values):
@@ -280,16 +269,9 @@ class SearchEndpoint(BaseEndpoint):
 
 
 class RequestSearchEndpoint(BaseEndpoint):
-    def __call__(self, *args, **kwargs):
-        if not args:
-            raise ZenpyException("You need to pass the query string as the first parameter")
-
-        query = "query=%s" % args[0]
-        result = []
-        for key, value in kwargs.items():
-            result.append("%s=%s" % (key, value))
-        query += '&' + "&".join(result)
-        return self.endpoint + query
+    def __call__(self, query, **kwargs):
+        kwargs['query'] = query
+        return Url(self.endpoint, params=kwargs)
 
 
 class HelpDeskSearchEndpoint(BaseEndpoint):
@@ -303,35 +285,33 @@ class HelpDeskSearchEndpoint(BaseEndpoint):
                 processed_kwargs[key] = ",".join(value)
             else:
                 processed_kwargs[key] = value
-        return self.endpoint + query + '&'.join(("{}={}".format(k, v) for k, v in processed_kwargs.items()))
+        processed_kwargs['query'] = query
+        return Url(self.endpoint, params=processed_kwargs)
 
 
 class SatisfactionRatingEndpoint(BaseEndpoint):
     def __call__(self, score=None, sort_order=None, start_time=None, end_time=None):
-        if sort_order not in ('asc', 'desc'):
+        if sort_order and sort_order not in ('asc', 'desc'):
             raise ZenpyException("sort_order must be one of (asc, desc)")
-
-        base_url = self.endpoint + '?'
+        params = dict()
         if score:
-            result = base_url + "score={}".format(score)
-        else:
-            result = base_url
+            params['score'] = score
 
         if sort_order:
-            result += '&sort_order={}'.format(sort_order)
+            params['sort_order'] = sort_order
 
         if start_time:
-            result += '&start_time={}'.format(to_unix_ts(start_time))
+            params['start_time'] = to_unix_ts(start_time)
 
         if end_time:
-            result += '&end_time={}'.format(to_unix_ts(end_time))
+            params['end_time'] = to_unix_ts(end_time)
 
-        return result
+        return Url(self.endpoint, params=params)
 
 
 class MacroEndpoint(BaseEndpoint):
     def __call__(self, sort_order=None, sort_by=None, **kwargs):
-        kwargs.pop('sideload', None)
+        print(kwargs)
         if sort_order and sort_order not in ('asc', 'desc'):
             raise ZenpyException("sort_order must be one of (asc, desc)")
         if sort_by and sort_by not in ('alphabetical', 'created_at', 'updated_at', 'usage_1h', 'usage_24h', 'usage_7d'):
@@ -341,23 +321,26 @@ class MacroEndpoint(BaseEndpoint):
         if 'id' in kwargs:
             if len(kwargs) > 1:
                 raise ZenpyException("When specifying an id it must be the only parameter")
-            url_out = ''
-        else:
-            url_out = self.endpoint + '?'
 
+        params = dict()
+        path = self.endpoint
         for key, value in kwargs.items():
             if isinstance(value, bool):
                 value = str(value).lower()
             if key == 'id':
-                url_out += self._single(self.endpoint, value)
+                path += "/{}.json".format(value)
             else:
-                url_out += '&{}={}'.format(key, value)
+                params[key] = value
 
         if sort_order:
-            url_out += '&sort_order={}'.format(sort_order)
+            params['sort_order'] = sort_order
         if sort_by:
-            url_out += '&sort_by={}'.format(sort_by)
-        return url_out
+            params['sort_by'] = sort_by
+
+        if path == self.endpoint:
+            path += '.json'
+
+        return Url(path, params=params)
 
 
 class ChatEndpoint(BaseEndpoint):
@@ -365,8 +348,10 @@ class ChatEndpoint(BaseEndpoint):
         if len(kwargs) > 1:
             raise ZenpyException("Only expect a single keyword to the ChatEndpoint")
         endpoint_path = self.endpoint
+        params = dict()
         if 'ids' in kwargs:
-            endpoint_path = "{}?ids={}".format(self.endpoint, ','.join(kwargs['ids']))
+            endpoint_path = self.endpoint
+            params['ids'] = ','.join(kwargs['ids'])
         else:
             for key, value in kwargs.items():
                 if key == 'email':
@@ -376,7 +361,7 @@ class ChatEndpoint(BaseEndpoint):
                 else:
                     endpoint_path = "{}/{}".format(self.endpoint, value)
                 break
-        return endpoint_path
+        return Url(endpoint_path, params=params)
 
 
 class ChatSearchEndpoint(BaseEndpoint):
@@ -384,20 +369,14 @@ class ChatSearchEndpoint(BaseEndpoint):
         conditions = list()
         if args:
             conditions.append(' '.join(args))
-
         conditions.extend(["{}:{}".format(k, v) for k, v in kwargs.items()])
-        return self.endpoint + " AND ".join(conditions)
+        return Url(self.endpoint + " AND ".join(conditions))
 
 
 class ViewSearchEndpoint(BaseEndpoint):
-    def __call__(self, *args, **kwargs):
-        params = list()
-        if len(args) > 1:
-            raise ZenpyException("Only query can be passed as an arg!")
-        elif len(args) == 1:
-            params.append("query={}".format(args[0]))
-        params.extend(["{}={}".format(k, v) for k, v in kwargs.items()])
-        return self.endpoint + "&".join(params).lower()
+    def __call__(self, query, **kwargs):
+        kwargs['query'] = query
+        return Url(self.endpoint, params=kwargs)
 
 
 class EndpointFactory(object):
@@ -407,7 +386,7 @@ class EndpointFactory(object):
 
     activities = PrimaryEndpoint('activities')
     attachments = PrimaryEndpoint('attachments')
-    attachments.upload = AttachmentEndpoint('uploads.json?')
+    attachments.upload = AttachmentEndpoint('uploads.json')
     brands = PrimaryEndpoint('brands')
     chats = ChatEndpoint('chats')
     chats.account = ChatEndpoint('account')
@@ -422,24 +401,23 @@ class EndpointFactory(object):
     chats.search = ChatSearchEndpoint('chats/search?q=')
     chats.stream = ChatSearchEndpoint('stream/chats')
     end_user = SecondaryEndpoint('end_users/%(id)s.json')
-    group_memberships = PrimaryEndpoint('group_memberships', sideload=['users', ' groups'])
+    group_memberships = PrimaryEndpoint('group_memberships')
     group_memberships.assignable = PrimaryEndpoint('group_memberships/assignable')
     group_memberships.make_default = MultipleIDEndpoint('users/{}/group_memberships/{}/make_default.json')
-    groups = PrimaryEndpoint('groups', ['users'])
+    groups = PrimaryEndpoint('groups')
     groups.memberships = SecondaryEndpoint('groups/%(id)s/memberships.json')
     groups.memberships_assignable = SecondaryEndpoint('groups/%(id)s/memberships/assignable.json')
     job_statuses = PrimaryEndpoint('job_statuses')
-    macros = MacroEndpoint('macros', sideload=['app_installation', 'categories', 'permissions', 'usage_1h', 'usage_24h',
-                                               'usage_7d', 'usage_30d'])
+    macros = MacroEndpoint('macros')
     macros.apply = SecondaryEndpoint('macros/%(id)s/apply.json')
 
     nps = PrimaryEndpoint('nps')
-    nps.recipients_incremental = IncrementalEndpoint('nps/incremental/recipients.json?')
-    nps.responses_incremental = IncrementalEndpoint('nps/incremental/responses.json?')
+    nps.recipients_incremental = IncrementalEndpoint('nps/incremental/recipients.json')
+    nps.responses_incremental = IncrementalEndpoint('nps/incremental/responses.json')
     organization_memberships = PrimaryEndpoint('organization_memberships')
-    organizations = PrimaryEndpoint('organizations', ['abilities'])
+    organizations = PrimaryEndpoint('organizations')
     organizations.external = SecondaryEndpoint('organizations/search.json?external_id=%(id)s')
-    organizations.incremental = IncrementalEndpoint('incremental/organizations.json?')
+    organizations.incremental = IncrementalEndpoint('incremental/organizations.json')
     organizations.organization_fields = PrimaryEndpoint('organization_fields')
     organizations.organization_memberships = SecondaryEndpoint('organizations/%(id)s/organization_memberships.json')
     organizations.requests = SecondaryEndpoint('organizations/%(id)s/requests.json')
@@ -449,11 +427,11 @@ class EndpointFactory(object):
     requests.ccd = PrimaryEndpoint("requests/ccd")
     requests.comments = SecondaryEndpoint('requests/%(id)s/comments.json')
     requests.open = PrimaryEndpoint("requests/open")
-    requests.search = RequestSearchEndpoint('requests/search.json?')
+    requests.search = RequestSearchEndpoint('requests/search.json')
     requests.solved = PrimaryEndpoint("requests/solved")
     satisfaction_ratings = SatisfactionRatingEndpoint('satisfaction_ratings')
     satisfaction_ratings.create = SecondaryEndpoint('tickets/%(id)s/satisfaction_rating.json')
-    search = SearchEndpoint('search.json?')
+    search = SearchEndpoint('search.json')
     sharing_agreements = PrimaryEndpoint('sharing_agreements')
     sla_policies = PrimaryEndpoint('slas/policies')
     sla_policies.definitions = PrimaryEndpoint('slas/policies/definitions')
@@ -464,23 +442,14 @@ class EndpointFactory(object):
     ticket_forms = PrimaryEndpoint('ticket_forms')
     ticket_import = PrimaryEndpoint('imports/tickets')
     ticket_metrics = PrimaryEndpoint('ticket_metrics')
-    tickets = PrimaryEndpoint('tickets',
-                              ['users', 'groups', 'organizations', 'last_audits', 'metric_sets', 'dates',
-                               'sharing_agreements', 'comment_count', 'incident_counts', 'ticket_forms',
-                               'metric_events', 'slas'])
-    tickets.audits = SecondaryEndpoint('tickets/%(id)s/audits.json',
-                                       sideload=['users', 'organizations', 'groups', 'tickets'])
+    tickets = PrimaryEndpoint('tickets')
+    tickets.audits = SecondaryEndpoint('tickets/%(id)s/audits.json')
     tickets.audits.cursor = PrimaryEndpoint('ticket_audits')
     tickets.comments = SecondaryEndpoint('tickets/%(id)s/comments.json')
-    tickets.events = IncrementalEndpoint('incremental/ticket_events.json?', sideload=['comment_events'])
-    tickets.incremental = IncrementalEndpoint('incremental/tickets.json?',
-                                              sideload=['users', 'groups', 'organizations', 'last_audits',
-                                                        'metric_sets', 'dates',
-                                                        'sharing_agreements', 'comment_count', 'incident_counts',
-                                                        'ticket_forms',
-                                                        'metric_events', 'slas'])
+    tickets.events = IncrementalEndpoint('incremental/ticket_events.json')
+    tickets.incremental = IncrementalEndpoint('incremental/tickets.json')
     tickets.metrics = SecondaryEndpoint('tickets/%(id)s/metrics.json')
-    tickets.metrics.incremental = IncrementalEndpoint('incremental/ticket_metric_events.json?')
+    tickets.metrics.incremental = IncrementalEndpoint('incremental/ticket_metric_events.json')
     tickets.organizations = SecondaryEndpoint('organizations/%(id)s/tickets.json')
     tickets.recent = SecondaryEndpoint('tickets/recent.json')
     tickets.tags = SecondaryEndpoint('tickets/%(id)s/tags.json')
@@ -489,22 +458,21 @@ class EndpointFactory(object):
     topics = PrimaryEndpoint('topics')
     topics.tags = SecondaryEndpoint('topics/%(id)s/tags.json')
     user_fields = PrimaryEndpoint('user_fields')
-    users = PrimaryEndpoint('users',
-                            ['organizations', 'abilities', 'roles', 'identities', 'groups', 'open_ticket_count'])
+    users = PrimaryEndpoint('users')
     users.assigned = SecondaryEndpoint('users/%(id)s/tickets/assigned.json')
     users.cced = SecondaryEndpoint('users/%(id)s/tickets/ccd.json')
     users.create_or_update = PrimaryEndpoint('users/create_or_update')
     users.create_or_update_many = PrimaryEndpoint('users/create_or_update_many.json')
     users.group_memberships = SecondaryEndpoint('users/%(id)s/group_memberships.json')
     users.groups = SecondaryEndpoint('users/%(id)s/groups.json')
-    users.incremental = IncrementalEndpoint('incremental/users.json?')
+    users.incremental = IncrementalEndpoint('incremental/users.json')
     users.me = SecondaryEndpoint('users/me.json')
     users.merge = SecondaryEndpoint('users/%(id)s/merge.json')
     users.organization_memberships = SecondaryEndpoint('users/%(id)s/organization_memberships.json')
     users.organizations = SecondaryEndpoint('users/%(id)s/organizations.json')
     users.related = SecondaryEndpoint('users/%(id)s/related.json')
     users.requested = SecondaryEndpoint('users/%(id)s/tickets/requested.json')
-    users.requests = SecondaryEndpoint('users/%(id)s/requests.json', sideload=['users', 'organizations'])
+    users.requests = SecondaryEndpoint('users/%(id)s/requests.json')
     users.tags = SecondaryEndpoint('users/%(id)s/tags.json')
     users.identities = SecondaryEndpoint('users/%(id)s/identities.json')
     users.identities.show = MultipleIDEndpoint('users/{0}/identities/{1}.json')
@@ -513,7 +481,7 @@ class EndpointFactory(object):
     users.identities.verify = MultipleIDEndpoint('users/{0}/identities/{1}/verify')
     users.identities.request_verification = MultipleIDEndpoint('users/{0}/identities/{1}/request_verification.json')
     users.identities.delete = MultipleIDEndpoint('users/{0}/identities/{1}.json')
-    views = PrimaryEndpoint('views', sideload=['app_installation', 'permissions'])
+    views = PrimaryEndpoint('views')
     views.active = PrimaryEndpoint('views/active')
     views.compact = PrimaryEndpoint('views/compact')
     views.count = SecondaryEndpoint('views/%(id)s/count.json')
@@ -541,7 +509,7 @@ class EndpointFactory(object):
     help_centre.articles.update_translation = MultipleIDEndpoint('help_center/articles/{}/translations/{}.json')
     help_centre.articles.show_translation = MultipleIDEndpoint('help_center/articles/{}/translations/{}.json')
     help_centre.articles.delete_translation = SecondaryEndpoint('help_center/translations/%(id)s.json')
-    help_centre.articles.search = HelpDeskSearchEndpoint('help_center/articles/search.json?')
+    help_centre.articles.search = HelpDeskSearchEndpoint('help_center/articles/search.json')
     help_centre.articles.subscriptions = SecondaryEndpoint('help_center/articles/%(id)s/subscriptions.json')
     help_centre.articles.subscriptions_delete = MultipleIDEndpoint('help_center/articles/{}/subscriptions/{}.json')
     help_centre.articles.votes = SecondaryEndpoint('help_center//articles/%(id)s/votes.json')
@@ -590,7 +558,7 @@ class EndpointFactory(object):
     help_centre.topics.subscriptions_delete = MultipleIDEndpoint('community/topics/{}/subscriptions/{}.json')
     help_centre.topics.access_policies = SecondaryEndpoint('community/topics/%(id)s/access_policy.json')
 
-    help_centre.posts = PrimaryEndpoint('community/posts', sideload=['users', 'topics'])
+    help_centre.posts = PrimaryEndpoint('community/posts')
     help_centre.posts.subscriptions = SecondaryEndpoint('community/posts/%(id)s/subscriptions.json')
     help_centre.posts.subscriptions_delete = MultipleIDEndpoint('community/posts/{}/subscriptions/{}.json')
 
