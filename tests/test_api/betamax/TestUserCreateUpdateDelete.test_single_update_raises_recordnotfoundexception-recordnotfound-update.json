@@ -1,34 +1,20 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2018-03-30T06:17:51",
+      "recorded_at": "2018-03-30T07:42:19",
       "request": {
         "body": {
           "encoding": "utf-8",
           "string": "{\"user\": {\"id\": 9223372036854775807, \"name\": \"testUser\"}}"
         },
         "headers": {
-          "Accept": [
-            "*/*"
-          ],
-          "Accept-Encoding": [
-            "gzip, deflate"
-          ],
-          "Authorization": [
-            "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnBUNXQ2ZEZ4QWltU1hoNEkydjBYeVMwSkNlYVV4eWROQUxFRkV1VWM="
-          ],
-          "Connection": [
-            "keep-alive"
-          ],
-          "Content-Length": [
-            "57"
-          ],
-          "Content-Type": [
-            "application/json"
-          ],
-          "User-Agent": [
-            "Zenpy/1.2"
-          ]
+          "Accept": "*/*",
+          "Accept-Encoding": "gzip, deflate",
+          "Authorization": "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnBUNXQ2ZEZ4QWltU1hoNEkydjBYeVMwSkNlYVV4eWROQUxFRkV1VWM=",
+          "Connection": "keep-alive",
+          "Content-Length": "57",
+          "Content-Type": "application/json",
+          "User-Agent": "Zenpy/1.2"
         },
         "method": "PUT",
         "uri": "https://d3v-zenpydev.zendesk.com/api/v2/users/9223372036854775807.json"
@@ -36,66 +22,29 @@
       "response": {
         "body": {
           "base64_string": "H4sIAAAAAAAAA6tWSi0qyi9SslIKSk3OL0rxyy9xyy/NS1HSUUpJLU4uyiwoyczPA0oDJRTSwDK1AHKmUTI0AAAA",
-          "encoding": "UTF-8"
+          "encoding": "UTF-8",
+          "string": ""
         },
         "headers": {
-          "Cache-Control": [
-            "no-cache"
-          ],
-          "Connection": [
-            "keep-alive"
-          ],
-          "Content-Encoding": [
-            "gzip"
-          ],
-          "Content-Type": [
-            "application/json; charset=UTF-8"
-          ],
-          "Date": [
-            "Fri, 30 Mar 2018 06:17:51 GMT"
-          ],
-          "Server": [
-            "nginx"
-          ],
-          "Strict-Transport-Security": [
-            "max-age=31536000;"
-          ],
-          "Transfer-Encoding": [
-            "chunked"
-          ],
-          "X-Frame-Options": [
-            "SAMEORIGIN"
-          ],
-          "X-Rack-Cache": [
-            "invalidate, pass"
-          ],
-          "X-Rate-Limit": [
-            "700"
-          ],
-          "X-Rate-Limit-Remaining": [
-            "658"
-          ],
-          "X-Request-Id": [
-            "e9c3ce0b-74a7-4e50-ce2a-0682871176a2"
-          ],
-          "X-Runtime": [
-            "0.133744"
-          ],
-          "X-UA-Compatible": [
-            "IE=Edge,chrome=1"
-          ],
-          "X-Zendesk-API-Version": [
-            "v2"
-          ],
-          "X-Zendesk-Application-Version": [
-            "v757.19"
-          ],
-          "X-Zendesk-Origin-Server": [
-            "app61.pod13.usw2.zdsys.com"
-          ],
-          "X-Zendesk-Request-Id": [
-            "eb8d1e048bb13654b7bf"
-          ]
+          "Cache-Control": "no-cache",
+          "Connection": "keep-alive",
+          "Content-Encoding": "gzip",
+          "Content-Type": "application/json; charset=UTF-8",
+          "Date": "Fri, 30 Mar 2018 07:42:19 GMT",
+          "Server": "nginx",
+          "Strict-Transport-Security": "max-age=31536000;",
+          "Transfer-Encoding": "chunked",
+          "X-Frame-Options": "SAMEORIGIN",
+          "X-Rack-Cache": "invalidate, pass",
+          "X-Rate-Limit": "700",
+          "X-Rate-Limit-Remaining": "676",
+          "X-Request-Id": "abcf2890-b2b3-40a0-c0bc-067c7f868c24",
+          "X-Runtime": "0.134170",
+          "X-UA-Compatible": "IE=Edge,chrome=1",
+          "X-Zendesk-API-Version": "v2",
+          "X-Zendesk-Application-Version": "v757.19",
+          "X-Zendesk-Origin-Server": "app41.pod13.usw2.zdsys.com",
+          "X-Zendesk-Request-Id": "273b1bc49a7e44a70cc7"
         },
         "status": {
           "code": 404,

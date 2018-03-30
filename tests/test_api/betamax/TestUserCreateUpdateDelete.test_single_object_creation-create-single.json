@@ -1,34 +1,20 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2018-03-30T06:17:47",
+      "recorded_at": "2018-03-30T07:42:14",
       "request": {
         "body": {
           "encoding": "utf-8",
           "string": "{\"user\": {\"id\": null, \"name\": \"testUser\"}}"
         },
         "headers": {
-          "Accept": [
-            "*/*"
-          ],
-          "Accept-Encoding": [
-            "gzip, deflate"
-          ],
-          "Authorization": [
-            "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnBUNXQ2ZEZ4QWltU1hoNEkydjBYeVMwSkNlYVV4eWROQUxFRkV1VWM="
-          ],
-          "Connection": [
-            "keep-alive"
-          ],
-          "Content-Length": [
-            "42"
-          ],
-          "Content-Type": [
-            "application/json"
-          ],
-          "User-Agent": [
-            "Zenpy/1.2"
-          ]
+          "Accept": "*/*",
+          "Accept-Encoding": "gzip, deflate",
+          "Authorization": "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnBUNXQ2ZEZ4QWltU1hoNEkydjBYeVMwSkNlYVV4eWROQUxFRkV1VWM=",
+          "Connection": "keep-alive",
+          "Content-Length": "42",
+          "Content-Type": "application/json",
+          "User-Agent": "Zenpy/1.2"
         },
         "method": "POST",
         "uri": "https://d3v-zenpydev.zendesk.com/api/v2/users.json"
@@ -36,72 +22,30 @@
       "response": {
         "body": {
           "encoding": "UTF-8",
-          "string": "{\"user\":{\"id\":362436404731,\"url\":\"https://d3v-zenpydev.zendesk.com/api/v2/users/362436404731.json\",\"name\":\"testUser\",\"email\":null,\"created_at\":\"2018-03-30T06:17:47Z\",\"updated_at\":\"2018-03-30T06:17:47Z\",\"time_zone\":\"Magadan\",\"phone\":null,\"shared_phone_number\":null,\"photo\":null,\"locale_id\":1,\"locale\":\"en-US\",\"organization_id\":null,\"role\":\"end-user\",\"verified\":false,\"external_id\":null,\"tags\":[],\"alias\":null,\"active\":true,\"shared\":false,\"shared_agent\":false,\"last_login_at\":null,\"two_factor_auth_enabled\":false,\"signature\":null,\"details\":null,\"notes\":null,\"role_type\":null,\"custom_role_id\":null,\"moderator\":false,\"ticket_restriction\":\"requested\",\"only_private_comments\":false,\"restricted_agent\":true,\"suspended\":false,\"chat_only\":false,\"default_group_id\":null,\"user_fields\":{\"more_crap\":null,\"some_crap\":null}}}"
+          "string": "{\"user\":{\"id\":362440640511,\"url\":\"https://d3v-zenpydev.zendesk.com/api/v2/users/362440640511.json\",\"name\":\"testUser\",\"email\":null,\"created_at\":\"2018-03-30T07:42:14Z\",\"updated_at\":\"2018-03-30T07:42:14Z\",\"time_zone\":\"Magadan\",\"phone\":null,\"shared_phone_number\":null,\"photo\":null,\"locale_id\":1,\"locale\":\"en-US\",\"organization_id\":null,\"role\":\"end-user\",\"verified\":false,\"external_id\":null,\"tags\":[],\"alias\":null,\"active\":true,\"shared\":false,\"shared_agent\":false,\"last_login_at\":null,\"two_factor_auth_enabled\":false,\"signature\":null,\"details\":null,\"notes\":null,\"role_type\":null,\"custom_role_id\":null,\"moderator\":false,\"ticket_restriction\":\"requested\",\"only_private_comments\":false,\"restricted_agent\":true,\"suspended\":false,\"chat_only\":false,\"default_group_id\":null,\"user_fields\":{\"more_crap\":null,\"some_crap\":null}}}"
         },
         "headers": {
-          "Cache-Control": [
-            "max-age=0, private, must-revalidate"
-          ],
-          "Connection": [
-            "keep-alive"
-          ],
-          "Content-Length": [
-            "811"
-          ],
-          "Content-Type": [
-            "application/json; charset=UTF-8"
-          ],
-          "Date": [
-            "Fri, 30 Mar 2018 06:17:47 GMT"
-          ],
-          "ETag": [
-            "\"1bdb2b1d2d6976e8f5e65160925661d4\""
-          ],
-          "Location": [
-            "https://d3v-zenpydev.zendesk.com/api/v2/users/362436404731.json"
-          ],
-          "Server": [
-            "nginx"
-          ],
-          "Strict-Transport-Security": [
-            "max-age=31536000;"
-          ],
-          "X-Content-Type-Options": [
-            "nosniff"
-          ],
-          "X-Frame-Options": [
-            "SAMEORIGIN"
-          ],
-          "X-Rack-Cache": [
-            "invalidate, pass"
-          ],
-          "X-Rate-Limit": [
-            "700"
-          ],
-          "X-Rate-Limit-Remaining": [
-            "665"
-          ],
-          "X-Request-Id": [
-            "ea17f728-10de-4a68-cae7-0682871176a2"
-          ],
-          "X-Runtime": [
-            "0.254854"
-          ],
-          "X-UA-Compatible": [
-            "IE=Edge,chrome=1"
-          ],
-          "X-Zendesk-API-Version": [
-            "v2"
-          ],
-          "X-Zendesk-Application-Version": [
-            "v757.19"
-          ],
-          "X-Zendesk-Origin-Server": [
-            "app54.pod13.usw2.zdsys.com"
-          ],
-          "X-Zendesk-Request-Id": [
-            "3f70f989241a403100ec"
-          ]
+          "Cache-Control": "max-age=0, private, must-revalidate",
+          "Connection": "keep-alive",
+          "Content-Length": "811",
+          "Content-Type": "application/json; charset=UTF-8",
+          "Date": "Fri, 30 Mar 2018 07:42:14 GMT",
+          "ETag": "\"8285cba123a96886452cadd9a91af061\"",
+          "Location": "https://d3v-zenpydev.zendesk.com/api/v2/users/362440640511.json",
+          "Server": "nginx",
+          "Strict-Transport-Security": "max-age=31536000;",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "SAMEORIGIN",
+          "X-Rack-Cache": "invalidate, pass",
+          "X-Rate-Limit": "700",
+          "X-Rate-Limit-Remaining": "683",
+          "X-Request-Id": "68647a39-547a-4b81-cb14-067c7f868c24",
+          "X-Runtime": "0.227771",
+          "X-UA-Compatible": "IE=Edge,chrome=1",
+          "X-Zendesk-API-Version": "v2",
+          "X-Zendesk-Application-Version": "v757.19",
+          "X-Zendesk-Origin-Server": "app44.pod13.usw2.zdsys.com",
+          "X-Zendesk-Request-Id": "c748c5c364b7c9ca0546"
         },
         "status": {
           "code": 201,
