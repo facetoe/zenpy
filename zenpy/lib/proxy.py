@@ -47,7 +47,7 @@ class ProxyDict(dict):
             dict.__setitem__(self, k, element)
         elif getattr(element, '_dirty_callback', None) is not None:
             element._dirty_callback = dirty_callback
-        return self[k]
+        return element
 
     def __delitem__(self, k):
         dict.__delitem__(self, k)
