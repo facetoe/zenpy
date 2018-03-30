@@ -10,9 +10,11 @@ from betamax_serializers.pretty_json import PrettyJSONSerializer
 from zenpy import Zenpy
 
 cred_path = os.path.expanduser('~/zenpy-test-credentials.json')
+
 if os.path.exists(cred_path):
     with open(cred_path) as f:
         credentials = json.load(f)
+        print(credentials)
 else:
     credentials = {
         "subdomain": "d3v-zenpydev",
@@ -83,14 +85,14 @@ def configure():
     config.cassette_library_dir = "tests/test_api/betamax/"
     config.default_cassette_options['record_mode'] = 'once'
     config.default_cassette_options['match_requests_on'] = ['method', 'path_matcher']
-    if credentials:
-        auth_key = 'token' if 'token' in credentials else 'password'
-        config.define_cassette_placeholder(
-            '<ZENPY-CREDENTIALS>',
-            str(base64.b64encode(
-                "{}/token:{}".format(credentials['email'], credentials[auth_key]).encode('utf-8')
-            ))
-        )
+    # if credentials:
+    #     auth_key = 'token' if 'token' in credentials else 'password'
+    #     config.define_cassette_placeholder(
+    #         '<ZENPY-CREDENTIALS>',
+    #         str(base64.b64encode(
+    #             "{}/token:{}".format(credentials['email'], credentials[auth_key]).encode('utf-8')
+    #         ))
+    #     )
     session = requests.Session()
     credentials['session'] = session
     zenpy_client = Zenpy(**credentials)

@@ -45,13 +45,13 @@ class ZenpyApiTestCase(TestCase):
             assert cached_object is not None
             self.assertTrue(getattr(zenpy_object, attr) == expected)
 
-    def wait_for_job_status(self, job_status, max_attempts=30):
+    def wait_for_job_status(self, job_status, max_attempts=50):
         """ Wait until a background job has completed. """
 
         # If we are currently recording be nice and don't hammer Zendesk for status updates.
         # If not we are replaying an interaction and can hammer the status update to speed up the tests.
         if self.recorder.current_cassette.is_recording():
-            request_interval = 2
+            request_interval = 5
         else:
             request_interval = 0.0001
         n = 0

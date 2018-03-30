@@ -59,6 +59,7 @@ class TestTicketGeneratorSlice(ZenpyApiTestCase):
 
     def check_slice_range(self, values, slice_range):
         self.assertEqual(len(values), len(slice_range))
+
         for i, n in enumerate(slice_range):
             self.assertIsInstance(values[i], Ticket)
             self.assertTrue(values[i].id == n,

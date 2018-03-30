@@ -1,78 +1,78 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2017-11-07T04:02:20",
+      "recorded_at": "2018-03-30T05:55:41",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"category\": {\"description\": \"this is a test\", \"name\": \"test\"}}"
+          "string": "{\"category\": {\"description\": \"this is a test\", \"id\": null, \"name\": \"test\"}}"
         },
         "headers": {
           "Accept": "*/*",
           "Accept-Encoding": "gzip, deflate",
-          "Authorization": "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOklpeWNRd3I2ZUtUc1p3MVhmR1JLSXM0b1k2c0M4d2w5bmdRbjBNeEU=",
+          "Authorization": "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnBUNXQ2ZEZ4QWltU1hoNEkydjBYeVMwSkNlYVV4eWROQUxFRkV1VWM=",
           "Connection": "keep-alive",
-          "Content-Length": "63",
+          "Content-Length": "75",
           "Content-Type": "application/json",
           "User-Agent": "Zenpy/1.2"
         },
         "method": "POST",
-        "uri": "https://zenpydevhelp.zendesk.com/api/v2/help_center/categories.json?&include="
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/help_center/categories.json"
       },
       "response": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"category\":{\"id\":115000317032,\"url\":\"https://zenpydevhelp.zendesk.com/api/v2/help_center/en-us/categories/115000317032-test.json\",\"html_url\":\"https://zenpydevhelp.zendesk.com/hc/en-us/categories/115000317032-test\",\"position\":0,\"created_at\":\"2017-11-07T04:02:19Z\",\"updated_at\":\"2017-11-07T04:02:19Z\",\"name\":\"test\",\"description\":\"this is a test\",\"locale\":\"en-us\",\"source_locale\":\"en-us\",\"outdated\":false}}"
+          "string": "{\"category\":{\"id\":360000253151,\"url\":\"https://d3v-zenpydev.zendesk.com/api/v2/help_center/en-us/categories/360000253151-test.json\",\"html_url\":\"https://d3v-zenpydev.zendesk.com/hc/en-us/categories/360000253151-test\",\"position\":0,\"created_at\":\"2018-03-30T05:55:41Z\",\"updated_at\":\"2018-03-30T05:55:41Z\",\"name\":\"test\",\"description\":\"this is a test\",\"locale\":\"en-us\",\"source_locale\":\"en-us\",\"outdated\":false}}"
         },
         "headers": {
           "Cache-Control": "max-age=0, private, must-revalidate",
           "Connection": "keep-alive",
           "Content-Type": "application/json; charset=utf-8",
-          "Date": "Tue, 07 Nov 2017 04:02:19 GMT",
-          "ETag": "W/\"06e1f3fc8d254ed6e3556cde045edb77\"",
+          "Date": "Fri, 30 Mar 2018 05:55:41 GMT",
+          "ETag": "W/\"4210fb78d3684d5636784d730f38fda3\"",
           "Server": "nginx",
           "Status": "201 Created",
           "Strict-Transport-Security": "max-age=31536000;",
           "Transfer-Encoding": "chunked",
           "X-Content-Type-Options": "nosniff",
           "X-Frame-Options": "SAMEORIGIN",
-          "X-Request-Id": "db74b01f-afe7-4afb-ca5a-0229a26aede0",
-          "X-Runtime": "0.093016",
+          "X-Request-Id": "f2eb5b4c-dd6f-4534-c552-0682871176a2",
+          "X-Runtime": "0.088939",
           "X-UA-Compatible": "IE=edge",
           "X-XSS-Protection": "1; mode=block",
           "X-Zendesk-API-Version": "v2",
-          "X-Zendesk-Origin-Server": "hcapp12.pod13.usw2.zdsys.com",
+          "X-Zendesk-Origin-Server": "hcapp26.pod13.usw2.zdsys.com",
           "X-Zendesk-User-Id": ""
         },
         "status": {
           "code": 201,
           "message": "Created"
         },
-        "url": "https://zenpydevhelp.zendesk.com/api/v2/help_center/categories.json?&include="
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/help_center/categories.json"
       }
     },
     {
-      "recorded_at": "2017-11-07T04:02:20",
+      "recorded_at": "2018-03-30T05:55:42",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"category\": {\"created_at\": \"2017-11-07T04:02:19Z\", \"description\": \"this is a testfa26be19de6bff93f70bc2308434e4a440bbad02\", \"html_url\": \"https://zenpydevhelp.zendesk.com/hc/en-us/categories/115000317032-test\", \"id\": 115000317032, \"locale\": \"en-us\", \"name\": \"testa94a8fe5ccb19ba61c4c0873d391e987982fbbd3\", \"outdated\": false, \"position\": 0, \"source_locale\": \"en-us\", \"updated_at\": \"2017-11-07T04:02:19Z\", \"url\": \"https://zenpydevhelp.zendesk.com/api/v2/help_center/en-us/categories/115000317032-test.json\"}}"
+          "string": "{\"category\": {\"description\": \"this is a testfa26be19de6bff93f70bc2308434e4a440bbad02\", \"id\": 360000253151, \"name\": \"testa94a8fe5ccb19ba61c4c0873d391e987982fbbd3\"}}"
         },
         "headers": {
           "Accept": "*/*",
           "Accept-Encoding": "gzip, deflate",
-          "Authorization": "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOklpeWNRd3I2ZUtUc1p3MVhmR1JLSXM0b1k2c0M4d2w5bmdRbjBNeEU=",
+          "Authorization": "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnBUNXQ2ZEZ4QWltU1hoNEkydjBYeVMwSkNlYVV4eWROQUxFRkV1VWM=",
           "Connection": "keep-alive",
-          "Content-Length": "506",
+          "Content-Length": "163",
           "Content-Type": "application/json",
           "User-Agent": "Zenpy/1.2"
         },
         "method": "PUT",
-        "uri": "https://zenpydevhelp.zendesk.com/api/v2/help_center/categories/115000317032.json&include="
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/help_center/categories/360000253151.json"
       },
       "response": {
         "body": {
-          "base64_string": "H4sIAAAAAAAAA42QwW7DIAyGX6XyOQmQborGc/S0S4TAW9gIIAyVuqrvXqftYdIOq+SLze/v988ZrKn4mcoJ9Bm8A63Uq5Ryrya5HztoJYCGpdZMWogfjPnk8LhgyAM3Dul7sGkVJntxHMU2ny3GikVg7BuJB90jid/gviLV4YtShI7pa5ifNFrsE2Bm5kS+esZr2YEtyCHdbCpnGaWaeqV6OR3ki5ajVm/vvNCy+1cTzYpM2G7nDQ5vi893F6iLpx2X2T2eQ7ImbPLbR7CeUisW5z/z1OrNGvSHCYSXyxUxfQJklAEAAA==",
+          "base64_string": "H4sIAAAAAAAAA42QTW7DIBCFrxLN2hhsSlVxjqy6sRBMa1oMiB9LaZS7d5JmUamLBs0CDW++x5szWNPwPZUT6DN4B1o+CzqzkpOaBuglgIa1tVw1507u7AtjPjncR7o4rJ+jTRs32fN95iuGvFiMDQvHyHrld7rHyn+DWcPaxo+aIgxE38LyoNFqHwATM6fqmye8FgPYghTSLaZRlllML0xIJsVRKK2UfppeaaBn968mmg2JcP07TVB4W3z+cYG2+nqgMof7c0jWhKv8tgjS19SLxeVPP/V2swb9ZkLFy+Ub8fD1RpQBAAA=",
           "encoding": "utf-8",
           "string": ""
         },
@@ -81,27 +81,27 @@
           "Connection": "keep-alive",
           "Content-Encoding": "gzip",
           "Content-Type": "application/json; charset=utf-8",
-          "Date": "Tue, 07 Nov 2017 04:02:20 GMT",
-          "ETag": "W/\"06e1f3fc8d254ed6e3556cde045edb77\"",
+          "Date": "Fri, 30 Mar 2018 05:55:42 GMT",
+          "ETag": "W/\"4210fb78d3684d5636784d730f38fda3\"",
           "Server": "nginx",
           "Status": "200 OK",
           "Strict-Transport-Security": "max-age=31536000;",
           "Transfer-Encoding": "chunked",
           "X-Content-Type-Options": "nosniff",
           "X-Frame-Options": "SAMEORIGIN",
-          "X-Request-Id": "b4c6764f-00bd-4e99-ce10-0229a26aede0",
-          "X-Runtime": "0.061608",
+          "X-Request-Id": "b5ffc880-f281-47b2-c7b5-0682871176a2",
+          "X-Runtime": "0.080238",
           "X-UA-Compatible": "IE=edge",
           "X-XSS-Protection": "1; mode=block",
           "X-Zendesk-API-Version": "v2",
-          "X-Zendesk-Origin-Server": "hcapp14.pod13.usw2.zdsys.com",
+          "X-Zendesk-Origin-Server": "hcapp23.pod13.usw2.zdsys.com",
           "X-Zendesk-User-Id": ""
         },
         "status": {
           "code": 200,
           "message": "OK"
         },
-        "url": "https://zenpydevhelp.zendesk.com/api/v2/help_center/categories/115000317032.json&include="
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/help_center/categories/360000253151.json"
       }
     }
   ],
