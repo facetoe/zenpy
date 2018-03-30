@@ -74,7 +74,6 @@ class PrimaryEndpoint(BaseEndpoint):
     """
 
     def __call__(self, **kwargs):
-        modifiers = []
         parameters = {}
         path = self.endpoint
         for key, value in kwargs.items():
