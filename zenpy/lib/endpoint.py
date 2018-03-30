@@ -56,10 +56,6 @@ class Url(object):
 
 
 class BaseEndpoint(object):
-    """
-    BaseEndpoint supplies common formatting operations.
-    """
-
     ISO_8601_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
     ZENDESK_DATE_FORMAT = "%Y-%m-%d"
 
@@ -68,7 +64,6 @@ class BaseEndpoint(object):
 
 
 class PrimaryEndpoint(BaseEndpoint):
-    ISO_8601_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
     """
     The PrimaryEndpoint handles the most common endpoint operations.
     """
@@ -275,7 +270,6 @@ class RequestSearchEndpoint(BaseEndpoint):
 
 class HelpDeskSearchEndpoint(BaseEndpoint):
     def __call__(self, query='', **kwargs):
-        query = 'query={}&'.format(query)
         processed_kwargs = dict()
         for key, value in kwargs.items():
             if isinstance(value, datetime):
@@ -295,22 +289,17 @@ class SatisfactionRatingEndpoint(BaseEndpoint):
         params = dict()
         if score:
             params['score'] = score
-
         if sort_order:
             params['sort_order'] = sort_order
-
         if start_time:
             params['start_time'] = to_unix_ts(start_time)
-
         if end_time:
             params['end_time'] = to_unix_ts(end_time)
-
         return Url(self.endpoint, params=params)
 
 
 class MacroEndpoint(BaseEndpoint):
     def __call__(self, sort_order=None, sort_by=None, **kwargs):
-        print(kwargs)
         if sort_order and sort_order not in ('asc', 'desc'):
             raise ZenpyException("sort_order must be one of (asc, desc)")
         if sort_by and sort_by not in ('alphabetical', 'created_at', 'updated_at', 'usage_1h', 'usage_24h', 'usage_7d'):
