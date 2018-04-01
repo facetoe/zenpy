@@ -52,7 +52,7 @@ class ProxyDict(dict):
 
     def _wrap_element(self, element):
         """
-        We want to know if an item is modified that is stored in this list. If the element is a list or dict,
+        We want to know if an item is modified that is stored in this dict. If the element is a list or dict,
         we wrap it in a ProxyList or ProxyDict, and if it is modified execute a callback that updates this
         instance. If it is a ZenpyObject, then the callback updates the parent object.
         """
