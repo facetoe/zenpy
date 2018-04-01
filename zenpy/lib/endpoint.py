@@ -111,6 +111,9 @@ class PrimaryEndpoint(BaseEndpoint):
                 parameters[key] = value.strftime(self.ISO_8601_FORMAT)
             elif key == 'async':
                 parameters[key] = str(value).lower()
+            elif key == 'include':
+                if value:
+                    parameters[key] = ",".join(value)
 
             # this is a bit of a hack
             elif key == 'role':
