@@ -49,8 +49,10 @@ class TestProxyList(TestCase):
         self._assert_dirty()
 
     def test_proxy_list_clear(self):
-        self.proxy_list.clear()
-        self._assert_dirty()
+        # Doesn't exist in 2.7
+        if hasattr(self.proxy_list, 'clear'):
+            self.proxy_list.clear()
+            self._assert_dirty()
 
     def test_proxy_list_extend(self):
         self.proxy_list.extend([1, 2, 3])

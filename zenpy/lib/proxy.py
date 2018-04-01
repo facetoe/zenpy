@@ -78,10 +78,17 @@ class ProxyList(list):
     """
 
     def __init__(self, iterable=None, dirty_callback=None):
-        list.__init__(self, iterable)
+        list.__init__(self, iterable or [])
         self.dirty_callback = dirty_callback
         self._dirty = False
         self._sentinel = object()
+
+        # Doesn't exist in 2.7
+        if hasattr(list, 'clear'):
+            def clear():
+                list.clear(self)
+                self._set_dirty()
+            self.clear = clear
 
     def _clean_dirty(self):
         self._dirty = False
@@ -93,10 +100,6 @@ class ProxyList(list):
 
     def append(self, item):
         list.append(self, item)
-        self._set_dirty()
-
-    def clear(self):
-        list.clear(self)
         self._set_dirty()
 
     def extend(self, iterable):
