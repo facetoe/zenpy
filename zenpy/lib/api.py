@@ -48,6 +48,7 @@ class BaseApi(object):
     """
 
     def __init__(self, subdomain, session, timeout, ratelimit, ratelimit_budget):
+        self.domain = 'zendesk.com'
         self.subdomain = subdomain
         self.session = session
         self.timeout = timeout
@@ -274,15 +275,16 @@ class BaseApi(object):
             except ValueError:
                 response.raise_for_status()
 
-    def _build_url(self, endpoint='', template=None):
+    def _build_url(self, endpoint):
         """ Build complete URL """
         if not issubclass(type(self), ChatApiBase) and not self.subdomain:
             raise ZenpyException("subdomain is required when accessing the Zendesk API!")
 
-        if template is None:
-            template = self._url_template
+        if self.subdomain:
+            endpoint.netloc = '{}.{}'.format(self.subdomain, self.domain)
+        else:
+            endpoint.netloc = self.domain
 
-        endpoint.netloc = '{}.zendesk.com'.format(self.subdomain)
         endpoint.prefix_path(self.api_prefix)
         return endpoint.build()
 
@@ -1234,9 +1236,10 @@ class ChatApiBase(Api):
         super(ChatApiBase, self).__init__(config,
                                           object_type='chat',
                                           endpoint=endpoint)
+        self.domain = 'www.zopim.com'
+        self.subdomain = ''
         self._request_handler = request_handler or ChatApiRequest
         self._object_mapping = ChatObjectMapping(self)
-        self._url_template = "%(protocol)s://www.zopim.com/%(api_prefix)s"
         self._response_handlers = (
             DeleteResponseHandler,
             ChatSearchResponseHandler,
@@ -1301,7 +1304,6 @@ class HelpCentreApiBase(Api):
         self._response_handlers = (MissingTranslationHandler,) + self._response_handlers
 
         self._object_mapping = HelpCentreObjectMapping(self)
-        self._url_template = "%(protocol)s://%(subdomain)s.zendesk.com/%(api_prefix)s%(locale)s"
         self.locale = ''
 
     def _process_response(self, response):
@@ -1312,10 +1314,8 @@ class HelpCentreApiBase(Api):
             object_mapping = ZendeskObjectMapping(self)
         return super(HelpCentreApiBase, self)._process_response(response, object_mapping)
 
-    def _build_url(self, endpoint='', template=None):
-        if endpoint.path.startswith('users/') and not endpoint.path.endswith('comments.json'):
-            template = "%(protocol)s://%(subdomain)s.zendesk.com/%(api_prefix)s"
-        return super(HelpCentreApiBase, self)._build_url(endpoint, template=template)
+    def _build_url(self, endpoint):
+        return super(HelpCentreApiBase, self)._build_url(endpoint)
 
 
 class TranslationApi(Api):
