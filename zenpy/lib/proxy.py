@@ -7,14 +7,16 @@ class ProxyDict(dict):
         self.dirty_callback = kwargs.pop('dirty_callback', None)
         super(dict, self).__init__()
         dict.update(self, *args, **kwargs)
-        self._set_dirty()
+        if args or kwargs:
+            self._set_dirty()
+        self._sentinel = object()
 
     def update(self, *args, **kwargs):
         dict.update(self, *args, **kwargs)
         self._set_dirty()
 
     def pop(self, key, default=None):
-        dict.pop(self, key, default=default)
+        dict.pop(self, key, default)
         self._set_dirty()
 
     def popitem(self):
@@ -35,19 +37,10 @@ class ProxyDict(dict):
         self._dirty = True
 
     def __getitem__(self, k):
-        def dirty_callback():
-            self._set_dirty()
-
         element = dict.__getitem__(self, k)
-        if isinstance(element, list):
-            element = ProxyList(element, dirty_callback=dirty_callback)
-            dict.__setitem__(self, k, element)
-        elif isinstance(element, dict):
-            element = ProxyDict(element, dirty_callback=dirty_callback)
-            dict.__setitem__(self, k, element)
-        elif getattr(element, '_dirty_callback', None) is not None:
-            element._dirty_callback = dirty_callback
-        return element
+        wrapped = self._wrap_element(element)
+        self[k] = wrapped
+        return wrapped
 
     def __delitem__(self, k):
         dict.__delitem__(self, k)
@@ -56,6 +49,27 @@ class ProxyDict(dict):
     def __setitem__(self, k, v):
         dict.__setitem__(self, k, v)
         self._set_dirty()
+
+    def _wrap_element(self, element):
+        """
+        We want to know if an item is modified that is stored in this list. If the element is a list or dict,
+        we wrap it in a ProxyList or ProxyDict, and if it is modified execute a callback that updates this
+        instance. If it is a ZenpyObject, then the callback updates the parent object.
+        """
+
+        def dirty_callback():
+            self._set_dirty()
+
+        if isinstance(element, list):
+            element = ProxyList(element, dirty_callback=dirty_callback)
+        elif isinstance(element, dict):
+            element = ProxyDict(element, dirty_callback=dirty_callback)
+        # If it is a Zenpy object this will either return None or the previous wrapper.
+        elif getattr(element, '_dirty_callback', self._sentinel) is not self._sentinel:
+            # Don't set callback if already set.
+            if not callable(element._dirty_callback):
+                element._dirty_callback = dirty_callback
+        return element
 
 
 class ProxyList(list):
@@ -67,6 +81,7 @@ class ProxyList(list):
         list.__init__(self, iterable)
         self.dirty_callback = dirty_callback
         self._dirty = False
+        self._sentinel = object()
 
     def _clean_dirty(self):
         self._dirty = False
@@ -97,19 +112,14 @@ class ProxyList(list):
         self._set_dirty()
 
     def __getitem__(self, item):
-        def dirty_callback():
-            self._set_dirty()
-
         element = list.__getitem__(self, item)
-        if isinstance(element, list):
-            element = ProxyList(element, dirty_callback=dirty_callback)
-            self[item] = element
-        elif isinstance(element, dict):
-            element = ProxyDict(element, dirty_callback=dirty_callback)
-            self[item] = element
-        elif getattr(element, '_dirty_callback', None) is not None:
-            element._dirty_callback = dirty_callback
-        return element
+        wrapped = self._wrap_element(element)
+        self[item] = wrapped
+        return wrapped
+
+    def __iter__(self):
+        for element in list.__iter__(self):
+            yield self._wrap_element(element)
 
     def pop(self, index=-1):
         r = list.pop(self, index)
@@ -133,3 +143,24 @@ class ProxyList(list):
         r = list.__imul__(self, other)
         self._set_dirty()
         return r
+
+    def _wrap_element(self, element):
+        """
+        We want to know if an item is modified that is stored in this list. If the element is a list or dict,
+        we wrap it in a ProxyList or ProxyDict, and if it is modified execute a callback that updates this
+        instance. If it is a ZenpyObject, then the callback updates the parent object.
+        """
+
+        def dirty_callback():
+            self._set_dirty()
+
+        if isinstance(element, list):
+            element = ProxyList(element, dirty_callback=dirty_callback)
+        elif isinstance(element, dict):
+            element = ProxyDict(element, dirty_callback=dirty_callback)
+        # If it is a Zenpy object this will either return None or the previous wrapper.
+        elif getattr(element, '_dirty_callback', self._sentinel) is not self._sentinel:
+            # Don't set callback if already set.
+            if not callable(element._dirty_callback):
+                element._dirty_callback = dirty_callback
+        return element
