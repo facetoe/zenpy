@@ -62,17 +62,6 @@ class BaseObject(object):
 
 
 
-class Action(BaseObject):
-    def __init__(self, api=None, field=None, value=None, **kwargs):
-
-        self.api = api
-        self.field = field
-        self.value = value
-
-        for key, value in kwargs.items():
-            setattr(self, key, value)
-
-
 class Activity(BaseObject):
     def __init__(self,
                  api=None,

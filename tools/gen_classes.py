@@ -258,10 +258,13 @@ class BaseObject(object):
     def __new__(cls, *args, **kwargs):
         instance = super(BaseObject, cls).__new__(cls)
         instance.__dict__['_dirty_attributes'] = set()
+        instance.__dict__['_dirty_callback'] = None
         return instance
 
     def __setattr__(self, key, value):
         self.__dict__['_dirty_attributes'].add(key)
+        if self._dirty_callback is not None:
+            self._dirty_callback()
         object.__setattr__(self, key, value)
 
     def _clean_dirty(self):
