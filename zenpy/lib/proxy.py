@@ -121,8 +121,10 @@ class ProxyList(list):
         return wrapped
 
     def __iter__(self):
-        for element in list.__iter__(self):
-            yield self._wrap_element(element)
+        for index, element in enumerate(list.__iter__(self), start=0):
+            wrapped = self._wrap_element(element)
+            self[index] = wrapped
+            yield wrapped
 
     def pop(self, index=-1):
         r = list.pop(self, index)
