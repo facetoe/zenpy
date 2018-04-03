@@ -37,7 +37,7 @@ class BaseObject(object):
                 continue
             elif serialize and getattr(value, '_dirty', False):
                 continue
-            elif copy_dict[key] is None or key in ('api', '_dirty_attributes'):
+            elif key in ('api', '_dirty_attributes'):
                 del copy_dict[key]
             elif serialize and key not in self._dirty_attributes:
                 del copy_dict[key]
