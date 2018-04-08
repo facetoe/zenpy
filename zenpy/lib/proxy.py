@@ -39,7 +39,7 @@ class ProxyDict(dict):
     def __getitem__(self, k):
         element = dict.__getitem__(self, k)
         wrapped = self._wrap_element(element)
-        self[k] = wrapped
+        dict.__setitem__(self, k, wrapped)
         return wrapped
 
     def __delitem__(self, k):
