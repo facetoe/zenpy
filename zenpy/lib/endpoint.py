@@ -150,10 +150,11 @@ class IncrementalEndpoint(BaseEndpoint):
     Zenpy will convert it to UTC, however if a naive object or unix timestamp is passed there is nothing
     Zenpy can do. It is recommended to always pass timezone aware objects to this endpoint.
 
-    :param start_time: Unix timestamp or datetime object
+    :param start_time: unix timestamp or datetime object
+    :param include: list of items to sideload
     """
 
-    def __call__(self, start_time=None):
+    def __call__(self, start_time=None, include=None):
         if start_time is None:
             raise ZenpyException("Incremental Endpoint requires a start_time parameter!")
 
@@ -161,7 +162,12 @@ class IncrementalEndpoint(BaseEndpoint):
             unix_time = to_unix_ts(start_time)
         else:
             unix_time = start_time
-        return Url(self.endpoint, params=dict(start_time=str(unix_time)))
+
+        params = dict(start_time=str(unix_time))
+        if include is not None:
+            params.update(dict(include=",".join(include)))
+
+        return Url(self.endpoint, params=params)
 
 
 class AttachmentEndpoint(BaseEndpoint):

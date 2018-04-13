@@ -541,12 +541,13 @@ class IncrementalApi(Api):
     IncrementalApi supports the incremental endpoint.
     """
 
-    def incremental(self, start_time):
+    def incremental(self, start_time, include=None):
         """
         Retrieve bulk data from the incremental API.
+        :param include: list of objects to sideload
         :param start_time: The time of the oldest object you are interested in.
         """
-        return self._query_zendesk(self.endpoint.incremental, self.object_type, start_time=start_time)
+        return self._query_zendesk(self.endpoint.incremental, self.object_type, start_time=start_time, include=include)
 
 
 class UserIdentityApi(Api):
@@ -834,7 +835,7 @@ class OrganizationApi(TaggableApi, IncrementalApi, CRUDExternalApi):
     @extract_id(Organization)
     def organization_memberships(self, organization):
         """
-        Retrieve the organization fields for this organization.
+        Retrieve tche organization fields for this organization.
 
         :param organization: Organization object or id
         """
@@ -948,7 +949,7 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
     @extract_id(Ticket)
     def audits(self, ticket=None, **kwargs):
         """
-        Retrieve TicketAudits. If ticket_id is passed, return the tickets for a specific audit.
+        Retrieve TicketAudits. If ticket is passed, return the tickets for a specific audit.
 
         If ticket_id is None, a TicketAuditGenerator is returned to handle pagination. The way this generator
         works is a different to the other Zenpy generators as it is cursor based, allowing you to change the
