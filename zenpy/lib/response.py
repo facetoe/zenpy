@@ -105,7 +105,7 @@ class GenericZendeskResponseHandler(ResponseHandler):
         # Collection of objects (eg, users/tickets)
         plural_object_type = as_plural(self.api.object_type)
         if plural_object_type in zenpy_objects:
-            return ZendeskResultGenerator(self, response_json)
+            return ZendeskResultGenerator(self, response_json, response_objects=zenpy_objects[plural_object_type])
 
         # Here the response matches the API object_type, seems legit.
         if self.api.object_type in zenpy_objects:
