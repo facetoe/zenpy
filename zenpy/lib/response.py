@@ -121,7 +121,8 @@ class GenericZendeskResponseHandler(ResponseHandler):
             plural_zenpy_object_name = as_plural(zenpy_object_name)
             if plural_zenpy_object_name in zenpy_objects:
                 return ZendeskResultGenerator(self, response_json, object_type=plural_zenpy_object_name)
-        # Bummer, bail out with an informative message.
+
+        # Bummer, bail out.
         raise ZenpyException("Unknown Response: " + str(response_json))
 
 

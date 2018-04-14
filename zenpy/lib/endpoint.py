@@ -112,8 +112,10 @@ class PrimaryEndpoint(BaseEndpoint):
             elif key == 'async':
                 parameters[key] = str(value).lower()
             elif key == 'include':
-                if value:
+                if is_iterable_but_not_string(value):
                     parameters[key] = ",".join(value)
+                elif value:
+                    parameters[key] = value
 
             # this is a bit of a hack
             elif key == 'role':
@@ -165,8 +167,10 @@ class IncrementalEndpoint(BaseEndpoint):
 
         params = dict(start_time=str(unix_time))
         if include is not None:
-            params.update(dict(include=",".join(include)))
-
+            if is_iterable_but_not_string(include):
+                params.update(dict(include=",".join(include)))
+            else:
+                params.update(dict(include=include))
         return Url(self.endpoint, params=params)
 
 
@@ -464,7 +468,7 @@ class EndpointFactory(object):
     users.group_memberships = SecondaryEndpoint('users/%(id)s/group_memberships.json')
     users.groups = SecondaryEndpoint('users/%(id)s/groups.json')
     users.incremental = IncrementalEndpoint('incremental/users.json')
-    users.me = SecondaryEndpoint('users/me.json')
+    users.me = PrimaryEndpoint('users/me')
     users.merge = SecondaryEndpoint('users/%(id)s/merge.json')
     users.organization_memberships = SecondaryEndpoint('users/%(id)s/organization_memberships.json')
     users.organizations = SecondaryEndpoint('users/%(id)s/organizations.json')

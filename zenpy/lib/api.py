@@ -710,11 +710,13 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
         """
         return self._query_zendesk(self.endpoint.related, 'user_related', id=user)
 
-    def me(self):
+    def me(self, include=None):
         """
         Return the logged in user
+
+        :param include: abilities - https://developer.zendesk.com/rest_api/docs/core/side_loading#abilities
         """
-        return self._query_zendesk(self.endpoint.me, 'user', id=None)
+        return self._query_zendesk(self.endpoint.me, 'user', include=include)
 
     @extract_id(User)
     def merge(self, source_user, dest_user):
