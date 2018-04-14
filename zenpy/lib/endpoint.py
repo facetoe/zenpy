@@ -367,7 +367,8 @@ class ChatSearchEndpoint(BaseEndpoint):
         if args:
             conditions.append(' '.join(args))
         conditions.extend(["{}:{}".format(k, v) for k, v in kwargs.items()])
-        return Url(self.endpoint + " AND ".join(conditions))
+        query = " AND ".join(conditions)
+        return Url(self.endpoint, params=dict(q=query))
 
 
 class ViewSearchEndpoint(BaseEndpoint):
@@ -395,7 +396,7 @@ class EndpointFactory(object):
     chats.triggers = ChatEndpoint('triggers')
     chats.shortcuts = ChatEndpoint('shortcuts')
     chats.visitors = ChatEndpoint('visitors')
-    chats.search = ChatSearchEndpoint('chats/search?q=')
+    chats.search = ChatSearchEndpoint('chats/search')
     chats.stream = ChatSearchEndpoint('stream/chats')
     end_user = SecondaryEndpoint('end_users/%(id)s.json')
     group_memberships = PrimaryEndpoint('group_memberships')
@@ -485,7 +486,7 @@ class EndpointFactory(object):
     views.tickets = SecondaryEndpoint('views/%(id)s/tickets')
     views.execute = SecondaryEndpoint('views/%(id)s/execute.json')
     views.export = SecondaryEndpoint('views/%(id)s/export.json')
-    views.search = ViewSearchEndpoint('views/search.json?')
+    views.search = ViewSearchEndpoint('views/search.json')
     recipient_addresses = PrimaryEndpoint('recipient_addresses')
 
     class Dummy(object): pass
