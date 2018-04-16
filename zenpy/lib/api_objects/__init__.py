@@ -3847,6 +3847,62 @@ class Topic(BaseObject):
             self.updater_id = updater.id
             self._updater = updater
 
+class Trigger(BaseObject):
+    def __init__(self,
+                 api=None,
+                 actions=None,
+                 active=None,
+                 conditions=None,
+                 created_at=None,
+                 description=None,
+                 id=None,
+                 position=None,
+                 title=None,
+                 updated_at=None,
+                 url=None,
+                 **kwargs):
+
+        self.api = api
+        self.actions = actions
+        self.active = active
+        self.conditions = conditions
+        self.created_at = created_at
+        self.description = description
+        self.id = id
+        self.position = position
+        self.title = title
+        self.updated_at = updated_at
+        self.url = url
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def created(self):
+        """
+        |  Comment: The time the trigger was created
+        """
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
+
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created
+
+    @property
+    def updated(self):
+        """
+        |  Comment: The time of the last update of the trigger
+        """
+        if self.updated_at:
+            return dateutil.parser.parse(self.updated_at)
+
+    @updated.setter
+    def updated(self, updated):
+        if updated:
+            self.updated_at = updated
+
 
 class TweetEvent(BaseObject):
     def __init__(self,

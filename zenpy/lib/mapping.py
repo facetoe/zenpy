@@ -86,7 +86,8 @@ class ZendeskObjectMapping(object):
         'definitions': Definitions,
         'recipient_address': RecipientAddress,
         'recipient': Recipient,
-        'response': Response
+        'response': Response,
+        'trigger': Trigger
     }
 
     skip_attrs = []
