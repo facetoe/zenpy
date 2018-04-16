@@ -89,7 +89,6 @@ class PrimaryEndpoint(BaseEndpoint):
                 parameters[key] = ",".join(map(str, value))
             elif key == 'update_many':
                 path += '/update_many.json'
-                parameters[key] = ",".join(map(str, value))
             elif key == 'count_many':
                 path += '/count_many.json'
                 parameters[key] = ",".join(map(str, value))
