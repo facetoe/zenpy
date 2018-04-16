@@ -1,20 +1,34 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2018-03-30T07:41:58",
+      "recorded_at": "2018-04-16T07:19:40",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"ticket\": {\"description\": \"test\", \"id\": null, \"subject\": \"test\"}}"
+          "string": "{\"ticket\": {\"assignee_id\": null, \"brand_id\": null, \"collaborator_ids\": null, \"created_at\": null, \"custom_fields\": null, \"description\": \"test\", \"due_at\": null, \"external_id\": null, \"fields\": null, \"forum_topic_id\": null, \"group_id\": null, \"has_incidents\": null, \"id\": null, \"organization_id\": null, \"priority\": null, \"problem_id\": null, \"raw_subject\": null, \"recipient\": null, \"requester_id\": null, \"satisfaction_rating\": null, \"sharing_agreement_ids\": null, \"status\": null, \"subject\": \"test\", \"submitter_id\": null, \"tags\": null, \"type\": null, \"updated_at\": null, \"url\": null, \"via\": null}}"
         },
         "headers": {
-          "Accept": "*/*",
-          "Accept-Encoding": "gzip, deflate",
-          "Authorization": "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnBUNXQ2ZEZ4QWltU1hoNEkydjBYeVMwSkNlYVV4eWROQUxFRkV1VWM=",
-          "Connection": "keep-alive",
-          "Content-Length": "66",
-          "Content-Type": "application/json",
-          "User-Agent": "Zenpy/1.2"
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnBUNXQ2ZEZ4QWltU1hoNEkydjBYeVMwSkNlYVV4eWROQUxFRkV1VWM="
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "589"
+          ],
+          "Content-Type": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "Zenpy/1.2"
+          ]
         },
         "method": "POST",
         "uri": "https://d3v-zenpydev.zendesk.com/api/v2/tickets.json"
@@ -22,31 +36,75 @@
       "response": {
         "body": {
           "encoding": "UTF-8",
-          "string": "{\"ticket\":{\"url\":\"https://d3v-zenpydev.zendesk.com/api/v2/tickets/6037.json\",\"id\":6037,\"external_id\":null,\"via\":{\"channel\":\"api\",\"source\":{\"from\":{},\"to\":{},\"rel\":null}},\"created_at\":\"2018-03-30T07:41:58Z\",\"updated_at\":\"2018-03-30T07:41:58Z\",\"type\":null,\"subject\":\"test\",\"raw_subject\":\"test\",\"description\":\"test\",\"priority\":null,\"status\":\"open\",\"recipient\":null,\"requester_id\":116514121092,\"submitter_id\":116514121092,\"assignee_id\":116514121092,\"organization_id\":115219725952,\"group_id\":114095923532,\"collaborator_ids\":[],\"follower_ids\":[],\"email_cc_ids\":[],\"forum_topic_id\":null,\"problem_id\":null,\"has_incidents\":false,\"is_public\":true,\"due_at\":null,\"tags\":[\"stuff\",\"thing\"],\"custom_fields\":[{\"id\":360001824571,\"value\":null}],\"satisfaction_rating\":null,\"sharing_agreement_ids\":[],\"fields\":[{\"id\":360001824571,\"value\":null}],\"followup_ids\":[],\"ticket_form_id\":114094015291,\"brand_id\":114095174732,\"satisfaction_probability\":null,\"allow_channelback\":false},\"audit\":{\"id\":377632265011,\"ticket_id\":6037,\"created_at\":\"2018-03-30T07:41:58Z\",\"author_id\":116514121092,\"metadata\":{\"system\":{\"client\":\"Zenpy/1.2\",\"ip_address\":\"121.45.201.213\",\"location\":\"Canberra, 01, Australia\",\"latitude\":-35.27600000000001,\"longitude\":149.13440000000003},\"custom\":{}},\"events\":[{\"id\":377632265031,\"type\":\"Comment\",\"author_id\":116514121092,\"body\":\"test\",\"html_body\":\"<div class=\\\"zd-comment\\\"><p dir=\\\"auto\\\">test</p></div>\",\"plain_body\":\"test\",\"public\":true,\"attachments\":[],\"audit_id\":377632265011},{\"id\":377632265051,\"type\":\"Create\",\"value\":\"test\",\"field_name\":\"subject\"},{\"id\":377632265071,\"type\":\"Create\",\"value\":\"116514121092\",\"field_name\":\"requester_id\"},{\"id\":377632265091,\"type\":\"Create\",\"value\":\"open\",\"field_name\":\"status\"},{\"id\":377632265111,\"type\":\"Create\",\"value\":null,\"field_name\":\"priority\"},{\"id\":377632265131,\"type\":\"Create\",\"value\":null,\"field_name\":\"type\"},{\"id\":377632265151,\"type\":\"Create\",\"value\":\"116514121092\",\"field_name\":\"assignee_id\"},{\"id\":377632265171,\"type\":\"Create\",\"value\":\"114095923532\",\"field_name\":\"group_id\"},{\"id\":377632265191,\"type\":\"Create\",\"value\":\"115219725952\",\"field_name\":\"organization_id\"},{\"id\":377632265211,\"type\":\"Create\",\"value\":[\"stuff\",\"thing\"],\"field_name\":\"tags\"},{\"id\":377632265231,\"type\":\"Create\",\"value\":\"114095174732\",\"field_name\":\"brand_id\"},{\"id\":377632265251,\"type\":\"Create\",\"value\":\"114094015291\",\"field_name\":\"ticket_form_id\"},{\"id\":377632265271,\"type\":\"Notification\",\"via\":{\"channel\":\"rule\",\"source\":{\"from\":{\"deleted\":false,\"title\":\"Notify requester of received request\",\"id\":114139575432,\"revision_id\":3},\"rel\":\"trigger\"}},\"subject\":\"[Request received] {{ticket.title}}\",\"body\":\"Your request ({{ticket.id}}) has been received and is being reviewed by our support staff.\\n\\nTo add additional comments, reply to this email.\\n\\n{{ticket.comments_formatted}}\",\"recipients\":[116514121092]},{\"id\":377632265311,\"type\":\"Notification\",\"via\":{\"channel\":\"rule\",\"source\":{\"from\":{\"deleted\":false,\"title\":\"Notify all agents of received request\",\"id\":114139575552,\"revision_id\":3},\"rel\":\"trigger\"}},\"subject\":\"[{{ticket.account}}] {{ticket.title}}\",\"body\":\"A ticket (#{{ticket.id}}) by {{ticket.requester.name}} has been received. It is unassigned.\\n\\n{{ticket.comments_formatted}}\",\"recipients\":[116514121092]}],\"via\":{\"channel\":\"api\",\"source\":{\"from\":{},\"to\":{},\"rel\":null}}}}"
+          "string": "{\"ticket\":{\"url\":\"https://d3v-zenpydev.zendesk.com/api/v2/tickets/6504.json\",\"id\":6504,\"external_id\":null,\"via\":{\"channel\":\"api\",\"source\":{\"from\":{},\"to\":{},\"rel\":null}},\"created_at\":\"2018-04-16T07:19:40Z\",\"updated_at\":\"2018-04-16T07:19:40Z\",\"type\":null,\"subject\":\"test\",\"raw_subject\":\"test\",\"description\":\"test\",\"priority\":null,\"status\":\"open\",\"recipient\":null,\"requester_id\":116514121092,\"submitter_id\":116514121092,\"assignee_id\":116514121092,\"organization_id\":115219725952,\"group_id\":114095923532,\"collaborator_ids\":[],\"follower_ids\":[],\"email_cc_ids\":[],\"forum_topic_id\":null,\"problem_id\":null,\"has_incidents\":false,\"is_public\":true,\"due_at\":null,\"tags\":[\"stuff\",\"thing\"],\"custom_fields\":[{\"id\":360001824571,\"value\":null}],\"satisfaction_rating\":null,\"sharing_agreement_ids\":[],\"fields\":[{\"id\":360001824571,\"value\":null}],\"followup_ids\":[],\"ticket_form_id\":114094015291,\"brand_id\":114095174732,\"satisfaction_probability\":null,\"allow_channelback\":false},\"audit\":{\"id\":381902229212,\"ticket_id\":6504,\"created_at\":\"2018-04-16T07:19:40Z\",\"author_id\":116514121092,\"metadata\":{\"system\":{\"client\":\"Zenpy/1.2\",\"ip_address\":\"203.59.52.134\",\"location\":\"Perth, 08, Australia\",\"latitude\":-32.05799999999999,\"longitude\":115.91809999999998},\"custom\":{}},\"events\":[{\"id\":381902229232,\"type\":\"Comment\",\"author_id\":116514121092,\"body\":\"test\",\"html_body\":\"<div class=\\\"zd-comment\\\"><p dir=\\\"auto\\\">test</p></div>\",\"plain_body\":\"test\",\"public\":true,\"attachments\":[],\"audit_id\":381902229212},{\"id\":381902229252,\"type\":\"Create\",\"value\":\"test\",\"field_name\":\"subject\"},{\"id\":381902229272,\"type\":\"Create\",\"value\":\"116514121092\",\"field_name\":\"requester_id\"},{\"id\":381902229292,\"type\":\"Create\",\"value\":null,\"field_name\":\"priority\"},{\"id\":381902229312,\"type\":\"Create\",\"value\":null,\"field_name\":\"type\"},{\"id\":381902229332,\"type\":\"Create\",\"value\":\"116514121092\",\"field_name\":\"assignee_id\"},{\"id\":381902229352,\"type\":\"Create\",\"value\":\"114095923532\",\"field_name\":\"group_id\"},{\"id\":381902229372,\"type\":\"Create\",\"value\":\"115219725952\",\"field_name\":\"organization_id\"},{\"id\":381902229392,\"type\":\"Create\",\"value\":[\"stuff\",\"thing\"],\"field_name\":\"tags\"},{\"id\":381902229412,\"type\":\"Create\",\"value\":\"open\",\"field_name\":\"status\"},{\"id\":381902229432,\"type\":\"Create\",\"value\":\"114095174732\",\"field_name\":\"brand_id\"},{\"id\":381902229452,\"type\":\"Create\",\"value\":\"114094015291\",\"field_name\":\"ticket_form_id\"},{\"id\":381902229472,\"type\":\"Notification\",\"via\":{\"channel\":\"rule\",\"source\":{\"from\":{\"deleted\":false,\"title\":\"Notify requester of received request\",\"id\":114139575432,\"revision_id\":3},\"rel\":\"trigger\"}},\"subject\":\"[Request received] {{ticket.title}}\",\"body\":\"Your request ({{ticket.id}}) has been received and is being reviewed by our support staff.\\n\\nTo add additional comments, reply to this email.\\n\\n{{ticket.comments_formatted}}\",\"recipients\":[116514121092]},{\"id\":381902229492,\"type\":\"Notification\",\"via\":{\"channel\":\"rule\",\"source\":{\"from\":{\"deleted\":false,\"title\":\"Notify all agents of received request\",\"id\":114139575552,\"revision_id\":3},\"rel\":\"trigger\"}},\"subject\":\"[{{ticket.account}}] {{ticket.title}}\",\"body\":\"A ticket (#{{ticket.id}}) by {{ticket.requester.name}} has been received. It is unassigned.\\n\\n{{ticket.comments_formatted}}\",\"recipients\":[116514121092]}],\"via\":{\"channel\":\"api\",\"source\":{\"from\":{},\"to\":{},\"rel\":null}}}}"
         },
         "headers": {
-          "Cache-Control": "max-age=0, private, must-revalidate",
-          "Connection": "keep-alive",
-          "Content-Length": "3307",
-          "Content-Type": "application/json; charset=UTF-8",
-          "Date": "Fri, 30 Mar 2018 07:41:58 GMT",
-          "ETag": "\"703ca577629bc681d21f75e86ba7623d\"",
-          "Location": "https://d3v-zenpydev.zendesk.com/api/v2/tickets/6037.json",
-          "Server": "nginx",
-          "Strict-Transport-Security": "max-age=31536000;",
-          "X-Content-Type-Options": "nosniff",
-          "X-Frame-Options": "SAMEORIGIN",
-          "X-Rack-Cache": "invalidate, pass",
-          "X-Rate-Limit": "700",
-          "X-Rate-Limit-Remaining": "674",
-          "X-Request-Id": "9a9b88ce-2836-47e6-c745-06796bc76686",
-          "X-Runtime": "0.565652",
-          "X-UA-Compatible": "IE=Edge,chrome=1",
-          "X-Zendesk-API-Version": "v2",
-          "X-Zendesk-API-Warn": "Removed restricted keys [\"ticket.id\"] from parameters according to whitelist",
-          "X-Zendesk-Application-Version": "v757.19",
-          "X-Zendesk-Origin-Server": "app65.pod13.usw2.zdsys.com",
-          "X-Zendesk-Request-Id": "a35dcdd25432f511837b"
+          "Cache-Control": [
+            "max-age=0, private, must-revalidate"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "3303"
+          ],
+          "Content-Type": [
+            "application/json; charset=UTF-8"
+          ],
+          "Date": [
+            "Mon, 16 Apr 2018 07:19:40 GMT"
+          ],
+          "ETag": [
+            "\"5f58ccd474c9319e72c62f3292c4d86a\""
+          ],
+          "Location": [
+            "https://d3v-zenpydev.zendesk.com/api/v2/tickets/6504.json"
+          ],
+          "Server": [
+            "nginx"
+          ],
+          "Strict-Transport-Security": [
+            "max-age=31536000;"
+          ],
+          "X-Content-Type-Options": [
+            "nosniff"
+          ],
+          "X-Frame-Options": [
+            "SAMEORIGIN"
+          ],
+          "X-Rack-Cache": [
+            "invalidate, pass"
+          ],
+          "X-Rate-Limit": [
+            "700"
+          ],
+          "X-Rate-Limit-Remaining": [
+            "680"
+          ],
+          "X-Request-Id": [
+            "56724d52-95d2-4ea2-ce8b-0a27526fa680"
+          ],
+          "X-Runtime": [
+            "0.555613"
+          ],
+          "X-UA-Compatible": [
+            "IE=Edge,chrome=1"
+          ],
+          "X-Zendesk-API-Version": [
+            "v2"
+          ],
+          "X-Zendesk-API-Warn": [
+            "Removed restricted keys [\"ticket.created_at\", \"ticket.has_incidents\", \"ticket.id\", \"ticket.satisfaction_rating\", \"ticket.updated_at\"] from parameters according to whitelist"
+          ],
+          "X-Zendesk-Application-Version": [
+            "v926.24"
+          ],
+          "X-Zendesk-Origin-Server": [
+            "app15.pod13.usw2.zdsys.com"
+          ],
+          "X-Zendesk-Request-Id": [
+            "3dc6988b609afeaa1cf3"
+          ]
         },
         "status": {
           "code": 201,
@@ -56,5 +114,5 @@
       }
     }
   ],
-  "recorded_with": "betamax/0.8.0"
+  "recorded_with": "betamax/0.8.1"
 }

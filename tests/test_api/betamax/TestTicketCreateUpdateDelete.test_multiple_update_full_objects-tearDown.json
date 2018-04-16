@@ -1,61 +1,119 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2018-03-30T07:41:12",
+      "recorded_at": "2018-04-16T07:18:58",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"tickets\": [{\"id\": 5744}, {\"id\": 5745}, {\"id\": 5746}, {\"id\": 5747}, {\"id\": 5748}, {\"id\": 5749}, {\"id\": 5750}, {\"id\": 5751}, {\"id\": 5752}, {\"id\": 5753}, {\"id\": 5754}, {\"id\": 5755}, {\"id\": 5756}, {\"id\": 5757}, {\"id\": 5758}, {\"id\": 5759}, {\"id\": 5760}, {\"id\": 5761}, {\"id\": 5762}, {\"id\": 5763}, {\"id\": 5764}, {\"id\": 5765}, {\"id\": 5766}, {\"id\": 5767}, {\"id\": 5768}, {\"id\": 5769}, {\"id\": 5770}, {\"id\": 5771}, {\"id\": 5772}, {\"id\": 5773}, {\"id\": 5774}, {\"id\": 5775}, {\"id\": 5776}, {\"id\": 5777}, {\"id\": 5778}, {\"id\": 5779}, {\"id\": 5780}, {\"id\": 5781}, {\"id\": 5782}, {\"id\": 5783}, {\"id\": 5784}, {\"id\": 5785}, {\"id\": 5786}, {\"id\": 5787}, {\"id\": 5788}, {\"id\": 5789}, {\"id\": 5790}, {\"id\": 5791}, {\"id\": 5792}, {\"id\": 5793}, {\"id\": 5794}, {\"id\": 5795}, {\"id\": 5796}, {\"id\": 5797}, {\"id\": 5798}, {\"id\": 5799}, {\"id\": 5800}, {\"id\": 5801}, {\"id\": 5802}, {\"id\": 5803}, {\"id\": 5804}, {\"id\": 5805}, {\"id\": 5806}, {\"id\": 5807}, {\"id\": 5808}, {\"id\": 5809}, {\"id\": 5810}, {\"id\": 5811}, {\"id\": 5812}, {\"id\": 5813}, {\"id\": 5814}, {\"id\": 5815}, {\"id\": 5816}, {\"id\": 5817}, {\"id\": 5818}, {\"id\": 5819}, {\"id\": 5820}, {\"id\": 5821}, {\"id\": 5822}, {\"id\": 5823}, {\"id\": 5824}, {\"id\": 5825}, {\"id\": 5826}, {\"id\": 5827}, {\"id\": 5828}, {\"id\": 5829}, {\"id\": 5830}, {\"id\": 5831}, {\"id\": 5832}, {\"id\": 5833}, {\"id\": 5834}, {\"id\": 5835}, {\"id\": 5836}, {\"id\": 5837}, {\"id\": 5838}, {\"id\": 5839}, {\"id\": 5840}, {\"id\": 5841}, {\"id\": 5842}, {\"id\": 5843}]}"
+          "string": "{\"tickets\": [{\"id\": 6352}, {\"id\": 6353}, {\"id\": 6354}, {\"id\": 6355}, {\"id\": 6356}, {\"id\": 6357}, {\"id\": 6358}, {\"id\": 6359}, {\"id\": 6360}, {\"id\": 6361}, {\"id\": 6362}, {\"id\": 6363}, {\"id\": 6364}, {\"id\": 6365}, {\"id\": 6366}, {\"id\": 6367}, {\"id\": 6368}, {\"id\": 6369}, {\"id\": 6370}, {\"id\": 6371}, {\"id\": 6372}, {\"id\": 6373}, {\"id\": 6374}, {\"id\": 6375}, {\"id\": 6376}, {\"id\": 6377}, {\"id\": 6378}, {\"id\": 6379}, {\"id\": 6380}, {\"id\": 6381}, {\"id\": 6382}, {\"id\": 6383}, {\"id\": 6384}, {\"id\": 6385}, {\"id\": 6386}, {\"id\": 6387}, {\"id\": 6388}, {\"id\": 6389}, {\"id\": 6390}, {\"id\": 6391}, {\"id\": 6392}, {\"id\": 6393}, {\"id\": 6394}, {\"id\": 6395}, {\"id\": 6396}, {\"id\": 6397}, {\"id\": 6398}, {\"id\": 6399}, {\"id\": 6400}, {\"id\": 6401}, {\"id\": 6402}, {\"id\": 6403}, {\"id\": 6404}, {\"id\": 6405}, {\"id\": 6406}, {\"id\": 6407}, {\"id\": 6408}, {\"id\": 6409}, {\"id\": 6410}, {\"id\": 6411}, {\"id\": 6412}, {\"id\": 6413}, {\"id\": 6414}, {\"id\": 6415}, {\"id\": 6416}, {\"id\": 6417}, {\"id\": 6418}, {\"id\": 6419}, {\"id\": 6420}, {\"id\": 6421}, {\"id\": 6422}, {\"id\": 6423}, {\"id\": 6424}, {\"id\": 6425}, {\"id\": 6426}, {\"id\": 6427}, {\"id\": 6428}, {\"id\": 6429}, {\"id\": 6430}, {\"id\": 6431}, {\"id\": 6432}, {\"id\": 6433}, {\"id\": 6434}, {\"id\": 6435}, {\"id\": 6436}, {\"id\": 6437}, {\"id\": 6438}, {\"id\": 6439}, {\"id\": 6440}, {\"id\": 6441}, {\"id\": 6442}, {\"id\": 6443}, {\"id\": 6444}, {\"id\": 6445}, {\"id\": 6446}, {\"id\": 6447}, {\"id\": 6448}, {\"id\": 6449}, {\"id\": 6450}, {\"id\": 6451}]}"
         },
         "headers": {
-          "Accept": "*/*",
-          "Accept-Encoding": "gzip, deflate",
-          "Authorization": "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnBUNXQ2ZEZ4QWltU1hoNEkydjBYeVMwSkNlYVV4eWROQUxFRkV1VWM=",
-          "Connection": "keep-alive",
-          "Content-Length": "1413",
-          "Content-Type": "application/json",
-          "User-Agent": "Zenpy/1.2"
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnBUNXQ2ZEZ4QWltU1hoNEkydjBYeVMwSkNlYVV4eWROQUxFRkV1VWM="
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "1413"
+          ],
+          "Content-Type": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "Zenpy/1.2"
+          ]
         },
         "method": "DELETE",
-        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/tickets/destroy_many.json?ids=5744,5745,5746,5747,5748,5749,5750,5751,5752,5753,5754,5755,5756,5757,5758,5759,5760,5761,5762,5763,5764,5765,5766,5767,5768,5769,5770,5771,5772,5773,5774,5775,5776,5777,5778,5779,5780,5781,5782,5783,5784,5785,5786,5787,5788,5789,5790,5791,5792,5793,5794,5795,5796,5797,5798,5799,5800,5801,5802,5803,5804,5805,5806,5807,5808,5809,5810,5811,5812,5813,5814,5815,5816,5817,5818,5819,5820,5821,5822,5823,5824,5825,5826,5827,5828,5829,5830,5831,5832,5833,5834,5835,5836,5837,5838,5839,5840,5841,5842,5843"
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/tickets/destroy_many.json?ids=6352,6353,6354,6355,6356,6357,6358,6359,6360,6361,6362,6363,6364,6365,6366,6367,6368,6369,6370,6371,6372,6373,6374,6375,6376,6377,6378,6379,6380,6381,6382,6383,6384,6385,6386,6387,6388,6389,6390,6391,6392,6393,6394,6395,6396,6397,6398,6399,6400,6401,6402,6403,6404,6405,6406,6407,6408,6409,6410,6411,6412,6413,6414,6415,6416,6417,6418,6419,6420,6421,6422,6423,6424,6425,6426,6427,6428,6429,6430,6431,6432,6433,6434,6435,6436,6437,6438,6439,6440,6441,6442,6443,6444,6445,6446,6447,6448,6449,6450,6451"
       },
       "response": {
         "body": {
-          "base64_string": "H4sIAAAAAAAAA4WOQQ6CMBBF7zJrpJEiCJcxbWeCYKGFtiRKuLuTKHHp7k/+y7y/weD0LUQVU4B2gx6hBXkuG6NKXUtZVagbU1ypxBovtUFVaIIM0mIZvMfoQysEyvX0osk/kdacA1J45MaNQvlerIX4OSiIf9/zIbiJFdFFxZIpWZuBX1y3UOCNn/tYDHOiRMj4yK3q6AAYTjZ++X1/A6FZMS7oAAAA",
+          "base64_string": "H4sIAAAAAAAAA4WOQQ6CMBBF7zJrpBaSIlzGtMyAYKGVtiRKuLuTKHHp7k/+y7y/wejMNUQdU4BmgwGhAVkYklV5Llq8qFLJFrvOqLoy2mDdKQkZpMUyeIvRh0YILNfTi2b/RFpzDkjhnrduEtoPYi3Ez0FB/Puej8HNrIguapbMydoM/OL6hQJv/NzHYngkSoSMT9zqng6A4WTjl9/3N+vQWOHoAAAA",
           "encoding": "UTF-8",
           "string": ""
         },
         "headers": {
-          "Cache-Control": "max-age=0, private, must-revalidate",
-          "Connection": "keep-alive",
-          "Content-Encoding": "gzip",
-          "Content-Type": "application/json; charset=UTF-8",
-          "Date": "Fri, 30 Mar 2018 07:41:12 GMT",
-          "ETag": "W/\"072306862e40ec9154496c8642a865d9\"",
-          "Server": "nginx",
-          "Strict-Transport-Security": "max-age=31536000;",
-          "Transfer-Encoding": "chunked",
-          "X-Content-Type-Options": "nosniff",
-          "X-Frame-Options": "SAMEORIGIN",
-          "X-Rack-Cache": "invalidate, pass",
-          "X-Rate-Limit": "700",
-          "X-Rate-Limit-Remaining": "695",
-          "X-Request-Id": "1774c536-2149-426f-c23b-06796bc76686",
-          "X-Runtime": "0.131253",
-          "X-UA-Compatible": "IE=Edge,chrome=1",
-          "X-Zendesk-API-Version": "v2",
-          "X-Zendesk-API-Warn": "Removed restricted keys [\"tickets\"] from parameters according to whitelist",
-          "X-Zendesk-Application-Version": "v757.19",
-          "X-Zendesk-Origin-Server": "app19.pod13.usw2.zdsys.com",
-          "X-Zendesk-Request-Id": "d9896f89289f7c8e2b27"
+          "Cache-Control": [
+            "max-age=0, private, must-revalidate"
+          ],
+          "Connection": [
+            "close"
+          ],
+          "Content-Encoding": [
+            "gzip"
+          ],
+          "Content-Type": [
+            "application/json; charset=UTF-8"
+          ],
+          "Date": [
+            "Mon, 16 Apr 2018 07:18:58 GMT"
+          ],
+          "ETag": [
+            "W/\"0d9b5d76793530ebb9c9c4aa86447c8d\""
+          ],
+          "Server": [
+            "nginx"
+          ],
+          "Strict-Transport-Security": [
+            "max-age=31536000;"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "X-Content-Type-Options": [
+            "nosniff"
+          ],
+          "X-Frame-Options": [
+            "SAMEORIGIN"
+          ],
+          "X-Rack-Cache": [
+            "invalidate, pass"
+          ],
+          "X-Rate-Limit": [
+            "700"
+          ],
+          "X-Rate-Limit-Remaining": [
+            "684"
+          ],
+          "X-Request-Id": [
+            "255d7fdd-ceec-4f94-cffd-0a4d80c5cfd6"
+          ],
+          "X-Runtime": [
+            "0.152261"
+          ],
+          "X-UA-Compatible": [
+            "IE=Edge,chrome=1"
+          ],
+          "X-Zendesk-API-Version": [
+            "v2"
+          ],
+          "X-Zendesk-API-Warn": [
+            "Removed restricted keys [\"tickets\"] from parameters according to whitelist"
+          ],
+          "X-Zendesk-Application-Version": [
+            "v926.24"
+          ],
+          "X-Zendesk-Origin-Server": [
+            "app16.pod13.usw2.zdsys.com"
+          ],
+          "X-Zendesk-Request-Id": [
+            "be9467ac5fb31564de92"
+          ]
         },
         "status": {
           "code": 200,
           "message": "OK"
         },
-        "url": "https://d3v-zenpydev.zendesk.com/api/v2/tickets/destroy_many.json?ids=5744,5745,5746,5747,5748,5749,5750,5751,5752,5753,5754,5755,5756,5757,5758,5759,5760,5761,5762,5763,5764,5765,5766,5767,5768,5769,5770,5771,5772,5773,5774,5775,5776,5777,5778,5779,5780,5781,5782,5783,5784,5785,5786,5787,5788,5789,5790,5791,5792,5793,5794,5795,5796,5797,5798,5799,5800,5801,5802,5803,5804,5805,5806,5807,5808,5809,5810,5811,5812,5813,5814,5815,5816,5817,5818,5819,5820,5821,5822,5823,5824,5825,5826,5827,5828,5829,5830,5831,5832,5833,5834,5835,5836,5837,5838,5839,5840,5841,5842,5843"
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/tickets/destroy_many.json?ids=6352,6353,6354,6355,6356,6357,6358,6359,6360,6361,6362,6363,6364,6365,6366,6367,6368,6369,6370,6371,6372,6373,6374,6375,6376,6377,6378,6379,6380,6381,6382,6383,6384,6385,6386,6387,6388,6389,6390,6391,6392,6393,6394,6395,6396,6397,6398,6399,6400,6401,6402,6403,6404,6405,6406,6407,6408,6409,6410,6411,6412,6413,6414,6415,6416,6417,6418,6419,6420,6421,6422,6423,6424,6425,6426,6427,6428,6429,6430,6431,6432,6433,6434,6435,6436,6437,6438,6439,6440,6441,6442,6443,6444,6445,6446,6447,6448,6449,6450,6451"
       }
     }
   ],
-  "recorded_with": "betamax/0.8.0"
+  "recorded_with": "betamax/0.8.1"
 }

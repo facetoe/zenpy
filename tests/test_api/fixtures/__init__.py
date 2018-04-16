@@ -388,7 +388,7 @@ class MultipleUpdateApiTestCase(ModifiableApiTestCase):
             for zenpy_object in self.api(ids=[r.id for r in job_status.results]):
                 modified_object, new_kwargs = self.modify_object(zenpy_object)
                 updated_objects.append((modified_object, new_kwargs))
-            self.create_method([m[0] for m in updated_objects])
+            self.update_method([m[0] for m in updated_objects])
             for modified_object, new_kwargs in updated_objects:
                 self.verify_object_updated(new_kwargs, modified_object)
 

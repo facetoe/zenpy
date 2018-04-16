@@ -1,23 +1,37 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2018-03-30T07:41:49",
+      "recorded_at": "2018-04-16T07:19:30",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"ticket\": {\"id\": 5964}}"
+          "string": "{\"ticket\": {\"id\": 6502}}"
         },
         "headers": {
-          "Accept": "*/*",
-          "Accept-Encoding": "gzip, deflate",
-          "Authorization": "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnBUNXQ2ZEZ4QWltU1hoNEkydjBYeVMwSkNlYVV4eWROQUxFRkV1VWM=",
-          "Connection": "keep-alive",
-          "Content-Length": "24",
-          "Content-Type": "application/json",
-          "User-Agent": "Zenpy/1.2"
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnBUNXQ2ZEZ4QWltU1hoNEkydjBYeVMwSkNlYVV4eWROQUxFRkV1VWM="
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "24"
+          ],
+          "Content-Type": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "Zenpy/1.2"
+          ]
         },
         "method": "DELETE",
-        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/tickets/5964.json"
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/tickets/6502.json"
       },
       "response": {
         "body": {
@@ -25,32 +39,68 @@
           "string": ""
         },
         "headers": {
-          "Cache-Control": "no-cache",
-          "Connection": "keep-alive",
-          "Date": "Fri, 30 Mar 2018 07:41:49 GMT",
-          "Server": "nginx",
-          "Strict-Transport-Security": "max-age=31536000;",
-          "X-Content-Type-Options": "nosniff",
-          "X-Frame-Options": "SAMEORIGIN",
-          "X-Rack-Cache": "invalidate, pass",
-          "X-Rate-Limit": "700",
-          "X-Rate-Limit-Remaining": "681",
-          "X-Request-Id": "5e1a3db4-c536-419f-c116-06796bc76686",
-          "X-Runtime": "0.244000",
-          "X-UA-Compatible": "IE=Edge,chrome=1",
-          "X-Zendesk-API-Version": "v2",
-          "X-Zendesk-API-Warn": "Removed restricted keys [\"ticket.id\", \"ticket\"] from parameters according to whitelist",
-          "X-Zendesk-Application-Version": "v757.19",
-          "X-Zendesk-Origin-Server": "app34.pod13.usw2.zdsys.com",
-          "X-Zendesk-Request-Id": "eadb2e5cf7dfccd021a5"
+          "Cache-Control": [
+            "no-cache"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Date": [
+            "Mon, 16 Apr 2018 07:19:30 GMT"
+          ],
+          "Server": [
+            "nginx"
+          ],
+          "Strict-Transport-Security": [
+            "max-age=31536000;"
+          ],
+          "X-Content-Type-Options": [
+            "nosniff"
+          ],
+          "X-Frame-Options": [
+            "SAMEORIGIN"
+          ],
+          "X-Rack-Cache": [
+            "invalidate, pass"
+          ],
+          "X-Rate-Limit": [
+            "700"
+          ],
+          "X-Rate-Limit-Remaining": [
+            "687"
+          ],
+          "X-Request-Id": [
+            "061f8a4c-fd1c-44d3-c4d7-0a27526fa680"
+          ],
+          "X-Runtime": [
+            "0.235492"
+          ],
+          "X-UA-Compatible": [
+            "IE=Edge,chrome=1"
+          ],
+          "X-Zendesk-API-Version": [
+            "v2"
+          ],
+          "X-Zendesk-API-Warn": [
+            "Removed restricted keys [\"ticket.id\", \"ticket\"] from parameters according to whitelist"
+          ],
+          "X-Zendesk-Application-Version": [
+            "v926.24"
+          ],
+          "X-Zendesk-Origin-Server": [
+            "app7.pod13.usw2.zdsys.com"
+          ],
+          "X-Zendesk-Request-Id": [
+            "c8a7353cf7d7232cf924"
+          ]
         },
         "status": {
           "code": 204,
           "message": "No Content"
         },
-        "url": "https://d3v-zenpydev.zendesk.com/api/v2/tickets/5964.json"
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/tickets/6502.json"
       }
     }
   ],
-  "recorded_with": "betamax/0.8.0"
+  "recorded_with": "betamax/0.8.1"
 }
