@@ -3853,55 +3853,41 @@ class Trigger(BaseObject):
                  actions=None,
                  active=None,
                  conditions=None,
-                 created_at=None,
                  description=None,
                  id=None,
                  position=None,
                  title=None,
-                 updated_at=None,
-                 url=None,
                  **kwargs):
 
         self.api = api
+
+        # Comment: An object describing what the trigger will do
+        # Type: :class:`Actions`
         self.actions = actions
+
+        # Comment: Whether the trigger is active
+        # Type: boolean
         self.active = active
+
+        # Comment: An object that describes the conditions under which the trigger will execute
+        # Type: :class:`Conditions`
         self.conditions = conditions
-        self.created_at = created_at
         self.description = description
+
+        # Comment: Automatically assigned when created
+        # Type: integer
         self.id = id
+
+        # Comment: Position of the trigger, determines the order they will execute in
+        # Type: integer
         self.position = position
+
+        # Comment: The title of the trigger
+        # Type: string
         self.title = title
-        self.updated_at = updated_at
-        self.url = url
 
         for key, value in kwargs.items():
             setattr(self, key, value)
-
-    @property
-    def created(self):
-        """
-        |  Comment: The time the trigger was created
-        """
-        if self.created_at:
-            return dateutil.parser.parse(self.created_at)
-
-    @created.setter
-    def created(self, created):
-        if created:
-            self.created_at = created
-
-    @property
-    def updated(self):
-        """
-        |  Comment: The time of the last update of the trigger
-        """
-        if self.updated_at:
-            return dateutil.parser.parse(self.updated_at)
-
-    @updated.setter
-    def updated(self, updated):
-        if updated:
-            self.updated_at = updated
 
 
 class TweetEvent(BaseObject):

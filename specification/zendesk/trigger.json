@@ -1,0 +1,31 @@
+{
+	"id": 65122182,
+	"description": "Trigger sends a notification",
+	"conditions": {
+		"all": [{
+			"field": "update_type",
+			"value": "Change",
+			"operator": "is"
+		},
+		{
+			"field": "comment_is_public",
+			"value": "requester_can_see_comment",
+			"operator": "is"
+		},
+		{
+			"field": "requester_id",
+			"value": "current_user",
+			"operator": "is_not"
+		}],
+		"any": []
+	},
+	"title": "Notify requester of a new comment",
+	"actions": [{
+		"field": "notification_user",
+		"value": ["requester_id",
+		"[{{ticket.account}}] Reply to: {{ticket.title}}",
+		"New comment:\n{{ticket.comments_formatted}}]\n"]
+	}],
+	"active": true,
+	"position": 2
+}
