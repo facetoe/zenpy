@@ -458,6 +458,7 @@ class EndpointFactory(object):
     tickets.merge = SecondaryEndpoint('tickets/%(id)s/merge.json')
     topics = PrimaryEndpoint('topics')
     topics.tags = SecondaryEndpoint('topics/%(id)s/tags.json')
+    triggers = PrimaryEndpoint('triggers')
     user_fields = PrimaryEndpoint('user_fields')
     users = PrimaryEndpoint('users')
     users.assigned = SecondaryEndpoint('users/%(id)s/tickets/assigned.json')

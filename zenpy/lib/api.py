@@ -1037,6 +1037,8 @@ class TicketImportAPI(CRUDApi):
 class TicketFieldApi(CRUDApi):
     pass
 
+class TriggerApi(CRUDApi):
+    pass
 
 class RequestAPI(CRUDApi):
     def __init__(self, config):
