@@ -12,6 +12,7 @@ __author__ = 'facetoe'
 log = logging.getLogger(__name__)
 purge_lock = RLock()
 
+set_lock = RLock()
 
 class ZenpyCache(object):
     """
@@ -89,7 +90,8 @@ class ZenpyCache(object):
     def __setitem__(self, key, value):
         if not issubclass(type(value), BaseObject):
             raise ZenpyCacheException("{} is not a subclass of BaseObject!".format(type(value)))
-        self.cache[key] = value
+        with set_lock:
+            self.cache[key] = value
 
     def __delitem__(self, key):
         del self.cache[key]
