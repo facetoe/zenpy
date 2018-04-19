@@ -86,7 +86,8 @@ class ZendeskObjectMapping(object):
         'definitions': Definitions,
         'recipient_address': RecipientAddress,
         'recipient': Recipient,
-        'response': Response
+        'response': Response,
+        'trigger': zenpy.lib.api_objects.Trigger
     }
 
     skip_attrs = []
@@ -161,7 +162,7 @@ class ChatObjectMapping(ZendeskObjectMapping):
         'webpath': Webpath,
         'count': Count,
         'shortcut': Shortcut,
-        'trigger': Trigger,
+        'trigger': zenpy.lib.api_objects.chat_objects.Trigger,
         'ban': Ban,
         'account': Account,
         'plan': Plan,

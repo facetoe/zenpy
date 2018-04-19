@@ -3847,6 +3847,48 @@ class Topic(BaseObject):
             self.updater_id = updater.id
             self._updater = updater
 
+class Trigger(BaseObject):
+    def __init__(self,
+                 api=None,
+                 actions=None,
+                 active=None,
+                 conditions=None,
+                 description=None,
+                 id=None,
+                 position=None,
+                 title=None,
+                 **kwargs):
+
+        self.api = api
+
+        # Comment: An object describing what the trigger will do
+        # Type: :class:`Actions`
+        self.actions = actions
+
+        # Comment: Whether the trigger is active
+        # Type: boolean
+        self.active = active
+
+        # Comment: An object that describes the conditions under which the trigger will execute
+        # Type: :class:`Conditions`
+        self.conditions = conditions
+        self.description = description
+
+        # Comment: Automatically assigned when created
+        # Type: integer
+        self.id = id
+
+        # Comment: Position of the trigger, determines the order they will execute in
+        # Type: integer
+        self.position = position
+
+        # Comment: The title of the trigger
+        # Type: string
+        self.title = title
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
 
 class TweetEvent(BaseObject):
     def __init__(self,
