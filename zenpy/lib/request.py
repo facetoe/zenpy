@@ -112,6 +112,13 @@ class CRUDRequest(BaseZendeskRequest):
         delete_from_cache(api_objects)
         return response
 
+class DynamicContentRequest(CRUDRequest):
+    def build_payload(self, api_objects):
+        if isinstance(api_objects, collections.Iterable):
+            payload_key = 'items'
+        else:
+            payload_key = 'item'
+        return {payload_key: self.api._serialize(api_objects)}
 
 class SuspendedTicketRequest(BaseZendeskRequest):
     """

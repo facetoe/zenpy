@@ -401,6 +401,7 @@ class EndpointFactory(object):
     chats.visitors = ChatEndpoint('visitors')
     chats.search = ChatSearchEndpoint('chats/search')
     chats.stream = ChatSearchEndpoint('stream/chats')
+    dynamic_content_items = PrimaryEndpoint('dynamic_content/items')
     end_user = SecondaryEndpoint('end_users/%(id)s.json')
     group_memberships = PrimaryEndpoint('group_memberships')
     group_memberships.assignable = PrimaryEndpoint('group_memberships/assignable')

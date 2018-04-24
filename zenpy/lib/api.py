@@ -69,6 +69,7 @@ class BaseApi(object):
             ViewResponseHandler,
             SlaPolicyResponseHandler,
             RequestCommentResponseHandler,
+            DynamicContentResponseHandler,
             GenericZendeskResponseHandler,
             HTTPOKResponseHandler,
         )
@@ -1039,6 +1040,10 @@ class TicketFieldApi(CRUDApi):
 
 class TriggerApi(CRUDApi):
     pass
+
+class DynamicContentApi(CRUDApi):
+    def create(self, api_objects, **kwargs):
+        return DynamicContentRequest(self).post(api_objects)
 
 class RequestAPI(CRUDApi):
     def __init__(self, config):

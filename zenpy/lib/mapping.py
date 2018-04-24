@@ -87,7 +87,8 @@ class ZendeskObjectMapping(object):
         'recipient_address': RecipientAddress,
         'recipient': Recipient,
         'response': Response,
-        'trigger': zenpy.lib.api_objects.Trigger
+        'trigger': zenpy.lib.api_objects.Trigger,
+        'dynamic_content_item': DynamicContent
     }
 
     skip_attrs = []
