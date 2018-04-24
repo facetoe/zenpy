@@ -1,0 +1,13 @@
+{
+	"url": "https://sample.zendesk.com/api/v2/targets/20155924.json",
+	"id": 20155924,
+	"created_at": "2017-10-11T12:31:32Z",
+	"type": "url_target_v2",
+	"title": "System: Update Cancelled Tickets",
+	"active": true,
+	"method": "put",
+	"username": "user@domain/token",
+	"password": null,
+	"content_type": "application/json",
+	"target_url": "https://sample.zendesk.com/api/v2/tickets/{{ticket.id}}.json"
+}

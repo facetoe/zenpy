@@ -1043,6 +1043,9 @@ class TriggerApi(CRUDApi):
 class AutomationApi(CRUDApi):
     pass
 
+class TargetApi(CRUDApi):
+    pass
+
 class RequestAPI(CRUDApi):
     def __init__(self, config):
         super(RequestAPI, self).__init__(config, object_type='request')

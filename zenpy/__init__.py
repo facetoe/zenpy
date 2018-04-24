@@ -26,7 +26,8 @@ from zenpy.lib.api import (
     RecipientAddressApi,
     NpsApi, TicketFieldApi,
     TriggerApi,
-    AutomationApi)
+    AutomationApi,
+    TargetApi)
 from zenpy.lib.cache import ZenpyCache, cache_mapping, purge_cache
 from zenpy.lib.endpoint import EndpointFactory
 from zenpy.lib.exception import ZenpyException
@@ -127,6 +128,7 @@ class Zenpy(object):
         self.nps = NpsApi(config)
         self.triggers = TriggerApi(config, object_type='trigger')
         self.automations = AutomationApi(config, object_type='automation')
+        self.targets = TargetApi(config, object_type='target')
 
     def _init_session(self, email, token, oath_token, password, session):
         if not session:
