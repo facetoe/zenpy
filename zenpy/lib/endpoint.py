@@ -123,7 +123,7 @@ class PrimaryEndpoint(BaseEndpoint):
                 else:
                     parameters['role[]'] = value[0] + '&' + "&".join(('role[]={}'.format(role) for role in value[1:]))
 
-        if path == self.endpoint:
+        if path == self.endpoint and not path.endswith('.json'):
             path += '.json'
         return Url(path=path, params=parameters)
 
