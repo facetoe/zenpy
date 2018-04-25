@@ -259,31 +259,51 @@ class BaseObject(object):
         instance = super(BaseObject, cls).__new__(cls)
         instance.__dict__['_dirty_attributes'] = set()
         instance.__dict__['_dirty_callback'] = None
+        instance.__dict__['_always_dirty'] = set()
         return instance
 
     def __setattr__(self, key, value):
-        self.__dict__['_dirty_attributes'].add(key)
-        if self._dirty_callback is not None:
-            self._dirty_callback()
+        if key not in ('_dirty', '_dirty_callback', '_always_dirty'):
+            self.__dict__['_dirty_attributes'].add(key)
+            if self._dirty_callback is not None:
+                self._dirty_callback()
         object.__setattr__(self, key, value)
 
     def _clean_dirty(self):
         self.__dict__['_dirty_attributes'].clear()
+        self._dirty = False
         for key, val in vars(self).items():
-            if type(val) in (ProxyDict, ProxyList):
-                val._clean_dirty()
+            func = getattr(val, '_clean_dirty', None)
+            if callable(func):
+                func()
 
     def to_dict(self, serialize=False):
+        """
+        This method works by copying self.__dict__, and removing everything that should not be serialized.
+        """
         copy_dict = self.__dict__.copy()
         for key, value in vars(self).items():
+            # We want to send all ids to Zendesk always
             if serialize and key == 'id':
                 continue
+
+            # This object has a flag indicating it has been dirtied, so we want to send it off.
             elif serialize and getattr(value, '_dirty', False):
                 continue
-            elif key in ('api', '_dirty_attributes'):
+
+            # Here we have an attribute that should always be sent to Zendesk.
+            elif serialize and key in self._always_dirty:
+                continue
+
+            # These are for internal tracking, so just delete.
+            elif key in ('api', '_dirty_attributes', '_always_dirty', '_dirty_callback'):
                 del copy_dict[key]
+
+            # If the attribute has not been modified, do not send it.
             elif serialize and key not in self._dirty_attributes:
                 del copy_dict[key]
+
+            # Some reserved words are prefixed with an underscore, remove it here.
             elif key.startswith('_'):
                 copy_dict[key[1:]] = copy_dict[key]
                 del copy_dict[key]
