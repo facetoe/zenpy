@@ -388,6 +388,7 @@ class EndpointFactory(object):
     activities = PrimaryEndpoint('activities')
     attachments = PrimaryEndpoint('attachments')
     attachments.upload = AttachmentEndpoint('uploads.json')
+    automations = PrimaryEndpoint('automations')
     brands = PrimaryEndpoint('brands')
     chats = ChatEndpoint('chats')
     chats.account = ChatEndpoint('account')

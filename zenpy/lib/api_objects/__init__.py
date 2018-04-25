@@ -266,6 +266,86 @@ class Audit(BaseObject):
             self.ticket_id = ticket.id
             self._ticket = ticket
 
+class Automation(BaseObject):
+    def __init__(self,
+                 api=None,
+                 actions=None,
+                 active=None,
+                 conditions=None,
+                 created_at=None,
+                 id=None,
+                 position=None,
+                 raw_title=None,
+                 title=None,
+                 updated_at=None,
+                 url=None,
+                 **kwargs):
+
+        self.api = api
+
+        # Comment: An object describing what the automation will do
+        # Type: :class:`Actions`
+        self.actions = actions
+
+        # Comment: Whether the automation is active
+        # Type: boolean
+        self.active = active
+
+        # Comment: An object that describes the conditions under which the automation will execute
+        # Type: :class:`Conditions`
+        self.conditions = conditions
+
+        # Comment: The time the automation was created
+        # Type: date
+        self.created_at = created_at
+
+        # Comment: Automatically assigned when created
+        # Type: integer
+        self.id = id
+
+        # Comment: Position of the automation, determines the order they will execute in
+        # Type: integer
+        self.position = position
+        self.raw_title = raw_title
+
+        # Comment: The title of the automation
+        # Type: string
+        self.title = title
+
+        # Comment: The time of the last update of the automation
+        # Type: date
+        self.updated_at = updated_at
+        self.url = url
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def created(self):
+        """
+        |  Comment: The time the automation was created
+        """
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
+
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created
+
+    @property
+    def updated(self):
+        """
+        |  Comment: The time of the last update of the automation
+        """
+        if self.updated_at:
+            return dateutil.parser.parse(self.updated_at)
+
+    @updated.setter
+    def updated(self, updated):
+        if updated:
+            self.updated_at = updated
+
 
 class Brand(BaseObject):
     def __init__(self,

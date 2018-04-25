@@ -1040,6 +1040,9 @@ class TicketFieldApi(CRUDApi):
 class TriggerApi(CRUDApi):
     pass
 
+class AutomationApi(CRUDApi):
+    pass
+
 class RequestAPI(CRUDApi):
     def __init__(self, config):
         super(RequestAPI, self).__init__(config, object_type='request')
