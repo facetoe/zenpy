@@ -27,7 +27,8 @@ from zenpy.lib.api import (
     NpsApi, TicketFieldApi,
     TriggerApi,
     AutomationApi,
-    DynamicContentApi)
+    DynamicContentApi,
+    TargetApi)
 
 from zenpy.lib.cache import ZenpyCache, cache_mapping, purge_cache
 from zenpy.lib.endpoint import EndpointFactory
@@ -130,6 +131,7 @@ class Zenpy(object):
         self.triggers = TriggerApi(config, object_type='trigger')
         self.automations = AutomationApi(config, object_type='automation')
         self.dynamic_content = DynamicContentApi(config, object_type='dynamic_content_item')
+        self.targets = TargetApi(config, object_type='target')
 
     def _init_session(self, email, token, oath_token, password, session):
         if not session:

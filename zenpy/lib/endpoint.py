@@ -441,6 +441,7 @@ class EndpointFactory(object):
     suspended_tickets = PrimaryEndpoint('suspended_tickets')
     suspended_tickets.recover = SecondaryEndpoint('suspended_tickets/%(id)s/recover.json')
     tags = PrimaryEndpoint('tags')
+    targets = PrimaryEndpoint('targets')
     ticket_fields = PrimaryEndpoint('ticket_fields')
     ticket_forms = PrimaryEndpoint('ticket_forms')
     ticket_import = PrimaryEndpoint('imports/tickets')

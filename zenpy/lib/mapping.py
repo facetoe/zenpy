@@ -90,6 +90,7 @@ class ZendeskObjectMapping(object):
         'trigger': zenpy.lib.api_objects.Trigger,
         'automation': Automation
         'dynamic_content_item': DynamicContent
+        'target': Target
     }
 
     skip_attrs = []
