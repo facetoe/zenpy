@@ -22,6 +22,13 @@ class Account(BaseObject):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
+
 
 class Agent(BaseObject):
     def __init__(self,
@@ -55,6 +62,13 @@ class Agent(BaseObject):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
+
 
 class Ban(BaseObject):
     def __init__(self, api=None, ip_address=None, visitor=None, **kwargs):
@@ -65,6 +79,13 @@ class Ban(BaseObject):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
 
 
 class Billing(BaseObject):
@@ -98,6 +119,13 @@ class Billing(BaseObject):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
 
 
 class Chat(BaseObject):
@@ -161,6 +189,13 @@ class Chat(BaseObject):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
 
     @property
     def end_timestamp(self):
@@ -237,6 +272,13 @@ class Count(BaseObject):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
+
 
 class Definition(BaseObject):
     def __init__(self,
@@ -253,6 +295,13 @@ class Definition(BaseObject):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
 
 
 class Department(BaseObject):
@@ -276,6 +325,13 @@ class Department(BaseObject):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
 
 
 class Goal(BaseObject):
@@ -302,6 +358,13 @@ class Goal(BaseObject):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
+
 
 class IpAddress(BaseObject):
     def __init__(self,
@@ -320,6 +383,13 @@ class IpAddress(BaseObject):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
 
 
 class OfflineMessage(BaseObject):
@@ -351,6 +421,13 @@ class OfflineMessage(BaseObject):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
 
     @property
     def timestamp(self):
@@ -454,6 +531,13 @@ class Plan(BaseObject):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
+
 
 class ResponseTime(BaseObject):
     def __init__(self, api=None, avg=None, first=None, max=None, **kwargs):
@@ -466,6 +550,13 @@ class ResponseTime(BaseObject):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
+
 
 class Roles(BaseObject):
     def __init__(self, api=None, administrator=None, owner=None, **kwargs):
@@ -476,6 +567,13 @@ class Roles(BaseObject):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
 
 
 class SearchResult(BaseObject):
@@ -497,6 +595,13 @@ class SearchResult(BaseObject):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
 
     @property
     def timestamp(self):
@@ -547,6 +652,13 @@ class Session(BaseObject):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
+
 
 class Shortcut(BaseObject):
     def __init__(self,
@@ -566,6 +678,13 @@ class Shortcut(BaseObject):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
+
 
 class Trigger(BaseObject):
     def __init__(self,
@@ -584,6 +703,13 @@ class Trigger(BaseObject):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
 
 
 class Visitor(BaseObject):
@@ -606,6 +732,13 @@ class Visitor(BaseObject):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
+
 
 class Webpath(BaseObject):
     def __init__(self, api=None, from_=None, title=None, to=None, **kwargs):
@@ -619,6 +752,13 @@ class Webpath(BaseObject):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
 
     @property
     def timestamp(self):

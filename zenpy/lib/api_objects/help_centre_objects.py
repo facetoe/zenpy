@@ -22,6 +22,13 @@ class AccessPolicy(BaseObject):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
+
     @property
     def restricted_to_groups(self):
 
@@ -103,6 +110,13 @@ class Article(BaseObject):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
+
     @property
     def author(self):
 
@@ -174,6 +188,13 @@ class ArticleAttachment(BaseObject):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
+
     @property
     def article(self):
 
@@ -218,6 +239,13 @@ class Category(BaseObject):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
 
     @property
     def created(self):
@@ -276,6 +304,13 @@ class Comment(BaseObject):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
+
     @property
     def author(self):
 
@@ -330,6 +365,13 @@ class Label(BaseObject):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
 
     @property
     def created(self):
@@ -397,6 +439,13 @@ class Post(BaseObject):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
 
     @property
     def author(self):
@@ -485,6 +534,13 @@ class Section(BaseObject):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
+
     @property
     def category(self):
 
@@ -556,6 +612,13 @@ class Subscription(BaseObject):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
+
     @property
     def created(self):
 
@@ -622,6 +685,13 @@ class Topic(BaseObject):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
 
     @property
     def created(self):
@@ -698,6 +768,13 @@ class Translation(BaseObject):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
+
     @property
     def created(self):
 
@@ -773,6 +850,13 @@ class UserSegment(BaseObject):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
+
     @property
     def created(self):
 
@@ -845,6 +929,13 @@ class Vote(BaseObject):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
 
     @property
     def created(self):
