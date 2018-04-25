@@ -20,20 +20,17 @@ class TestGroupCreateUpdateDelete(SingleCreateApiTestCase,
     api_name = 'groups'
 
 
-class TestUserCreateUpdateDelete(SingleCreateApiTestCase,
-                                 SingleUpdateApiTestCase,
-                                 SingleDeleteApiTestCase):
+class TestUserCreateUpdateDelete(CRUDApiTestCase):
     __test__ = True
     ZenpyType = User
     object_kwargs = dict(name='testUser')
     api_name = 'users'
 
 
-class TestOrganizationCreateUpdateDelete(SingleCreateApiTestCase,
-                                         SingleUpdateApiTestCase):
+class TestOrganizationCreateUpdateDelete(CRUDApiTestCase):
     __test__ = True
     ZenpyType = Organization
-    object_kwargs = dict(name='testOrganization')
+    object_kwargs = dict(name='testOrganization{}')
     api_name = 'organizations'
 
 
