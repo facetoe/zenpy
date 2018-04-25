@@ -1041,6 +1041,9 @@ class TicketFieldApi(CRUDApi):
 class TriggerApi(CRUDApi):
     pass
 
+class AutomationApi(CRUDApi):
+    pass
+
 class DynamicContentApi(CRUDApi):
     def create(self, api_objects, **kwargs):
         return DynamicContentRequest(self).post(api_objects)

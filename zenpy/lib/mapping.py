@@ -88,16 +88,21 @@ class ZendeskObjectMapping(object):
         'recipient': Recipient,
         'response': Response,
         'trigger': zenpy.lib.api_objects.Trigger,
+        'automation': Automation
         'dynamic_content_item': DynamicContent
     }
 
     skip_attrs = []
+    always_dirty = {}
 
     def __init__(self, api):
         self.api = api
         self.skip_attrs = ['user_fields', 'organization_fields']
+        self.always_dirty = dict(
+            conditions=('all', 'any')
+        )
 
-    def object_from_json(self, object_type, object_json):
+    def object_from_json(self, object_type, object_json, parent=None):
         """
         Given a blob of JSON representing a Zenpy object, recursively deserialize it and
          any nested objects it contains. This method also adds the deserialized object
@@ -105,32 +110,54 @@ class ZendeskObjectMapping(object):
         """
         if not isinstance(object_json, dict):
             return object_json
-        ZenpyClass = self.class_for_type(object_type)
-        obj = ZenpyClass(api=self.api)
+        obj = self.instantiate_object(object_type, parent)
         for key, value in object_json.items():
             if key not in self.skip_attrs:
                 key, value = self._deserialize(key, obj, value)
             if isinstance(value, dict):
-                value = ProxyDict(value)
+                value = ProxyDict(value, dirty_callback=getattr(obj, '_dirty_callback', None))
             elif isinstance(value, list):
-                value = ProxyList(value)
+                value = ProxyList(value, dirty_callback=getattr(obj, '_dirty_callback', None))
             setattr(obj, key, value)
         if hasattr(obj, '_clean_dirty'):
             obj._clean_dirty()
         add_to_cache(obj)
         return obj
 
+    def instantiate_object(self, object_type, parent):
+        """
+        Instantiate a Zenpy object. If this object has a parent, add a callback to call the parent if it is modified.
+        This is so the parent object is correctly marked as dirty when a child is modified, eg:
+
+            view.conditions.all.append(<something>)
+
+        Also, some attributes need to be sent together to Zendesk together if either is modified. For example,
+        Condition objects need to send both "all" and "any", even if only one has changed. If we have such values
+        configured, add them. They will be inspected in the objects to_dict method on serialization.
+        """
+        ZenpyClass = self.class_for_type(object_type)
+        obj = ZenpyClass(api=self.api)
+        if parent:
+            def dirty_callback():
+                parent._dirty = True
+                obj._dirty = True
+
+            obj._dirty_callback = dirty_callback
+        obj._always_dirty.update(self.always_dirty.get(object_type, []))
+        return obj
+
     def _deserialize(self, key, obj, value):
         if isinstance(value, dict):
             key = self.format_key(key, parent=obj)
             if key in self.class_mapping:
-                value = self.object_from_json(key, value)
+                value = self.object_from_json(key, value, parent=obj)
             elif as_singular(key) in self.class_mapping:
-                value = self.object_from_json(as_singular(key), value)
+                value = self.object_from_json(as_singular(key), value, parent=obj)
         elif isinstance(value, list) and self.format_key(as_singular(key), parent=obj) in self.class_mapping:
             zenpy_objects = list()
             for item in value:
-                zenpy_objects.append(self.object_from_json(self.format_key(as_singular(key), parent=obj), item))
+                object_type = self.format_key(as_singular(key), parent=obj)
+                zenpy_objects.append(self.object_from_json(object_type, item, parent=obj))
             value = zenpy_objects
         return key, value
 

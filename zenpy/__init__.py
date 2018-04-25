@@ -26,7 +26,9 @@ from zenpy.lib.api import (
     RecipientAddressApi,
     NpsApi, TicketFieldApi,
     TriggerApi,
+    AutomationApi,
     DynamicContentApi)
+
 from zenpy.lib.cache import ZenpyCache, cache_mapping, purge_cache
 from zenpy.lib.endpoint import EndpointFactory
 from zenpy.lib.exception import ZenpyException
@@ -126,6 +128,7 @@ class Zenpy(object):
         self.recipient_addresses = RecipientAddressApi(config)
         self.nps = NpsApi(config)
         self.triggers = TriggerApi(config, object_type='trigger')
+        self.automations = AutomationApi(config, object_type='automation')
         self.dynamic_content = DynamicContentApi(config, object_type='dynamic_content_item')
 
     def _init_session(self, email, token, oath_token, password, session):

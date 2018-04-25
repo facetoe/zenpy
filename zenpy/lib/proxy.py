@@ -7,9 +7,8 @@ class ProxyDict(dict):
         self.dirty_callback = kwargs.pop('dirty_callback', None)
         super(dict, self).__init__()
         dict.update(self, *args, **kwargs)
-        if args or kwargs:
-            self._set_dirty()
         self._sentinel = object()
+        self._dirty = False
 
     def update(self, *args, **kwargs):
         dict.update(self, *args, **kwargs)
