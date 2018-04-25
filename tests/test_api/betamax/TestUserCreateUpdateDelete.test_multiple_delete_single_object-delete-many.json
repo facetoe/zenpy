@@ -1,0 +1,440 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2018-04-25T14:43:49",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"users\": [{\"id\": null, \"name\": \"testUser\"}]}"
+        },
+        "headers": {
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnZTRlRhTTdTcklBUDUycjNGZGt2WG9XRU15R25yT1RoUlZzbnpvSG8="
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "45"
+          ],
+          "Content-Type": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "Zenpy/1.2"
+          ]
+        },
+        "method": "POST",
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/users/create_many.json"
+      },
+      "response": {
+        "body": {
+          "base64_string": "H4sIAAAAAAAAA4WOQQ6CMBBF7zJrpFgIKJcxpTMgWGihLYkS7u4kSly6+5P/Mu9vMNjm5oMK0UO9QY9Qg2yb9oxljlmlyqtupdZFgYhKXrKyIg0JxMUweA/B+VoIzNfTiyb3RFpTDkj+kWo7CuV6sUrxc5AX/76ng7cTK4INiiVTNCYBt9huIc8bP/exGOZIkZDxkVvV0QEwHE348vv+BlaBzmzoAAAA",
+          "encoding": "UTF-8",
+          "string": ""
+        },
+        "headers": {
+          "Cache-Control": [
+            "max-age=0, private, must-revalidate"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Encoding": [
+            "gzip"
+          ],
+          "Content-Type": [
+            "application/json; charset=UTF-8"
+          ],
+          "Date": [
+            "Wed, 25 Apr 2018 14:43:49 GMT"
+          ],
+          "ETag": [
+            "W/\"e84aa120518fed54a13d9a8f221b4727\""
+          ],
+          "Server": [
+            "nginx"
+          ],
+          "Strict-Transport-Security": [
+            "max-age=31536000;"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "X-Content-Type-Options": [
+            "nosniff"
+          ],
+          "X-Frame-Options": [
+            "SAMEORIGIN"
+          ],
+          "X-Rack-Cache": [
+            "invalidate, pass"
+          ],
+          "X-Rate-Limit": [
+            "700"
+          ],
+          "X-Rate-Limit-Remaining": [
+            "682"
+          ],
+          "X-Request-Id": [
+            "e5f4b18f-fb41-4e5d-ce60-0229a26aede0"
+          ],
+          "X-Runtime": [
+            "0.158941"
+          ],
+          "X-UA-Compatible": [
+            "IE=Edge,chrome=1"
+          ],
+          "X-Zendesk-API-Version": [
+            "v2"
+          ],
+          "X-Zendesk-Application-Version": [
+            "v1010.44"
+          ],
+          "X-Zendesk-Origin-Server": [
+            "app6.pod13.usw2.zdsys.com"
+          ],
+          "X-Zendesk-Request-Id": [
+            "2b6b312a52c2e92b10ed"
+          ]
+        },
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/users/create_many.json"
+      }
+    },
+    {
+      "recorded_at": "2018-04-25T14:43:55",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": ""
+        },
+        "headers": {
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnZTRlRhTTdTcklBUDUycjNGZGt2WG9XRU15R25yT1RoUlZzbnpvSG8="
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "User-Agent": [
+            "Zenpy/1.2"
+          ]
+        },
+        "method": "GET",
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/job_statuses/2fbf1d63d07a69cf2cc44ddda28067ec.json"
+      },
+      "response": {
+        "body": {
+          "base64_string": "H4sIAAAAAAAAA4WPTW7CMBCFrxJ5WxI7tmuItxwDocp4JhQI2IonkVqUu3eqCsGus5rf9725i3M6fBQKNBXh7+IEwgvdH/oWnAG1Dq6LvY7RWgAIeqPcGqNYiWkcePGTKBcvJZi5/sZb/gKcG04Ay6WJ6SpDPslZyycDi/xPvTmXdGMEJQoMaVcij+k4YmGDXDy8CtbPAxIC7155Go7IlraPbhWo0qrd1MrW+r1qrbfG2656Uxx8woLTQKy5+/vaOOM6ZzvljH6hbEcMv4xlvyw/HutDcy0BAAA=",
+          "encoding": "UTF-8",
+          "string": ""
+        },
+        "headers": {
+          "Cache-Control": [
+            "must-revalidate, private, max-age=0"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Encoding": [
+            "gzip"
+          ],
+          "Content-Type": [
+            "application/json; charset=UTF-8"
+          ],
+          "Date": [
+            "Wed, 25 Apr 2018 14:43:55 GMT"
+          ],
+          "ETag": [
+            "W/\"0fab29557f449f6341004eb351bc08ee\""
+          ],
+          "Server": [
+            "nginx"
+          ],
+          "Strict-Transport-Security": [
+            "max-age=31536000;"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "X-Content-Type-Options": [
+            "nosniff"
+          ],
+          "X-Frame-Options": [
+            "SAMEORIGIN"
+          ],
+          "X-Rack-Cache": [
+            "miss"
+          ],
+          "X-Rate-Limit": [
+            "700"
+          ],
+          "X-Rate-Limit-Remaining": [
+            "681"
+          ],
+          "X-Request-Id": [
+            "66e1232f-b68a-4a98-caca-0229a26aede0"
+          ],
+          "X-Runtime": [
+            "0.140646"
+          ],
+          "X-UA-Compatible": [
+            "IE=Edge,chrome=1"
+          ],
+          "X-Zendesk-API-Version": [
+            "v2"
+          ],
+          "X-Zendesk-Application-Version": [
+            "v1010.44"
+          ],
+          "X-Zendesk-Origin-Server": [
+            "app10.pod13.usw2.zdsys.com"
+          ],
+          "X-Zendesk-Request-Id": [
+            "cb3fba91b7b59e557f66"
+          ]
+        },
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/job_statuses/2fbf1d63d07a69cf2cc44ddda28067ec.json"
+      }
+    },
+    {
+      "recorded_at": "2018-04-25T14:43:55",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": ""
+        },
+        "headers": {
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnZTRlRhTTdTcklBUDUycjNGZGt2WG9XRU15R25yT1RoUlZzbnpvSG8="
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "User-Agent": [
+            "Zenpy/1.2"
+          ]
+        },
+        "method": "GET",
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/users/show_many.json?ids=363696490632"
+      },
+      "response": {
+        "body": {
+          "base64_string": "H4sIAAAAAAAAA4VSQXLbMAz8C8+yZVuqp9YfempzSabDQURYZkKRLAmqtT3+e0FJUdRTbyIE7GJ3cRcpYoiiebkLrURTHavj6VifdsfqUIgUjGjEhcjHpixVNWxuaP1V4bDlD4Xxfdu6vgSvy+FQjkjlGmH7Fp0VhbDQIwMRRnriJq5gD5qxbTKmEG1AIFQSiJsOu/3Xza7eHL782NdNXTX16ZkHklf/7SHdo7w5m7m+QQcKMrm/jJWJKl4gMNNYkzb1r7zN/Itr5D4exrVgUGZL9oWYXoyKdvP0nTFd6MDqG5B2dmya0IMzmZut2WQzuHHAoM8aueMMJiIL/0MYLJjVFEGXA/hZCDAa+HMCg5b0wHAUEs9Niy8wsw7o0LJpM7aBSNK4TtvRygmGfjt5ZiwXJCS6SLTwalYLRd1ZoBQWixQSZ7OsYR3HthYo6eqX5jZFcr3MwleKeqcwAFMuq5Fu35Fk4AsImoXxWTQi4K/EBV6GHbXmKn3QA6cs+ah6Fsa0s7KPuXwkk+TZlRR9PsRPf9sLkMxgy6zCMyRDsgsu+dWSOSHJ2RjFPHfRu8DEAfxyKo6v6bPweHBAluOTnldYjibgoF2K/xRbl3Iq+8dfIHf6QV4DAAA=",
+          "encoding": "UTF-8",
+          "string": ""
+        },
+        "headers": {
+          "Cache-Control": [
+            "must-revalidate, private, max-age=0"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Encoding": [
+            "gzip"
+          ],
+          "Content-Type": [
+            "application/json; charset=UTF-8"
+          ],
+          "Date": [
+            "Wed, 25 Apr 2018 14:43:55 GMT"
+          ],
+          "ETag": [
+            "W/\"cf57c07d45c967cec4db1551607bbdde\""
+          ],
+          "Server": [
+            "nginx"
+          ],
+          "Strict-Transport-Security": [
+            "max-age=31536000;"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "X-Content-Type-Options": [
+            "nosniff"
+          ],
+          "X-Frame-Options": [
+            "SAMEORIGIN"
+          ],
+          "X-Rack-Cache": [
+            "miss"
+          ],
+          "X-Rate-Limit": [
+            "700"
+          ],
+          "X-Rate-Limit-Remaining": [
+            "680"
+          ],
+          "X-Request-Id": [
+            "0c0355b6-9a43-4380-c38c-0229a26aede0"
+          ],
+          "X-Runtime": [
+            "0.209393"
+          ],
+          "X-UA-Compatible": [
+            "IE=Edge,chrome=1"
+          ],
+          "X-Zendesk-API-Version": [
+            "v2"
+          ],
+          "X-Zendesk-Application-Version": [
+            "v1010.44"
+          ],
+          "X-Zendesk-Origin-Server": [
+            "app17.pod13.usw2.zdsys.com"
+          ],
+          "X-Zendesk-Request-Id": [
+            "09330b056d2f2bc2d3bf"
+          ]
+        },
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/users/show_many.json?ids=363696490632"
+      }
+    },
+    {
+      "recorded_at": "2018-04-25T14:43:56",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"users\": [{\"id\": 363696490632}]}"
+        },
+        "headers": {
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnZTRlRhTTdTcklBUDUycjNGZGt2WG9XRU15R25yT1RoUlZzbnpvSG8="
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "33"
+          ],
+          "Content-Type": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "Zenpy/1.2"
+          ]
+        },
+        "method": "DELETE",
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/users/destroy_many.json?ids=363696490632"
+      },
+      "response": {
+        "body": {
+          "base64_string": "H4sIAAAAAAAAA4WOQQ6CMBBF7zJrpAViQS5jCh0QLLQyLYkS7u4kSly6+5P/Mu9vMLrmSkGHSFBvMBiooTJKdS1mnZRdmcuLxCpT56y95CUWWjWQQFwsg7cQPNVCmGI9vXD2T4NrysEg3dPWTUL7Qay5+DmQxL/v6UhuZkVwQbNkjtYm4BfXL0i88XMfi+ERMaJhfOJW93gADEcbvvy+vwE8e1eg6AAAAA==",
+          "encoding": "UTF-8",
+          "string": ""
+        },
+        "headers": {
+          "Cache-Control": [
+            "max-age=0, private, must-revalidate"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Encoding": [
+            "gzip"
+          ],
+          "Content-Type": [
+            "application/json; charset=UTF-8"
+          ],
+          "Date": [
+            "Wed, 25 Apr 2018 14:43:55 GMT"
+          ],
+          "ETag": [
+            "W/\"78fc85c8284af41c6856c9023c372d9a\""
+          ],
+          "Server": [
+            "nginx"
+          ],
+          "Strict-Transport-Security": [
+            "max-age=31536000;"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "X-Content-Type-Options": [
+            "nosniff"
+          ],
+          "X-Frame-Options": [
+            "SAMEORIGIN"
+          ],
+          "X-Rack-Cache": [
+            "invalidate, pass"
+          ],
+          "X-Rate-Limit": [
+            "700"
+          ],
+          "X-Rate-Limit-Remaining": [
+            "679"
+          ],
+          "X-Request-Id": [
+            "fb4e410b-c1b9-40f0-c007-0229a26aede0"
+          ],
+          "X-Runtime": [
+            "0.137056"
+          ],
+          "X-UA-Compatible": [
+            "IE=Edge,chrome=1"
+          ],
+          "X-Zendesk-API-Version": [
+            "v2"
+          ],
+          "X-Zendesk-API-Warn": [
+            "Removed restricted keys [\"users\"] from parameters according to whitelist"
+          ],
+          "X-Zendesk-Application-Version": [
+            "v1010.44"
+          ],
+          "X-Zendesk-Origin-Server": [
+            "app74.pod13.usw2.zdsys.com"
+          ],
+          "X-Zendesk-Request-Id": [
+            "b0e5cb939add66aaa43e"
+          ]
+        },
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/users/destroy_many.json?ids=363696490632"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.8.1"
+}
