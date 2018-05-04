@@ -74,6 +74,13 @@ class Init(TemplateObject):
         {% endfor %}
         for key, value in kwargs.items():
             setattr(self, key, value)
+            
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
     """
 
     def __init__(self, attributes):

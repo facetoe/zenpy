@@ -1,4 +1,5 @@
 import hashlib
+import uuid
 from operator import attrgetter
 
 from test_api import configure
@@ -176,7 +177,7 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
         """ Helper method for creating multiple Zenpy objects. """
         to_create = list()
         for i in range(num_objects):
-            zenpy_object = self.instantiate_zenpy_object(i, dummy=dummy)
+            zenpy_object = self.instantiate_zenpy_object(uuid.uuid4(), dummy=dummy)
             to_create.append(zenpy_object)
         result = self.create_method(to_create)
         if wait_on_job_status:
@@ -196,7 +197,7 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
             value = obj_kwargs[key]
             if '{}' in value:
                 if format_val is None:
-                    raise Exception("Formatter found in object_kwargs but format_val is None!")
+                    print("Formatter found in object_kwargs but format_val is None!")
                 obj_kwargs[key] = value.format(format_val)
 
         zenpy_object = self.ZenpyType(**obj_kwargs) if not dummy else None
