@@ -1051,6 +1051,12 @@ class DynamicContentApi(CRUDApi):
 class TargetApi(CRUDApi):
     pass
 
+class BrandApi(CRUDApi):
+    pass
+
+class TicketFormApi(CRUDApi):
+    pass
+
 class RequestAPI(CRUDApi):
     def __init__(self, config):
         super(RequestAPI, self).__init__(config, object_type='request')
