@@ -90,7 +90,8 @@ class ZendeskObjectMapping(object):
         'trigger': zenpy.lib.api_objects.Trigger,
         'automation': Automation,
         'dynamic_content_item': DynamicContent,
-        'target': Target
+        'target': Target,
+        'locale': Locale
     }
 
     skip_attrs = []

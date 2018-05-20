@@ -399,6 +399,9 @@ class Api(BaseApi):
     def _get_survey(self, survery_id):
         pass
 
+    def _get_default_locale(self, locale_id):
+        return self._query_zendesk(EndpointFactory('locales'), 'locale', id=locale_id)
+
 
 class CRUDApi(Api):
     """
@@ -1038,24 +1041,31 @@ class TicketImportAPI(CRUDApi):
 class TicketFieldApi(CRUDApi):
     pass
 
+
 class TriggerApi(CRUDApi):
     pass
 
+
 class AutomationApi(CRUDApi):
     pass
+
 
 class DynamicContentApi(CRUDApi):
     def create(self, api_objects, **kwargs):
         return DynamicContentRequest(self).post(api_objects)
 
+
 class TargetApi(CRUDApi):
     pass
+
 
 class BrandApi(CRUDApi):
     pass
 
+
 class TicketFormApi(CRUDApi):
     pass
+
 
 class RequestAPI(CRUDApi):
     def __init__(self, config):

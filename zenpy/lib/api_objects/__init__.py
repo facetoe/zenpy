@@ -752,6 +752,7 @@ class Definitions(BaseObject):
                 except KeyError:
                     continue
 
+
 class DynamicContent(BaseObject):
     def __init__(self,
                  api=None,
@@ -779,6 +780,13 @@ class DynamicContent(BaseObject):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
 
     @property
     def created(self):
@@ -813,6 +821,7 @@ class DynamicContent(BaseObject):
     def updated(self, updated):
         if updated:
             self.updated_at = updated
+
 
 class ErrorEvent(BaseObject):
     def __init__(self, api=None, id=None, message=None, type=None, **kwargs):
@@ -1310,6 +1319,66 @@ class JobStatusResult(BaseObject):
                     self._dirty_attributes.remove(key)
                 except KeyError:
                     continue
+
+
+class Locale(BaseObject):
+    def __init__(self,
+                 api=None,
+                 created_at=None,
+                 default=None,
+                 id=None,
+                 locale=None,
+                 name=None,
+                 native_name=None,
+                 presentation_name=None,
+                 rtl=None,
+                 updated_at=None,
+                 url=None,
+                 **kwargs):
+
+        self.api = api
+        self.created_at = created_at
+        self.default = default
+        self.id = id
+        self.locale = locale
+        self.name = name
+        self.native_name = native_name
+        self.presentation_name = presentation_name
+        self.rtl = rtl
+        self.updated_at = updated_at
+        self.url = url
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
+
+    @property
+    def created(self):
+
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
+
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created
+
+    @property
+    def updated(self):
+
+        if self.updated_at:
+            return dateutil.parser.parse(self.updated_at)
+
+    @updated.setter
+    def updated(self, updated):
+        if updated:
+            self.updated_at = updated
 
 
 class LogmeinTranscriptEvent(BaseObject):
@@ -3081,6 +3150,7 @@ class Tag(BaseObject):
                 except KeyError:
                     continue
 
+
 class Target(BaseObject):
     def __init__(self,
                  api=None,
@@ -3133,6 +3203,13 @@ class Target(BaseObject):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
+
     @property
     def created(self):
         """
@@ -3145,6 +3222,7 @@ class Target(BaseObject):
     def created(self, created):
         if created:
             self.created_at = created
+
 
 class Thumbnail(BaseObject):
     def __init__(self,

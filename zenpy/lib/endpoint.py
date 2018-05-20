@@ -411,6 +411,7 @@ class EndpointFactory(object):
     groups.memberships = SecondaryEndpoint('groups/%(id)s/memberships.json')
     groups.memberships_assignable = SecondaryEndpoint('groups/%(id)s/memberships/assignable.json')
     job_statuses = PrimaryEndpoint('job_statuses')
+    locales = PrimaryEndpoint('locales')
     macros = MacroEndpoint('macros')
     macros.apply = SecondaryEndpoint('macros/%(id)s/apply.json')
 
