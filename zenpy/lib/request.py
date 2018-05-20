@@ -7,7 +7,7 @@ from zenpy.lib.api_objects.chat_objects import Shortcut, Trigger
 from zenpy.lib.cache import delete_from_cache
 from zenpy.lib.endpoint import EndpointFactory
 from zenpy.lib.exception import ZenpyException
-from zenpy.lib.util import get_object_type, as_plural
+from zenpy.lib.util import get_object_type, as_plural, is_iterable_but_not_string
 
 
 class RequestHandler(object):
@@ -112,6 +112,7 @@ class CRUDRequest(BaseZendeskRequest):
         delete_from_cache(api_objects)
         return response
 
+
 class DynamicContentRequest(CRUDRequest):
     def build_payload(self, api_objects):
         if isinstance(api_objects, collections.Iterable):
@@ -119,6 +120,7 @@ class DynamicContentRequest(CRUDRequest):
         else:
             payload_key = 'item'
         return {payload_key: self.api._serialize(api_objects)}
+
 
 class SuspendedTicketRequest(BaseZendeskRequest):
     """
@@ -264,6 +266,8 @@ class TicketMergeRequest(RequestHandler):
     """ Handles merging one or more tickets.  """
 
     def post(self, target, source, target_comment=None, source_comment=None):
+        if not is_iterable_but_not_string(source):
+            source = [source]
         payload = dict(
             ids=source,
             target_comment=target_comment,
