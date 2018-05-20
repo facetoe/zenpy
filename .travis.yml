@@ -6,4 +6,4 @@ python:
   - "3.5"
   - "3.6"
   - "3.7-dev"
-script: "nosetests -v --stop"
+script: "pip install -r requirements.dev && nosetests -v --stop"
