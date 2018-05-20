@@ -195,6 +195,16 @@ class SearchResultGenerator(BaseResultGenerator):
             search_results.append(self.response_handler.api._object_mapping.object_from_json(object_type, object_json))
         return search_results
 
+class DynamicContentResultGenerator(BaseResultGenerator):
+    """ Result generator for search queries. """
+
+    def process_page(self):
+        search_results = list()
+        for object_json in self._response_json['items']:
+            object_type = 'dynamic_content_item'
+            search_results.append(self.response_handler.api._object_mapping.object_from_json(object_type, object_json))
+        return search_results
+
 
 class TicketAuditGenerator(ZendeskResultGenerator):
     def __init__(self, response_handler, response_json):

@@ -752,6 +752,67 @@ class Definitions(BaseObject):
                 except KeyError:
                     continue
 
+class DynamicContent(BaseObject):
+    def __init__(self,
+                 api=None,
+                 created_at=None,
+                 default_locale_id=None,
+                 id=None,
+                 name=None,
+                 outdated=None,
+                 placeholder=None,
+                 updated_at=None,
+                 url=None,
+                 variants=None,
+                 **kwargs):
+
+        self.api = api
+        self.created_at = created_at
+        self.default_locale_id = default_locale_id
+        self.id = id
+        self.name = name
+        self.outdated = outdated
+        self.placeholder = placeholder
+        self.updated_at = updated_at
+        self.url = url
+        self.variants = variants
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def created(self):
+
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
+
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created
+
+    @property
+    def default_locale(self):
+
+        if self.api and self.default_locale_id:
+            return self.api._get_default_locale(self.default_locale_id)
+
+    @default_locale.setter
+    def default_locale(self, default_locale):
+        if default_locale:
+            self.default_locale_id = default_locale.id
+            self._default_locale = default_locale
+
+    @property
+    def updated(self):
+
+        if self.updated_at:
+            return dateutil.parser.parse(self.updated_at)
+
+    @updated.setter
+    def updated(self, updated):
+        if updated:
+            self.updated_at = updated
 
 class ErrorEvent(BaseObject):
     def __init__(self, api=None, id=None, message=None, type=None, **kwargs):
@@ -3020,6 +3081,70 @@ class Tag(BaseObject):
                 except KeyError:
                     continue
 
+class Target(BaseObject):
+    def __init__(self,
+                 api=None,
+                 active=None,
+                 content_type=None,
+                 created_at=None,
+                 id=None,
+                 method=None,
+                 password=None,
+                 target_url=None,
+                 title=None,
+                 type=None,
+                 url=None,
+                 username=None,
+                 **kwargs):
+
+        self.api = api
+
+        # Comment: Whether or not the target is activated
+        # Mandatory:
+        # Type: boolean
+        self.active = active
+        self.content_type = content_type
+
+        # Comment: The time the target was created
+        # Mandatory:
+        # Type: date
+        self.created_at = created_at
+
+        # Comment: Automatically assigned when created
+        # Mandatory:
+        # Type: integer
+        self.id = id
+        self.method = method
+        self.password = password
+        self.target_url = target_url
+
+        # Comment: A name for the target
+        # Mandatory: yes
+        # Type: string
+        self.title = title
+
+        # Comment: A pre-defined target, such as "basecamp_target". See the additional attributes for the type that follow
+        # Mandatory:
+        # Type: string
+        self.type = type
+        self.url = url
+        self.username = username
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def created(self):
+        """
+        |  Comment: The time the target was created
+        """
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
+
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created
 
 class Thumbnail(BaseObject):
     def __init__(self,

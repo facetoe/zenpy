@@ -26,7 +26,12 @@ from zenpy.lib.api import (
     RecipientAddressApi,
     NpsApi, TicketFieldApi,
     TriggerApi,
-    AutomationApi)
+    AutomationApi,
+    DynamicContentApi,
+    TargetApi,
+    BrandApi,
+    TicketFormApi)
+
 from zenpy.lib.cache import ZenpyCache, cache_mapping, purge_cache
 from zenpy.lib.endpoint import EndpointFactory
 from zenpy.lib.exception import ZenpyException
@@ -106,7 +111,7 @@ class Zenpy(object):
         self.search = Api(config, object_type='results', endpoint=EndpointFactory('search'))
         self.topics = Api(config, object_type='topic')
         self.attachments = AttachmentApi(config)
-        self.brands = Api(config, object_type='brand')
+        self.brands = BrandApi(config, object_type='brand')
         self.job_status = Api(config, object_type='job_status', endpoint=EndpointFactory('job_statuses'))
         self.tags = Api(config, object_type='tag')
         self.satisfaction_ratings = SatisfactionRatingApi(config)
@@ -116,7 +121,7 @@ class Zenpy(object):
         self.end_user = EndUserApi(config)
         self.ticket_metrics = Api(config, object_type='ticket_metric')
         self.ticket_fields = TicketFieldApi(config, object_type='ticket_field')
-        self.ticket_forms = Api(config, object_type='ticket_form')
+        self.ticket_forms = TicketFormApi(config, object_type='ticket_form')
         self.ticket_import = TicketImportAPI(config)
         self.requests = RequestAPI(config)
         self.chats = ChatApi(config, endpoint=EndpointFactory('chats'))
@@ -127,6 +132,8 @@ class Zenpy(object):
         self.nps = NpsApi(config)
         self.triggers = TriggerApi(config, object_type='trigger')
         self.automations = AutomationApi(config, object_type='automation')
+        self.dynamic_content = DynamicContentApi(config, object_type='dynamic_content_item')
+        self.targets = TargetApi(config, object_type='target')
 
     def _init_session(self, email, token, oath_token, password, session):
         if not session:

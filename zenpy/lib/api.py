@@ -69,6 +69,7 @@ class BaseApi(object):
             ViewResponseHandler,
             SlaPolicyResponseHandler,
             RequestCommentResponseHandler,
+            DynamicContentResponseHandler,
             GenericZendeskResponseHandler,
             HTTPOKResponseHandler,
         )
@@ -1041,6 +1042,19 @@ class TriggerApi(CRUDApi):
     pass
 
 class AutomationApi(CRUDApi):
+    pass
+
+class DynamicContentApi(CRUDApi):
+    def create(self, api_objects, **kwargs):
+        return DynamicContentRequest(self).post(api_objects)
+
+class TargetApi(CRUDApi):
+    pass
+
+class BrandApi(CRUDApi):
+    pass
+
+class TicketFormApi(CRUDApi):
     pass
 
 class RequestAPI(CRUDApi):
