@@ -816,7 +816,14 @@ class EndUserApi(CRUDApi):
     """
 
     def __init__(self, config):
-        super(EndUserApi, self).__init__(config, object_type='user')
+        super(EndUserApi, self).__init__(config, object_type='user', endpoint=EndpointFactory('end_user'))
+
+    def __call__(self, *args, **kwargs):
+        raise ZenpyException("EndUserApi is not callable!")
+
+    @extract_id(User)
+    def show(self, user):
+        return self._query_zendesk(self.endpoint, object_type='user', id=user)
 
     def delete(self, api_objects, **kwargs):
         raise ZenpyException("EndUsers cannot delete!")
