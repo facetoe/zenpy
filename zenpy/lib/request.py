@@ -214,7 +214,7 @@ class UserIdentityRequest(BaseZendeskRequest):
 class UploadRequest(RequestHandler):
     """ Handles uploading files to Zendesk. """
 
-    def post(self, fp, token=None, target_name=None):
+    def post(self, fp, token=None, target_name=None, content_type=None):
         if hasattr(fp, 'read'):
             # File-like objects such as:
             #   PY3: io.StringIO, io.TextIOBase, io.BufferedIOBase
@@ -238,7 +238,7 @@ class UploadRequest(RequestHandler):
             raise ZenpyException("upload requires a target file name")
 
         url = self.api._build_url(self.api.endpoint.upload(filename=target_name, token=token))
-        return self.api._post(url, data=fp, payload={})
+        return self.api._post(url, data=fp, payload={}, content_type=content_type)
 
     def put(self, api_objects, *args, **kwargs):
         raise NotImplementedError("POST is not implemented fpr UploadRequest!")
