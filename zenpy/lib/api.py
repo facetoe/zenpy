@@ -79,7 +79,7 @@ class BaseApi(object):
         self._dirty_object = None
 
     def _post(self, url, payload, **kwargs):
-        headers = {'Content-Type': 'application/octet-stream'} if 'data' in kwargs else None
+        headers = {'Content-Type': 'application/*'} if 'data' in kwargs else None
         response = self._call_api(self.session.post, url,
                                   json=self._serialize(payload),
                                   timeout=self.timeout,
