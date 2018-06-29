@@ -78,8 +78,14 @@ class BaseApi(object):
         # is successfully processed, and then call the objects _clean_dirty() method.
         self._dirty_object = None
 
-    def _post(self, url, payload, **kwargs):
-        headers = {'Content-Type': 'application/octet-stream'} if 'data' in kwargs else None
+    def _post(self, url, payload, content_type = None, **kwargs):
+        if 'data' in kwargs:
+            if content_type:
+                headers = {'Content-Type': content_type}
+            else:
+                headers = {'Content-Type': 'application/octet-stream'}
+        else:
+            headers = None
         response = self._call_api(self.session.post, url,
                                   json=self._serialize(payload),
                                   timeout=self.timeout,
@@ -772,7 +778,7 @@ class AttachmentApi(Api):
             raise ZenpyException("Attachment endpoint requires an id")
         return Api.__call__(self, **kwargs)
 
-    def upload(self, fp, token=None, target_name=None):
+    def upload(self, fp, token=None, target_name=None, content_type = None):
         """
         Upload a file to Zendesk.
 
@@ -783,7 +789,7 @@ class AttachmentApi(Api):
         :return: :class:`Upload` object containing a token and other information
                     (see https://developer.zendesk.com/rest_api/docs/core/attachments#uploading-files)
         """
-        return UploadRequest(self).post(fp, token=token, target_name=target_name)
+        return UploadRequest(self).post(fp, token=token, target_name=target_name, content_type=content_type)
 
     def download(self, attachment_id, destination):
         """
