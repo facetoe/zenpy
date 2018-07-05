@@ -1339,6 +1339,9 @@ class Locale(BaseObject):
         self.api = api
         self.created_at = created_at
         self.default = default
+
+        # Description: Either the ID or the bcp-47 code of the locale (es-419, en-us, pr-br)
+        # Type: string
         self.id = id
         self.locale = locale
         self.name = name

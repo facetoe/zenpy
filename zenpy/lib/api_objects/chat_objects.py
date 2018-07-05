@@ -13,10 +13,30 @@ class Account(BaseObject):
                  **kwargs):
 
         self.api = api
+
+        # Description: The widget key for the account
+        # Read-only: yes
+        # Type: string
         self.account_key = account_key
+
+        # Description: The billing information of the account
+        # Read-only: no
+        # Type: :class:`email`
         self.billing = billing
+
+        # Description: The date of creation of the account
+        # Read-only: yes
+        # Type: timestamp
         self.create_date = create_date
+
+        # Description: Information about the package of the account
+        # Read-only: yes
+        # Type: :class:`dictionary`
         self.plan = plan
+
+        # Description: The status of the account
+        # Read-only: yes
+        # Type: string
         self.status = status
 
         for key, value in kwargs.items():
@@ -47,16 +67,52 @@ class Agent(BaseObject):
                  **kwargs):
 
         self.api = api
+
+        # Description: The date of creation of the agent
+        # Read-only: yes
+        # Type: timestamp
         self.create_date = create_date
+
+        # Description: The departments for the agent
+        # Read-only: yes
+        # Type: array
         self.departments = departments
+
+        # Description: The name to be displayed for the agent
+        # Read-only: no
+        # Type: string
         self.display_name = display_name
+
+        # Description: The email ID of the agent
+        # Read-only: no
+        # Type: integer
         self.email = email
+
+        # Description: Describes whether the agent is enabled
+        # Read-only: no
+        # Type: integer
         self.enabled = enabled
+
+        # Description: The agent's first name
+        # Read-only: no
+        # Type: string
         self.first_name = first_name
+
+        # Description: The ID of the agent
+        # Read-only: yes
+        # Type: integer
         self.id = id
         self.last_login = last_login
+
+        # Description: The agent's last name
+        # Read-only: no
+        # Type: string
         self.last_name = last_name
         self.login_count = login_count
+
+        # Description: Special role privileges. See below for values (deprecated)
+        # Read-only: yes
+        # Type: object
         self.roles = roles
 
         for key, value in kwargs.items():
@@ -74,6 +130,10 @@ class Ban(BaseObject):
     def __init__(self, api=None, ip_address=None, visitor=None, **kwargs):
 
         self.api = api
+
+        # Description: The IP address of the banned visitor
+        # Read-only: yes
+        # Type: string
         self.ip_address = ip_address
         self.visitor = visitor
 
@@ -161,30 +221,122 @@ class Chat(BaseObject):
 
         self._end_timestamp = None
 
+        # Description: Timestamp for the chat
+        # Read-only: yes
+        # Type: timestamp
+
         self._timestamp = None
+
+        # Description: IDs of agents involved in the chat
+        # Read-only: yes
+        # Type: array
         self.agent_ids = agent_ids
+
+        # Description: Names of agents involved in the chat
+        # Read-only: yes
+        # Type: array
         self.agent_names = agent_names
+
+        # Description: The customer comment on the chat
+        # Read-only: no
+        # Type: string
         self.comment = comment
+
+        # Description: Number of messages (each) by the visitor and the agent(s)
+        # Read-only: yes
+        # Type: object
         self.count = count
+
+        # Description: The ID of the department to which the chat is directed
+        # Read-only: yes
+        # Type: integer
         self.department_id = department_id
+
+        # Description: The name of the department to which the chat is directed
+        # Read-only: yes
+        # Type: integer
         self.department_name = department_name
+
+        # Description: Duration of the chat
+        # Read-only: yes
+        # Type: timestamp
         self.duration = duration
+
+        # Description: Chronological list of messages in the chat
+        # Read-only: yes
+        # Type: array
         self.history = history
+
+        # Description: The ID of the chat
+        # Read-only: yes
+        # Type: string
         self.id = id
+
+        # Description: Whether the chat was missed or not
+        # Read-only: yes
+        # Type: boolean
         self.missed = missed
+
+        # Description: The customer satisfaction rating for the chat
+        # Read-only: no
+        # Type: string
         self.rating = rating
         self.referrer_search_engine = referrer_search_engine
         self.referrer_search_terms = referrer_search_terms
+
+        # Description: Statistics about the response times in the chat, avg, max and first
+        # Read-only: yes
+        # Type: object
         self.response_time = response_time
+
+        # Description: Information related to the session of the session of the chat
+        # Read-only: yes
+        # Type: object
         self.session = session
+
+        # Description: Who started the chat. Can be one of visitor, agent or trigger
+        # Read-only: yes
+        # Type: string
         self.started_by = started_by
+
+        # Description: Tags associated with the chat
+        # Read-only: no
+        # Type: array
         self.tags = tags
+
+        # Description: Whether the chat was a triggered chat or not
+        # Read-only: yes
+        # Type: boolean
         self.triggered = triggered
+
+        # Description: Whether the response was a triggered response or not
+        # Read-only: yes
+        # Type: boolean
         self.triggered_response = triggered_response
+
+        # Description: Chat type. One of offline_msg, chat
+        # Read-only: yes
+        # Type: string
         self.type = type
+
+        # Description: Whether the chat is unread
+        # Read-only: no
+        # Type: boolean
         self.unread = unread
+
+        # Description: Information about the visitor
+        # Read-only: yes
+        # Type: object
         self.visitor = visitor
+
+        # Description: The list of pages the customer navigated to during the chat
+        # Read-only: yes
+        # Type: array
         self.webpath = webpath
+
+        # Description: The ID of the Zendesk Support ticket created from this chat. Available only if using version 2 of the Zendesk Chat-Support integration
+        # Read-only: yes
+        # Type: integer
         self.zendesk_ticket_id = zendesk_ticket_id
 
         for key, value in kwargs.items():
@@ -210,7 +362,9 @@ class Chat(BaseObject):
 
     @property
     def timestamp(self):
-
+        """
+        |  Description: Timestamp for the chat
+        """
         if self._timestamp:
             return dateutil.parser.parse(self._timestamp)
 
@@ -221,7 +375,9 @@ class Chat(BaseObject):
 
     @property
     def agents(self):
-
+        """
+        |  Description: IDs of agents involved in the chat
+        """
         if self.api and self.agent_ids:
             return self.api._get_agents(self.agent_ids)
 
@@ -233,7 +389,9 @@ class Chat(BaseObject):
 
     @property
     def department(self):
-
+        """
+        |  Description: The ID of the department to which the chat is directed
+        """
         if self.api and self.department_id:
             return self.api._get_department(self.department_id)
 
@@ -245,7 +403,9 @@ class Chat(BaseObject):
 
     @property
     def zendesk_ticket(self):
-
+        """
+        |  Description: The ID of the Zendesk Support ticket created from this chat. Available only if using version 2 of the Zendesk Chat-Support integration
+        """
         if self.api and self.zendesk_ticket_id:
             return self.api._get_zendesk_ticket(self.zendesk_ticket_id)
 
@@ -316,11 +476,35 @@ class Department(BaseObject):
                  **kwargs):
 
         self.api = api
+
+        # Description: The description of the department
+        # Read-only: no
+        # Type: string
         self.description = description
+
+        # Description: Describes whether the department is enabled
+        # Read-only: no
+        # Type: integer
         self.enabled = enabled
+
+        # Description: The ID of the department
+        # Read-only: yes
+        # Type: integer
         self.id = id
+
+        # Description: The member agent IDs for the account
+        # Read-only: no
+        # Type: array
         self.members = members
+
+        # Description: The name of the department
+        # Read-only: no
+        # Type: string
         self.name = name
+
+        # Description: The settings for the department
+        # Read-only: no
+        # Type: object
         self.settings = settings
 
         for key, value in kwargs.items():
@@ -347,12 +531,40 @@ class Goal(BaseObject):
                  **kwargs):
 
         self.api = api
+
+        # Description: Describes the attribution model associated with the goal. One of first_touch, last_touch
+        # Read-only: no
+        # Type: string
         self.attribution_model = attribution_model
+
+        # Description: Describes the attribution period in days for this goal. Range between 1 to 30
+        # Read-only: no
+        # Type: integer
         self.attribution_period = attribution_period
+
+        # Description: The description of the goal
+        # Read-only: no
+        # Type: string
         self.description = description
+
+        # Description: Describes whether the goal is enabled
+        # Read-only: no
+        # Type: integer
         self.enabled = enabled
+
+        # Description: The ID of the goal
+        # Read-only: yes
+        # Type: integer
         self.id = id
+
+        # Description: The name of the goal
+        # Read-only: no
+        # Type: string
         self.name = name
+
+        # Description: The settings for the goal. Contains the conditions array (described below).
+        # Read-only: no
+        # Type: object
         self.settings = settings
 
         for key, value in kwargs.items():
@@ -637,11 +849,6 @@ class Session(BaseObject):
         self.country_code = country_code
         self.country_name = country_name
         self.end_date = end_date
-
-        # Comment: Automatically assigned when the session is created
-        # Mandatory: yes
-        # Read-only: yes
-        # Type: integer
         self.id = id
         self.ip = ip
         self.platform = platform
@@ -670,9 +877,25 @@ class Shortcut(BaseObject):
                  **kwargs):
 
         self.api = api
+
+        # Description: The message of the shortcut
+        # Read-only: no
+        # Type: string
         self.message = message
+
+        # Description: The name of the shortcut
+        # Read-only: no
+        # Type: integer
         self.name = name
+
+        # Description: Options for the shortcut
+        # Read-only: no
+        # Type: integer
         self.options = options
+
+        # Description: List of tags that will be added to chat if the shortcut is used
+        # Read-only: no
+        # Type: array
         self.tags = tags
 
         for key, value in kwargs.items():
@@ -698,10 +921,19 @@ class Trigger(BaseObject):
         self.api = api
         self.definition = definition
 
-        # Comment: The description of the trigger
+        # Description: The description of the trigger
+        # Read-only: no
         # Type: string
         self.description = description
+
+        # Description: Whether the trigger is enabled or not
+        # Read-only: no
+        # Type: integer
         self.enabled = enabled
+
+        # Description: The name of the trigger
+        # Read-only: no
+        # Type: string
         self.name = name
 
         for key, value in kwargs.items():
@@ -726,10 +958,30 @@ class Visitor(BaseObject):
                  **kwargs):
 
         self.api = api
+
+        # Description: The email ID of the visitor
+        # Read-only: no
+        # Type: :class:`email`
         self.email = email
+
+        # Description: The ID of the visitor
+        # Read-only: yes
+        # Type: integer
         self.id = id
+
+        # Description: The name to be displayed for the visitor
+        # Read-only: no
+        # Type: string
         self.name = name
+
+        # Description: Any additional notes about the visitor
+        # Read-only: yes
+        # Type: string
         self.notes = notes
+
+        # Description: The phone number of the visitor (if available)
+        # Read-only: no
+        # Type: integer
         self.phone = phone
 
         for key, value in kwargs.items():
