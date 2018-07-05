@@ -467,7 +467,7 @@ class Brand(BaseObject):
         # Type: string
         self.name = name
 
-        # Comment: The subdomain of the brand (only admins view this key)
+        # Comment: The subdomain of the brand
         # Mandatory: yes
         # Read-only: no
         # Type: string
@@ -1897,13 +1897,13 @@ class OrganizationMembership(BaseObject):
         # Type: date
         self.created_at = created_at
 
-        # Comment: Denotes whether this is the default organization membership for the user
+        # Comment: Denotes whether this is the default organization membership for the user. If false, returns null
         # Mandatory: yes
         # Read-only: no
         # Type: boolean
         self.default = default
 
-        # Comment: Automatically assigned when creating memberships
+        # Comment: Automatically assigned when the membership is created
         # Mandatory: no
         # Read-only: yes
         # Type: integer
@@ -3288,19 +3288,19 @@ class Ticket(BaseObject):
 
         self.api = api
 
-        # Comment: What agent is currently assigned to the ticket
+        # Comment: The agent currently assigned to the ticket
         # Mandatory: no
         # Read-only: no
         # Type: integer
         self.assignee_id = assignee_id
 
-        # Comment: The id of the brand this ticket is associated with - only applicable for enterprise accounts
+        # Comment: Enterprise only. The id of the brand this ticket is associated with
         # Mandatory: no
         # Read-only: no
         # Type: integer
         self.brand_id = brand_id
 
-        # Comment: Who are currently CC'ed on the ticket
+        # Comment: The ids of users currently cc'ed on the ticket
         # Mandatory: no
         # Read-only: no
         # Type: array
@@ -3312,7 +3312,7 @@ class Ticket(BaseObject):
         # Type: date
         self.created_at = created_at
 
-        # Comment: The custom fields of the ticket
+        # Comment: Custom fields for the ticket. See Setting custom field values
         # Mandatory: no
         # Read-only: no
         # Type: array
@@ -3355,25 +3355,25 @@ class Ticket(BaseObject):
         # Type: boolean
         self.has_incidents = has_incidents
 
-        # Comment: Automatically assigned when creating tickets
+        # Comment: Automatically assigned when the ticket is created
         # Mandatory: no
         # Read-only: yes
         # Type: integer
         self.id = id
 
-        # Comment: The organization of the requester. Writable only when creating, not when updating
+        # Comment: The organization of the requester. You can only specify the ID of an organization associated with the requester. See Organization Memberships
         # Mandatory: no
         # Read-only: no
         # Type: integer
         self.organization_id = organization_id
 
-        # Comment: Priority, defines the urgency with which the ticket should be addressed: "urgent", "high", "normal", "low"
+        # Comment: The urgency with which the ticket should be addressed. Possible values: "urgent", "high", "normal", "low"
         # Mandatory: no
         # Read-only: no
         # Type: string
         self.priority = priority
 
-        # Comment: The problem this incident is linked to, if any
+        # Comment: For tickets of type "incident", the ID of the problem the incident is linked to
         # Mandatory: no
         # Read-only: no
         # Type: integer
@@ -3409,7 +3409,7 @@ class Ticket(BaseObject):
         # Type: array
         self.sharing_agreement_ids = sharing_agreement_ids
 
-        # Comment: The state of the ticket, "new", "open", "pending", "hold", "solved", "closed"
+        # Comment: The state of the ticket. Possible values: "new", "open", "pending", "hold", "solved", "closed"
         # Mandatory: no
         # Read-only: no
         # Type: string
@@ -3421,7 +3421,7 @@ class Ticket(BaseObject):
         # Type: string
         self.subject = subject
 
-        # Comment: The user who submitted the ticket; The submitter always becomes the author of the first comment on the ticket.
+        # Comment: The user who submitted the ticket. The submitter always becomes the author of the first comment on the ticket
         # Mandatory: no
         # Read-only: no
         # Type: integer
@@ -3433,7 +3433,7 @@ class Ticket(BaseObject):
         # Type: array
         self.tags = tags
 
-        # Comment: The type of this ticket, i.e. "problem", "incident", "question" or "task"
+        # Comment: The type of this ticket. Possible values: "problem", "incident", "question" or "task"
         # Mandatory: no
         # Read-only: no
         # Type: string
@@ -3470,7 +3470,7 @@ class Ticket(BaseObject):
     @property
     def assignee(self):
         """
-        |  Comment: What agent is currently assigned to the ticket
+        |  Comment: The agent currently assigned to the ticket
         """
         if self.api and self.assignee_id:
             return self.api._get_user(self.assignee_id)
@@ -3484,7 +3484,7 @@ class Ticket(BaseObject):
     @property
     def brand(self):
         """
-        |  Comment: The id of the brand this ticket is associated with - only applicable for enterprise accounts
+        |  Comment: Enterprise only. The id of the brand this ticket is associated with
         """
         if self.api and self.brand_id:
             return self.api._get_brand(self.brand_id)
@@ -3498,7 +3498,7 @@ class Ticket(BaseObject):
     @property
     def collaborators(self):
         """
-        |  Comment: Who are currently CC'ed on the ticket
+        |  Comment: The ids of users currently cc'ed on the ticket
         """
         if self.api and self.collaborator_ids:
             return self.api._get_users(self.collaborator_ids)
@@ -3566,7 +3566,7 @@ class Ticket(BaseObject):
     @property
     def organization(self):
         """
-        |  Comment: The organization of the requester. Writable only when creating, not when updating
+        |  Comment: The organization of the requester. You can only specify the ID of an organization associated with the requester. See Organization Memberships
         """
         if self.api and self.organization_id:
             return self.api._get_organization(self.organization_id)
@@ -3580,7 +3580,7 @@ class Ticket(BaseObject):
     @property
     def problem(self):
         """
-        |  Comment: The problem this incident is linked to, if any
+        |  Comment: For tickets of type "incident", the ID of the problem the incident is linked to
         """
         if self.api and self.problem_id:
             return self.api._get_problem(self.problem_id)
@@ -3622,7 +3622,7 @@ class Ticket(BaseObject):
     @property
     def submitter(self):
         """
-        |  Comment: The user who submitted the ticket; The submitter always becomes the author of the first comment on the ticket.
+        |  Comment: The user who submitted the ticket. The submitter always becomes the author of the first comment on the ticket
         """
         if self.api and self.submitter_id:
             return self.api._get_user(self.submitter_id)
@@ -3793,7 +3793,7 @@ class TicketField(BaseObject):
         # Type: integer
         self.id = id
 
-        # Comment: A relative position for the ticket fields, determines the order of ticket fields on a ticket
+        # Comment: A relative position for the ticket fields that determines the order of ticket fields on a ticket. Note that positions 0 to 7 are reserved for system fields
         # Mandatory: no
         # Read-only: no
         # Type: integer
@@ -3853,7 +3853,7 @@ class TicketField(BaseObject):
         # Type: string
         self.title_in_portal = title_in_portal
 
-        # Comment: The type of the ticket field: "checkbox", "date", "decimal", "integer", "regexp", "tagger", "text", or "textarea"
+        # Comment: The type of the ticket field: "checkbox", "date", "decimal", "integer", "regexp", "tagger", "text", or "textarea". Type is not editable once created.
         # Mandatory: yes
         # Read-only: no
         # Type: string
@@ -3943,11 +3943,6 @@ class TicketForm(BaseObject):
         # Read-only: no
         # Type: boolean
         self.active = active
-
-        # Comment: The time the ticket form was created
-        # Mandatory: no
-        # Read-only: yes
-        # Type: date
         self.created_at = created_at
 
         # Comment: Is the form the default form for this account
@@ -3974,11 +3969,6 @@ class TicketForm(BaseObject):
         # Read-only: no
         # Type: boolean
         self.in_all_brands = in_all_brands
-
-        # Comment: Is the form available for use in all organizations on this account
-        # Mandatory: no
-        # Read-only: no
-        # Type: boolean
         self.in_all_organizations = in_all_organizations
 
         # Comment: The name of the form
@@ -4010,11 +4000,6 @@ class TicketForm(BaseObject):
         # Read-only: yes
         # Type: array
         self.restricted_brand_ids = restricted_brand_ids
-
-        # Comment: ids of all organizations that this ticket form is restricted to
-        # Mandatory: no
-        # Read-only: yes
-        # Type: array
         self.restricted_organization_ids = restricted_organization_ids
 
         # Comment: ids of all ticket fields which are in this ticket form
@@ -4022,17 +4007,7 @@ class TicketForm(BaseObject):
         # Read-only: no
         # Type: array
         self.ticket_field_ids = ticket_field_ids
-
-        # Comment: The time of the last update of the ticket form
-        # Mandatory: no
-        # Read-only: yes
-        # Type: date
         self.updated_at = updated_at
-
-        # Comment: The API url of this ticket form
-        # Mandatory: no
-        # Read-only: yes
-        # Type: string
         self.url = url
 
         for key, value in kwargs.items():
@@ -4047,9 +4022,7 @@ class TicketForm(BaseObject):
 
     @property
     def created(self):
-        """
-        |  Comment: The time the ticket form was created
-        """
+
         if self.created_at:
             return dateutil.parser.parse(self.created_at)
 
@@ -4074,9 +4047,7 @@ class TicketForm(BaseObject):
 
     @property
     def restricted_organizations(self):
-        """
-        |  Comment: ids of all organizations that this ticket form is restricted to
-        """
+
         if self.api and self.restricted_organization_ids:
             return self.api._get_restricted_organizations(
                 self.restricted_organization_ids)
@@ -4105,9 +4076,7 @@ class TicketForm(BaseObject):
 
     @property
     def updated(self):
-        """
-        |  Comment: The time of the last update of the ticket form
-        """
+
         if self.updated_at:
             return dateutil.parser.parse(self.updated_at)
 
@@ -4572,8 +4541,8 @@ class Trigger(BaseObject):
 
         self.api = api
 
-        # Comment: An object describing what the trigger will do
-        # Type: :class:`Actions`
+        # Comment: An array of Actions describing what the trigger will do
+        # Type: array
         self.actions = actions
 
         # Comment: Whether the trigger is active
@@ -4583,6 +4552,9 @@ class Trigger(BaseObject):
         # Comment: An object that describes the conditions under which the trigger will execute
         # Type: :class:`Conditions`
         self.conditions = conditions
+
+        # Comment: The description of the trigger
+        # Type: string
         self.description = description
 
         # Comment: Automatically assigned when created
@@ -4749,13 +4721,13 @@ class User(BaseObject):
         # Type: string
         self.details = details
 
-        # Comment: The user's primary email address
+        # Comment: The user's primary email address. Writeable on create only. On update, a secondary email is added. See Email Address
         # Mandatory: no
         # Read-only: no
         # Type: string
         self.email = email
 
-        # Comment: A unique id you can specify for the user
+        # Comment: A unique identifier from another system. The API treats the id as case insensitive. Example: ian1 and Ian1 are the same user
         # Mandatory: no
         # Read-only: no
         # Type: string
@@ -4875,7 +4847,7 @@ class User(BaseObject):
         # Type: string
         self.ticket_restriction = ticket_restriction
 
-        # Comment: The user's time zone. See Time Zone below
+        # Comment: The user's time zone. See Time Zone
         # Mandatory: no
         # Read-only: no
         # Type: string
@@ -4899,13 +4871,13 @@ class User(BaseObject):
         # Type: string
         self.url = url
 
-        # Comment: Custom fields for the user
+        # Comment: Values of custom fields in the user's profile. See User Fields
         # Mandatory: no
         # Read-only: no
-        # Type: :class:`hash`
+        # Type: object
         self.user_fields = user_fields
 
-        # Comment: If the user's identity has been verified or not
+        # Comment: The user's primary identity is verified or not. For secondary identities, see User Identities
         # Mandatory: no
         # Read-only: no
         # Type: boolean
@@ -5198,7 +5170,7 @@ class View(BaseObject):
 
         self.api = api
 
-        # Comment: Useful for determining if the view should be displayed
+        # Comment: Whether the view is active
         # Read-only: no
         # Type: boolean
         self.active = active
@@ -5233,10 +5205,6 @@ class View(BaseObject):
         # Read-only: no
         # Type: object
         self.restriction = restriction
-
-        # Comment: If the view is for an SLA, shows the id
-        # Read-only: yes
-        # Type: integer
         self.sla_id = sla_id
 
         # Comment: The title of the view
@@ -5275,9 +5243,7 @@ class View(BaseObject):
 
     @property
     def sla(self):
-        """
-        |  Comment: If the view is for an SLA, shows the id
-        """
+
         if self.api and self.sla_id:
             return self.api._get_sla(self.sla_id)
 

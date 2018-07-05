@@ -697,6 +697,9 @@ class Trigger(BaseObject):
 
         self.api = api
         self.definition = definition
+
+        # Comment: The description of the trigger
+        # Type: string
         self.description = description
         self.enabled = enabled
         self.name = name
