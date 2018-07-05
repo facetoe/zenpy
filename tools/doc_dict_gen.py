@@ -66,11 +66,12 @@ def parse_link(link):
 
 from multiprocessing.pool import ThreadPool
 
-pool = ThreadPool(processes=20)
 
-results = pool.map_async(parse_link, get_links())
+with ThreadPool(processes=50) as pool:
+    results = pool.map(parse_link, get_links())
+
 output = dict()
-for result in results.get():
+for result in results:
     output.update(result)
 
 with open('doc_dict.json', 'w+') as f:
