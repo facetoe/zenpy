@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+import functools
 import glob
 import json
 import re
@@ -38,7 +38,7 @@ class {{object.name}}(BaseObject):
             if object_name in doc_json and attr_name in doc_json[object_name]:
                 doc_strings = []
                 attr_docs = doc_json[object_name][attr_name]
-                if attr_docs['type'] not in ('string', 'boolean', 'date', 'integer', 'array', 'object'):
+                if attr_docs['type'] not in ('string', 'boolean', 'date', 'integer', 'array', 'object', 'timestamp'):
                     attr_docs['type'] = ':class:`%s`' % attr_docs['type']
 
                 for key, value in sorted(attr_docs.items()):
@@ -357,21 +357,23 @@ elif not options.doc_json_path:
 doc_json = json.load(open(options.doc_json_path))
 
 
-def process_file(path):
+def process_file(namespace, path):
     class_name = os.path.basename(os.path.splitext(path)[0]).capitalize()
     class_name = "".join([w.capitalize() for w in class_name.split('_')])
     with open(path) as f:
-        class_code = Class(class_name, json.load(f), doc_json).render()
+        class_code = Class(class_name, json.load(f), doc_json[namespace]).render()
     print("Processed: %s -> %s" % (os.path.basename(path), class_name))
     return class_code
 
 
-def process_specification_directory(glob_pattern, outfile_name, write_baseclass=True):
+def process_specification_directory(glob_pattern, outfile_name, namespace, write_baseclass=True,):
     with open(os.path.join(options.out_path, outfile_name), 'w+') as out_file:
         paths = [p for p in glob.glob(os.path.join(options.spec_path, glob_pattern))]
         classes = list()
+
+        func = functools.partial(process_file, namespace)
         with Pool() as pool:
-            classes.extend(pool.map(process_file, paths))
+            classes.extend(pool.map(func, paths))
         print("Formatting...")
         formatted_code = FormatCode("\n".join(sorted(classes)))[0]
         if write_baseclass:
@@ -382,6 +384,11 @@ def process_specification_directory(glob_pattern, outfile_name, write_baseclass=
         out_file.write("\n\n\n".join((header, formatted_code)))
 
 
-process_specification_directory('zendesk/*.json', 'api_objects/__init__.py')
-process_specification_directory('chat/*.json', 'api_objects/chat_objects.py', write_baseclass=False)
-process_specification_directory('help_centre/*.json', 'api_objects/help_centre_objects.py', write_baseclass=False)
+process_specification_directory('zendesk/*.json', 'api_objects/__init__.py',
+                                namespace='core')
+process_specification_directory('chat/*.json', 'api_objects/chat_objects.py',
+                                namespace='chat',
+                                write_baseclass=False)
+process_specification_directory('help_centre/*.json', 'api_objects/help_centre_objects.py',
+                                namespace='help_center',
+                                write_baseclass=False)
