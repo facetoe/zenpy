@@ -72,7 +72,7 @@ class BaseObject(object):
                 continue
 
             # These are for internal tracking, so just delete.
-            elif key in ('api', '_dirty_attributes', '_always_dirty', '_dirty_callback'):
+            elif key in ('api', '_dirty_attributes', '_always_dirty', '_dirty_callback', '_dirty'):
                 del copy_dict[key]
 
             # If the attribute has not been modified, do not send it.
