@@ -1013,7 +1013,9 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         """
 
         url = self._build_url(self.endpoint.macro(ticket, macro))
-        return self._get(url)
+        macro_effect = self._get(url)
+        macro_effect._set_dirty()
+        return macro_effect
 
     @extract_id(Ticket)
     def merge(self, target, source,

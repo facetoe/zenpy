@@ -276,13 +276,27 @@ class BaseObject(object):
                 self._dirty_callback()
         object.__setattr__(self, key, value)
 
-    def _clean_dirty(self):
-        self.__dict__['_dirty_attributes'].clear()
-        self._dirty = False
-        for key, val in vars(self).items():
-            func = getattr(val, '_clean_dirty', None)
-            if callable(func):
-                func()
+    def _clean_dirty(self, obj=None):
+        """ Recursively clean self and all child objects. """
+        obj = obj or self
+        obj.__dict__['_dirty_attributes'].clear()
+        obj._dirty = False
+        for key, val in vars(obj).items():
+            if isinstance(val, BaseObject):
+                self._clean_dirty(val)
+            else:
+                func = getattr(val, '_clean_dirty', None)
+                if callable(func):
+                    func()
+
+    def _set_dirty(self, obj=None):
+        """ Recursively set self and all child objects _dirty flag. """
+        obj = obj or self
+        for key, value in vars(obj).items():
+            if key not in ('api', '_dirty_attributes', '_always_dirty', '_dirty_callback', '_dirty'):
+                setattr(obj, key, value)
+                if isinstance(value, BaseObject):
+                    self._set_dirty(value)
 
     def to_dict(self, serialize=False):
         """
