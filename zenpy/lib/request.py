@@ -20,17 +20,14 @@ class RequestHandler(object):
     def __init__(self, api):
         self.api = api
 
-    @abstractmethod
     def put(self, api_objects, *args, **kwargs):
-        pass
+        raise NotImplementedError("PUT is not implemented!")
 
-    @abstractmethod
     def post(self, api_objects, *args, **kwargs):
-        pass
+        raise NotImplementedError("POST is not implemented!")
 
-    @abstractmethod
     def delete(self, api_objects, *args, **kwargs):
-        pass
+        raise NotImplementedError("DELETE is not implemented!")
 
 
 class BaseZendeskRequest(RequestHandler):
@@ -296,6 +293,14 @@ class SatisfactionRatingRequest(BaseZendeskRequest):
 
     def delete(self, api_objects, *args, **kwargs):
         raise NotImplementedError("DELETE is not implemented fpr SatisfactionRequest!")
+
+
+class OrganizationFieldReorderRequest(BaseZendeskRequest):
+
+    def put(self, api_objects, *args, **kwargs):
+        payload = {'organization_field_ids': api_objects}
+        url = self.api._build_url(self.api.endpoint.reorder())
+        return self.api._put(url, payload=payload)
 
 
 class ChatApiRequest(RequestHandler):

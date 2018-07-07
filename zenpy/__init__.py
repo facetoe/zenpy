@@ -30,7 +30,7 @@ from zenpy.lib.api import (
     DynamicContentApi,
     TargetApi,
     BrandApi,
-    TicketFormApi)
+    TicketFormApi, OrganizationFieldsApi)
 
 from zenpy.lib.cache import ZenpyCache, cache_mapping, purge_cache
 from zenpy.lib.endpoint import EndpointFactory
@@ -106,6 +106,7 @@ class Zenpy(object):
         self.macros = MacroApi(config)
         self.organizations = OrganizationApi(config)
         self.organization_memberships = OrganizationMembershipApi(config)
+        self.organization_fields = OrganizationFieldsApi(config)
         self.tickets = TicketApi(config)
         self.suspended_tickets = SuspendedTicketApi(config, object_type='suspended_ticket')
         self.search = Api(config, object_type='results', endpoint=EndpointFactory('search'))

@@ -7,7 +7,7 @@ from json import JSONEncoder
 
 from time import sleep, time
 
-from zenpy.lib.api_objects import User, Macro, Identity, View, Organization, Group, GroupMembership
+from zenpy.lib.api_objects import User, Macro, Identity, View, Organization, Group, GroupMembership, OrganizationField
 from zenpy.lib.api_objects.help_centre_objects import Section, Article, Comment, ArticleAttachment, Label, Category, \
     Translation, Topic, Post, Subscription
 from zenpy.lib.cache import query_cache
@@ -78,7 +78,7 @@ class BaseApi(object):
         # is successfully processed, and then call the objects _clean_dirty() method.
         self._dirty_object = None
 
-    def _post(self, url, payload, content_type = None, **kwargs):
+    def _post(self, url, payload, content_type=None, **kwargs):
         if 'data' in kwargs:
             if content_type:
                 headers = {'Content-Type': content_type}
@@ -782,7 +782,7 @@ class AttachmentApi(Api):
             raise ZenpyException("Attachment endpoint requires an id")
         return Api.__call__(self, **kwargs)
 
-    def upload(self, fp, token=None, target_name=None, content_type = None):
+    def upload(self, fp, token=None, target_name=None, content_type=None):
         """
         Upload a file to Zendesk.
 
@@ -898,6 +898,19 @@ class OrganizationMembershipApi(CRUDApi):
 
     def update(self, items, **kwargs):
         raise ZenpyException("You cannot update Organization Memberships!")
+
+
+class OrganizationFieldsApi(CRUDApi):
+    def __init__(self, config):
+        super(OrganizationFieldsApi, self).__init__(config, object_type='organization_field')
+
+    @extract_id(OrganizationField)
+    def reorder(self, organization_fields):
+        """
+        Reorder organization fields.
+        :param organization_fields: list of OrganizationField objects or ids in the desired order.
+        """
+        return OrganizationFieldReorderRequest(self).put(organization_fields)
 
 
 class SatisfactionRatingApi(Api):

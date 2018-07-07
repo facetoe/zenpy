@@ -417,6 +417,8 @@ class EndpointFactory(object):
     nps.recipients_incremental = IncrementalEndpoint('nps/incremental/recipients.json')
     nps.responses_incremental = IncrementalEndpoint('nps/incremental/responses.json')
     organization_memberships = PrimaryEndpoint('organization_memberships')
+    organization_fields = PrimaryEndpoint('organization_fields')
+    organization_fields.reorder = PrimaryEndpoint('organization_fields/reorder.json')
     organizations = PrimaryEndpoint('organizations')
     organizations.external = SecondaryEndpoint('organizations/search.json?external_id=%(id)s')
     organizations.incremental = IncrementalEndpoint('incremental/organizations.json')

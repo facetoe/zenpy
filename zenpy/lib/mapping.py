@@ -101,7 +101,8 @@ class ZendeskObjectMapping(object):
         self.api = api
         self.skip_attrs = ['user_fields', 'organization_fields']
         self.always_dirty = dict(
-            conditions=('all', 'any')
+            conditions=('all', 'any'),
+            organization_field=('custom_field_options',)
         )
 
     def object_from_json(self, object_type, object_json, parent=None):
