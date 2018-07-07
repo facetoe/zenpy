@@ -213,10 +213,8 @@ class BaseApi(object):
 
         log.debug("Cleaning objects: {}".format(self._dirty_object))
         for o in self._dirty_object:
-            if not isinstance(o, BaseObject):
-                log.warning("Non-zenpy object found in _dirty_object list {}. This should never happen!".format(o))
-                continue
-            o._clean_dirty()
+            if isinstance(o, BaseObject):
+                o._clean_dirty()
         self._dirty_object = None
 
     def _serialize(self, zenpy_object):
