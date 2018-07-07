@@ -1,0 +1,100 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2018-07-07T06:57:08",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"organization_field\": {\"id\": 360000183272}}"
+        },
+        "headers": {
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnlHeUd3VHJsYnZNc3JhU0dnOFowTE1tQUw2MXNoVlVCS2JmQlRFeUc="
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "44"
+          ],
+          "Content-Type": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "Zenpy/1.2"
+          ]
+        },
+        "method": "DELETE",
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/organization_fields/360000183272.json"
+      },
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": ""
+        },
+        "headers": {
+          "Cache-Control": [
+            "no-cache"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Date": [
+            "Sat, 07 Jul 2018 06:57:09 GMT"
+          ],
+          "Server": [
+            "nginx"
+          ],
+          "Strict-Transport-Security": [
+            "max-age=31536000;"
+          ],
+          "X-Content-Type-Options": [
+            "nosniff"
+          ],
+          "X-Frame-Options": [
+            "SAMEORIGIN"
+          ],
+          "X-Rate-Limit": [
+            "700"
+          ],
+          "X-Rate-Limit-Remaining": [
+            "692"
+          ],
+          "X-Request-Id": [
+            "6910a349a127503cd3bd0e6ec332219a"
+          ],
+          "X-Runtime": [
+            "0.187383"
+          ],
+          "X-Zendesk-API-Version": [
+            "v2"
+          ],
+          "X-Zendesk-API-Warn": [
+            "Removed restricted keys [\"organization_field.id\", \"organization_field\"] from parameters according to whitelist"
+          ],
+          "X-Zendesk-Application-Version": [
+            "v1673.37"
+          ],
+          "X-Zendesk-Origin-Server": [
+            "app57.pod13.usw2.zdsys.com"
+          ],
+          "X-Zendesk-Request-Id": [
+            "e479780f30b344c64925"
+          ]
+        },
+        "status": {
+          "code": 204,
+          "message": "No Content"
+        },
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/organization_fields/360000183272.json"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.8.1"
+}

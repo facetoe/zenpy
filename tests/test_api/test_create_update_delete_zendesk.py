@@ -1,6 +1,7 @@
 from test_api.fixtures.__init__ import SingleCreateApiTestCase, CRUDApiTestCase, \
     SingleUpdateApiTestCase, SingleDeleteApiTestCase
-from zenpy.lib.api_objects import Ticket, TicketAudit, Group, User, Organization, Macro, RecipientAddress, TicketField
+from zenpy.lib.api_objects import Ticket, TicketAudit, Group, User, Organization, Macro, RecipientAddress, TicketField, \
+    OrganizationField
 
 
 class TestTicketCreateUpdateDelete(CRUDApiTestCase):
@@ -49,6 +50,16 @@ class TestRecipientAddressCreateUpdateDelete(SingleUpdateApiTestCase,
     object_kwargs = dict(name='Sales', email='help@omniwearshop.com')
     ignore_update_kwargs = ['email']  # Email value cannot be changed after creation
     api_name = 'recipient_addresses'
+
+
+class TestOrganizationFieldsCreateUpdateDelete(SingleCreateApiTestCase,
+                                               SingleDeleteApiTestCase,
+                                               SingleUpdateApiTestCase):
+    __test__ = True
+    ZenpyType = OrganizationField
+    object_kwargs = dict(description='test', title='i am test', key='somethingsomethingsomething')
+    ignore_update_kwargs = ['key']  # Can't update key after creation.
+    api_name = 'organization_fields'
 
 
 class TestTicketFieldCreateUpdateDelete(SingleCreateApiTestCase,
