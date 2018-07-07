@@ -7,9 +7,30 @@ from json import JSONEncoder
 
 from time import sleep, time
 
-from zenpy.lib.api_objects import User, Macro, Identity, View, Organization, Group, GroupMembership, OrganizationField
-from zenpy.lib.api_objects.help_centre_objects import Section, Article, Comment, ArticleAttachment, Label, Category, \
-    Translation, Topic, Post, Subscription
+from zenpy.lib.api_objects import (
+    User,
+    Macro,
+    Identity,
+    View,
+    Organization,
+    Group,
+    GroupMembership,
+    OrganizationField,
+    TicketField,
+    CustomFieldOption
+)
+from zenpy.lib.api_objects.help_centre_objects import (
+    Section,
+    Article,
+    Comment,
+    ArticleAttachment,
+    Label,
+    Category,
+    Translation,
+    Topic,
+    Post,
+    Subscription
+)
 from zenpy.lib.cache import query_cache
 from zenpy.lib.exception import *
 from zenpy.lib.mapping import ZendeskObjectMapping, ChatObjectMapping, HelpCentreObjectMapping
@@ -1073,8 +1094,50 @@ class TicketImportAPI(CRUDApi):
         raise ZenpyException("You cannot delete objects using the ticket_import endpoint!")
 
 
+class TicketCustomFieldOptionApi(Api):
+
+    def __init__(self, config):
+        super(TicketCustomFieldOptionApi, self).__init__(config,
+                                                         object_type='custom_field_option',
+                                                         endpoint=EndpointFactory('ticket_field_options'))
+
+    @extract_id(TicketField, CustomFieldOption)
+    def show(self, ticket_field, custom_field_option):
+        """
+        Return CustomFieldOption
+
+        :param ticket_field: TicketFieldOption or id
+        :param custom_field_option: CustomFieldOption or id
+        """
+        return self._query_zendesk(self.endpoint.show, 'custom_field_option', ticket_field, custom_field_option)
+
+    @extract_id(TicketField)
+    def create_or_update(self, ticket_field, custom_field_option):
+        """
+        Create or update a CustomFieldOption for a TicketField. If passed CustomFieldOption has no id, a new option
+        will be created, otherwise it is updated - https://developer.zendesk.com/rest_api/docs/core/ticket_fields#create-or-update-a-ticket-field-option.
+
+        :param ticket_field: TicketField object or id
+        :param custom_field_option: CustomFieldOption object
+        """
+        return TicketFieldOptionRequest(self).post(ticket_field, custom_field_option)
+
+    @extract_id(TicketField, CustomFieldOption)
+    def delete(self, ticket_field, custom_field_option):
+        """
+        Delete a CustomFieldOption.
+
+        :param ticket_field: TicketField object or id.
+        :param custom_field_option: CustomFieldOption
+        """
+        return TicketFieldOptionRequest(self).delete(ticket_field, custom_field_option)
+
+
 class TicketFieldApi(CRUDApi):
-    pass
+
+    def __init__(self, config):
+        super(TicketFieldApi, self).__init__(config, 'ticket_field')
+        self.options = TicketCustomFieldOptionApi(config)
 
 
 class TriggerApi(CRUDApi):

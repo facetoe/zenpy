@@ -295,12 +295,27 @@ class SatisfactionRatingRequest(BaseZendeskRequest):
         raise NotImplementedError("DELETE is not implemented fpr SatisfactionRequest!")
 
 
-class OrganizationFieldReorderRequest(BaseZendeskRequest):
+class OrganizationFieldReorderRequest(RequestHandler):
 
     def put(self, api_objects, *args, **kwargs):
         payload = {'organization_field_ids': api_objects}
         url = self.api._build_url(self.api.endpoint.reorder())
         return self.api._put(url, payload=payload)
+
+
+class TicketFieldOptionRequest(BaseZendeskRequest):
+
+    def post(self, ticket_field, custom_field_option):
+        cfo_id = getattr(custom_field_option, 'id', None)
+        if cfo_id is not None:
+            url = self.api._build_url(self.api.endpoint.update(id=ticket_field))
+        else:
+            url = self.api._build_url(self.api.endpoint(id=ticket_field))
+        return self.api._post(url, payload=self.build_payload(custom_field_option))
+
+    def delete(self, ticket_field, custom_field_option):
+        url = self.api._build_url(self.api.endpoint.delete(ticket_field, custom_field_option))
+        return self.api._delete(url)
 
 
 class ChatApiRequest(RequestHandler):

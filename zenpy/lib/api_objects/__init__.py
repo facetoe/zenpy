@@ -754,6 +754,36 @@ class CustomField(BaseObject):
                     continue
 
 
+class CustomFieldOption(BaseObject):
+    def __init__(self,
+                 api=None,
+                 id=None,
+                 name=None,
+                 position=None,
+                 raw_name=None,
+                 url=None,
+                 value=None,
+                 **kwargs):
+
+        self.api = api
+        self.id = id
+        self.name = name
+        self.position = position
+        self.raw_name = raw_name
+        self.url = url
+        self.value = value
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
+
+
 class Definitions(BaseObject):
     def __init__(self, api=None, all=None, any=None, **kwargs):
 

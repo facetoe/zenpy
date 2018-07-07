@@ -91,7 +91,8 @@ class ZendeskObjectMapping(object):
         'automation': Automation,
         'dynamic_content_item': DynamicContent,
         'target': Target,
-        'locale': Locale
+        'locale': Locale,
+        'custom_field_option': CustomFieldOption
     }
 
     skip_attrs = []
@@ -102,7 +103,8 @@ class ZendeskObjectMapping(object):
         self.skip_attrs = ['user_fields', 'organization_fields']
         self.always_dirty = dict(
             conditions=('all', 'any'),
-            organization_field=('custom_field_options',)
+            organization_field=('custom_field_options',),
+            ticket_field=('custom_field_options',)
         )
 
     def object_from_json(self, object_type, object_json, parent=None):
