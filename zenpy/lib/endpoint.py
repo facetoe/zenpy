@@ -129,10 +129,8 @@ class PrimaryEndpoint(BaseEndpoint):
 
 
 class SecondaryEndpoint(BaseEndpoint):
-    def __call__(self, **kwargs):
-        if not kwargs:
-            raise ZenpyException("This endpoint requires arguments!")
-        return Url(self.endpoint % kwargs)
+    def __call__(self, id, include=None):
+        return Url(self.endpoint % dict(id=id), params=dict(include=include) if include else None)
 
 
 class MultipleIDEndpoint(BaseEndpoint):

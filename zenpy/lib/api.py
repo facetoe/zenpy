@@ -652,58 +652,64 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
         self.identities = UserIdentityApi(config)
 
     @extract_id(User)
-    def groups(self, user):
+    def groups(self, user, include=None):
         """
         Retrieve the groups for this user.
 
+        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
         :param user: User object or id
         """
-        return self._query_zendesk(self.endpoint.groups, 'group', id=user)
+        return self._query_zendesk(self.endpoint.groups, 'group', id=user, include=include)
 
     @extract_id(User)
-    def organizations(self, user):
+    def organizations(self, user, include=None):
         """
         Retrieve the organizations for this user.
 
+        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
         :param user: User object or id
         """
-        return self._query_zendesk(self.endpoint.organizations, 'organization', id=user)
+        return self._query_zendesk(self.endpoint.organizations, 'organization', id=user, include=include)
 
     @extract_id(User)
-    def requested(self, user):
+    def requested(self, user, include=None):
         """
         Retrieve the requested tickets for this user.
 
+        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
         :param user: User object or id
         """
-        return self._query_zendesk(self.endpoint.requested, 'ticket', id=user)
+        return self._query_zendesk(self.endpoint.requested, 'ticket', id=user, include=include)
 
     @extract_id(User)
-    def cced(self, user):
+    def cced(self, user, include=None):
         """
         Retrieve the tickets this user is cc'd into.
 
+        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
         :param user: User object or id
         """
-        return self._query_zendesk(self.endpoint.cced, 'ticket', id=user)
+        return self._query_zendesk(self.endpoint.cced, 'ticket', id=user, include=include)
 
     @extract_id(User)
-    def assigned(self, user):
+    def assigned(self, user, include=None):
         """
         Retrieve the assigned tickets for this user.
 
+        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
         :param user: User object or id
         """
-        return self._query_zendesk(self.endpoint.assigned, 'ticket', id=user)
+        return self._query_zendesk(self.endpoint.assigned, 'ticket', id=user, include=include)
 
     @extract_id(User)
-    def group_memberships(self, user):
+    def group_memberships(self, user, include=None):
         """
         Retrieve the group memberships for this user.
 
+        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
         :param user: User object or id
         """
-        return self._query_zendesk(self.endpoint.group_memberships, 'group_membership', id=user)
+        return self._query_zendesk(self.endpoint.group_memberships, 'group_membership', id=user, include=include)
 
     def requests(self, **kwargs):
         return self._query_zendesk(self.endpoint.requests, 'request', **kwargs)
@@ -858,13 +864,14 @@ class OrganizationApi(TaggableApi, IncrementalApi, CRUDExternalApi):
         """
         return self._query_zendesk(self.endpoint.organization_memberships, 'organization_membership', id=organization)
 
-    def external(self, external_id):
+    def external(self, external_id, include=None):
         """
         Locate an Organization by it's external_id attribute.
 
+        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
         :param external_id: external id of organization
         """
-        return self._query_zendesk(self.endpoint.external, 'organization', id=external_id)
+        return self._query_zendesk(self.endpoint.external, 'organization', id=external_id, include=include)
 
     def requests(self, **kwargs):
         return self._query_zendesk(self.endpoint.requests, 'request', **kwargs)
@@ -932,19 +939,20 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         super(TicketApi, self).__init__(config, object_type='ticket')
 
     @extract_id(Organization)
-    def organizations(self, organization):
+    def organizations(self, organization, include=None):
         """
         Retrieve the tickets for this organization.
 
+        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
         :param organization: Organization object or id
         """
-        return self._query_zendesk(self.endpoint.organizations, 'ticket', id=organization)
+        return self._query_zendesk(self.endpoint.organizations, 'ticket', id=organization, include=include)
 
-    def recent(self):
+    def recent(self, include=None):
         """
         Retrieve the most recent tickets
         """
-        return self._query_zendesk(self.endpoint.recent, 'ticket', id=None)
+        return self._query_zendesk(self.endpoint.recent, 'ticket', id=None, include=include)
 
     @extract_id(Ticket)
     def comments(self, ticket):
@@ -964,7 +972,7 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         return self._query_zendesk(self.endpoint.events, 'ticket_event', start_time=start_time)
 
     @extract_id(Ticket)
-    def audits(self, ticket=None, **kwargs):
+    def audits(self, ticket=None, include=None, **kwargs):
         """
         Retrieve TicketAudits. If ticket is passed, return the tickets for a specific audit.
 
@@ -981,12 +989,13 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
 
         See the Zendesk docs for information on additional parameters - https://developer.zendesk.com/rest_api/docs/core/ticket_audits#pagination
 
+        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
         :param ticket: Ticket object or id
         """
         if ticket is not None:
-            return self._query_zendesk(self.endpoint.audits, 'ticket_audit', id=ticket)
+            return self._query_zendesk(self.endpoint.audits, 'ticket_audit', id=ticket, include=include)
         else:
-            return self._query_zendesk(self.endpoint.audits.cursor, 'ticket_audit', **kwargs)
+            return self._query_zendesk(self.endpoint.audits.cursor, 'ticket_audit', include=include, **kwargs)
 
     @extract_id(Ticket)
     def metrics(self, ticket):
@@ -1129,85 +1138,92 @@ class GroupApi(CRUDApi):
         super(GroupApi, self).__init__(config, object_type='group')
 
     @extract_id(Group)
-    def memberships(self, group):
+    def memberships(self, group, include=None):
         """
         Return the GroupMemberships for this group
 
+        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
         :param group: Group object or id
         """
-        return self._get(self._build_url(self.endpoint.memberships(id=group)))
+        return self._get(self._build_url(self.endpoint.memberships(id=group, include=include)))
 
     @extract_id(Group)
-    def memberships_assignable(self, group):
+    def memberships_assignable(self, group, include=None):
         """
         Return memberships that are assignable for this group.
 
+        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
         :param group: Group object or id
         """
-        return self._get(self._build_url(self.endpoint.memberships_assignable(id=group)))
+        return self._get(self._build_url(self.endpoint.memberships_assignable(id=group, include=include)))
 
 
 class ViewApi(CRUDApi):
     def __init__(self, config):
         super(ViewApi, self).__init__(config, object_type='view')
 
-    def active(self):
+    def active(self, include=None):
         """
         Return all active views.
         """
-        return self._get(self._build_url(self.endpoint.active()))
+        return self._get(self._build_url(self.endpoint.active(include=include)))
 
-    def compact(self):
+    def compact(self, include=None):
         """
         Return compact views - https://developer.zendesk.com/rest_api/docs/core/views#list-views---compact
         """
-        return self._get(self._build_url(self.endpoint.compact()))
+        return self._get(self._build_url(self.endpoint.compact(include=include)))
 
     @extract_id(View)
-    def execute(self, view):
+    def execute(self, view, include=None):
         """
         Execute a view.
 
+        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
         :param view: View or view id
         """
-        return self._get(self._build_url(self.endpoint.execute(id=view)))
+        return self._get(self._build_url(self.endpoint.execute(id=view, include=include)))
 
     @extract_id(View)
-    def tickets(self, view):
+    def tickets(self, view, include=None):
         """
         Return the tickets in a view.
 
+        :param include: Optionally include more data. See https://developer.zendesk.com/rest_api/docs/core/side_loading
         :param view: View or view id
         """
-        return self._get(self._build_url(self.endpoint.tickets(id=view)))
+        return self._get(self._build_url(self.endpoint.tickets(id=view, include=include)))
 
     @extract_id(View)
-    def count(self, view):
+    def count(self, view, include=None):
         """
         Return a ViewCount for a view.
 
+        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
         :param view: View or view id
         """
-        return self._get(self._build_url(self.endpoint.count(id=view)))
+        return self._get(self._build_url(self.endpoint.count(id=view, include=include)))
 
     @extract_id(View)
-    def count_many(self, views):
+    def count_many(self, views, include=None):
         """
         Return many ViewCounts.
 
+        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
         :param views: iterable of View or view ids
         """
-        return self._get(self._build_url(self.endpoint(count_many=views)))
+        return self._get(self._build_url(self.endpoint(count_many=views, include=include)))
 
     @extract_id(View)
-    def export(self, view):
+    def export(self, view, include=None):
         """
         Export a view. Returns an Export object.
 
+        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
         :param view: View or view id
         :return:
         """
-        return self._get(self._build_url(self.endpoint.export(id=view)))
+        return self._get(self._build_url(self.endpoint.export(id=view, include=include)))
 
     def search(self, *args, **kwargs):
         """
