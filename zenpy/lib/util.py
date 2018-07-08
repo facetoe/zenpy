@@ -5,6 +5,10 @@ import re
 
 import pytz
 
+from datetime import datetime, date
+
+from zenpy.lib.proxy import ProxyDict, ProxyList
+
 FIRST_CAP_REGEX = re.compile('(.)([A-Z][a-z]+)')
 ALL_CAP_REGEX = re.compile('([a-z0-9])([A-Z])')
 
@@ -95,6 +99,7 @@ def extract_id(*object_types):
     """
     Decorator for extracting id from passed parameters for specific types.
     """
+
     def outer(func):
         def inner(*args, **kwargs):
             def id_of(x):
@@ -107,3 +112,29 @@ def extract_id(*object_types):
         return inner
 
     return outer
+
+
+def json_encode_for_zendesk(obj):
+    """ Only encode those attributes of Zenpy objects that have been modified. """
+    return json_encode(obj, serialize=True)
+
+
+def json_encode_for_printing(obj):
+    """ Encode all attributes. """
+    return json_encode(obj, serialize=False)
+
+
+def json_encode(obj, serialize):
+    """ Handle encoding complex types. """
+    if hasattr(obj, 'to_dict'):
+        return obj.to_dict(serialize=serialize)
+    elif isinstance(obj, datetime):
+        return obj.date().isoformat()
+    elif isinstance(obj, date):
+        return obj.isoformat()
+    elif isinstance(obj, ProxyDict):
+        return dict(obj)
+    elif isinstance(obj, ProxyList):
+        return list(obj)
+    elif is_iterable_but_not_string(obj):
+        return list(obj)

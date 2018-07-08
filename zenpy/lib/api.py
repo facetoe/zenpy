@@ -2,8 +2,6 @@
 
 import json
 import logging
-from datetime import datetime, date
-from json import JSONEncoder
 
 from time import sleep, time
 
@@ -34,32 +32,13 @@ from zenpy.lib.api_objects.help_centre_objects import (
 from zenpy.lib.cache import query_cache
 from zenpy.lib.exception import *
 from zenpy.lib.mapping import ZendeskObjectMapping, ChatObjectMapping, HelpCentreObjectMapping
-from zenpy.lib.proxy import ProxyList, ProxyDict
 from zenpy.lib.request import *
 from zenpy.lib.response import *
-from zenpy.lib.util import as_plural, extract_id, is_iterable_but_not_string
+from zenpy.lib.util import as_plural, extract_id, is_iterable_but_not_string, json_encode_for_zendesk
 
 __author__ = 'facetoe'
 
 log = logging.getLogger(__name__)
-
-
-class ZenpyObjectEncoder(JSONEncoder):
-    """ Class for encoding API objects"""
-
-    def default(self, o):
-        if hasattr(o, 'to_dict'):
-            return o.to_dict(serialize=True)
-        elif isinstance(o, datetime):
-            return o.date().isoformat()
-        elif isinstance(o, date):
-            return o.isoformat()
-        elif isinstance(o, ProxyDict):
-            return dict(o)
-        elif isinstance(o, ProxyList):
-            return list(o)
-        elif is_iterable_but_not_string(o):
-            return list(o)
 
 
 class BaseApi(object):
@@ -243,7 +222,7 @@ class BaseApi(object):
         if not type(zenpy_object) == dict:
             log.debug("Setting dirty object: {}".format(zenpy_object))
             self._dirty_object = zenpy_object
-        return json.loads(json.dumps(zenpy_object, cls=ZenpyObjectEncoder))
+        return json.loads(json.dumps(zenpy_object, default=json_encode_for_zendesk))
 
     def _query_zendesk(self, endpoint, object_type, *endpoint_args, **endpoint_kwargs):
         """
