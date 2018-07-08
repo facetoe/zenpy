@@ -110,15 +110,6 @@ class CRUDRequest(BaseZendeskRequest):
         return response
 
 
-class DynamicContentRequest(CRUDRequest):
-    def build_payload(self, api_objects):
-        if isinstance(api_objects, collections.Iterable):
-            payload_key = 'items'
-        else:
-            payload_key = 'item'
-        return {payload_key: self.api._serialize(api_objects)}
-
-
 class SuspendedTicketRequest(BaseZendeskRequest):
     """
     Handle updating and deleting SuspendedTickets.
@@ -315,6 +306,30 @@ class TicketFieldOptionRequest(BaseZendeskRequest):
 
     def delete(self, ticket_field, custom_field_option):
         url = self.api._build_url(self.api.endpoint.delete(ticket_field, custom_field_option))
+        return self.api._delete(url)
+
+
+class VariantRequest(BaseZendeskRequest):
+    def post(self, item, variant):
+        if isinstance(variant, collections.Iterable):
+            endpoint = self.api.endpoint.create_many
+        else:
+            endpoint = self.api.endpoint
+        url = self.api._build_url(endpoint(item))
+        payload = self.build_payload(variant)
+        return self.api._post(url, payload=payload)
+
+    def put(self, item, variant):
+        if isinstance(variant, collections.Iterable):
+            url = self.api._build_url(self.api.endpoint.update_many(id=item))
+        else:
+            url = self.api._build_url(self.api.endpoint.update(item, variant.id))
+
+        payload = self.build_payload(variant)
+        return self.api._put(url, payload=payload)
+
+    def delete(self, item, variant):
+        url = self.api._build_url(self.api.endpoint.delete(item, variant))
         return self.api._delete(url)
 
 

@@ -2,7 +2,7 @@ from abc import abstractmethod
 
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.generator import SearchResultGenerator, ZendeskResultGenerator, ChatResultGenerator, ViewResultGenerator, \
-    TicketAuditGenerator, DynamicContentResultGenerator
+    TicketAuditGenerator
 from zenpy.lib.util import as_singular, as_plural, get_endpoint_path
 
 
@@ -204,18 +204,6 @@ class SearchResponseHandler(GenericZendeskResponseHandler):
     def build(self, response):
         return SearchResultGenerator(self, response.json())
 
-class DynamicContentResponseHandler(GenericZendeskResponseHandler):
-    """ Handles Zendesk search results. """
-
-    @staticmethod
-    def applies_to(api, response):
-        try:
-            return get_endpoint_path(api, response).startswith('/dynamic') and ('items' in response.json() or 'item' in response.json())
-        except ValueError:
-            return False
-
-    def build(self, response):
-        return DynamicContentResultGenerator(self, response.json())
 
 class CombinationResponseHandler(GenericZendeskResponseHandler):
     """ Handles a few special cases where the return type is made up of two objects. """

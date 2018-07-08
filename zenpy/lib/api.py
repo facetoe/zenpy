@@ -17,8 +17,8 @@ from zenpy.lib.api_objects import (
     GroupMembership,
     OrganizationField,
     TicketField,
-    CustomFieldOption
-)
+    CustomFieldOption,
+    Item, Variant)
 from zenpy.lib.api_objects.help_centre_objects import (
     Section,
     Article,
@@ -90,7 +90,6 @@ class BaseApi(object):
             ViewResponseHandler,
             SlaPolicyResponseHandler,
             RequestCommentResponseHandler,
-            DynamicContentResponseHandler,
             GenericZendeskResponseHandler,
             HTTPOKResponseHandler,
         )
@@ -1140,17 +1139,69 @@ class TicketFieldApi(CRUDApi):
         self.options = TicketCustomFieldOptionApi(config)
 
 
+class VariantApi(Api):
+    def __init__(self, config, endpoint):
+        super(VariantApi, self).__init__(config,
+                                         object_type='variant',
+                                         endpoint=endpoint)
+
+    @extract_id(Item, Variant)
+    def show(self, item, variant):
+        """
+        Show a variant.
+
+        :param item: Item object or id
+        :param variant: Variant object or id
+        :return:
+        """
+        url = self._build_url(self.endpoint.show(item, variant))
+        return self._get(url)
+
+    @extract_id(Item)
+    def create(self, item, variant):
+        """
+        Create one or more variants.
+
+        :param item: Item object or id
+        :param variant: Variant object or list of objects
+        """
+        return VariantRequest(self).post(item, variant)
+
+    @extract_id(Item)
+    def update(self, item, variant):
+        """
+        Update one or more variants.
+
+        :param item: Item object or id
+        :param variant: Variant object or list of objects
+        """
+        return VariantRequest(self).put(item, variant)
+
+    @extract_id(Item, Variant)
+    def delete(self, item, variant):
+        """
+        Delete a variant.
+
+        :param item: Item object or id
+        :param variant: Variant object or id
+        """
+        return VariantRequest(self).delete(item, variant)
+
+
+class DynamicContentApi(CRUDApi):
+    def __init__(self, config):
+        super(DynamicContentApi, self).__init__(config,
+                                                object_type='item',
+                                                endpoint=EndpointFactory('dynamic_contents'))
+        self.variants = VariantApi(config, endpoint=self.endpoint.variants)
+
+
 class TriggerApi(CRUDApi):
     pass
 
 
 class AutomationApi(CRUDApi):
     pass
-
-
-class DynamicContentApi(CRUDApi):
-    def create(self, api_objects, **kwargs):
-        return DynamicContentRequest(self).post(api_objects)
 
 
 class TargetApi(CRUDApi):

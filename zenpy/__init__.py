@@ -135,7 +135,7 @@ class Zenpy(object):
         self.nps = NpsApi(config)
         self.triggers = TriggerApi(config, object_type='trigger')
         self.automations = AutomationApi(config, object_type='automation')
-        self.dynamic_content = DynamicContentApi(config, object_type='dynamic_content_item')
+        self.dynamic_content = DynamicContentApi(config)
         self.targets = TargetApi(config, object_type='target')
 
     def _init_session(self, email, token, oath_token, password, session):

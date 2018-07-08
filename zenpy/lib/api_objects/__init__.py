@@ -802,76 +802,6 @@ class Definitions(BaseObject):
                     continue
 
 
-class DynamicContent(BaseObject):
-    def __init__(self,
-                 api=None,
-                 created_at=None,
-                 default_locale_id=None,
-                 id=None,
-                 name=None,
-                 outdated=None,
-                 placeholder=None,
-                 updated_at=None,
-                 url=None,
-                 variants=None,
-                 **kwargs):
-
-        self.api = api
-        self.created_at = created_at
-        self.default_locale_id = default_locale_id
-        self.id = id
-        self.name = name
-        self.outdated = outdated
-        self.placeholder = placeholder
-        self.updated_at = updated_at
-        self.url = url
-        self.variants = variants
-
-        for key, value in kwargs.items():
-            setattr(self, key, value)
-
-        for key in self.to_dict():
-            if getattr(self, key) is None:
-                try:
-                    self._dirty_attributes.remove(key)
-                except KeyError:
-                    continue
-
-    @property
-    def created(self):
-
-        if self.created_at:
-            return dateutil.parser.parse(self.created_at)
-
-    @created.setter
-    def created(self, created):
-        if created:
-            self.created_at = created
-
-    @property
-    def default_locale(self):
-
-        if self.api and self.default_locale_id:
-            return self.api._get_default_locale(self.default_locale_id)
-
-    @default_locale.setter
-    def default_locale(self, default_locale):
-        if default_locale:
-            self.default_locale_id = default_locale.id
-            self._default_locale = default_locale
-
-    @property
-    def updated(self):
-
-        if self.updated_at:
-            return dateutil.parser.parse(self.updated_at)
-
-    @updated.setter
-    def updated(self, updated):
-        if updated:
-            self.updated_at = updated
-
-
 class ErrorEvent(BaseObject):
     def __init__(self, api=None, id=None, message=None, type=None, **kwargs):
 
@@ -1306,6 +1236,76 @@ class Identity(BaseObject):
         if user:
             self.user_id = user.id
             self._user = user
+
+
+class Item(BaseObject):
+    def __init__(self,
+                 api=None,
+                 created_at=None,
+                 default_locale_id=None,
+                 id=None,
+                 name=None,
+                 outdated=None,
+                 placeholder=None,
+                 updated_at=None,
+                 url=None,
+                 variants=None,
+                 **kwargs):
+
+        self.api = api
+        self.created_at = created_at
+        self.default_locale_id = default_locale_id
+        self.id = id
+        self.name = name
+        self.outdated = outdated
+        self.placeholder = placeholder
+        self.updated_at = updated_at
+        self.url = url
+        self.variants = variants
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
+
+    @property
+    def created(self):
+
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
+
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created
+
+    @property
+    def default_locale(self):
+
+        if self.api and self.default_locale_id:
+            return self.api._get_default_locale(self.default_locale_id)
+
+    @default_locale.setter
+    def default_locale(self, default_locale):
+        if default_locale:
+            self.default_locale_id = default_locale.id
+            self._default_locale = default_locale
+
+    @property
+    def updated(self):
+
+        if self.updated_at:
+            return dateutil.parser.parse(self.updated_at)
+
+    @updated.setter
+    def updated(self, updated):
+        if updated:
+            self.updated_at = updated
 
 
 class JobStatus(BaseObject):
@@ -5184,6 +5184,64 @@ class UserRelated(BaseObject):
                     self._dirty_attributes.remove(key)
                 except KeyError:
                     continue
+
+
+class Variant(BaseObject):
+    def __init__(self,
+                 api=None,
+                 active=None,
+                 content=None,
+                 created_at=None,
+                 default=None,
+                 id=None,
+                 locale_id=None,
+                 outdated=None,
+                 updated_at=None,
+                 url=None,
+                 **kwargs):
+
+        self.api = api
+        self.active = active
+        self.content = content
+        self.created_at = created_at
+        self.default = default
+        self.id = id
+        self.locale_id = locale_id
+        self.outdated = outdated
+        self.updated_at = updated_at
+        self.url = url
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+        for key in self.to_dict():
+            if getattr(self, key) is None:
+                try:
+                    self._dirty_attributes.remove(key)
+                except KeyError:
+                    continue
+
+    @property
+    def created(self):
+
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
+
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created
+
+    @property
+    def updated(self):
+
+        if self.updated_at:
+            return dateutil.parser.parse(self.updated_at)
+
+    @updated.setter
+    def updated(self, updated):
+        if updated:
+            self.updated_at = updated
 
 
 class Via(BaseObject):

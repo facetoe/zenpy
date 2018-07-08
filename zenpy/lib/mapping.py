@@ -89,10 +89,11 @@ class ZendeskObjectMapping(object):
         'response': Response,
         'trigger': zenpy.lib.api_objects.Trigger,
         'automation': Automation,
-        'dynamic_content_item': DynamicContent,
+        'item': Item,
         'target': Target,
         'locale': Locale,
-        'custom_field_option': CustomFieldOption
+        'custom_field_option': CustomFieldOption,
+        'variant': Variant
     }
 
     skip_attrs = []
