@@ -320,7 +320,7 @@ class BaseObject(object):
                 continue
 
             # If this is a Zenpy object, convert it to a dict.
-            if isinstance(value, BaseObject):
+            if not serialize and isinstance(value, BaseObject):
                 copy_dict[key] = copy_dict.pop(key).to_dict()
 
             # This object has a flag indicating it has been dirtied, so we want to send it off.
