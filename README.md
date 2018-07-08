@@ -41,7 +41,7 @@ for ticket in zenpy_client.search('PC LOAD LETTER', type='ticket', assignee='fac
     # All objects can be converted to a Python dict.
     print(ticket.to_dict())
 
-    # Or back to JSON.
+    # Or to JSON.
     print(ticket.to_json())
 ```
 
