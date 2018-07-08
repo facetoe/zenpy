@@ -34,9 +34,15 @@ zenpy_client = Zenpy(**credentials)
 zenpy_client.tickets.create(Ticket(subject="Important", description="Thing"))
 
 # Perform a simple search
-for ticket in zenpy_client.search("PC LOAD LETTER", type='ticket', assignee="facetoe"):
+for ticket in zenpy_client.search('PC LOAD LETTER', type='ticket', assignee='facetoe'):
     # No need to mess around with ids, linked objects can be accessed directly.
-    print(ticket.requester)
+    print(ticket.requester.name)
+
+    # All objects can be converted to a Python dict.
+    print(ticket.to_dict())
+
+    # Or back to JSON.
+    print(ticket.to_json())
 ```
 
 ## Examples
