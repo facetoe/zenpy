@@ -59,7 +59,7 @@ class ZendeskObjectMapping(object):
         'activity': Activity,
         'group_membership': GroupMembership,
         'ticket_metric': TicketMetric,
-        'ticket_metric_event': TicketMetric,
+        'ticket_metric_event': TicketMetricEvent,
         'status': Status,
         'ticket_metric_item': TicketMetricItem,
         'user_field': UserField,

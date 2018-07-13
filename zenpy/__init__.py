@@ -31,7 +31,8 @@ from zenpy.lib.api import (
     TargetApi,
     BrandApi,
     TicketFormApi,
-    OrganizationFieldsApi
+    OrganizationFieldsApi,
+    TicketMetricEventsApi
 )
 
 from zenpy.lib.cache import ZenpyCache, cache_mapping, purge_cache
@@ -137,6 +138,7 @@ class Zenpy(object):
         self.automations = AutomationApi(config, object_type='automation')
         self.dynamic_content = DynamicContentApi(config)
         self.targets = TargetApi(config, object_type='target')
+        self.ticket_metric_events = TicketMetricEventsApi(config)
 
     def _init_session(self, email, token, oath_token, password, session):
         if not session:

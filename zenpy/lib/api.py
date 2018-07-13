@@ -1194,6 +1194,11 @@ class BrandApi(CRUDApi):
 class TicketFormApi(CRUDApi):
     pass
 
+class TicketMetricEventsApi(IncrementalApi):
+    def __init__(self, config):
+        super(TicketMetricEventsApi, self).__init__(config,
+                                                object_type='ticket_metric_event',
+                                                endpoint=EndpointFactory('ticket_metric_events'))
 
 class RequestAPI(CRUDApi):
     def __init__(self, config):
