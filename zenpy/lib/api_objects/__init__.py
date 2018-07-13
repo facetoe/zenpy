@@ -6055,30 +6055,3 @@ class TicketMetricEvent(BaseObject):
                 except KeyError:
                     continue
 
-    @property
-    def instance(self):
-        """
-        |  Comment: The instance of the metric associated with the event. See instance_id
-        """
-        if self.api and self.instance_id:
-            return self.api._get_instance(self.instance_id)
-
-    @instance.setter
-    def instance(self, instance):
-        if instance:
-            self.instance_id = instance.id
-            self._instance = instance
-
-    @property
-    def ticket(self):
-        """
-        |  Comment: Id of the associated ticket
-        """
-        if self.api and self.ticket_id:
-            return self.api._get_ticket(self.ticket_id)
-
-    @ticket.setter
-    def ticket(self, ticket):
-        if ticket:
-            self.ticket_id = ticket.id
-            self._ticket = ticket
