@@ -23,7 +23,7 @@ def to_snake_case(name):
 
 def to_unix_ts(start_time):
     """Given a datetime object, returns its value as a unix timestamp"""
-    if isinstance(start_time, datetime.datetime):
+    if isinstance(start_time, datetime):
         if is_timezone_aware(start_time):
             start_time = start_time.astimezone(pytz.utc)
         else:
