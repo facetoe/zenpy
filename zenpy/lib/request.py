@@ -330,7 +330,9 @@ class VariantRequest(BaseZendeskRequest):
 
     def delete(self, item, variant):
         url = self.api._build_url(self.api.endpoint.delete(item, variant))
-        return self.api._delete(url)
+        deleted = self.api._delete(url)
+        delete_from_cache(deleted)
+        return deleted
 
 
 class ChatApiRequest(RequestHandler):

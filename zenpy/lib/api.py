@@ -771,6 +771,18 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
 
         return CRUDRequest(self).post(users, create_or_update=True)
 
+    @extract_id(User)
+    def permanently_delete(self, user):
+        """
+        Permanently delete user - https://developer.zendesk.com/rest_api/docs/core/users#permanently-delete-user
+
+        :param user: User object or id
+        """
+        url = self._build_url(self.endpoint.permanently_delete(id=user))
+        deleted_user = self._delete(url)
+        delete_from_cache(deleted_user)
+        return deleted_user
+
 
 class AttachmentApi(Api):
     def __init__(self, config):
