@@ -987,13 +987,14 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         """
         return self._query_zendesk(self.endpoint.comments, 'comment', id=ticket)
 
-    def events(self, start_time):
+    def events(self, start_time, include=None):
         """
         Retrieve TicketEvents
 
+        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
         :param start_time: time to retrieve events from.
         """
-        return self._query_zendesk(self.endpoint.events, 'ticket_event', start_time=start_time)
+        return self._query_zendesk(self.endpoint.events, 'ticket_event', start_time=start_time, include=include)
 
     @extract_id(Ticket)
     def audits(self, ticket=None, include=None, **kwargs):
