@@ -69,7 +69,7 @@ class Zenpy(object):
                  timeout=None,
                  ratelimit=None,
                  ratelimit_budget=None,
-                 request_interval=None):
+                 ratelimit_request_interval=None):
         """
         Python Wrapper for the Zendesk API.
 
@@ -89,7 +89,7 @@ class Zenpy(object):
         :param timeout: global timeout on API requests.
         :param ratelimit: user specified rate limit
         :param ratelimit_budget: maximum time to spend being rate limited
-        :param request_interval: The interval in seconds between requests to Zendesk.
+        :param ratelimit_request_interval: The interval in seconds between requests to Zendesk.
         """
 
         session = self._init_session(email, token, oauth_token, password, session)
@@ -102,7 +102,7 @@ class Zenpy(object):
             timeout=timeout,
             ratelimit=int(ratelimit) if ratelimit is not None else None,
             ratelimit_budget=int(ratelimit_budget) if ratelimit_budget is not None else None,
-            request_interval=int(request_interval) if request_interval else 10,
+            ratelimit_request_interval=int(ratelimit_request_interval) if ratelimit_request_interval else 10,
         )
 
         self.users = UserApi(config)
