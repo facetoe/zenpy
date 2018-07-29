@@ -47,7 +47,7 @@ class BaseApi(object):
     rate limiting and deserializing responses.
     """
 
-    def __init__(self, subdomain, session, timeout, ratelimit, ratelimit_budget):
+    def __init__(self, subdomain, session, timeout, ratelimit, ratelimit_budget, ratelimit_request_interval):
         self.domain = 'zendesk.com'
         self.subdomain = subdomain
         self.session = session
@@ -61,6 +61,7 @@ class BaseApi(object):
             'lastcalltime': None,
             'lastlimitremaining': None
         }
+        self.ratelimit_request_interval = ratelimit_request_interval
         self._response_handlers = (
             DeleteResponseHandler,
             TagResponseHandler,
@@ -160,16 +161,17 @@ class BaseApi(object):
 
         lastlimitremaining = self.callsafety['lastlimitremaining']
 
-        if time_since_last_call() is None or time_since_last_call() >= 10 or lastlimitremaining >= self.ratelimit:
+        if time_since_last_call() is None or time_since_last_call() >= self.ratelimit_request_interval or \
+            lastlimitremaining >= self.ratelimit:
             response = http_method(url, **kwargs)
         else:
-            # We hit our limit floor and aren't quite at 10 seconds yet..
+            # We hit our limit floor and aren't quite at ratelimit_request_interval value in seconds yet..
             log.warn(
-                "Safety Limit Reached of %s remaining calls and time since last call is under 10 seconds"
-                % self.ratelimit
+                "Safety Limit Reached of %s remaining calls and time since last call is under %s seconds"
+                % (self.ratelimit, self.ratelimit_request_interval)
             )
-            while time_since_last_call() < 10:
-                remaining_sleep = int(10 - time_since_last_call())
+            while time_since_last_call() < self.ratelimit_request_interval:
+                remaining_sleep = int(self.ratelimit_request_interval - time_since_last_call())
                 log.debug("  -> sleeping: %s more seconds" % remaining_sleep)
                 sleep(1)
             response = http_method(url, **kwargs)
