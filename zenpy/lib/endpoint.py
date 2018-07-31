@@ -92,6 +92,9 @@ class PrimaryEndpoint(BaseEndpoint):
             elif key == 'count_many':
                 path += '/count_many.json'
                 parameters[key] = ",".join(map(str, value))
+            elif key == 'external_id' and path == 'tickets':
+                path += ".json"
+                parameters[key] = value
             elif key in ('external_id', 'external_ids'):
                 external_ids = [value] if not is_iterable_but_not_string(value) else value
                 path += '/show_many.json'
