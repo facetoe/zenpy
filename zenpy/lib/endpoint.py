@@ -458,7 +458,6 @@ class EndpointFactory(object):
     ticket_forms = PrimaryEndpoint('ticket_forms')
     ticket_import = PrimaryEndpoint('imports/tickets')
     ticket_metrics = PrimaryEndpoint('ticket_metrics')
-    ticket_metric_events = IncrementalEndpoint('incremental/ticket_metric_events.json')
     tickets = PrimaryEndpoint('tickets')
     tickets.audits = SecondaryEndpoint('tickets/%(id)s/audits.json')
     tickets.audits.cursor = PrimaryEndpoint('ticket_audits')
