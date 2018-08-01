@@ -47,7 +47,7 @@ class BaseApi(object):
     rate limiting and deserializing responses.
     """
 
-    def __init__(self, subdomain, session, timeout, ratelimit, ratelimit_budget):
+    def __init__(self, subdomain, session, timeout, ratelimit, ratelimit_budget, ratelimit_request_interval):
         self.domain = 'zendesk.com'
         self.subdomain = subdomain
         self.session = session
@@ -61,6 +61,7 @@ class BaseApi(object):
             'lastcalltime': None,
             'lastlimitremaining': None
         }
+        self.ratelimit_request_interval = ratelimit_request_interval
         self._response_handlers = (
             DeleteResponseHandler,
             TagResponseHandler,
@@ -160,16 +161,17 @@ class BaseApi(object):
 
         lastlimitremaining = self.callsafety['lastlimitremaining']
 
-        if time_since_last_call() is None or time_since_last_call() >= 10 or lastlimitremaining >= self.ratelimit:
+        if time_since_last_call() is None or time_since_last_call() >= self.ratelimit_request_interval or \
+            lastlimitremaining >= self.ratelimit:
             response = http_method(url, **kwargs)
         else:
-            # We hit our limit floor and aren't quite at 10 seconds yet..
+            # We hit our limit floor and aren't quite at ratelimit_request_interval value in seconds yet..
             log.warn(
-                "Safety Limit Reached of %s remaining calls and time since last call is under 10 seconds"
-                % self.ratelimit
+                "Safety Limit Reached of %s remaining calls and time since last call is under %s seconds"
+                % (self.ratelimit, self.ratelimit_request_interval)
             )
-            while time_since_last_call() < 10:
-                remaining_sleep = int(10 - time_since_last_call())
+            while time_since_last_call() < self.ratelimit_request_interval:
+                remaining_sleep = int(self.ratelimit_request_interval - time_since_last_call())
                 log.debug("  -> sleeping: %s more seconds" % remaining_sleep)
                 sleep(1)
             response = http_method(url, **kwargs)
@@ -771,6 +773,18 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
 
         return CRUDRequest(self).post(users, create_or_update=True)
 
+    @extract_id(User)
+    def permanently_delete(self, user):
+        """
+        Permanently delete user - https://developer.zendesk.com/rest_api/docs/core/users#permanently-delete-user
+
+        :param user: User object or id
+        """
+        url = self._build_url(self.endpoint.permanently_delete(id=user))
+        deleted_user = self._delete(url)
+        delete_from_cache(deleted_user)
+        return deleted_user
+
 
 class AttachmentApi(Api):
     def __init__(self, config):
@@ -975,13 +989,14 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         """
         return self._query_zendesk(self.endpoint.comments, 'comment', id=ticket)
 
-    def events(self, start_time):
+    def events(self, start_time, include=None):
         """
         Retrieve TicketEvents
 
+        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
         :param start_time: time to retrieve events from.
         """
-        return self._query_zendesk(self.endpoint.events, 'ticket_event', start_time=start_time)
+        return self._query_zendesk(self.endpoint.events, 'ticket_event', start_time=start_time, include=include)
 
     @extract_id(Ticket)
     def audits(self, ticket=None, include=None, **kwargs):
