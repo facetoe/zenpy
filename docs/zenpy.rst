@@ -361,7 +361,7 @@ The code above will not need to generate an additional API call to retrieve the 
 Caching
 ~~~~~~~
 
-:class:`Zenpy` maintains several caches to prevent unecessary API calls.
+:class:`Zenpy` support caching objects to prevent API calls, and each Zenpy instance has it's own set of caches.
 
 If we turn logging on, we can see Zenpy's caching in action. The code:
 
@@ -381,6 +381,25 @@ Outputs:
     DEBUG - Cache HIT: [User 116514121092]
 
 Here we see that only one API call is generated, as the user already existed in the cache after the first call.
+
+This feature is especially useful when combined with "sideloading" (https://developer.zendesk.com/rest_api/docs/core/side_loading). As an example, the following code:
+
+.. code:: python
+
+    ticket = zenpy_client.tickets(id=6569, include='users')
+    print(ticket.requester.name)
+
+Outputs:
+
+::
+
+    DEBUG - Cache MISS: [Ticket 6569]
+    DEBUG - GET: https://d3v-zenpydev.zendesk.com/api/v2/tickets/6569.json?include=users - {'timeout': 60.0}
+    DEBUG - Caching: [Ticket(id=6569)]
+    DEBUG - Caching: [User(id=116514121092)]
+    DEBUG - Cache HIT: [User 116514121092]
+
+We can see that because we "sideloaded" users, an extra API call was not generated when we attempted to access the requester attribute.
 
 Controlling Caching
 -------------------
@@ -415,10 +434,8 @@ By default :class:`Zenpy` caches for following objects:
 * :class:`zenpy.lib.api_objects.UserField`
 * :class:`zenpy.lib.api_objects.Group`
 * :class:`zenpy.lib.api_objects.User`
-* :class:`zenpy.lib.api_objects.OrganizationField`
 * :class:`zenpy.lib.api_objects.Organization`
 * :class:`zenpy.lib.api_objects.Brand`
-* :class:`zenpy.lib.api_objects.TicketField`
 
 
 Zenpy Endpoint Reference

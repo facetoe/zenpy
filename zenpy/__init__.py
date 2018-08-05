@@ -230,7 +230,7 @@ class Zenpy(object):
 
     def enable_caching(self):
         """
-        Enable caching of objects
+        Enable caching of objects.
         """
         self.cache.enable()
 
