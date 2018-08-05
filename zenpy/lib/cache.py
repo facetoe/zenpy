@@ -107,7 +107,7 @@ class ZenpyCacheManager:
     """
     def __init__(self, disabled=False):
         self.disabled = disabled
-        self.cache_mapping = {
+        self.mapping = {
             'user': ZenpyCache('LRUCache', maxsize=10000),
             'organization': ZenpyCache('LRUCache', maxsize=10000),
             'group': ZenpyCache('LRUCache', maxsize=10000),
@@ -122,12 +122,12 @@ class ZenpyCacheManager:
     def add_to_cache(self, zenpy_object):
         """ Add a Zenpy object to the relevant cache. If no cache exists for this object nothing is done. """
         object_type = get_object_type(zenpy_object)
-        if object_type not in self.cache_mapping or self.disabled:
+        if object_type not in self.mapping or self.disabled:
             return
         attr_name = self._cache_key_attribute(object_type)
         cache_key = getattr(zenpy_object, attr_name)
         log.debug("Caching: [{}({}={})]".format(zenpy_object.__class__.__name__, attr_name, cache_key))
-        self.cache_mapping[object_type][cache_key] = zenpy_object
+        self.mapping[object_type][cache_key] = zenpy_object
 
     def delete_from_cache(self, to_delete):
         """ Purge one or more items from the relevant caches """
@@ -135,7 +135,7 @@ class ZenpyCacheManager:
             to_delete = [to_delete]
         for zenpy_object in to_delete:
             object_type = get_object_type(zenpy_object)
-            object_cache = self.cache_mapping.get(object_type, None)
+            object_cache = self.mapping.get(object_type, None)
             if object_cache:
                 removed_object = object_cache.pop(zenpy_object.id, None)
                 if removed_object:
@@ -149,9 +149,9 @@ class ZenpyCacheManager:
 
     def query_cache(self, object_type, cache_key):
         """ Query the cache for a Zenpy object """
-        if object_type not in self.cache_mapping or self.disabled:
+        if object_type not in self.mapping or self.disabled:
             return None
-        cache = self.cache_mapping[object_type]
+        cache = self.mapping[object_type]
         if cache_key in cache:
             log.debug("Cache HIT: [%s %s]" % (object_type.capitalize(), cache_key))
             return cache[cache_key]
@@ -160,8 +160,8 @@ class ZenpyCacheManager:
 
     def purge_cache(self, object_type):
         """ Purge the named cache of all values. If no cache exists for object_type, nothing is done """
-        if object_type in self.cache_mapping:
-            cache = self.cache_mapping[object_type]
+        if object_type in self.mapping:
+            cache = self.mapping[object_type]
             log.debug("Purging [{}] cache of {} values.".format(object_type, len(cache)))
             cache.purge()
 
@@ -173,7 +173,7 @@ class ZenpyCacheManager:
 
     def should_cache(self, zenpy_object):
         """ Determine whether or not this object should be cached (ie, a cache exists for it's object_type) """
-        return get_object_type(zenpy_object) in self.cache_mapping
+        return get_object_type(zenpy_object) in self.mapping
 
     def disable(self):
         self.disabled = True

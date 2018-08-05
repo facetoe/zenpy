@@ -175,7 +175,7 @@ class Zenpy(object):
         """
         Returns a list of current caches
         """
-        return self.cache.cache_mapping.keys()
+        return self.cache.mapping.keys()
 
     def get_cache_max(self, cache_name):
         """
@@ -208,13 +208,13 @@ class Zenpy(object):
         """
         if object_type not in ZendeskObjectMapping.class_mapping:
             raise ZenpyException("No such object type: %s" % object_type)
-        self.cache.cache_mapping[object_type] = ZenpyCache(cache_impl_name, maxsize, **kwargs)
+        self.cache.mapping[object_type] = ZenpyCache(cache_impl_name, maxsize, **kwargs)
 
     def delete_cache(self, cache_name):
         """
         Deletes the named cache
         """
-        del self.cache.cache_mapping[cache_name]
+        del self.cache.mapping[cache_name]
 
     def purge_cache(self, cache_name):
         """
@@ -235,7 +235,7 @@ class Zenpy(object):
         self.cache.enable()
 
     def _get_cache(self, cache_name):
-        if cache_name not in self.cache.cache_mapping:
+        if cache_name not in self.cache.mapping:
             raise ZenpyException("No such cache - %s" % cache_name)
         else:
-            return self.cache.cache_mapping[cache_name]
+            return self.cache.mapping[cache_name]
