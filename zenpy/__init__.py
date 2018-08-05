@@ -68,7 +68,8 @@ class Zenpy(object):
                  timeout=None,
                  ratelimit=None,
                  ratelimit_budget=None,
-                 ratelimit_request_interval=None):
+                 ratelimit_request_interval=None,
+                 disable_cache=False):
         """
         Python Wrapper for the Zendesk API.
 
@@ -89,13 +90,14 @@ class Zenpy(object):
         :param ratelimit: user specified rate limit
         :param ratelimit_budget: maximum time to spend being rate limited
         :param ratelimit_request_interval: The interval in seconds between requests to Zendesk.
+        :param disable_cache: disable caching of objects
         """
 
         session = self._init_session(email, token, oauth_token, password, session)
 
         timeout = timeout or self.DEFAULT_TIMEOUT
 
-        self.cache = ZenpyCacheManager()
+        self.cache = ZenpyCacheManager(disable_cache)
 
         config = dict(
             subdomain=subdomain,
@@ -219,6 +221,18 @@ class Zenpy(object):
         Purges the named cache.
         """
         self.cache.purge_cache(cache_name)
+
+    def disable_caching(self):
+        """
+        Disable caching of objects.
+        """
+        self.cache.disable()
+
+    def enable_caching(self):
+        """
+        Enable caching of objects
+        """
+        self.cache.enable()
 
     def _get_cache(self, cache_name):
         if cache_name not in self.cache.cache_mapping:
