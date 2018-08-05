@@ -105,6 +105,7 @@ class ZenpyCacheManager:
     """
     Interface to the various caches.
     """
+
     def __init__(self, disabled=False):
         self.disabled = disabled
         self.mapping = {
@@ -119,7 +120,7 @@ class ZenpyCacheManager:
             'identity': ZenpyCache('LRUCache', maxsize=10000)
         }
 
-    def add_to_cache(self, zenpy_object):
+    def add(self, zenpy_object):
         """ Add a Zenpy object to the relevant cache. If no cache exists for this object nothing is done. """
         object_type = get_object_type(zenpy_object)
         if object_type not in self.mapping or self.disabled:
@@ -129,7 +130,7 @@ class ZenpyCacheManager:
         log.debug("Caching: [{}({}={})]".format(zenpy_object.__class__.__name__, attr_name, cache_key))
         self.mapping[object_type][cache_key] = zenpy_object
 
-    def delete_from_cache(self, to_delete):
+    def delete(self, to_delete):
         """ Purge one or more items from the relevant caches """
         if not isinstance(to_delete, list):
             to_delete = [to_delete]
@@ -141,13 +142,7 @@ class ZenpyCacheManager:
                 if removed_object:
                     log.debug("Cache RM: [%s %s]" % (object_type.capitalize(), zenpy_object.id))
 
-    def query_cache_by_object(self, zenpy_object):
-        """ Convenience method for testing. Given an object, return the cached version """
-        object_type = get_object_type(zenpy_object)
-        cache_key = self._cache_key_attribute(object_type)
-        return self.query_cache(object_type, getattr(zenpy_object, cache_key))
-
-    def query_cache(self, object_type, cache_key):
+    def get(self, object_type, cache_key):
         """ Query the cache for a Zenpy object """
         if object_type not in self.mapping or self.disabled:
             return None
@@ -157,6 +152,12 @@ class ZenpyCacheManager:
             return cache[cache_key]
         else:
             log.debug('Cache MISS: [%s %s]' % (object_type.capitalize(), cache_key))
+
+    def query_cache_by_object(self, zenpy_object):
+        """ Convenience method for testing. Given an object, return the cached version """
+        object_type = get_object_type(zenpy_object)
+        cache_key = self._cache_key_attribute(object_type)
+        return self.get(object_type, getattr(zenpy_object, cache_key))
 
     def purge_cache(self, object_type):
         """ Purge the named cache of all values. If no cache exists for object_type, nothing is done """
@@ -169,7 +170,7 @@ class ZenpyCacheManager:
         """ Determine whether or not this object is in the cache """
         object_type = get_object_type(zenpy_object)
         cache_key_attr = self._cache_key_attribute(object_type)
-        return self.query_cache(object_type, getattr(zenpy_object, cache_key_attr)) is not None
+        return self.get(object_type, getattr(zenpy_object, cache_key_attr)) is not None
 
     def should_cache(self, zenpy_object):
         """ Determine whether or not this object should be cached (ie, a cache exists for it's object_type) """

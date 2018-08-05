@@ -127,7 +127,7 @@ class ZendeskObjectMapping(object):
             setattr(obj, key, value)
         if hasattr(obj, '_clean_dirty'):
             obj._clean_dirty()
-        self.api.cache.add_to_cache(obj)
+        self.api.cache.add(obj)
         return obj
 
     def instantiate_object(self, object_type, parent):

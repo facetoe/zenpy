@@ -242,7 +242,7 @@ class BaseApi(object):
 
         _id = endpoint_kwargs.get('id', None)
         if _id:
-            item = self.cache.query_cache(object_type, _id)
+            item = self.cache.get(object_type, _id)
             if item:
                 return item
             else:
@@ -253,7 +253,7 @@ class BaseApi(object):
             # If we are missing even one we request them all again.
             # This could be optimized to only request the missing objects.
             for _id in endpoint_kwargs['ids']:
-                obj = self.cache.query_cache(object_type, _id)
+                obj = self.cache.get(object_type, _id)
                 if obj:
                     cached_objects.append(obj)
                 else:
@@ -782,7 +782,7 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
         """
         url = self._build_url(self.endpoint.permanently_delete(id=user))
         deleted_user = self._delete(url)
-        self.cache.delete_from_cache(deleted_user)
+        self.cache.delete(deleted_user)
         return deleted_user
 
 

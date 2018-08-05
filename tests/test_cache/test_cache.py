@@ -56,16 +56,16 @@ class TestCacheManager(TestCase):
     def test_cache_object(self):
         cache_key = 1
         ticket = self.cache_item(id=cache_key)
-        self.assertIs(self.cache.query_cache(get_object_type(ticket), cache_key), ticket)
+        self.assertIs(self.cache.get(get_object_type(ticket), cache_key), ticket)
 
     def test_remove_from_cache(self):
         cache_key = 1
         zenpy_object = self.cache_item(id=cache_key)
-        self.assertIs(self.cache.query_cache(get_object_type(zenpy_object), cache_key), zenpy_object)
-        self.cache.delete_from_cache(zenpy_object)
-        self.assertIs(self.cache.query_cache(get_object_type(zenpy_object), cache_key), None)
+        self.assertIs(self.cache.get(get_object_type(zenpy_object), cache_key), zenpy_object)
+        self.cache.delete(zenpy_object)
+        self.assertIs(self.cache.get(get_object_type(zenpy_object), cache_key), None)
 
     def cache_item(self, zenpy_class=Ticket, **kwargs):
         zenpy_object = zenpy_class(**kwargs)
-        self.cache.add_to_cache(zenpy_object)
+        self.cache.add(zenpy_object)
         return zenpy_object

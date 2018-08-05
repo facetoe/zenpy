@@ -103,7 +103,7 @@ class CRUDRequest(BaseZendeskRequest):
         payload = self.build_payload(api_objects)
         url = self.api._build_url(self.api.endpoint(*args, **kwargs))
         response = self.api._delete(url, payload=payload)
-        self.api.cache.delete_from_cache(api_objects)
+        self.api.cache.delete(api_objects)
         return response
 
 
@@ -138,7 +138,7 @@ class SuspendedTicketRequest(BaseZendeskRequest):
         payload = self.build_payload(tickets)
         url = self.api._build_url(self.api.endpoint(**endpoint_kwargs))
         response = self.api._delete(url, payload=payload)
-        self.api.cache.delete_from_cache(tickets)
+        self.api.cache.delete(tickets)
         return response
 
 
