@@ -331,15 +331,19 @@ Rate Limiting
 
 Zendesk imposes rate limiting (https://developer.zendesk.com/rest_api/docs/core/introduction#rate-limits). By default Zenpy will detect this and wait the required period before trying again, however for some use cases this is not desirable. Zenpy offers two additional configuration options to control rate limiting:
 
-1.  `ratelimit`
+1.  `proactive_ratelimit`
 
-    If you wish to avoid ever hitting the rate limit you can set the `ratelimit` parameter when instantiating Zenpy:
+    If you wish to avoid ever hitting the rate limit you can set the `proactive_ratelimit` parameter when instantiating Zenpy:
 
     .. code:: python
 
-        zenpy_client = Zenpy(ratelimit=20, **creds)
+        zenpy_client = Zenpy(proactive_ratelimit_request_interval=20, **creds)
 
-2.  `ratelimit_budget`
+2. `proactive_ratelimit_request_interval`
+
+    When utilizing the `proactive_ratelimit` feature, you can also specify how long to wait when you are over your `proactive_ratelimit`.
+
+3.  `ratelimit_budget`
 
     If you have a maximum amount of time you are willing to wait for rate limiting, you can set the `ratelimit_budget` parameter. This budget is decremented for every second spent being rate limited, and when the budget is spent throws a RatelimitBudgetExceeded exception. For example, if you wish to wait no more than 60 seconds:
 

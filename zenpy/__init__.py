@@ -48,17 +48,6 @@ class Zenpy(object):
 
     DEFAULT_TIMEOUT = 60.0
 
-    @staticmethod
-    def http_adapter_kwargs():
-        """
-        Provides Zenpy's default HTTPAdapter args for those users providing their own adapter.
-        """
-
-        return dict(
-            # http://docs.python-requests.org/en/latest/api/?highlight=max_retries#requests.adapters.HTTPAdapter
-            max_retries=3
-        )
-
     def __init__(self, subdomain=None,
                  email=None,
                  token=None,
@@ -66,9 +55,9 @@ class Zenpy(object):
                  password=None,
                  session=None,
                  timeout=None,
-                 ratelimit=None,
                  ratelimit_budget=None,
-                 ratelimit_request_interval=None,
+                 proactive_ratelimit=None,
+                 proactive_ratelimit_request_interval=10,
                  disable_cache=False):
         """
         Python Wrapper for the Zendesk API.
@@ -87,9 +76,9 @@ class Zenpy(object):
         :param password: Zendesk password
         :param session: existing Requests Session object
         :param timeout: global timeout on API requests.
-        :param ratelimit: user specified rate limit
         :param ratelimit_budget: maximum time to spend being rate limited
-        :param ratelimit_request_interval: The interval in seconds between requests to Zendesk.
+        :param proactive_ratelimit: user specified rate limit.
+        :param proactive_ratelimit_request_interval: seconds to wait when over proactive_ratelimit.
         :param disable_cache: disable caching of objects
         """
 
@@ -103,9 +92,9 @@ class Zenpy(object):
             subdomain=subdomain,
             session=session,
             timeout=timeout,
-            ratelimit=int(ratelimit) if ratelimit is not None else None,
+            ratelimit=int(proactive_ratelimit) if proactive_ratelimit is not None else None,
             ratelimit_budget=int(ratelimit_budget) if ratelimit_budget is not None else None,
-            ratelimit_request_interval=int(ratelimit_request_interval) if ratelimit_request_interval else 10,
+            ratelimit_request_interval=int(proactive_ratelimit_request_interval),
             cache=self.cache
         )
 
@@ -144,6 +133,17 @@ class Zenpy(object):
         self.automations = AutomationApi(config, object_type='automation')
         self.dynamic_content = DynamicContentApi(config)
         self.targets = TargetApi(config, object_type='target')
+
+    @staticmethod
+    def http_adapter_kwargs():
+        """
+        Provides Zenpy's default HTTPAdapter args for those users providing their own adapter.
+        """
+
+        return dict(
+            # http://docs.python-requests.org/en/latest/api/?highlight=max_retries#requests.adapters.HTTPAdapter
+            max_retries=3
+        )
 
     def _init_session(self, email, token, oath_token, password, session):
         if not session:
