@@ -16,7 +16,7 @@ from zenpy.lib.api_objects import (
     OrganizationField,
     TicketField,
     CustomFieldOption,
-    Item, Variant)
+    Item, Variant, Ticket, BaseObject)
 from zenpy.lib.api_objects.help_centre_objects import (
     Section,
     Article,
@@ -29,7 +29,6 @@ from zenpy.lib.api_objects.help_centre_objects import (
     Post,
     Subscription
 )
-from zenpy.lib.cache import query_cache
 from zenpy.lib.exception import *
 from zenpy.lib.mapping import ZendeskObjectMapping, ChatObjectMapping, HelpCentreObjectMapping
 from zenpy.lib.request import *
@@ -47,13 +46,14 @@ class BaseApi(object):
     rate limiting and deserializing responses.
     """
 
-    def __init__(self, subdomain, session, timeout, ratelimit, ratelimit_budget, ratelimit_request_interval):
+    def __init__(self, subdomain, session, timeout, ratelimit, ratelimit_budget, ratelimit_request_interval, cache):
         self.domain = 'zendesk.com'
         self.subdomain = subdomain
         self.session = session
         self.timeout = timeout
         self.ratelimit = ratelimit
         self.ratelimit_budget = ratelimit_budget
+        self.cache = cache
         self.protocol = 'https'
         self.api_prefix = 'api/v2'
         self._url_template = "%(protocol)s://%(subdomain)s.zendesk.com/%(api_prefix)s"
@@ -242,7 +242,7 @@ class BaseApi(object):
 
         _id = endpoint_kwargs.get('id', None)
         if _id:
-            item = query_cache(object_type, _id)
+            item = self.cache.query_cache(object_type, _id)
             if item:
                 return item
             else:
@@ -253,7 +253,7 @@ class BaseApi(object):
             # If we are missing even one we request them all again.
             # This could be optimized to only request the missing objects.
             for _id in endpoint_kwargs['ids']:
-                obj = query_cache(object_type, _id)
+                obj = self.cache.query_cache(object_type, _id)
                 if obj:
                     cached_objects.append(obj)
                 else:
@@ -782,7 +782,7 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
         """
         url = self._build_url(self.endpoint.permanently_delete(id=user))
         deleted_user = self._delete(url)
-        delete_from_cache(deleted_user)
+        self.cache.delete_from_cache(deleted_user)
         return deleted_user
 
 

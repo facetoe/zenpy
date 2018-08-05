@@ -1,13 +1,11 @@
 import hashlib
 import uuid
 from operator import attrgetter
-
-from test_api import configure
 from time import sleep
 from unittest import TestCase
 
+from test_api import configure
 from zenpy.lib.api_objects import BaseObject
-from zenpy.lib.cache import should_cache, in_cache, query_cache_by_object
 from zenpy.lib.endpoint import basestring
 from zenpy.lib.exception import TooManyValuesException, ZenpyException, RecordNotFoundException
 from zenpy.lib.generator import BaseResultGenerator
@@ -30,18 +28,18 @@ class ZenpyApiTestCase(TestCase):
 
     def assertInCache(self, zenpy_object):
         """ If an object should be cached, assert that it is """
-        if should_cache(zenpy_object):
-            self.assertTrue(in_cache(zenpy_object))
+        if self.zenpy_client.cache.should_cache(zenpy_object):
+            self.assertTrue(self.zenpy_client.cache.in_cache(zenpy_object))
 
     def assertNotInCache(self, zenpy_object):
         """ If an object should have been purged from the cache, assert that it is. """
-        if should_cache(zenpy_object):
-            self.assertTrue(not in_cache(zenpy_object))
+        if self.zenpy_client.cache.should_cache(zenpy_object):
+            self.assertTrue(not self.zenpy_client.cache.in_cache(zenpy_object))
 
     def assertCacheUpdated(self, zenpy_object, attr, expected):
         """ If an object should be cached, assert that the specified attribute is equal to 'expected'. """
-        if should_cache(zenpy_object):
-            cached_object = query_cache_by_object(zenpy_object)
+        if self.zenpy_client.cache.should_cache(zenpy_object):
+            cached_object = self.zenpy_client.cache.query_cache_by_object(zenpy_object)
             # We expect it to be present
             assert cached_object is not None
             self.assertTrue(getattr(zenpy_object, attr) == expected)

@@ -1,11 +1,11 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2018-04-16T07:19:41",
+      "recorded_at": "2018-08-05T02:58:11",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"ticket\": {\"id\": 6504}}"
+          "string": "{\"ticket\": {\"id\": 6793}}"
         },
         "headers": {
           "Accept": [
@@ -15,7 +15,7 @@
             "gzip, deflate"
           ],
           "Authorization": [
-            "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnBUNXQ2ZEZ4QWltU1hoNEkydjBYeVMwSkNlYVV4eWROQUxFRkV1VWM="
+            "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnZZaWRJVlJiVUdsekRqRVVUNjNVeURWTmt3MGVPSHIxRFptRE5pNnM="
           ],
           "Connection": [
             "keep-alive"
@@ -31,7 +31,7 @@
           ]
         },
         "method": "DELETE",
-        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/tickets/6504.json"
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/tickets/6793.json"
       },
       "response": {
         "body": {
@@ -46,7 +46,7 @@
             "keep-alive"
           ],
           "Date": [
-            "Mon, 16 Apr 2018 07:19:41 GMT"
+            "Sun, 05 Aug 2018 02:58:20 GMT"
           ],
           "Server": [
             "nginx"
@@ -60,23 +60,17 @@
           "X-Frame-Options": [
             "SAMEORIGIN"
           ],
-          "X-Rack-Cache": [
-            "invalidate, pass"
-          ],
           "X-Rate-Limit": [
             "700"
           ],
           "X-Rate-Limit-Remaining": [
-            "679"
+            "698"
           ],
           "X-Request-Id": [
-            "74ad2382-a93d-4114-c107-0a27526fa680"
+            "50f7ea3f291ad79d957fad75f1a349ef"
           ],
           "X-Runtime": [
-            "0.241699"
-          ],
-          "X-UA-Compatible": [
-            "IE=Edge,chrome=1"
+            "0.253350"
           ],
           "X-Zendesk-API-Version": [
             "v2"
@@ -85,20 +79,20 @@
             "Removed restricted keys [\"ticket.id\", \"ticket\"] from parameters according to whitelist"
           ],
           "X-Zendesk-Application-Version": [
-            "v926.24"
+            "v1989.15"
           ],
           "X-Zendesk-Origin-Server": [
-            "app40.pod13.usw2.zdsys.com"
+            "app21.pod13.usw2.zdsys.com"
           ],
           "X-Zendesk-Request-Id": [
-            "b4fd76ab99dbdcaed058"
+            "ec1f0549673cfde8c13c"
           ]
         },
         "status": {
           "code": 204,
           "message": "No Content"
         },
-        "url": "https://d3v-zenpydev.zendesk.com/api/v2/tickets/6504.json"
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/tickets/6793.json"
       }
     }
   ],

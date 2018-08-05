@@ -33,8 +33,7 @@ from zenpy.lib.api import (
     TicketFormApi,
     OrganizationFieldsApi
 )
-
-from zenpy.lib.cache import ZenpyCache, cache_mapping, purge_cache
+from zenpy.lib.cache import ZenpyCache, ZenpyCacheManager
 from zenpy.lib.endpoint import EndpointFactory
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.mapping import ZendeskObjectMapping
@@ -96,6 +95,8 @@ class Zenpy(object):
 
         timeout = timeout or self.DEFAULT_TIMEOUT
 
+        self.cache = ZenpyCacheManager()
+
         config = dict(
             subdomain=subdomain,
             session=session,
@@ -103,6 +104,7 @@ class Zenpy(object):
             ratelimit=int(ratelimit) if ratelimit is not None else None,
             ratelimit_budget=int(ratelimit_budget) if ratelimit_budget is not None else None,
             ratelimit_request_interval=int(ratelimit_request_interval) if ratelimit_request_interval else 10,
+            cache=self.cache
         )
 
         self.users = UserApi(config)
@@ -171,7 +173,7 @@ class Zenpy(object):
         """
         Returns a list of current caches
         """
-        return cache_mapping.keys()
+        return self.cache.cache_mapping.keys()
 
     def get_cache_max(self, cache_name):
         """
@@ -204,22 +206,22 @@ class Zenpy(object):
         """
         if object_type not in ZendeskObjectMapping.class_mapping:
             raise ZenpyException("No such object type: %s" % object_type)
-        cache_mapping[object_type] = ZenpyCache(cache_impl_name, maxsize, **kwargs)
+        self.cache.cache_mapping[object_type] = ZenpyCache(cache_impl_name, maxsize, **kwargs)
 
     def delete_cache(self, cache_name):
         """
         Deletes the named cache
         """
-        del cache_mapping[cache_name]
+        del self.cache.cache_mapping[cache_name]
 
     def purge_cache(self, cache_name):
         """
         Purges the named cache.
         """
-        purge_cache(cache_name)
+        self.cache.purge_cache(cache_name)
 
     def _get_cache(self, cache_name):
-        if cache_name not in cache_mapping:
+        if cache_name not in self.cache.cache_mapping:
             raise ZenpyException("No such cache - %s" % cache_name)
         else:
-            return cache_mapping[cache_name]
+            return self.cache.cache_mapping[cache_name]

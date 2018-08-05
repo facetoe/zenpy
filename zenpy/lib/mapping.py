@@ -5,7 +5,6 @@ from zenpy.lib.api_objects import *
 from zenpy.lib.api_objects.chat_objects import *
 from zenpy.lib.api_objects.help_centre_objects import Article, Category, Section, Label, Translation, Topic, Post, \
     Subscription, Vote, AccessPolicy, UserSegment
-from zenpy.lib.cache import add_to_cache
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.proxy import ProxyDict, ProxyList
 from zenpy.lib.util import as_singular, get_object_type
@@ -128,7 +127,7 @@ class ZendeskObjectMapping(object):
             setattr(obj, key, value)
         if hasattr(obj, '_clean_dirty'):
             obj._clean_dirty()
-        add_to_cache(obj)
+        self.api.cache.add_to_cache(obj)
         return obj
 
     def instantiate_object(self, object_type, parent):
