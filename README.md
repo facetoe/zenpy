@@ -14,6 +14,7 @@ Please report bugs!
 * [Examples](#examples)
     * [Creating a ticket with a different requester](#creating-a-ticket-with-a-different-requester)
     * [Commenting on a ticket](#commenting-on-a-ticket)
+    * [Adding a HTML comment to a ticket](#adding-a-html-comment-to-a-ticket)
     * [Appending tags to a ticket](#appending-tags-to-a-ticket)
     * [Uploading an attachment](#uploading-an-attachment)
     * [Creating a ticket with a custom field set](#creating-a-ticket-with-a-custom-field-set)
@@ -66,6 +67,18 @@ from zenpy.lib.api_objects import Comment
 ticket = zenpy_client.tickets(id=some_ticket_id)
 ticket.comment = Comment(body="Important private comment", public=False)
 zenpy_client.tickets.update(ticket)
+```
+
+##### Adding a HTML comment to a ticket
+
+```python
+from zenpy.lib.api_objects import Ticket, Comment
+
+zenpy_client.tickets.create(Ticket(
+    subject='Html comment example',
+    comment=Comment(body='The smoke is very colorful',
+                    html_body='<h2>The smoke is <i>very</i> colourful</h2>'))
+)
 ```
 
 ##### Appending tags to a ticket
