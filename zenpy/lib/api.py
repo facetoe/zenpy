@@ -859,6 +859,10 @@ class OrganizationApi(TaggableApi, IncrementalApi, CRUDExternalApi):
         super(OrganizationApi, self).__init__(config, object_type='organization')
 
     @extract_id(Organization)
+    def users(self, organization, include=None):
+        return self._get(self._build_url(self.endpoint.users(id=organization, include=include)))
+
+    @extract_id(Organization)
     def organization_fields(self, organization):
         """
         Retrieve the organization fields for this organization.
@@ -1256,6 +1260,10 @@ class SharingAgreementAPI(CRUDApi):
 class GroupApi(CRUDApi):
     def __init__(self, config):
         super(GroupApi, self).__init__(config, object_type='group')
+
+    @extract_id(Group)
+    def users(self, group, include=None):
+        return self._get(self._build_url(self.endpoint.users(id=group, include=include)))
 
     @extract_id(Group)
     def memberships(self, group, include=None):
