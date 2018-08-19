@@ -76,4 +76,4 @@ for result in results:
         output[namespace].update(data)
 
 with open('doc_dict.json', 'w+') as f:
-    json.dump(output, f)
+    json.dump(output, f, indent=2)

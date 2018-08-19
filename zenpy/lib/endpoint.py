@@ -1,6 +1,6 @@
 import logging
-from datetime import datetime
 from datetime import date
+from datetime import datetime
 
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.util import is_iterable_but_not_string, to_unix_ts
@@ -117,6 +117,8 @@ class PrimaryEndpoint(BaseEndpoint):
                     parameters[key] = ",".join(value)
                 elif value:
                     parameters[key] = value
+            elif key in ('since_id', 'ticket_id', 'issue_id'):  # Jira integration
+                parameters[key] = value
 
             # this is a bit of a hack
             elif key == 'role':
@@ -419,6 +421,7 @@ class EndpointFactory(object):
     groups.memberships_assignable = SecondaryEndpoint('groups/%(id)s/memberships/assignable.json')
     job_statuses = PrimaryEndpoint('job_statuses')
     locales = PrimaryEndpoint('locales')
+    links = PrimaryEndpoint('services/jira/links')
     macros = MacroEndpoint('macros')
     macros.apply = SecondaryEndpoint('macros/%(id)s/apply.json')
 

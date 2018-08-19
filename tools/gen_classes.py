@@ -228,7 +228,8 @@ class Attribute(object):
 
     def get_is_property(self, attr_name):
         if attr_name in ('locale_id', 'external_id', 'graph_object_id',
-                         'agreement_id', 'content_id', 'item_id', 'source_id', 'community_id'):
+                         'agreement_id', 'content_id', 'item_id', 'source_id', 'community_id',
+                         'issue_id', 'instance_id'):
             return False
         if attr_name.endswith('_id') or attr_name.endswith('_ids'):
             return True

@@ -31,8 +31,8 @@ from zenpy.lib.api import (
     TargetApi,
     BrandApi,
     TicketFormApi,
-    OrganizationFieldsApi
-)
+    OrganizationFieldsApi,
+    JiraLinkApi)
 from zenpy.lib.cache import ZenpyCache, ZenpyCacheManager
 from zenpy.lib.endpoint import EndpointFactory
 from zenpy.lib.exception import ZenpyException
@@ -112,6 +112,7 @@ class Zenpy(object):
         self.attachments = AttachmentApi(config)
         self.brands = BrandApi(config, object_type='brand')
         self.job_status = Api(config, object_type='job_status', endpoint=EndpointFactory('job_statuses'))
+        self.jira_links = JiraLinkApi(config)
         self.tags = Api(config, object_type='tag')
         self.satisfaction_ratings = SatisfactionRatingApi(config)
         self.sharing_agreements = SharingAgreementAPI(config)

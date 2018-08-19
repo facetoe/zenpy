@@ -987,7 +987,7 @@ class Shortcut(BaseObject):
 
         # Description: The name of the shortcut
         # Read-only: no
-        # Type: integer
+        # Type: string
         self.name = name
 
         # Description: Options for the shortcut

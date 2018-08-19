@@ -2,7 +2,6 @@
 
 import json
 import logging
-
 from time import sleep, time
 
 from zenpy.lib.api_objects import (
@@ -162,7 +161,7 @@ class BaseApi(object):
         lastlimitremaining = self.callsafety['lastlimitremaining']
 
         if time_since_last_call() is None or time_since_last_call() >= self.ratelimit_request_interval or \
-            lastlimitremaining >= self.ratelimit:
+                lastlimitremaining >= self.ratelimit:
             response = http_method(url, **kwargs)
         else:
             # We hit our limit floor and aren't quite at ratelimit_request_interval value in seconds yet..
@@ -1382,6 +1381,15 @@ class GroupMembershipApi(CRUDApi):
         :param group_membership: GroupMembership object or id
         """
         return self._put(self._build_url(self.endpoint.make_default(user, group_membership)), payload={})
+
+
+class JiraLinkApi(CRUDApi):
+    def __init__(self, config):
+        super(JiraLinkApi, self).__init__(config, object_type='link')
+        self.api_prefix = "api"
+
+    def update(self, api_objects, **kwargs):
+        raise ZenpyException("Cannot update Jira Links!")
 
 
 class SlaPolicyApi(CRUDApi):
