@@ -793,6 +793,13 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
         """
         return self._get(self._build_url(self.endpoint.deleted()))
 
+    @extract_id(User)
+    def skips(self, user):
+        """
+        Skips for user (https://developer.zendesk.com/rest_api/docs/core/ticket_skips)
+        """
+        return self._get(self._build_url(self.endpoint.skips(id=user)))
+
 
 class AttachmentApi(Api):
     def __init__(self, config):
@@ -1081,6 +1088,27 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         return TicketMergeRequest(self).post(target, source,
                                              target_comment=target_comment,
                                              source_comment=source_comment)
+
+    @extract_id(Ticket)
+    def skips(self, ticket):
+        """
+        Skips for ticket (https://developer.zendesk.com/rest_api/docs/core/ticket_skips)
+        """
+
+        return self._get(self._build_url(self.endpoint.skips(id=ticket)))
+
+
+class SkipApi(CRUDApi):
+    def __init__(self, config):
+        super(SkipApi, self).__init__(config,
+                                      object_type='skip',
+                                      endpoint=EndpointFactory('skips'))
+
+    def delete(self, api_objects, **kwargs):
+        raise NotImplementedError("Cannot delete Skip objects")
+
+    def update(self, api_objects, **kwargs):
+        raise NotImplementedError("Cannot update Skip objects")
 
 
 class TicketImportAPI(CRUDApi):

@@ -94,7 +94,8 @@ class ZendeskObjectMapping(object):
         'locale': Locale,
         'custom_field_option': CustomFieldOption,
         'variant': Variant,
-        'link': Link
+        'link': Link,
+        'skip': Skip
     }
 
     skip_attrs = []
