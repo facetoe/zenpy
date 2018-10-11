@@ -40,7 +40,7 @@ class {{object.name}}(BaseObject):
         object_name = to_snake_case(name).lower() + 's'
 
         for attr_name, attr in iter(sorted(_json.items())):
-            attribute = Attribute(attr_name=attr_name, attr_value=attr)
+            attribute = Attribute(attr_name=attr_name, attr_value=attr, parent_object=to_snake_case(name).lower())
             if object_name in doc_json and attr_name in doc_json[object_name]:
                 doc_strings = []
                 attr_docs = doc_json[object_name][attr_name]
@@ -172,10 +172,11 @@ class Property(TemplateObject):
 
 
 class Attribute(object):
-    def __init__(self, attr_name, attr_value, attr_docs=None):
+    def __init__(self, parent_object, attr_name, attr_value, attr_docs=None):
         if attr_name == 'from':
             attr_name = 'from_'
 
+        self.parent_object = parent_object
         self.key = '_{}'.format(attr_name) if attr_name.endswith('timestamp') else attr_name
         self.attr_docs = attr_docs
         self.object_type = self.get_object_type(attr_name)
@@ -230,6 +231,8 @@ class Attribute(object):
         if attr_name in ('locale_id', 'external_id', 'graph_object_id',
                          'agreement_id', 'content_id', 'item_id', 'source_id', 'community_id',
                          'issue_id', 'instance_id'):
+            return False
+        elif self.parent_object == 'skip' and attr_name in ('ticket', 'ticket_id'):
             return False
         if attr_name.endswith('_id') or attr_name.endswith('_ids'):
             return True
