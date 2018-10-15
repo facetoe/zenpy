@@ -95,7 +95,8 @@ class ZendeskObjectMapping(object):
         'custom_field_option': CustomFieldOption,
         'variant': Variant,
         'link': Link,
-        'skip': Skip
+        'skip': Skip,
+        'schedule': Schedule
     }
 
     skip_attrs = []
@@ -123,9 +124,11 @@ class ZendeskObjectMapping(object):
             if key not in self.skip_attrs:
                 key, value = self._deserialize(key, obj, value)
             if isinstance(value, dict):
-                value = ProxyDict(value, dirty_callback=getattr(obj, '_dirty_callback', None))
+                value = ProxyDict(value, dirty_callback=getattr(
+                    obj, '_dirty_callback', None))
             elif isinstance(value, list):
-                value = ProxyList(value, dirty_callback=getattr(obj, '_dirty_callback', None))
+                value = ProxyList(value, dirty_callback=getattr(
+                    obj, '_dirty_callback', None))
             setattr(obj, key, value)
         if hasattr(obj, '_clean_dirty'):
             obj._clean_dirty()
@@ -160,12 +163,14 @@ class ZendeskObjectMapping(object):
             if key in self.class_mapping:
                 value = self.object_from_json(key, value, parent=obj)
             elif as_singular(key) in self.class_mapping:
-                value = self.object_from_json(as_singular(key), value, parent=obj)
+                value = self.object_from_json(
+                    as_singular(key), value, parent=obj)
         elif isinstance(value, list) and self.format_key(as_singular(key), parent=obj) in self.class_mapping:
             zenpy_objects = list()
             for item in value:
                 object_type = self.format_key(as_singular(key), parent=obj)
-                zenpy_objects.append(self.object_from_json(object_type, item, parent=obj))
+                zenpy_objects.append(self.object_from_json(
+                    object_type, item, parent=obj))
             value = zenpy_objects
         return key, value
 
