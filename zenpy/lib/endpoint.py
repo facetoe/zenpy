@@ -449,6 +449,7 @@ class EndpointFactory(object):
     requests.solved = PrimaryEndpoint("requests/solved")
     satisfaction_ratings = SatisfactionRatingEndpoint('satisfaction_ratings')
     satisfaction_ratings.create = SecondaryEndpoint('tickets/%(id)s/satisfaction_rating.json')
+    schedules = PrimaryEndpoint('business_hours/schedules')
     search = SearchEndpoint('search.json')
     sharing_agreements = PrimaryEndpoint('sharing_agreements')
     sla_policies = PrimaryEndpoint('slas/policies')
