@@ -28,8 +28,16 @@ from zenpy.lib.api_objects.help_centre_objects import (
     Post,
     Subscription
 )
+from zenpy.lib.api_objects.talk_objects import (
+    CurrentQueueActivity,
+    PhoneNumbers,
+    ShowAvailability,
+    AgentsOverview,
+    AccountOverview,
+    AgentsActivity
+)
 from zenpy.lib.exception import *
-from zenpy.lib.mapping import ZendeskObjectMapping, ChatObjectMapping, HelpCentreObjectMapping
+from zenpy.lib.mapping import ZendeskObjectMapping, ChatObjectMapping, HelpCentreObjectMapping, TalkObjectMapping
 from zenpy.lib.request import *
 from zenpy.lib.response import *
 from zenpy.lib.util import as_plural, extract_id, is_iterable_but_not_string, json_encode_for_zendesk
@@ -405,7 +413,6 @@ class Api(BaseApi):
 
     def _get_default_locale(self, locale_id):
         return self._query_zendesk(EndpointFactory('locales'), 'locale', id=locale_id)
-
 
 class CRUDApi(Api):
     """
@@ -1854,3 +1861,27 @@ class NpsApi(Api):
         :param start_time: time to retrieve events from.
         """
         return self._query_zendesk(self.endpoint.responses_incremental, 'responses', start_time=start_time)
+
+class TalkApi(Api):
+    def __init__(self, config, endpoint, object_type):
+        super(TalkApi, self).__init__(config, object_type=object_type, endpoint=endpoint)
+        self._object_mapping = TalkObjectMapping(self)
+
+    def current_queue_activity(self, **kwargs):
+        return self._query_zendesk(EndpointFactory('talk').current_queue_activity,'current_queue_activity', **kwargs)
+
+    def agents_activity(self, **kwargs):
+        return self._query_zendesk(EndpointFactory('talk').agents_activity,'agents_activity', **kwargs)
+
+    def availability(self, **kwargs):
+        return self._query_zendesk(EndpointFactory('talk').availability,'availability', **kwargs)
+
+    def account_overview(self, **kwargs):
+        return self._query_zendesk(EndpointFactory('talk').account_overview,'account_overview', **kwargs)
+
+    def phone_numbers(self, **kwargs):
+        for phone_number in self._query_zendesk(EndpointFactory('talk').phone_numbers,'phone_numbers', **kwargs):
+            yield phone_number
+
+    def agents_overview(self):
+        return self._query_zendesk(EndpointFactory('talk').agents_overview,'agents_overview')
