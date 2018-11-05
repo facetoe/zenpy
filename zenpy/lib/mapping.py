@@ -1,244 +1,246 @@
 import logging
 
-import requests
-from requests.adapters import HTTPAdapter
-
-from zenpy.lib.api import (
-    UserApi,
-    Api,
-    TicketApi,
-    OrganizationApi,
-    SuspendedTicketApi,
-    EndUserApi,
-    TicketImportAPI,
-    RequestAPI,
-    OrganizationMembershipApi,
-    AttachmentApi,
-    SharingAgreementAPI,
-    SatisfactionRatingApi,
-    MacroApi,
-    GroupApi,
-    ViewApi,
-    SlaPolicyApi,
-    ChatApi,
-    GroupMembershipApi,
-    HelpCentreApi,
-    RecipientAddressApi,
-    NpsApi, TicketFieldApi,
-    TriggerApi,
-    AutomationApi,
-    DynamicContentApi,
-    TargetApi,
-    BrandApi,
-    TicketFormApi,
-    OrganizationFieldsApi,
-    JiraLinkApi, SkipApi, TalkApi)
-from zenpy.lib.cache import ZenpyCache, ZenpyCacheManager
-from zenpy.lib.endpoint import EndpointFactory
+import zenpy
+from zenpy.lib.api_objects import *
+from zenpy.lib.api_objects.chat_objects import *
+from zenpy.lib.api_objects.help_centre_objects import Article, Category, Section, Label, Translation, Topic, Post, \
+    Subscription, Vote, AccessPolicy, UserSegment
+from zenpy.lib.api_objects.talk_objects import *
 from zenpy.lib.exception import ZenpyException
-from zenpy.lib.mapping import ZendeskObjectMapping
+from zenpy.lib.proxy import ProxyDict, ProxyList
+from zenpy.lib.util import as_singular, get_object_type
 
-log = logging.getLogger()
+log = logging.getLogger(__name__)
 
 __author__ = 'facetoe'
 
 
-class Zenpy(object):
-    """"""
+class ZendeskObjectMapping(object):
+    """
+    Handle converting Zendesk JSON objects to Python ones.
+    """
+    class_mapping = {
+        'ticket': Ticket,
+        'user': User,
+        'deleted_user': User,
+        'organization': Organization,
+        'group': Group,
+        'brand': Brand,
+        'topic': Topic,
+        'comment': Comment,
+        'attachment': Attachment,
+        'thumbnail': Thumbnail,
+        'metadata': Metadata,
+        'system': System,
+        'create': CreateEvent,
+        'change': ChangeEvent,
+        'notification': NotificationEvent,
+        'voicecomment': VoiceCommentEvent,
+        'commentprivacychange': CommentPrivacyChangeEvent,
+        'satisfactionrating': SatisfactionRatingEvent,
+        'ticketsharingevent': TicketSharingEvent,
+        'organizationactivity': OrganizationActivityEvent,
+        'error': ErrorEvent,
+        'tweet': TweetEvent,
+        'facebookevent': FacebookEvent,
+        'facebookcomment': FacebookCommentEvent,
+        'external': ExternalEvent,
+        'logmeintranscript': LogmeinTranscriptEvent,
+        'push': PushEvent,
+        'cc': CcEvent,
+        'via': Via,
+        'source': Source,
+        'job_status': JobStatus,
+        'audit': Audit,
+        'ticket_event': TicketEvent,
+        'tag': Tag,
+        'suspended_ticket': SuspendedTicket,
+        'ticket_audit': TicketAudit,
+        'satisfaction_rating': SatisfactionRating,
+        'activity': Activity,
+        'group_membership': GroupMembership,
+        'ticket_metric': TicketMetric,
+        'ticket_metric_event': TicketMetricEvent,
+        'status': Status,
+        'ticket_metric_item': TicketMetricItem,
+        'user_field': UserField,
+        'organization_field': OrganizationField,
+        'ticket_field': TicketField,
+        'ticket_form': TicketForm,
+        'request': Request,
+        'user_related': UserRelated,
+        'organization_membership': OrganizationMembership,
+        'upload': Upload,
+        'sharing_agreement': SharingAgreement,
+        'macro': Macro,
+        'result': MacroResult,
+        'job_status_result': JobStatusResult,
+        'agentmacroreference': AgentMacroReference,
+        'identity': Identity,
+        'view': View,
+        'conditions': Conditions,
+        'view_row': ViewRow,
+        'view_count': ViewCount,
+        'export': Export,
+        'sla_policy': SlaPolicy,
+        'policy_metric': PolicyMetric,
+        'definitions': Definitions,
+        'recipient_address': RecipientAddress,
+        'recipient': Recipient,
+        'response': Response,
+        'trigger': zenpy.lib.api_objects.Trigger,
+        'automation': Automation,
+        'item': Item,
+        'target': Target,
+        'locale': Locale,
+        'custom_field_option': CustomFieldOption,
+        'variant': Variant,
+        'link': Link,
+        'skip': Skip,
+        'schedule': Schedule
+    }
 
-    DEFAULT_TIMEOUT = 60.0
+    skip_attrs = []
+    always_dirty = {}
 
-    def __init__(self, subdomain=None,
-                 email=None,
-                 token=None,
-                 oauth_token=None,
-                 password=None,
-                 session=None,
-                 timeout=None,
-                 ratelimit_budget=None,
-                 proactive_ratelimit=None,
-                 proactive_ratelimit_request_interval=10,
-                 disable_cache=False):
-        """
-        Python Wrapper for the Zendesk API.
-
-        There are several ways to authenticate with the Zendesk API:
-            * Email and password
-            * Email and Zendesk API token
-            * Email and OAuth token
-            * Existing authenticated Requests Session object.
-
-
-        :param subdomain: your Zendesk subdomain
-        :param email: email address
-        :param token: Zendesk API token
-        :param oauth_token: OAuth token
-        :param password: Zendesk password
-        :param session: existing Requests Session object
-        :param timeout: global timeout on API requests.
-        :param ratelimit_budget: maximum time to spend being rate limited
-        :param proactive_ratelimit: user specified rate limit.
-        :param proactive_ratelimit_request_interval: seconds to wait when over proactive_ratelimit.
-        :param disable_cache: disable caching of objects
-        """
-
-        session = self._init_session(email, token, oauth_token, password, session)
-
-        timeout = timeout or self.DEFAULT_TIMEOUT
-
-        self.cache = ZenpyCacheManager(disable_cache)
-
-        config = dict(
-            subdomain=subdomain,
-            session=session,
-            timeout=timeout,
-            ratelimit=int(proactive_ratelimit) if proactive_ratelimit is not None else None,
-            ratelimit_budget=int(ratelimit_budget) if ratelimit_budget is not None else None,
-            ratelimit_request_interval=int(proactive_ratelimit_request_interval),
-            cache=self.cache
+    def __init__(self, api):
+        self.api = api
+        self.skip_attrs = ['user_fields', 'organization_fields']
+        self.always_dirty = dict(
+            conditions=('all', 'any'),
+            organization_field=('custom_field_options',),
+            ticket_field=('custom_field_options',)
         )
 
-        self.users = UserApi(config)
-        self.user_fields = Api(config, object_type='user_field')
-        self.groups = GroupApi(config)
-        self.macros = MacroApi(config)
-        self.organizations = OrganizationApi(config)
-        self.organization_memberships = OrganizationMembershipApi(config)
-        self.organization_fields = OrganizationFieldsApi(config)
-        self.tickets = TicketApi(config)
-        self.suspended_tickets = SuspendedTicketApi(config, object_type='suspended_ticket')
-        self.search = Api(config, object_type='results', endpoint=EndpointFactory('search'))
-        self.topics = Api(config, object_type='topic')
-        self.attachments = AttachmentApi(config)
-        self.brands = BrandApi(config, object_type='brand')
-        self.job_status = Api(config, object_type='job_status', endpoint=EndpointFactory('job_statuses'))
-        self.jira_links = JiraLinkApi(config)
-        self.tags = Api(config, object_type='tag')
-        self.satisfaction_ratings = SatisfactionRatingApi(config)
-        self.sharing_agreements = SharingAgreementAPI(config)
-        self.skips = SkipApi(config)
-        self.activities = Api(config, object_type='activity')
-        self.group_memberships = GroupMembershipApi(config)
-        self.end_user = EndUserApi(config)
-        self.ticket_metrics = Api(config, object_type='ticket_metric')
-        self.ticket_fields = TicketFieldApi(config)
-        self.ticket_forms = TicketFormApi(config, object_type='ticket_form')
-        self.ticket_import = TicketImportAPI(config)
-        self.requests = RequestAPI(config)
-        self.chats = ChatApi(config, endpoint=EndpointFactory('chats'))
-        self.views = ViewApi(config)
-        self.sla_policies = SlaPolicyApi(config)
-        self.help_center = HelpCentreApi(config)
-        self.recipient_addresses = RecipientAddressApi(config)
-        self.nps = NpsApi(config)
-        self.triggers = TriggerApi(config, object_type='trigger')
-        self.automations = AutomationApi(config, object_type='automation')
-        self.dynamic_content = DynamicContentApi(config)
-        self.targets = TargetApi(config, object_type='target')
-        self.talk = TalkApi(config,EndpointFactory('talk'),'talk')
+    def object_from_json(self, object_type, object_json, parent=None):
+        """
+        Given a blob of JSON representing a Zenpy object, recursively deserialize it and
+         any nested objects it contains. This method also adds the deserialized object
+         to the relevant cache if applicable.
+        """
+        if not isinstance(object_json, dict):
+            return object_json
+        obj = self.instantiate_object(object_type, parent)
+        for key, value in object_json.items():
+            if key not in self.skip_attrs:
+                key, value = self._deserialize(key, obj, value)
+            if isinstance(value, dict):
+                value = ProxyDict(value, dirty_callback=getattr(
+                    obj, '_dirty_callback', None))
+            elif isinstance(value, list):
+                value = ProxyList(value, dirty_callback=getattr(
+                    obj, '_dirty_callback', None))
+            setattr(obj, key, value)
+        if hasattr(obj, '_clean_dirty'):
+            obj._clean_dirty()
+        self.api.cache.add(obj)
+        return obj
 
-    @staticmethod
-    def http_adapter_kwargs():
+    def instantiate_object(self, object_type, parent):
         """
-        Provides Zenpy's default HTTPAdapter args for those users providing their own adapter.
-        """
+        Instantiate a Zenpy object. If this object has a parent, add a callback to call the parent if it is modified.
+        This is so the parent object is correctly marked as dirty when a child is modified, eg:
 
-        return dict(
-            # http://docs.python-requests.org/en/latest/api/?highlight=max_retries#requests.adapters.HTTPAdapter
-            max_retries=3
-        )
+            view.conditions.all.append(<something>)
 
-    def _init_session(self, email, token, oath_token, password, session):
-        if not session:
-            session = requests.Session()
-            # Workaround for possible race condition - https://github.com/kennethreitz/requests/issues/3661
-            session.mount('https://', HTTPAdapter(**self.http_adapter_kwargs()))
+        Also, some attributes need to be sent together to Zendesk together if either is modified. For example,
+        Condition objects need to send both "all" and "any", even if only one has changed. If we have such values
+        configured, add them. They will be inspected in the objects to_dict method on serialization.
+        """
+        ZenpyClass = self.class_for_type(object_type)
+        obj = ZenpyClass(api=self.api)
+        if parent:
+            def dirty_callback():
+                parent._dirty = True
+                obj._dirty = True
 
-        if not hasattr(session, 'authorized') or not session.authorized:
-            # session is not an OAuth session that has been authorized, so authorize the session.
-            if not password and not token and not oath_token:
-                raise ZenpyException("password, token or oauth_token are required!")
-            elif password and token:
-                raise ZenpyException("password and token "
-                                     "are mutually exclusive!")
-            if password:
-                session.auth = (email, password)
-            elif token:
-                session.auth = ('%s/token' % email, token)
-            elif oath_token:
-                session.headers.update({'Authorization': 'Bearer %s' % oath_token})
-            else:
-                raise ZenpyException("Invalid arguments to _init_session()!")
+            obj._dirty_callback = dirty_callback
+        obj._always_dirty.update(self.always_dirty.get(object_type, []))
+        return obj
 
-        headers = {'User-Agent': 'Zenpy/1.2'}
-        session.headers.update(headers)
-        return session
+    def _deserialize(self, key, obj, value):
+        if isinstance(value, dict):
+            key = self.format_key(key, parent=obj)
+            if key in self.class_mapping:
+                value = self.object_from_json(key, value, parent=obj)
+            elif as_singular(key) in self.class_mapping:
+                value = self.object_from_json(
+                    as_singular(key), value, parent=obj)
+        elif isinstance(value, list) and self.format_key(as_singular(key), parent=obj) in self.class_mapping:
+            zenpy_objects = list()
+            for item in value:
+                object_type = self.format_key(as_singular(key), parent=obj)
+                zenpy_objects.append(self.object_from_json(
+                    object_type, item, parent=obj))
+            value = zenpy_objects
+        return key, value
 
-    def get_cache_names(self):
-        """
-        Returns a list of current caches
-        """
-        return self.cache.mapping.keys()
-
-    def get_cache_max(self, cache_name):
-        """
-        Returns the maxsize attribute of the named cache
-        """
-        return self._get_cache(cache_name).maxsize
-
-    def set_cache_max(self, cache_name, maxsize, **kwargs):
-        """
-        Sets the maxsize attribute of the named cache
-        """
-        cache = self._get_cache(cache_name)
-        cache.set_maxsize(maxsize, **kwargs)
-
-    def get_cache_impl_name(self, cache_name):
-        """
-        Returns the name of the cache implementation for the named cache
-        """
-        return self._get_cache(cache_name).impl_name
-
-    def set_cache_implementation(self, cache_name, impl_name, maxsize, **kwargs):
-        """
-        Changes the cache implementation for the named cache
-        """
-        self._get_cache(cache_name).set_cache_impl(impl_name, maxsize, **kwargs)
-
-    def add_cache(self, object_type, cache_impl_name, maxsize, **kwargs):
-        """
-        Add a new cache for the named object type and cache implementation
-        """
-        if object_type not in ZendeskObjectMapping.class_mapping:
-            raise ZenpyException("No such object type: %s" % object_type)
-        self.cache.mapping[object_type] = ZenpyCache(cache_impl_name, maxsize, **kwargs)
-
-    def delete_cache(self, cache_name):
-        """
-        Deletes the named cache
-        """
-        del self.cache.mapping[cache_name]
-
-    def purge_cache(self, cache_name):
-        """
-        Purges the named cache.
-        """
-        self.cache.purge_cache(cache_name)
-
-    def disable_caching(self):
-        """
-        Disable caching of objects.
-        """
-        self.cache.disable()
-
-    def enable_caching(self):
-        """
-        Enable caching of objects.
-        """
-        self.cache.enable()
-
-    def _get_cache(self, cache_name):
-        if cache_name not in self.cache.mapping:
-            raise ZenpyException("No such cache - %s" % cache_name)
+    def class_for_type(self, object_type):
+        """ Given an object_type return the class associated with it. """
+        if object_type not in self.class_mapping:
+            raise ZenpyException("Unknown object_type: " + str(object_type))
         else:
-            return self.cache.mapping[cache_name]
+            return self.class_mapping[object_type]
+
+    def format_key(self, key, parent):
+        if key == 'result':
+            key = "{}_result".format(get_object_type(parent))
+        elif key in ('metadata', 'from', 'system', 'photo', 'thumbnails'):
+            key = '{}'.format(key)
+        return key
+
+
+class ChatObjectMapping(ZendeskObjectMapping):
+    """
+    Handle converting Chat API objects to Python ones. This class exists
+    mainly to prevent namespace collisions between the two APIs.
+    """
+    class_mapping = {
+        'chat': Chat,
+        'offline_msg': OfflineMessage,
+        'session': Session,
+        'response_time': ResponseTime,
+        'visitor': Visitor,
+        'webpath': Webpath,
+        'count': Count,
+        'shortcut': Shortcut,
+        'trigger': zenpy.lib.api_objects.chat_objects.Trigger,
+        'ban': Ban,
+        'account': Account,
+        'plan': Plan,
+        'billing': Billing,
+        'agent': Agent,
+        'roles': Roles,
+        'search_result': SearchResult,
+        'ip_address': IpAddress,
+        'department': Department,
+        'goal': Goal
+    }
+
+
+class HelpCentreObjectMapping(ZendeskObjectMapping):
+    class_mapping = {
+        'article': Article,
+        'category': Category,
+        'section': Section,
+        'comment': zenpy.lib.api_objects.help_centre_objects.Comment,
+        'article_attachment': zenpy.lib.api_objects.help_centre_objects.ArticleAttachment,
+        'label': Label,
+        'translation': Translation,
+        'topic': zenpy.lib.api_objects.help_centre_objects.Topic,
+        'post': Post,
+        'subscription': Subscription,
+        'vote': Vote,
+        'access_policy': AccessPolicy,
+        'user_segment': UserSegment
+    }
+
+class TalkObjectMapping(ZendeskObjectMapping):
+    class_mapping = {
+        'account_overview': AccountOverview,
+        'agents_activity': AgentsActivity,
+        'agents_overview': AgentsOverview,
+        'current_queue_activity': CurrentQueueActivity,
+        'phone_numbers': PhoneNumbers,
+        'show_availability': ShowAvailability
+    }
