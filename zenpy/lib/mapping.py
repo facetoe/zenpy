@@ -242,5 +242,5 @@ class TalkObjectMapping(ZendeskObjectMapping):
         'agents_overview': AgentsOverview,
         'current_queue_activity': CurrentQueueActivity,
         'phone_numbers': PhoneNumbers,
-        'show_availability': ShowAvailability
+        'availability': ShowAvailability
     }
