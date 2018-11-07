@@ -1885,7 +1885,3 @@ class TalkApi(Api):
 
     def agents_overview(self):
         return self._query_zendesk(EndpointFactory('talk').agents_overview,'agents_overview')
-    
-    
-    
-    
