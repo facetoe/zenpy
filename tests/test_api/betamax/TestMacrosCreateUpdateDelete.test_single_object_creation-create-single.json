@@ -1,57 +1,58 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2017-04-23T13:52:08",
+      "recorded_at": "2018-03-30T07:37:01",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"macro\": {\"title\": \"TestMacro\", \"actions\": [{\"field\": \"status\", \"value\": \"solved\"}]}}"
+          "string": "{\"macro\": {\"actions\": [{\"field\": \"status\", \"value\": \"solved\"}], \"id\": null, \"title\": \"TestMacro\"}}"
         },
         "headers": {
           "Accept": "*/*",
           "Accept-Encoding": "gzip, deflate",
-          "Authorization": "Basic ZmFjZXRvZUBmYWNldG9lLmNvbS5hdS90b2tlbjpkbWZIVnh6ak90b0ZsVlhJNnMzeFE2YmQ1dXZ1RG5Sb0kydkZWWW85",
+          "Authorization": "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnBUNXQ2ZEZ4QWltU1hoNEkydjBYeVMwSkNlYVV4eWROQUxFRkV1VWM=",
           "Connection": "keep-alive",
-          "Content-Length": "86",
-          "Content-type": "application/json",
-          "User-Agent": "Zenpy/1.1"
+          "Content-Length": "98",
+          "Content-Type": "application/json",
+          "User-Agent": "Zenpy/1.2"
         },
         "method": "POST",
-        "uri": "https://facetoe1.zendesk.com/api/v2/macros"
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/macros.json"
       },
       "response": {
         "body": {
           "encoding": "UTF-8",
-          "string": "{\"macro\":{\"url\":\"https://facetoe1.zendesk.com/api/v2/macros/306018807.json\",\"id\":306018807,\"title\":\"TestMacro\",\"active\":true,\"updated_at\":\"2017-04-23T13:52:17Z\",\"created_at\":\"2017-04-23T13:52:17Z\",\"position\":10000,\"description\":null,\"actions\":[{\"field\":\"status\",\"value\":\"solved\"}],\"restriction\":null}}"
+          "string": "{\"macro\":{\"url\":\"https://d3v-zenpydev.zendesk.com/api/v2/macros/360015125411.json\",\"id\":360015125411,\"title\":\"TestMacro\",\"active\":true,\"updated_at\":\"2018-03-30T07:37:00Z\",\"created_at\":\"2018-03-30T07:37:00Z\",\"position\":10013,\"description\":null,\"actions\":[{\"field\":\"status\",\"value\":\"solved\"}],\"restriction\":null}}"
         },
         "headers": {
           "Cache-Control": "max-age=0, private, must-revalidate",
           "Connection": "keep-alive",
-          "Content-Length": "301",
+          "Content-Length": "311",
           "Content-Type": "application/json; charset=UTF-8",
-          "Date": "Sun, 23 Apr 2017 13:52:17 GMT",
-          "ETag": "\"6f933ba1b398488aceca189e614e9931\"",
-          "Location": "https://facetoe1.zendesk.com/api/v2/macros/306018807.json",
+          "Date": "Fri, 30 Mar 2018 07:37:00 GMT",
+          "ETag": "\"366480a04b5adeebd63676542aa1e5f4\"",
+          "Location": "https://d3v-zenpydev.zendesk.com/api/v2/macros/360015125411.json",
           "Server": "nginx",
           "Strict-Transport-Security": "max-age=31536000;",
           "X-Content-Type-Options": "nosniff",
           "X-Frame-Options": "SAMEORIGIN",
           "X-Rack-Cache": "invalidate, pass",
-          "X-Rate-Limit": "400",
-          "X-Rate-Limit-Remaining": "388",
-          "X-Request-Id": "4422ded9-4fb7-471b-c748-ecf4bbdf6efc",
-          "X-Runtime": "0.238222",
+          "X-Rate-Limit": "700",
+          "X-Rate-Limit-Remaining": "699",
+          "X-Request-Id": "2aaefb4f-7970-4440-c468-067c7f868c24",
+          "X-Runtime": "0.249143",
           "X-UA-Compatible": "IE=Edge,chrome=1",
           "X-Zendesk-API-Version": "v2",
-          "X-Zendesk-Application-Version": "v20.24",
-          "X-Zendesk-Origin-Server": "app41.pod5.iad1.zdsys.com",
-          "X-Zendesk-Request-Id": "eeb1947b39fec894b250"
+          "X-Zendesk-API-Warn": "Removed restricted keys [\"macro.id\"] from parameters according to whitelist",
+          "X-Zendesk-Application-Version": "v757.19",
+          "X-Zendesk-Origin-Server": "app7.pod13.usw2.zdsys.com",
+          "X-Zendesk-Request-Id": "b26d9bb085d975a26f6f"
         },
         "status": {
           "code": 201,
           "message": "Created"
         },
-        "url": "https://facetoe1.zendesk.com/api/v2/macros"
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/macros.json"
       }
     }
   ],

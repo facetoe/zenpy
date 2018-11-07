@@ -1,0 +1,42 @@
+{
+	"url": "https://sample.zendesk.com/api/v2/automations/360000003090.json",
+	"id": 360000003090,
+	"title": "[System] Autoclose after 14 days of Pending",
+	"active": true,
+	"updated_at": "2018-03-12T10:53:49Z",
+	"created_at": "2018-01-16T11:47:39Z",
+	"actions": [{
+		"field": "status",
+		"value": "closed"
+	},
+	{
+		"field": "current_tags",
+		"value": "closed_by_autoclose"
+	},
+	{
+		"field": "notification_user",
+		"value": ["requester_id",
+		"{{dc.notify_reminder_subject}}",
+		"Ticket was automatically closed"]
+	}],
+	"conditions": {
+		"all": [{
+			"field": "PENDING",
+			"operator": "greater_than",
+			"value": "336"
+		},
+		{
+			"field": "current_tags",
+			"operator": "includes",
+			"value": "pending_reminder_sent"
+		},
+		{
+			"field": "current_tags",
+			"operator": "not_includes",
+			"value": "closed_by_autoclose"
+		}],
+		"any": []
+	},
+	"position": 1,
+	"raw_title": "[System] Autoclose after 14 days of Pending"
+}

@@ -1,0 +1,116 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2018-03-30T07:42:10",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"ticket_field\": {\"id\": null, \"title\": \"I AM A TEST\", \"type\": \"text\"}}"
+        },
+        "headers": {
+          "Accept": "*/*",
+          "Accept-Encoding": "gzip, deflate",
+          "Authorization": "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnBUNXQ2ZEZ4QWltU1hoNEkydjBYeVMwSkNlYVV4eWROQUxFRkV1VWM=",
+          "Connection": "keep-alive",
+          "Content-Length": "70",
+          "Content-Type": "application/json",
+          "User-Agent": "Zenpy/1.2"
+        },
+        "method": "POST",
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/ticket_fields.json"
+      },
+      "response": {
+        "body": {
+          "encoding": "UTF-8",
+          "string": "{\"ticket_field\":{\"url\":\"https://d3v-zenpydev.zendesk.com/api/v2/ticket_fields/360003006012.json\",\"id\":360003006012,\"type\":\"text\",\"title\":\"I AM A TEST\",\"raw_title\":\"I AM A TEST\",\"description\":\"I AM A TEST\",\"raw_description\":\"I AM A TEST\",\"position\":9999,\"active\":true,\"required\":false,\"collapsed_for_agents\":false,\"regexp_for_validation\":null,\"title_in_portal\":\"I AM A TEST\",\"raw_title_in_portal\":\"I AM A TEST\",\"visible_in_portal\":false,\"editable_in_portal\":false,\"required_in_portal\":false,\"tag\":null,\"created_at\":\"2018-03-30T07:42:09Z\",\"updated_at\":\"2018-03-30T07:42:09Z\",\"removable\":true,\"agent_description\":null}}"
+        },
+        "headers": {
+          "Cache-Control": "max-age=0, private, must-revalidate",
+          "Connection": "keep-alive",
+          "Content-Length": "616",
+          "Content-Type": "application/json; charset=UTF-8",
+          "Date": "Fri, 30 Mar 2018 07:42:10 GMT",
+          "ETag": "\"fd87a482ac4cd32efaa3fe9704d079c5\"",
+          "Location": "https://d3v-zenpydev.zendesk.com/api/v2/ticket_fields/360003006012.json",
+          "Server": "nginx",
+          "Strict-Transport-Security": "max-age=31536000;",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "SAMEORIGIN",
+          "X-Rack-Cache": "invalidate, pass",
+          "X-Rate-Limit": "700",
+          "X-Rate-Limit-Remaining": "688",
+          "X-Request-Id": "79907244-244e-4223-c2e1-0682871176a2",
+          "X-Runtime": "0.742081",
+          "X-UA-Compatible": "IE=Edge,chrome=1",
+          "X-Zendesk-API-Version": "v2",
+          "X-Zendesk-API-Warn": "Removed restricted keys [\"ticket_field.id\"] from parameters according to whitelist",
+          "X-Zendesk-Application-Version": "v757.19",
+          "X-Zendesk-Origin-Server": "app22.pod13.usw2.zdsys.com",
+          "X-Zendesk-Request-Id": "997ff06763b2a8d52128"
+        },
+        "status": {
+          "code": 201,
+          "message": "Created"
+        },
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/ticket_fields.json"
+      }
+    },
+    {
+      "recorded_at": "2018-03-30T07:42:11",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"ticket_field\": {\"id\": 360003006012, \"title\": \"I AM A TEST408baae298e40e7beba372405b3258045fddea1b\", \"type\": \"text372ea08cab33e71c02c651dbc83a474d32c676ea\"}}"
+        },
+        "headers": {
+          "Accept": "*/*",
+          "Accept-Encoding": "gzip, deflate",
+          "Authorization": "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnBUNXQ2ZEZ4QWltU1hoNEkydjBYeVMwSkNlYVV4eWROQUxFRkV1VWM=",
+          "Connection": "keep-alive",
+          "Content-Length": "158",
+          "Content-Type": "application/json",
+          "User-Agent": "Zenpy/1.2"
+        },
+        "method": "PUT",
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/ticket_fields/360003006012.json"
+      },
+      "response": {
+        "body": {
+          "base64_string": "H4sIAAAAAAAAA61Ru3LCMBD8FUY14PMDMO4oUqRIFao0nrN1JgrCVqSzA2H498g8MmSGpCGqpFvd3u7eXrAq18R5pUhLke1Fa7XIxCuzcVkQyLgbfVJtdpK6sb9Icutx2WwCNCroouC62wXxFABigCmE0fjNNbUYCuVZr+tDwTtDfgTTlj3OinX/fBwsngaLwfLheZlAWiBSNE8pAZoVVGA8ixKYFHE0SSGZVFIShoXvtviR38fgHZVWGVZe7Q8VZ/a/cNM4dWqc+zMUWLLqvBm2LXlt9N4qS95/hdr5QtlojcaRzKvG5riimt03aGlFW3NEOtRK4om4brU+h5SrOjeNZewXdGdc/8DVKacKTddMZ58kFeNt6JLJjS7GlchOdktLyD4mZO80gjAdQTyKYQmzLIkymL/43bTGR/TrnxD6P5Y2TdcruazkmHn+Y6X9xMPhCyv7BOAIAwAA",
+          "encoding": "UTF-8",
+          "string": ""
+        },
+        "headers": {
+          "Cache-Control": "max-age=0, private, must-revalidate",
+          "Connection": "keep-alive",
+          "Content-Encoding": "gzip",
+          "Content-Type": "application/json; charset=UTF-8",
+          "Date": "Fri, 30 Mar 2018 07:42:11 GMT",
+          "ETag": "W/\"93c0137b1b24dc9a82fd82b0d371d4dd\"",
+          "Server": "nginx",
+          "Strict-Transport-Security": "max-age=31536000;",
+          "Transfer-Encoding": "chunked",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "SAMEORIGIN",
+          "X-Rack-Cache": "invalidate, pass",
+          "X-Rate-Limit": "700",
+          "X-Rate-Limit-Remaining": "687",
+          "X-Request-Id": "b24180b9-79af-4976-c9e6-0682871176a2",
+          "X-Runtime": "0.658285",
+          "X-UA-Compatible": "IE=Edge,chrome=1",
+          "X-Zendesk-API-Version": "v2",
+          "X-Zendesk-API-Warn": "Removed restricted keys [\"ticket_field.id\", \"ticket_field.type\"] from parameters according to whitelist",
+          "X-Zendesk-Application-Version": "v757.19",
+          "X-Zendesk-Origin-Server": "app13.pod13.usw2.zdsys.com",
+          "X-Zendesk-Request-Id": "0f93ac240ecadd454abf"
+        },
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/ticket_fields/360003006012.json"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.8.0"
+}

@@ -1,10 +1,11 @@
 import hashlib
-from test_api import configure
+import uuid
+from operator import attrgetter
 from time import sleep
 from unittest import TestCase
 
+from test_api import configure
 from zenpy.lib.api_objects import BaseObject
-from zenpy.lib.cache import should_cache, in_cache, query_cache_by_object
 from zenpy.lib.endpoint import basestring
 from zenpy.lib.exception import TooManyValuesException, ZenpyException, RecordNotFoundException
 from zenpy.lib.generator import BaseResultGenerator
@@ -19,7 +20,7 @@ class ZenpyApiTestCase(TestCase):
 
     def generate_cassette_name(self):
         """
-        Taken from BetamaxTestCase. 
+        Taken from BetamaxTestCase.
         """
         cls = getattr(self, '__class__')
         test = self._testMethodName
@@ -27,29 +28,29 @@ class ZenpyApiTestCase(TestCase):
 
     def assertInCache(self, zenpy_object):
         """ If an object should be cached, assert that it is """
-        if should_cache(zenpy_object):
-            self.assertTrue(in_cache(zenpy_object))
+        if self.zenpy_client.cache.should_cache(zenpy_object):
+            self.assertTrue(self.zenpy_client.cache.in_cache(zenpy_object))
 
     def assertNotInCache(self, zenpy_object):
         """ If an object should have been purged from the cache, assert that it is. """
-        if should_cache(zenpy_object):
-            self.assertTrue(not in_cache(zenpy_object))
+        if self.zenpy_client.cache.should_cache(zenpy_object):
+            self.assertTrue(not self.zenpy_client.cache.in_cache(zenpy_object))
 
     def assertCacheUpdated(self, zenpy_object, attr, expected):
         """ If an object should be cached, assert that the specified attribute is equal to 'expected'. """
-        if should_cache(zenpy_object):
-            cached_object = query_cache_by_object(zenpy_object)
+        if self.zenpy_client.cache.should_cache(zenpy_object):
+            cached_object = self.zenpy_client.cache.query_cache_by_object(zenpy_object)
             # We expect it to be present
             assert cached_object is not None
             self.assertTrue(getattr(zenpy_object, attr) == expected)
 
-    def wait_for_job_status(self, job_status, max_attempts=30):
+    def wait_for_job_status(self, job_status, max_attempts=50):
         """ Wait until a background job has completed. """
 
         # If we are currently recording be nice and don't hammer Zendesk for status updates.
         # If not we are replaying an interaction and can hammer the status update to speed up the tests.
         if self.recorder.current_cassette.is_recording():
-            request_interval = 2
+            request_interval = 5
         else:
             request_interval = 0.0001
         n = 0
@@ -144,9 +145,8 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
     @property
     def api(self):
         """ Return the current Api under test. """
-        if not hasattr(self.zenpy_client, self.api_name):
-            raise Exception("Zenpy has not Api named: {}".format(self.api_name))
-        return getattr(self.zenpy_client, self.api_name)
+        f = attrgetter(self.api_name)
+        return f(self.zenpy_client)
 
     @property
     def single_response_type(self):
@@ -154,9 +154,9 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
         return self.expected_single_result_type or self.ZenpyType
 
     def unpack_object(self, zenpy_object):
-        """ 
-        If we have a nested object, return the nested object we are interested in. 
-        Otherwise just return the passed object. 
+        """
+        If we have a nested object, return the nested object we are interested in.
+        Otherwise just return the passed object.
         """
         if hasattr(zenpy_object, self.api.object_type):
             obj = getattr(zenpy_object, self.api.object_type)
@@ -175,7 +175,7 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
         """ Helper method for creating multiple Zenpy objects. """
         to_create = list()
         for i in range(num_objects):
-            zenpy_object = self.instantiate_zenpy_object(i, dummy=dummy)
+            zenpy_object = self.instantiate_zenpy_object(uuid.uuid4(), dummy=dummy)
             to_create.append(zenpy_object)
         result = self.create_method(to_create)
         if wait_on_job_status:
@@ -184,10 +184,10 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
             return result
 
     def instantiate_zenpy_object(self, format_val=None, dummy=False):
-        """ 
-        Create a Zenpy object of type ZenpyType with obj_kwargs passed to __init__. 
-        Any values with the formatter "{}" will be replaced with format_val. 
-        
+        """
+        Create a Zenpy object of type ZenpyType with obj_kwargs passed to __init__.
+        Any values with the formatter "{}" will be replaced with format_val.
+
         If dummy is True, simply return object (for testing type checking).
         """
         obj_kwargs = self.object_kwargs.copy()
@@ -195,14 +195,18 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
             value = obj_kwargs[key]
             if '{}' in value:
                 if format_val is None:
-                    raise Exception("Formatter found in object_kwargs but format_val is None!")
+                    print("Formatter found in object_kwargs but format_val is None!")
                 obj_kwargs[key] = value.format(format_val)
 
-        return self.ZenpyType(**obj_kwargs) if not dummy else None
+        zenpy_object = self.ZenpyType(**obj_kwargs) if not dummy else None
+        if zenpy_object:
+            # Ensure creating a new object sets the passed attributes as dirty.
+            self.assertTrue(all(k in zenpy_object.to_dict(serialize=True) for k in obj_kwargs))
+        return zenpy_object
 
     def modify_object(self, zenpy_object):
-        """ 
-        Given a Zenpy object, modify it by hashing it's kwargs and appending the result to the 
+        """
+        Given a Zenpy object, modify it by hashing it's kwargs and appending the result to the
         existing values.
         """
 
@@ -214,6 +218,8 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
             if isinstance(new_kwargs[attr_name], basestring) and attr_name not in self.ignore_update_kwargs:
                 new_kwargs[attr_name] += hash_of(new_kwargs[attr_name])
                 setattr(zenpy_object, attr_name, new_kwargs[attr_name])
+                self.assertTrue(attr_name in zenpy_object._dirty_attributes,
+                                msg="Object modification failed to set _dirty_attributes!")
         return zenpy_object, new_kwargs
 
     def verify_object_updated(self, new_kwargs, zenpy_object):
@@ -225,6 +231,8 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
             if isinstance(attr, basestring):
                 self.assertEqual(getattr(updated_object, attr_name), new_kwargs[attr_name])
                 self.assertCacheUpdated(updated_object, attr_name, attr)
+        # Ensure that updating the object cleared the dirty attributes.
+        self.assertFalse(updated_object._dirty_attributes)
 
     def create_dummy_objects(self):
         """ Create some dummy objects for checking invalid types. """
@@ -379,7 +387,7 @@ class MultipleUpdateApiTestCase(ModifiableApiTestCase):
             for zenpy_object in self.api(ids=[r.id for r in job_status.results]):
                 modified_object, new_kwargs = self.modify_object(zenpy_object)
                 updated_objects.append((modified_object, new_kwargs))
-            self.create_method([m[0] for m in updated_objects])
+            self.update_method([m[0] for m in updated_objects])
             for modified_object, new_kwargs in updated_objects:
                 self.verify_object_updated(new_kwargs, modified_object)
 

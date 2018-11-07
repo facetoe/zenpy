@@ -5,6 +5,10 @@ import re
 
 import pytz
 
+from datetime import datetime, date
+
+from zenpy.lib.proxy import ProxyDict, ProxyList
+
 FIRST_CAP_REGEX = re.compile('(.)([A-Z][a-z]+)')
 ALL_CAP_REGEX = re.compile('([a-z0-9])([A-Z])')
 
@@ -19,7 +23,7 @@ def to_snake_case(name):
 
 def to_unix_ts(start_time):
     """Given a datetime object, returns its value as a unix timestamp"""
-    if isinstance(start_time, datetime.datetime):
+    if isinstance(start_time, datetime):
         if is_timezone_aware(start_time):
             start_time = start_time.astimezone(pytz.utc)
         else:
@@ -84,3 +88,53 @@ def as_plural(result_key):
         return result_key + 's'
     else:
         return result_key
+
+
+def get_endpoint_path(api, response):
+    """ Return the section of the URL from 'api/v2' to the end. """
+    return response.request.url.split(api.api_prefix)[-1]
+
+
+def extract_id(*object_types):
+    """
+    Decorator for extracting id from passed parameters for specific types.
+    """
+
+    def outer(func):
+        def inner(*args, **kwargs):
+            def id_of(x):
+                return x.id if type(x) in object_types else x
+
+            new_args = [id_of(arg) for arg in args]
+            new_kwargs = {k: id_of(v) for k, v in kwargs.items()}
+            return func(*new_args, **new_kwargs)
+
+        return inner
+
+    return outer
+
+
+def json_encode_for_zendesk(obj):
+    """ Only encode those attributes of Zenpy objects that have been modified. """
+    return json_encode(obj, serialize=True)
+
+
+def json_encode_for_printing(obj):
+    """ Encode all attributes. """
+    return json_encode(obj, serialize=False)
+
+
+def json_encode(obj, serialize):
+    """ Handle encoding complex types. """
+    if hasattr(obj, 'to_dict'):
+        return obj.to_dict(serialize=serialize)
+    elif isinstance(obj, datetime):
+        return obj.date().isoformat()
+    elif isinstance(obj, date):
+        return obj.isoformat()
+    elif isinstance(obj, ProxyDict):
+        return dict(obj)
+    elif isinstance(obj, ProxyList):
+        return list(obj)
+    elif is_iterable_but_not_string(obj):
+        return list(obj)

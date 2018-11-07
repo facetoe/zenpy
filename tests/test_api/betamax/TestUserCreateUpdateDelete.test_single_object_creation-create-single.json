@@ -1,57 +1,57 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2017-04-23T13:57:21",
+      "recorded_at": "2018-03-30T07:42:14",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"user\": {\"name\": \"testUser\"}}"
+          "string": "{\"user\": {\"id\": null, \"name\": \"testUser\"}}"
         },
         "headers": {
           "Accept": "*/*",
           "Accept-Encoding": "gzip, deflate",
-          "Authorization": "Basic ZmFjZXRvZUBmYWNldG9lLmNvbS5hdS90b2tlbjpkbWZIVnh6ak90b0ZsVlhJNnMzeFE2YmQ1dXZ1RG5Sb0kydkZWWW85",
+          "Authorization": "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnBUNXQ2ZEZ4QWltU1hoNEkydjBYeVMwSkNlYVV4eWROQUxFRkV1VWM=",
           "Connection": "keep-alive",
-          "Content-Length": "30",
-          "Content-type": "application/json",
-          "User-Agent": "Zenpy/1.1"
+          "Content-Length": "42",
+          "Content-Type": "application/json",
+          "User-Agent": "Zenpy/1.2"
         },
         "method": "POST",
-        "uri": "https://facetoe1.zendesk.com/api/v2/users.json?&include=organizations,abilities,roles,identities,groups,open_ticket_count"
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/users.json"
       },
       "response": {
         "body": {
           "encoding": "UTF-8",
-          "string": "{\"user\":{\"id\":21661252208,\"url\":\"https://facetoe1.zendesk.com/api/v2/users/21661252208.json\",\"name\":\"testUser\",\"email\":null,\"created_at\":\"2017-04-23T13:57:30Z\",\"updated_at\":\"2017-04-23T13:57:30Z\",\"time_zone\":\"Bangkok\",\"phone\":null,\"shared_phone_number\":null,\"photo\":null,\"locale_id\":1,\"locale\":\"en-US\",\"organization_id\":null,\"role\":\"end-user\",\"verified\":false,\"external_id\":null,\"tags\":[],\"alias\":null,\"active\":true,\"shared\":false,\"shared_agent\":false,\"last_login_at\":null,\"two_factor_auth_enabled\":false,\"signature\":null,\"details\":null,\"notes\":null,\"custom_role_id\":null,\"moderator\":false,\"ticket_restriction\":\"requested\",\"only_private_comments\":false,\"restricted_agent\":true,\"suspended\":false,\"chat_only\":false,\"user_fields\":{},\"abilities\":{\"url\":\"https://facetoe1.zendesk.com/api/v2/users/21661252208.json\",\"user_id\":21661252208,\"can_edit\":true,\"can_edit_password\":false,\"can_manage_identities_of\":true,\"can_verify_identities\":true,\"can_reset_password\":true,\"can_set_password\":false,\"can_create_password\":false,\"can_change_password\":false,\"can_set_alias\":false,\"can_send_verification_email\":true,\"can_verify_now\":true,\"can_make_comment_private\":true,\"can_edit_agent_forwarding\":false,\"can_modify_user_tags\":true,\"can_assume\":true,\"can_delete\":true,\"can_view_views\":false,\"can_view_reports\":true,\"can_export\":false,\"can_use_voice_console\":false,\"can_use_voice\":false,\"can_view_voice_dashboard\":false}},\"identities\":[],\"organizations\":[],\"roles\":[{\"id\":null,\"description\":null,\"created_at\":null,\"updated_at\":null,\"name\":\"end-user\",\"configuration\":{\"chat_access\":false,\"manage_business_rules\":false,\"manage_dynamic_content\":false,\"manage_extensions_and_channels\":false,\"manage_facebook\":false,\"organization_editing\":false,\"organization_notes_editing\":false,\"ticket_deletion\":false,\"view_deleted_tickets\":false,\"ticket_tag_editing\":false,\"twitter_search_access\":false,\"forum_access_restricted_content\":false,\"end_user_list_access\":\"none\",\"ticket_access\":null,\"ticket_comment_access\":\"public\",\"voice_access\":false,\"moderate_forums\":false,\"group_access\":false,\"light_agent\":false,\"end_user_profile_access\":\"readonly\",\"forum_access\":\"readonly\",\"macro_access\":\"manage-personal\",\"report_access\":\"readonly\",\"ticket_editing\":true,\"ticket_merge\":false,\"view_access\":\"manage-personal\",\"user_view_access\":\"none\"}}],\"groups\":[],\"open_ticket_count\":{\"21661252208\":0}}"
+          "string": "{\"user\":{\"id\":362440640511,\"url\":\"https://d3v-zenpydev.zendesk.com/api/v2/users/362440640511.json\",\"name\":\"testUser\",\"email\":null,\"created_at\":\"2018-03-30T07:42:14Z\",\"updated_at\":\"2018-03-30T07:42:14Z\",\"time_zone\":\"Magadan\",\"phone\":null,\"shared_phone_number\":null,\"photo\":null,\"locale_id\":1,\"locale\":\"en-US\",\"organization_id\":null,\"role\":\"end-user\",\"verified\":false,\"external_id\":null,\"tags\":[],\"alias\":null,\"active\":true,\"shared\":false,\"shared_agent\":false,\"last_login_at\":null,\"two_factor_auth_enabled\":false,\"signature\":null,\"details\":null,\"notes\":null,\"role_type\":null,\"custom_role_id\":null,\"moderator\":false,\"ticket_restriction\":\"requested\",\"only_private_comments\":false,\"restricted_agent\":true,\"suspended\":false,\"chat_only\":false,\"default_group_id\":null,\"user_fields\":{\"more_crap\":null,\"some_crap\":null}}}"
         },
         "headers": {
           "Cache-Control": "max-age=0, private, must-revalidate",
           "Connection": "keep-alive",
-          "Content-Length": "2354",
+          "Content-Length": "811",
           "Content-Type": "application/json; charset=UTF-8",
-          "Date": "Sun, 23 Apr 2017 13:57:30 GMT",
-          "ETag": "\"2a111a2634cfb09aecc14e40d1e3a496\"",
-          "Location": "https://facetoe1.zendesk.com/api/v2/users/21661252208.json",
+          "Date": "Fri, 30 Mar 2018 07:42:14 GMT",
+          "ETag": "\"8285cba123a96886452cadd9a91af061\"",
+          "Location": "https://d3v-zenpydev.zendesk.com/api/v2/users/362440640511.json",
           "Server": "nginx",
           "Strict-Transport-Security": "max-age=31536000;",
           "X-Content-Type-Options": "nosniff",
           "X-Frame-Options": "SAMEORIGIN",
           "X-Rack-Cache": "invalidate, pass",
-          "X-Rate-Limit": "400",
-          "X-Rate-Limit-Remaining": "383",
-          "X-Request-Id": "16fae00f-f34d-4eb6-ce6f-b8ca3a6b1f90",
-          "X-Runtime": "0.228099",
+          "X-Rate-Limit": "700",
+          "X-Rate-Limit-Remaining": "683",
+          "X-Request-Id": "68647a39-547a-4b81-cb14-067c7f868c24",
+          "X-Runtime": "0.227771",
           "X-UA-Compatible": "IE=Edge,chrome=1",
           "X-Zendesk-API-Version": "v2",
-          "X-Zendesk-Application-Version": "v20.24",
-          "X-Zendesk-Origin-Server": "app33.pod5.iad1.zdsys.com",
-          "X-Zendesk-Request-Id": "29f1e519159a409821e2"
+          "X-Zendesk-Application-Version": "v757.19",
+          "X-Zendesk-Origin-Server": "app44.pod13.usw2.zdsys.com",
+          "X-Zendesk-Request-Id": "c748c5c364b7c9ca0546"
         },
         "status": {
           "code": 201,
           "message": "Created"
         },
-        "url": "https://facetoe1.zendesk.com/api/v2/users.json?&include=organizations,abilities,roles,identities,groups,open_ticket_count"
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/users.json"
       }
     }
   ],

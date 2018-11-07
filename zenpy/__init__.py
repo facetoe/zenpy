@@ -22,9 +22,18 @@ from zenpy.lib.api import (
     SlaPolicyApi,
     ChatApi,
     GroupMembershipApi,
+    HelpCentreApi,
     RecipientAddressApi,
-    NpsApi)
-from zenpy.lib.cache import ZenpyCache, cache_mapping, purge_cache
+    NpsApi, TicketFieldApi,
+    TriggerApi,
+    AutomationApi,
+    DynamicContentApi,
+    TargetApi,
+    BrandApi,
+    TicketFormApi,
+    OrganizationFieldsApi,
+    JiraLinkApi, SkipApi, TalkApi)
+from zenpy.lib.cache import ZenpyCache, ZenpyCacheManager
 from zenpy.lib.endpoint import EndpointFactory
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.mapping import ZendeskObjectMapping
@@ -39,17 +48,6 @@ class Zenpy(object):
 
     DEFAULT_TIMEOUT = 60.0
 
-    @staticmethod
-    def http_adapter_kwargs():
-        """
-        Provides Zenpy's default HTTPAdapter args for those users providing their own adapter.
-        """
-
-        return dict(
-            # http://docs.python-requests.org/en/latest/api/?highlight=max_retries#requests.adapters.HTTPAdapter
-            max_retries=3
-        )
-
     def __init__(self, subdomain=None,
                  email=None,
                  token=None,
@@ -57,8 +55,10 @@ class Zenpy(object):
                  password=None,
                  session=None,
                  timeout=None,
-                 ratelimit=None,
-                 ratelimit_budget=None):
+                 ratelimit_budget=None,
+                 proactive_ratelimit=None,
+                 proactive_ratelimit_request_interval=10,
+                 disable_cache=False):
         """
         Python Wrapper for the Zendesk API.
 
@@ -76,79 +76,77 @@ class Zenpy(object):
         :param password: Zendesk password
         :param session: existing Requests Session object
         :param timeout: global timeout on API requests.
-        :param ratelimit: user specified rate limit
         :param ratelimit_budget: maximum time to spend being rate limited
+        :param proactive_ratelimit: user specified rate limit.
+        :param proactive_ratelimit_request_interval: seconds to wait when over proactive_ratelimit.
+        :param disable_cache: disable caching of objects
         """
 
         session = self._init_session(email, token, oauth_token, password, session)
 
         timeout = timeout or self.DEFAULT_TIMEOUT
 
+        self.cache = ZenpyCacheManager(disable_cache)
+
         config = dict(
             subdomain=subdomain,
             session=session,
             timeout=timeout,
-            ratelimit=ratelimit,
-            ratelimit_budget=ratelimit_budget
+            ratelimit=int(proactive_ratelimit) if proactive_ratelimit is not None else None,
+            ratelimit_budget=int(ratelimit_budget) if ratelimit_budget is not None else None,
+            ratelimit_request_interval=int(proactive_ratelimit_request_interval),
+            cache=self.cache
         )
 
         self.users = UserApi(config)
-
         self.user_fields = Api(config, object_type='user_field')
-
         self.groups = GroupApi(config)
-
         self.macros = MacroApi(config)
-
         self.organizations = OrganizationApi(config)
-
         self.organization_memberships = OrganizationMembershipApi(config)
-
+        self.organization_fields = OrganizationFieldsApi(config)
         self.tickets = TicketApi(config)
-
         self.suspended_tickets = SuspendedTicketApi(config, object_type='suspended_ticket')
-
         self.search = Api(config, object_type='results', endpoint=EndpointFactory('search'))
-
         self.topics = Api(config, object_type='topic')
-
         self.attachments = AttachmentApi(config)
-
-        self.brands = Api(config, object_type='brand')
-
+        self.brands = BrandApi(config, object_type='brand')
         self.job_status = Api(config, object_type='job_status', endpoint=EndpointFactory('job_statuses'))
-
+        self.jira_links = JiraLinkApi(config)
         self.tags = Api(config, object_type='tag')
-
         self.satisfaction_ratings = SatisfactionRatingApi(config)
-
         self.sharing_agreements = SharingAgreementAPI(config)
-
+        self.skips = SkipApi(config)
         self.activities = Api(config, object_type='activity')
-
         self.group_memberships = GroupMembershipApi(config)
-
         self.end_user = EndUserApi(config)
-
         self.ticket_metrics = Api(config, object_type='ticket_metric')
-
-        self.ticket_fields = Api(config, object_type='ticket_field')
-
-        self.ticket_forms = Api(config, object_type='ticket_form')
-
+        self.ticket_fields = TicketFieldApi(config)
+        self.ticket_forms = TicketFormApi(config, object_type='ticket_form')
         self.ticket_import = TicketImportAPI(config)
-
         self.requests = RequestAPI(config)
-
         self.chats = ChatApi(config, endpoint=EndpointFactory('chats'))
-
         self.views = ViewApi(config)
-
         self.sla_policies = SlaPolicyApi(config)
-
+        self.help_center = HelpCentreApi(config)
         self.recipient_addresses = RecipientAddressApi(config)
-
         self.nps = NpsApi(config)
+        self.triggers = TriggerApi(config, object_type='trigger')
+        self.automations = AutomationApi(config, object_type='automation')
+        self.dynamic_content = DynamicContentApi(config)
+        self.targets = TargetApi(config, object_type='target')
+        self.talk = TalkApi(config,EndpointFactory('talk'),'talk')
+
+    @staticmethod
+    def http_adapter_kwargs():
+        """
+        Provides Zenpy's default HTTPAdapter args for those users providing their own adapter.
+        """
+
+        return dict(
+            # http://docs.python-requests.org/en/latest/api/?highlight=max_retries#requests.adapters.HTTPAdapter
+            max_retries=3
+        )
 
     def _init_session(self, email, token, oath_token, password, session):
         if not session:
@@ -172,8 +170,7 @@ class Zenpy(object):
             else:
                 raise ZenpyException("Invalid arguments to _init_session()!")
 
-        headers = {'Content-type': 'application/json',
-                   'User-Agent': 'Zenpy/1.2'}
+        headers = {'User-Agent': 'Zenpy/1.2'}
         session.headers.update(headers)
         return session
 
@@ -181,7 +178,7 @@ class Zenpy(object):
         """
         Returns a list of current caches
         """
-        return cache_mapping.keys()
+        return self.cache.mapping.keys()
 
     def get_cache_max(self, cache_name):
         """
@@ -214,22 +211,34 @@ class Zenpy(object):
         """
         if object_type not in ZendeskObjectMapping.class_mapping:
             raise ZenpyException("No such object type: %s" % object_type)
-        cache_mapping[object_type] = ZenpyCache(cache_impl_name, maxsize, **kwargs)
+        self.cache.mapping[object_type] = ZenpyCache(cache_impl_name, maxsize, **kwargs)
 
     def delete_cache(self, cache_name):
         """
         Deletes the named cache
         """
-        del cache_mapping[cache_name]
+        del self.cache.mapping[cache_name]
 
     def purge_cache(self, cache_name):
         """
         Purges the named cache.
         """
-        purge_cache(cache_name)
+        self.cache.purge_cache(cache_name)
+
+    def disable_caching(self):
+        """
+        Disable caching of objects.
+        """
+        self.cache.disable()
+
+    def enable_caching(self):
+        """
+        Enable caching of objects.
+        """
+        self.cache.enable()
 
     def _get_cache(self, cache_name):
-        if cache_name not in cache_mapping:
+        if cache_name not in self.cache.mapping:
             raise ZenpyException("No such cache - %s" % cache_name)
         else:
-            return cache_mapping[cache_name]
+            return self.cache.mapping[cache_name]

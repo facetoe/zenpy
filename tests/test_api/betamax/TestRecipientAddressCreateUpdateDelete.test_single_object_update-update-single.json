@@ -1,81 +1,82 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2017-10-11T08:31:39",
+      "recorded_at": "2018-03-30T07:37:10",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"recipient_address\": {\"email\": \"help@omniwearshop.com\", \"name\": \"Sales\", \"default\": false}}"
+          "string": "{\"recipient_address\": {\"email\": \"help@omniwearshop.com\", \"id\": null, \"name\": \"Sales\"}}"
         },
         "headers": {
           "Accept": "*/*",
           "Accept-Encoding": "gzip, deflate",
-          "Authorization": "Basic bmljb2xhcy5qYXJlbWVrQHJlY2xhbWFkb3IuZXMvdG9rZW46MEFSUFVzVzlOWmJpZnAza2tiWHZueTU0bVZmdUg3eUdRazFVVkpRMw==",
+          "Authorization": "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnBUNXQ2ZEZ4QWltU1hoNEkydjBYeVMwSkNlYVV4eWROQUxFRkV1VWM=",
           "Connection": "keep-alive",
-          "Content-Length": "92",
-          "Content-type": "application/json",
+          "Content-Length": "86",
+          "Content-Type": "application/json",
           "User-Agent": "Zenpy/1.2"
         },
         "method": "POST",
-        "uri": "https://jaremek.zendesk.com/api/v2/recipient_addresses.json?&include="
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/recipient_addresses.json"
       },
       "response": {
         "body": {
           "encoding": "UTF-8",
-          "string": "{\"recipient_address\":{\"id\":114095027171,\"brand_id\":114094587791,\"default\":null,\"name\":\"Sales\",\"email\":\"help@omniwearshop.com\",\"created_at\":\"2017-10-11T08:31:39Z\",\"updated_at\":\"2017-10-11T08:31:39Z\",\"forwarding_status\":\"waiting\",\"spf_status\":\"failed\"}}"
+          "string": "{\"recipient_address\":{\"id\":360000563012,\"brand_id\":114095174732,\"default\":null,\"name\":\"Sales\",\"email\":\"help@omniwearshop.com\",\"created_at\":\"2018-03-30T07:37:10Z\",\"updated_at\":\"2018-03-30T07:37:10Z\",\"forwarding_status\":\"waiting\",\"spf_status\":\"failed\"}}"
         },
         "headers": {
           "Cache-Control": "max-age=0, private, must-revalidate",
           "Connection": "keep-alive",
           "Content-Length": "251",
           "Content-Type": "application/json; charset=UTF-8",
-          "Date": "Wed, 11 Oct 2017 08:31:39 GMT",
-          "ETag": "\"390e64da3b2ee5fcc0c0c19d1ab3f7c9\"",
-          "Location": "https://jaremek.zendesk.com/api/v2/recipient_addresses/114095027171.json",
+          "Date": "Fri, 30 Mar 2018 07:37:10 GMT",
+          "ETag": "\"204217c91d87d36533b2b1187d88e8e6\"",
+          "Location": "https://d3v-zenpydev.zendesk.com/api/v2/recipient_addresses/360000563012.json",
           "Server": "nginx",
           "Strict-Transport-Security": "max-age=31536000;",
           "X-Content-Type-Options": "nosniff",
           "X-Frame-Options": "SAMEORIGIN",
           "X-Rack-Cache": "invalidate, pass",
-          "X-Rate-Limit": "400",
-          "X-Rate-Limit-Remaining": "395",
-          "X-Request-Id": "cb510267-bbac-48bc-c899-0a27526fa680",
-          "X-Runtime": "0.306099",
+          "X-Rate-Limit": "700",
+          "X-Rate-Limit-Remaining": "684",
+          "X-Request-Id": "401a6ecf-6617-40d5-c0a8-06796bc76686",
+          "X-Runtime": "0.374078",
           "X-UA-Compatible": "IE=Edge,chrome=1",
           "X-Zendesk-API-Version": "v2",
-          "X-Zendesk-Application-Version": "v44.19",
-          "X-Zendesk-Origin-Server": "app23.pod13.usw2.zdsys.com",
-          "X-Zendesk-Request-Id": "5ace4bd1e1f3bbccce3d"
+          "X-Zendesk-API-Warn": "Removed restricted keys [\"recipient_address.id\"] from parameters according to whitelist",
+          "X-Zendesk-Application-Version": "v757.19",
+          "X-Zendesk-Origin-Server": "app40.pod13.usw2.zdsys.com",
+          "X-Zendesk-Request-Id": "ed1341bd787c04fe3407"
         },
         "status": {
           "code": 201,
           "message": "Created"
         },
-        "url": "https://jaremek.zendesk.com/api/v2/recipient_addresses.json?&include="
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/recipient_addresses.json"
       }
     },
     {
-      "recorded_at": "2017-10-11T08:31:39",
+      "recorded_at": "2018-03-30T07:37:11",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"recipient_address\": {\"name\": \"Salesd0edfb6e8c55c8742a83f0f192886e0e15fa0347\", \"forwarding_status\": \"waiting\", \"updated_at\": \"2017-10-11T08:31:39Z\", \"email\": \"help@omniwearshop.com\", \"id\": 114095027171, \"spf_status\": \"failed\", \"created_at\": \"2017-10-11T08:31:39Z\", \"brand_id\": 114094587791}}"
+          "string": "{\"recipient_address\": {\"id\": 360000563012, \"name\": \"Salesd0edfb6e8c55c8742a83f0f192886e0e15fa0347\"}}"
         },
         "headers": {
           "Accept": "*/*",
           "Accept-Encoding": "gzip, deflate",
-          "Authorization": "Basic bmljb2xhcy5qYXJlbWVrQHJlY2xhbWFkb3IuZXMvdG9rZW46MEFSUFVzVzlOWmJpZnAza2tiWHZueTU0bVZmdUg3eUdRazFVVkpRMw==",
+          "Authorization": "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnBUNXQ2ZEZ4QWltU1hoNEkydjBYeVMwSkNlYVV4eWROQUxFRkV1VWM=",
           "Connection": "keep-alive",
-          "Content-Length": "292",
-          "Content-type": "application/json",
+          "Content-Length": "100",
+          "Content-Type": "application/json",
           "User-Agent": "Zenpy/1.2"
         },
         "method": "PUT",
-        "uri": "https://jaremek.zendesk.com/api/v2/recipient_addresses/114095027171.json&include="
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/recipient_addresses/360000563012.json"
       },
       "response": {
         "body": {
-          "base64_string": "H4sIAAAAAAAAA4WPMW7DMAxF78LZCUTbimRNvUM7dTEYk2oEyLIhyfAQ5O7R1I5dH9//JJ+QZQl7kFRnYs5SCrgnBAaHOKpJq96gwQ7umRLPv3zU1pipcRZPR6zg0hFjB4lWAQefFKWwEvb3m9hF68WasSc7eOVx6q29iRLUntQwGuhAVgqx5R4S949tTeEUyuWx7ddlW9t8yUJVeKa2CHqF5oLqgvilrBvQDdN3c46d/3X8lk/KHNLPXCrVoz0LJ4XaQGsou//Dvl0kDK/XG+3Zk+UjAQAA",
+          "base64_string": "H4sIAAAAAAAAA32PMW7DMAxF78LZKSjLthRNuUM7dTEYk2oEyLIhyfAQ5O5Vpm7l+P4jyP+ELEvYg6Q6E3OWUsA9ITA4PWGbcdKo+g7umRLPb67UgNdRmcHoxlk8HbGCS0eMHSRaBRx8UpTCKOzvk9hlHBdrhp6s9ujVtbd2EhQ1ekI9GOhAVgqx7T0k7rdtTeEUyuWx7R/LtrZ8yUJVeKZ2CHpU9oL6ovELjdPGKfxuzrHzf456O37LJ2UO6WculerRysJJoTbQ0rL7P+zbR8Lwev0Ckd+qDCMBAAA=",
           "encoding": "UTF-8",
           "string": ""
         },
@@ -84,30 +85,30 @@
           "Connection": "keep-alive",
           "Content-Encoding": "gzip",
           "Content-Type": "application/json; charset=UTF-8",
-          "Date": "Wed, 11 Oct 2017 08:31:39 GMT",
-          "ETag": "W/\"9ac2f003966fff695da09e2f18b7b29a\"",
+          "Date": "Fri, 30 Mar 2018 07:37:11 GMT",
+          "ETag": "W/\"7cfbc1f57e093b8fdb26a44c8d52c371\"",
           "Server": "nginx",
           "Strict-Transport-Security": "max-age=31536000;",
           "Transfer-Encoding": "chunked",
           "X-Content-Type-Options": "nosniff",
           "X-Frame-Options": "SAMEORIGIN",
           "X-Rack-Cache": "invalidate, pass",
-          "X-Rate-Limit": "400",
-          "X-Rate-Limit-Remaining": "394",
-          "X-Request-Id": "b0fb781b-d576-49e3-c91b-0a27526fa680",
-          "X-Runtime": "0.196634",
+          "X-Rate-Limit": "700",
+          "X-Rate-Limit-Remaining": "683",
+          "X-Request-Id": "734c0bc9-5365-47fc-c751-06796bc76686",
+          "X-Runtime": "0.198288",
           "X-UA-Compatible": "IE=Edge,chrome=1",
           "X-Zendesk-API-Version": "v2",
-          "X-Zendesk-API-Warn": "Removed restricted keys [\"recipient_address.forwarding_status\", \"recipient_address.updated_at\", \"recipient_address.id\", \"recipient_address.spf_status\", \"recipient_address.created_at\"] from parameters according to whitelist",
-          "X-Zendesk-Application-Version": "v44.19",
-          "X-Zendesk-Origin-Server": "app15.pod13.usw2.zdsys.com",
-          "X-Zendesk-Request-Id": "d87a2d12074d07ec390c"
+          "X-Zendesk-API-Warn": "Removed restricted keys [\"recipient_address.id\"] from parameters according to whitelist",
+          "X-Zendesk-Application-Version": "v757.19",
+          "X-Zendesk-Origin-Server": "app37.pod13.usw2.zdsys.com",
+          "X-Zendesk-Request-Id": "e980dfe1ebae8848de46"
         },
         "status": {
           "code": 200,
           "message": "OK"
         },
-        "url": "https://jaremek.zendesk.com/api/v2/recipient_addresses/114095027171.json&include="
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/recipient_addresses/360000563012.json"
       }
     }
   ],

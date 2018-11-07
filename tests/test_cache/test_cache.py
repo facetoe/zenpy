@@ -1,8 +1,7 @@
 from unittest import TestCase
-from zenpy import ZenpyCache
 
-from zenpy.lib.api_objects import Ticket, UserField
-from zenpy.lib.cache import add_to_cache, query_cache, delete_from_cache
+from zenpy import ZenpyCache, ZenpyCacheManager
+from zenpy.lib.api_objects import Ticket
 from zenpy.lib.exception import ZenpyCacheException
 from zenpy.lib.util import get_object_type
 
@@ -48,25 +47,25 @@ class TestZenpyCache(TestCase):
         self.cache.purge()
 
 
-class TestCacheModuleMethods(TestCase):
+class TestCacheManager(TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.cache = ZenpyCacheManager()
+
     def test_cache_object(self):
         cache_key = 1
         ticket = self.cache_item(id=cache_key)
-        self.assertIs(query_cache(get_object_type(ticket), cache_key), ticket)
-
-    def test_cache_object_with_non_id(self):
-        cache_key = 'somekey'
-        user_field = self.cache_item(UserField, key=cache_key)
-        self.assertIs(query_cache(get_object_type(user_field), cache_key), user_field)
+        self.assertIs(self.cache.get(get_object_type(ticket), cache_key), ticket)
 
     def test_remove_from_cache(self):
         cache_key = 1
         zenpy_object = self.cache_item(id=cache_key)
-        self.assertIs(query_cache(get_object_type(zenpy_object), cache_key), zenpy_object)
-        delete_from_cache(zenpy_object)
-        self.assertIs(query_cache(get_object_type(zenpy_object), cache_key), None)
+        self.assertIs(self.cache.get(get_object_type(zenpy_object), cache_key), zenpy_object)
+        self.cache.delete(zenpy_object)
+        self.assertIs(self.cache.get(get_object_type(zenpy_object), cache_key), None)
 
     def cache_item(self, zenpy_class=Ticket, **kwargs):
         zenpy_object = zenpy_class(**kwargs)
-        add_to_cache(zenpy_object)
+        self.cache.add(zenpy_object)
         return zenpy_object

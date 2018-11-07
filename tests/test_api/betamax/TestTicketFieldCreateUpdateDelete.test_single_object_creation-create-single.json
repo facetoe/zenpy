@@ -1,0 +1,60 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2018-03-30T07:42:06",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"ticket_field\": {\"id\": null, \"title\": \"I AM A TEST\", \"type\": \"text\"}}"
+        },
+        "headers": {
+          "Accept": "*/*",
+          "Accept-Encoding": "gzip, deflate",
+          "Authorization": "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnBUNXQ2ZEZ4QWltU1hoNEkydjBYeVMwSkNlYVV4eWROQUxFRkV1VWM=",
+          "Connection": "keep-alive",
+          "Content-Length": "70",
+          "Content-Type": "application/json",
+          "User-Agent": "Zenpy/1.2"
+        },
+        "method": "POST",
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/ticket_fields.json"
+      },
+      "response": {
+        "body": {
+          "encoding": "UTF-8",
+          "string": "{\"ticket_field\":{\"url\":\"https://d3v-zenpydev.zendesk.com/api/v2/ticket_fields/360003036051.json\",\"id\":360003036051,\"type\":\"text\",\"title\":\"I AM A TEST\",\"raw_title\":\"I AM A TEST\",\"description\":\"I AM A TEST\",\"raw_description\":\"I AM A TEST\",\"position\":9999,\"active\":true,\"required\":false,\"collapsed_for_agents\":false,\"regexp_for_validation\":null,\"title_in_portal\":\"I AM A TEST\",\"raw_title_in_portal\":\"I AM A TEST\",\"visible_in_portal\":false,\"editable_in_portal\":false,\"required_in_portal\":false,\"tag\":null,\"created_at\":\"2018-03-30T07:42:05Z\",\"updated_at\":\"2018-03-30T07:42:05Z\",\"removable\":true,\"agent_description\":null}}"
+        },
+        "headers": {
+          "Cache-Control": "max-age=0, private, must-revalidate",
+          "Connection": "keep-alive",
+          "Content-Length": "616",
+          "Content-Type": "application/json; charset=UTF-8",
+          "Date": "Fri, 30 Mar 2018 07:42:06 GMT",
+          "ETag": "\"2ad71e5c18d0ca75c4e305dd4c426309\"",
+          "Location": "https://d3v-zenpydev.zendesk.com/api/v2/ticket_fields/360003036051.json",
+          "Server": "nginx",
+          "Strict-Transport-Security": "max-age=31536000;",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "SAMEORIGIN",
+          "X-Rack-Cache": "invalidate, pass",
+          "X-Rate-Limit": "700",
+          "X-Rate-Limit-Remaining": "692",
+          "X-Request-Id": "26722106-51d3-4e36-cef9-0682871176a2",
+          "X-Runtime": "0.755024",
+          "X-UA-Compatible": "IE=Edge,chrome=1",
+          "X-Zendesk-API-Version": "v2",
+          "X-Zendesk-API-Warn": "Removed restricted keys [\"ticket_field.id\"] from parameters according to whitelist",
+          "X-Zendesk-Application-Version": "v757.19",
+          "X-Zendesk-Origin-Server": "app19.pod13.usw2.zdsys.com",
+          "X-Zendesk-Request-Id": "e6e7c51489cd5f987520"
+        },
+        "status": {
+          "code": 201,
+          "message": "Created"
+        },
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/ticket_fields.json"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.8.0"
+}

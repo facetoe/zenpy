@@ -1,23 +1,23 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2017-04-23T13:52:09",
+      "recorded_at": "2018-03-30T07:37:01",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"macro\": {\"active\": true, \"created_at\": \"2017-04-23T13:52:17Z\", \"id\": 306018807, \"position\": 10000, \"title\": \"TestMacro\", \"updated_at\": \"2017-04-23T13:52:17Z\", \"url\": \"https://facetoe1.zendesk.com/api/v2/macros/306018807.json\", \"actions\": [{\"field\": \"status\", \"value\": \"solved\"}]}}"
+          "string": "{\"macro\": {\"id\": 360015125411}}"
         },
         "headers": {
           "Accept": "*/*",
           "Accept-Encoding": "gzip, deflate",
-          "Authorization": "Basic ZmFjZXRvZUBmYWNldG9lLmNvbS5hdS90b2tlbjpkbWZIVnh6ak90b0ZsVlhJNnMzeFE2YmQ1dXZ1RG5Sb0kydkZWWW85",
+          "Authorization": "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnBUNXQ2ZEZ4QWltU1hoNEkydjBYeVMwSkNlYVV4eWROQUxFRkV1VWM=",
           "Connection": "keep-alive",
-          "Content-Length": "282",
-          "Content-type": "application/json",
-          "User-Agent": "Zenpy/1.1"
+          "Content-Length": "31",
+          "Content-Type": "application/json",
+          "User-Agent": "Zenpy/1.2"
         },
         "method": "DELETE",
-        "uri": "https://facetoe1.zendesk.com/api/v2/macros/306018807.json"
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/macros/360015125411.json"
       },
       "response": {
         "body": {
@@ -27,28 +27,28 @@
         "headers": {
           "Cache-Control": "no-cache",
           "Connection": "keep-alive",
-          "Date": "Sun, 23 Apr 2017 13:52:18 GMT",
+          "Date": "Fri, 30 Mar 2018 07:37:01 GMT",
           "Server": "nginx",
           "Strict-Transport-Security": "max-age=31536000;",
           "X-Content-Type-Options": "nosniff",
           "X-Frame-Options": "SAMEORIGIN",
           "X-Rack-Cache": "invalidate, pass",
-          "X-Rate-Limit": "400",
-          "X-Rate-Limit-Remaining": "387",
-          "X-Request-Id": "146c3622-08dd-4338-c360-ecf4bbdf6efc",
-          "X-Runtime": "0.176753",
+          "X-Rate-Limit": "700",
+          "X-Rate-Limit-Remaining": "698",
+          "X-Request-Id": "80864643-5ba0-425f-c2bd-067c7f868c24",
+          "X-Runtime": "0.218927",
           "X-UA-Compatible": "IE=Edge,chrome=1",
           "X-Zendesk-API-Version": "v2",
-          "X-Zendesk-API-Warn": "Removed restricted keys [\"active\", \"created_at\", \"position\", \"title\", \"updated_at\", \"url\", \"actions\", \"macro\"] from parameters according to whitelist",
-          "X-Zendesk-Application-Version": "v20.24",
-          "X-Zendesk-Origin-Server": "app50.pod5.iad1.zdsys.com",
-          "X-Zendesk-Request-Id": "cfb3436c716386edf4ab"
+          "X-Zendesk-API-Warn": "Removed restricted keys [\"macro.id\", \"macro\"] from parameters according to whitelist",
+          "X-Zendesk-Application-Version": "v757.19",
+          "X-Zendesk-Origin-Server": "app51.pod13.usw2.zdsys.com",
+          "X-Zendesk-Request-Id": "363327e341f2f4e64179"
         },
         "status": {
           "code": 204,
           "message": "No Content"
         },
-        "url": "https://facetoe1.zendesk.com/api/v2/macros/306018807.json"
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/macros/360015125411.json"
       }
     }
   ],

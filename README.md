@@ -2,9 +2,11 @@
 
 # Zenpy
 
-Zenpy is a Python wrapper for the Zendesk and Chat APIs. The goal of the project is to make it possible to write clean, fast, Pythonic code when interacting with Zendesk progmatically. The wrapper tries to keep API calls to a minimum. Wherever it makes sense objects are cached, and attributes of objects that would trigger an API call are evaluated lazily. 
+Zenpy is a Python wrapper for the Zendesk, Chat and HelpCentre APIs. The goal of the project is to make it easy to write clean, fast, Pythonic code when interacting with Zendesk progmatically. The wrapper tries to keep API calls to a minimum. Wherever it makes sense objects are cached, and attributes of objects that would trigger an API call are evaluated lazily. 
 
-Zenpy supports both Python2 and Python3. 
+Zenpy supports both Python2 and Python3.
+
+**Note:** HelpCentre API support is in beta.
 
 Please report bugs!
 
@@ -12,11 +14,13 @@ Please report bugs!
 * [Examples](#examples)
     * [Creating a ticket with a different requester](#creating-a-ticket-with-a-different-requester)
     * [Commenting on a ticket](#commenting-on-a-ticket)
+    * [Adding a HTML comment to a ticket](#adding-a-html-comment-to-a-ticket)
     * [Appending tags to a ticket](#appending-tags-to-a-ticket)
     * [Uploading an attachment](#uploading-an-attachment)
     * [Creating a ticket with a custom field set](#creating-a-ticket-with-a-custom-field-set)
     * [Updating a custom field on a ticket](#updating-a-custom-field-on-a-ticket)
     * [Applying a Macro to a ticket](#applying-a-macro-to-a-ticket)
+    * [Adding a photo to a user](#adding-a-photo-to-a-user)
 * [Documentation](#documentation)
 * [Contributions](#contributions)
 
@@ -31,8 +35,15 @@ zenpy_client = Zenpy(**credentials)
 zenpy_client.tickets.create(Ticket(subject="Important", description="Thing"))
 
 # Perform a simple search
-for ticket in zenpy_client.search("PC LOAD LETTER", type='ticket', assignee="facetoe"):
-    print(ticket)
+for ticket in zenpy_client.search('PC LOAD LETTER', type='ticket', assignee='facetoe'):
+    # No need to mess around with ids, linked objects can be accessed directly.
+    print(ticket.requester.name)
+
+    # All objects can be converted to a Python dict.
+    print(ticket.to_dict())
+
+    # Or to JSON.
+    print(ticket.to_json())
 ```
 
 ## Examples
@@ -56,6 +67,18 @@ from zenpy.lib.api_objects import Comment
 ticket = zenpy_client.tickets(id=some_ticket_id)
 ticket.comment = Comment(body="Important private comment", public=False)
 zenpy_client.tickets.update(ticket)
+```
+
+##### Adding a HTML comment to a ticket
+
+```python
+from zenpy.lib.api_objects import Ticket, Comment
+
+zenpy_client.tickets.create(Ticket(
+    subject='Html comment example',
+    comment=Comment(body='The smoke is very colorful',
+                    html_body='<h2>The smoke is <i>very</i> colourful</h2>'))
+)
 ```
 
 ##### Appending tags to a ticket
@@ -111,6 +134,14 @@ macro_result = zenpy_client.tickets.show_macro_effect(ticket_id_or_object, macro
 
 # Update the ticket to actually change the ticket. 
 zenpy_client.tickets.update(macro_result.ticket)
+```
+
+##### Adding a photo to a user
+
+```python
+user = zenpy_client.users(id=user_id)
+user.remote_photo_url = 'http://domain/example_photo.jpg'
+zenpy_client.users.update(user)
 ```
 
 ## Documentation

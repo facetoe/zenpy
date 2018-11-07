@@ -1,0 +1,56 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2018-03-30T07:42:12",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"ticket_field\": {\"id\": 360003006012}}"
+        },
+        "headers": {
+          "Accept": "*/*",
+          "Accept-Encoding": "gzip, deflate",
+          "Authorization": "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnBUNXQ2ZEZ4QWltU1hoNEkydjBYeVMwSkNlYVV4eWROQUxFRkV1VWM=",
+          "Connection": "keep-alive",
+          "Content-Length": "38",
+          "Content-Type": "application/json",
+          "User-Agent": "Zenpy/1.2"
+        },
+        "method": "DELETE",
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/ticket_fields/360003006012.json"
+      },
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": ""
+        },
+        "headers": {
+          "Cache-Control": "no-cache",
+          "Connection": "keep-alive",
+          "Date": "Fri, 30 Mar 2018 07:42:12 GMT",
+          "Server": "nginx",
+          "Strict-Transport-Security": "max-age=31536000;",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "SAMEORIGIN",
+          "X-Rack-Cache": "invalidate, pass",
+          "X-Rate-Limit": "700",
+          "X-Rate-Limit-Remaining": "686",
+          "X-Request-Id": "ca34834f-b801-434e-c368-0682871176a2",
+          "X-Runtime": "0.707915",
+          "X-UA-Compatible": "IE=Edge,chrome=1",
+          "X-Zendesk-API-Version": "v2",
+          "X-Zendesk-API-Warn": "Removed restricted keys [\"ticket_field.id\", \"ticket_field\"] from parameters according to whitelist",
+          "X-Zendesk-Application-Version": "v757.19",
+          "X-Zendesk-Origin-Server": "app42.pod13.usw2.zdsys.com",
+          "X-Zendesk-Request-Id": "ce1c06a3e11f81e781f2"
+        },
+        "status": {
+          "code": 204,
+          "message": "No Content"
+        },
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/ticket_fields/360003006012.json"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.8.0"
+}

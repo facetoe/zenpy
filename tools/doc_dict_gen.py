@@ -9,36 +9,35 @@ base_url = "https://developer.zendesk.com"
 
 
 def get_links():
-    skippages = (
-        '/rest_api/docs/core/introduction',
-        '/rest_api/docs/core/getting_started',
-        '/rest_api/docs/core/api_changes',
-        '/rest_api/docs/core/restrictions',
-        '/rest_api/docs/help_center/introduction',
-        '/rest_api/docs/zopim/introduction',
-        '/rest_api/docs/zopim/restrictions',
-        '/rest_api/docs/zopim/changes_roadmap',
-        '/rest_api/docs/web-portal/webportal_introduction',
-        '/rest_api/docs/nps-api/introduction',
-        '/rest_api/docs/core/side_loading',
-        '/rest_api/docs/core/search',
-        '/rest_api/docs/core/locales'
+    print("Retrieving links")
+
+    def extract_links(url):
+        response = requests.get(url)
+        soup = BeautifulSoup(response.content, "lxml")
+        nav_section = soup.find("ul", {"class": "docs-sidenav"})
+
+        api_doc_links = []
+        for link in [l['href'] for l in nav_section.findAll('a')]:
+            if not link.startswith('#'):
+                api_doc_links.append(link)
+        return api_doc_links
+
+    urls = (
+        'https://developer.zendesk.com/rest_api/docs/core/introduction',
+        'https://developer.zendesk.com/rest_api/docs/help_center/introduction',
+        'https://developer.zendesk.com/rest_api/docs/chat/introduction',
     )
 
-    print("Retrieving links")
-    response = requests.get('https://developer.zendesk.com/rest_api/docs/core/introduction')
-    soup = BeautifulSoup(response.content, "lxml")
-    nav_section = soup.find("ul", {"class": "docs-sidenav"})
-
-    api_doc_links = []
-    for link in [l['href'] for l in nav_section.findAll('a')]:
-        if link not in skippages and not link.startswith('#'):
-            api_doc_links.append(link)
-    return api_doc_links
+    links = []
+    for url in urls:
+        links.extend(extract_links(url))
+    return links
 
 
 def parse_link(link):
-    print("Parsing link: " + link)
+    namespace = link.split('/')[-2]
+
+    print("Parsing {} link: {}".format(namespace, link))
     response = requests.get(base_url + link)
 
     table_attr = SoupStrainer("table")
@@ -57,21 +56,24 @@ def parse_link(link):
     for row in rows[1:]:
         columns = [data.text for data in row.findAll('td')]
         row_data = dict(zip(header, columns))
-        name = row_data.pop('name')
-        object_info[object_name][name].update(row_data)
+        name = row_data.pop('name', None)
+        if name:
+            object_info[object_name][name].update(row_data)
 
     print("Parsing Completed for: " + link)
-    return object_info
+    return namespace, object_info
 
 
 from multiprocessing.pool import ThreadPool
 
-pool = ThreadPool(processes=20)
+with ThreadPool(processes=50) as pool:
+    results = pool.map(parse_link, get_links())
 
-results = pool.map_async(parse_link, get_links())
-output = dict()
-for result in results.get():
-    output.update(result)
+output = defaultdict(dict)
+for result in results:
+    if result:
+        namespace, data = result
+        output[namespace].update(data)
 
 with open('doc_dict.json', 'w+') as f:
-    json.dump(output, f)
+    json.dump(output, f, indent=2)

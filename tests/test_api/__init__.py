@@ -10,12 +10,13 @@ from betamax_serializers.pretty_json import PrettyJSONSerializer
 from zenpy import Zenpy
 
 cred_path = os.path.expanduser('~/zenpy-test-credentials.json')
+
 if os.path.exists(cred_path):
     with open(cred_path) as f:
         credentials = json.load(f)
 else:
     credentials = {
-        "subdomain": "zenpytesthelp",
+        "subdomain": "d3v-zenpydev",
         "email": "example@example.com",
         "token": "not really a token"
     }
@@ -52,12 +53,6 @@ def chunk_action(iterable, action, wait_action=None, ignore_func=None, batch_siz
 
 def setup_package():
     print("setup_package called")
-    zenpy_client, recorder = configure()
-    with recorder.use_cassette(cassette_name="setup_package-create-tickets", serialize_with='prettyjson'):
-        err_template = "{} found in test environment, bailing out!"
-        assert_empty(zenpy_client.tickets(), err_template.format("Tickets"))
-        assert_empty(zenpy_client.users(), err_template.format("Users"),
-                     ignore_func=lambda x: x.role != "admin" or x.name != "Mailer-daemon")
 
 
 def assert_empty(iterable, message, ignore_func=None):

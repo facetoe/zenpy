@@ -1,23 +1,23 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2017-04-23T13:52:15",
+      "recorded_at": "2018-03-30T07:37:05",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"organization\": {\"created_at\": \"2017-04-23T13:52:23Z\", \"id\": 16414988647, \"name\": \"testOrganization\", \"shared_comments\": false, \"shared_tickets\": false, \"tags\": [], \"updated_at\": \"2017-04-23T13:52:23Z\", \"url\": \"https://facetoe1.zendesk.com/api/v2/organizations/16414988647.json\", \"domain_names\": [], \"abilities\": {\"url\": \"https://facetoe1.zendesk.com/api/v2/organizations/16414988647.json\", \"organization_id\": 16414988647, \"can_edit_users\": true, \"can_access_tickets\": true}}}"
+          "string": "{\"organization\": {\"id\": 360036741151}}"
         },
         "headers": {
           "Accept": "*/*",
           "Accept-Encoding": "gzip, deflate",
-          "Authorization": "Basic ZmFjZXRvZUBmYWNldG9lLmNvbS5hdS90b2tlbjpkbWZIVnh6ak90b0ZsVlhJNnMzeFE2YmQ1dXZ1RG5Sb0kydkZWWW85",
+          "Authorization": "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnBUNXQ2ZEZ4QWltU1hoNEkydjBYeVMwSkNlYVV4eWROQUxFRkV1VWM=",
           "Connection": "keep-alive",
-          "Content-Length": "477",
-          "Content-type": "application/json",
-          "User-Agent": "Zenpy/1.1"
+          "Content-Length": "38",
+          "Content-Type": "application/json",
+          "User-Agent": "Zenpy/1.2"
         },
         "method": "DELETE",
-        "uri": "https://facetoe1.zendesk.com/api/v2/organizations/16414988647.json&include=abilities"
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/organizations/360036741151.json"
       },
       "response": {
         "body": {
@@ -27,28 +27,28 @@
         "headers": {
           "Cache-Control": "no-cache",
           "Connection": "keep-alive",
-          "Date": "Sun, 23 Apr 2017 13:52:24 GMT",
+          "Date": "Fri, 30 Mar 2018 07:37:05 GMT",
           "Server": "nginx",
           "Strict-Transport-Security": "max-age=31536000;",
           "X-Content-Type-Options": "nosniff",
           "X-Frame-Options": "SAMEORIGIN",
           "X-Rack-Cache": "invalidate, pass",
-          "X-Rate-Limit": "400",
-          "X-Rate-Limit-Remaining": "381",
-          "X-Request-Id": "a774e440-0c2b-4bda-cba7-b8ca3a6bb978",
-          "X-Runtime": "0.188634",
+          "X-Rate-Limit": "700",
+          "X-Rate-Limit-Remaining": "692",
+          "X-Request-Id": "908e25b1-5168-4187-c102-0682871176a2",
+          "X-Runtime": "0.187807",
           "X-UA-Compatible": "IE=Edge,chrome=1",
           "X-Zendesk-API-Version": "v2",
-          "X-Zendesk-API-Warn": "Removed restricted keys [\"created_at\", \"name\", \"shared_comments\", \"shared_tickets\", \"tags\", \"updated_at\", \"url\", \"domain_names\", \"url\", \"organization_id\", \"can_edit_users\", \"can_access_tickets\", \"abilities\", \"organization\"] from parameters according to whitelist",
-          "X-Zendesk-Application-Version": "v20.24",
-          "X-Zendesk-Origin-Server": "app46.pod5.iad1.zdsys.com",
-          "X-Zendesk-Request-Id": "6f2f6d7fa542e15ba406"
+          "X-Zendesk-API-Warn": "Removed restricted keys [\"organization.id\", \"organization\"] from parameters according to whitelist",
+          "X-Zendesk-Application-Version": "v757.19",
+          "X-Zendesk-Origin-Server": "app52.pod13.usw2.zdsys.com",
+          "X-Zendesk-Request-Id": "4859e0ab41d18165d8bf"
         },
         "status": {
           "code": 204,
           "message": "No Content"
         },
-        "url": "https://facetoe1.zendesk.com/api/v2/organizations/16414988647.json&include=abilities"
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/organizations/360036741151.json"
       }
     }
   ],

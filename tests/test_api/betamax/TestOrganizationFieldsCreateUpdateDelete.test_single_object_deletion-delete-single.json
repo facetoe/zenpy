@@ -1,0 +1,207 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2018-07-07T06:57:06",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"organization_field\": {\"description\": \"test\", \"id\": null, \"key\": \"somethingsomethingsomething\", \"title\": \"i am test\"}}"
+        },
+        "headers": {
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnlHeUd3VHJsYnZNc3JhU0dnOFowTE1tQUw2MXNoVlVCS2JmQlRFeUc="
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "119"
+          ],
+          "Content-Type": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "Zenpy/1.2"
+          ]
+        },
+        "method": "POST",
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/organization_fields.json"
+      },
+      "response": {
+        "body": {
+          "encoding": "UTF-8",
+          "string": "{\"organization_field\":{\"url\":\"https://d3v-zenpydev.zendesk.com/api/v2/organization_fields/360000188651.json\",\"id\":360000188651,\"type\":\"text\",\"key\":\"somethingsomethingsomething\",\"title\":\"i am test\",\"description\":\"test\",\"raw_title\":\"i am test\",\"raw_description\":\"test\",\"position\":9999,\"active\":true,\"system\":false,\"regexp_for_validation\":null,\"created_at\":\"2018-07-07T06:57:07Z\",\"updated_at\":\"2018-07-07T06:57:07Z\"}}"
+        },
+        "headers": {
+          "Cache-Control": [
+            "max-age=0, private, must-revalidate"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "414"
+          ],
+          "Content-Type": [
+            "application/json; charset=UTF-8"
+          ],
+          "Date": [
+            "Sat, 07 Jul 2018 06:57:07 GMT"
+          ],
+          "ETag": [
+            "W/\"957865f2b785cb39d1de91bd2cdad9ed\""
+          ],
+          "Location": [
+            "https://d3v-zenpydev.zendesk.com/api/v2/organization_fields/360000188651.json"
+          ],
+          "Server": [
+            "nginx"
+          ],
+          "Strict-Transport-Security": [
+            "max-age=31536000;"
+          ],
+          "X-Content-Type-Options": [
+            "nosniff"
+          ],
+          "X-Frame-Options": [
+            "SAMEORIGIN"
+          ],
+          "X-Rate-Limit": [
+            "700"
+          ],
+          "X-Rate-Limit-Remaining": [
+            "696"
+          ],
+          "X-Request-Id": [
+            "20e717307f690f02331d74cab4f98f9d"
+          ],
+          "X-Runtime": [
+            "0.212527"
+          ],
+          "X-Zendesk-API-Version": [
+            "v2"
+          ],
+          "X-Zendesk-API-Warn": [
+            "Removed restricted keys [\"organization_field.id\"] from parameters according to whitelist"
+          ],
+          "X-Zendesk-Application-Version": [
+            "v1673.37"
+          ],
+          "X-Zendesk-Origin-Server": [
+            "app7.pod13.usw2.zdsys.com"
+          ],
+          "X-Zendesk-Request-Id": [
+            "d6616b1be15fcd04031c"
+          ]
+        },
+        "status": {
+          "code": 201,
+          "message": "Created"
+        },
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/organization_fields.json"
+      }
+    },
+    {
+      "recorded_at": "2018-07-07T06:57:06",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"organization_field\": {\"id\": 360000188651}}"
+        },
+        "headers": {
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnlHeUd3VHJsYnZNc3JhU0dnOFowTE1tQUw2MXNoVlVCS2JmQlRFeUc="
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "44"
+          ],
+          "Content-Type": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "Zenpy/1.2"
+          ]
+        },
+        "method": "DELETE",
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/organization_fields/360000188651.json"
+      },
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": ""
+        },
+        "headers": {
+          "Cache-Control": [
+            "no-cache"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Date": [
+            "Sat, 07 Jul 2018 06:57:08 GMT"
+          ],
+          "Server": [
+            "nginx"
+          ],
+          "Strict-Transport-Security": [
+            "max-age=31536000;"
+          ],
+          "X-Content-Type-Options": [
+            "nosniff"
+          ],
+          "X-Frame-Options": [
+            "SAMEORIGIN"
+          ],
+          "X-Rate-Limit": [
+            "700"
+          ],
+          "X-Rate-Limit-Remaining": [
+            "695"
+          ],
+          "X-Request-Id": [
+            "544160461caeacb1733ecfb192e73f69"
+          ],
+          "X-Runtime": [
+            "0.195061"
+          ],
+          "X-Zendesk-API-Version": [
+            "v2"
+          ],
+          "X-Zendesk-API-Warn": [
+            "Removed restricted keys [\"organization_field.id\", \"organization_field\"] from parameters according to whitelist"
+          ],
+          "X-Zendesk-Application-Version": [
+            "v1673.37"
+          ],
+          "X-Zendesk-Origin-Server": [
+            "app46.pod13.usw2.zdsys.com"
+          ],
+          "X-Zendesk-Request-Id": [
+            "e1dfb57f12bda126b6c8"
+          ]
+        },
+        "status": {
+          "code": 204,
+          "message": "No Content"
+        },
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/organization_fields/360000188651.json"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.8.1"
+}

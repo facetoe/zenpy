@@ -10,7 +10,6 @@ from zenpy.lib.util import get_object_type
 __author__ = 'facetoe'
 
 log = logging.getLogger(__name__)
-purge_lock = RLock()
 
 
 class ZenpyCache(object):
@@ -22,6 +21,7 @@ class ZenpyCache(object):
 
     def __init__(self, cache_impl, maxsize, **kwargs):
         self.cache = self._get_cache_impl(cache_impl, maxsize, **kwargs)
+        self.purge_lock = RLock()
 
     def set_cache_impl(self, cache_impl, maxsize, **kwargs):
         """
@@ -63,7 +63,7 @@ class ZenpyCache(object):
 
     def purge(self):
         """ Purge the cache of all items. """
-        with purge_lock:
+        with self.purge_lock:
             self.cache.clear()
 
     @property
@@ -101,90 +101,90 @@ class ZenpyCache(object):
         return len(self.cache)
 
 
-# Global dictionary for managing default object caches
-cache_mapping = {
-    'user': ZenpyCache('LRUCache', maxsize=10000),
-    'organization': ZenpyCache('LRUCache', maxsize=10000),
-    'group': ZenpyCache('LRUCache', maxsize=10000),
-    'brand': ZenpyCache('LRUCache', maxsize=10000),
-    'ticket': ZenpyCache('TTLCache', maxsize=10000, ttl=30),
-    'comment': ZenpyCache('LRUCache', maxsize=10000),
-    'request': ZenpyCache('LRUCache', maxsize=10000),
-    'user_field': ZenpyCache('TTLCache', maxsize=10000, ttl=30),
-    'organization_field': ZenpyCache('LRUCache', maxsize=10000),
-    'ticket_field': ZenpyCache('LRUCache', maxsize=10000),
-    'sharing_agreement': ZenpyCache('TTLCache', maxsize=10000, ttl=6000),
-    'identity': ZenpyCache('LRUCache', maxsize=10000)
-}
+class ZenpyCacheManager:
+    """
+    Interface to the various caches.
+    """
 
+    def __init__(self, disabled=False):
+        self.disabled = disabled
+        self.mapping = {
+            'user': ZenpyCache('LRUCache', maxsize=10000),
+            'organization': ZenpyCache('LRUCache', maxsize=10000),
+            'group': ZenpyCache('LRUCache', maxsize=10000),
+            'brand': ZenpyCache('LRUCache', maxsize=10000),
+            'ticket': ZenpyCache('TTLCache', maxsize=10000, ttl=30),
+            'request': ZenpyCache('LRUCache', maxsize=10000),
+            'ticket_field': ZenpyCache('LRUCache', maxsize=10000),
+            'sharing_agreement': ZenpyCache('TTLCache', maxsize=10000, ttl=6000),
+            'identity': ZenpyCache('LRUCache', maxsize=10000)
+        }
 
-def delete_from_cache(to_delete):
-    """ Purge one or more items from the relevant caches """
-    if not isinstance(to_delete, list):
-        to_delete = [to_delete]
-    for zenpy_object in to_delete:
+    def add(self, zenpy_object):
+        """ Add a Zenpy object to the relevant cache. If no cache exists for this object nothing is done. """
         object_type = get_object_type(zenpy_object)
-        object_cache = cache_mapping.get(object_type, None)
-        if object_cache:
-            removed_object = object_cache.pop(zenpy_object.id, None)
-            if removed_object:
-                log.debug("Cache RM: [%s %s]" % (object_type.capitalize(), zenpy_object.id))
+        if object_type not in self.mapping or self.disabled:
+            return
+        attr_name = self._cache_key_attribute(object_type)
+        cache_key = getattr(zenpy_object, attr_name)
+        log.debug("Caching: [{}({}={})]".format(zenpy_object.__class__.__name__, attr_name, cache_key))
+        self.mapping[object_type][cache_key] = zenpy_object
 
+    def delete(self, to_delete):
+        """ Purge one or more items from the relevant caches """
+        if not isinstance(to_delete, list):
+            to_delete = [to_delete]
+        for zenpy_object in to_delete:
+            object_type = get_object_type(zenpy_object)
+            object_cache = self.mapping.get(object_type, None)
+            if object_cache:
+                removed_object = object_cache.pop(zenpy_object.id, None)
+                if removed_object:
+                    log.debug("Cache RM: [%s %s]" % (object_type.capitalize(), zenpy_object.id))
 
-def query_cache_by_object(zenpy_object):
-    """ Convenience method for testing. Given an object, return the cached version """
-    object_type = get_object_type(zenpy_object)
-    cache_key = _cache_key_attribute(object_type)
-    return query_cache(object_type, getattr(zenpy_object, cache_key))
+    def get(self, object_type, cache_key):
+        """ Query the cache for a Zenpy object """
+        if object_type not in self.mapping or self.disabled:
+            return None
+        cache = self.mapping[object_type]
+        if cache_key in cache:
+            log.debug("Cache HIT: [%s %s]" % (object_type.capitalize(), cache_key))
+            return cache[cache_key]
+        else:
+            log.debug('Cache MISS: [%s %s]' % (object_type.capitalize(), cache_key))
 
+    def query_cache_by_object(self, zenpy_object):
+        """ Convenience method for testing. Given an object, return the cached version """
+        object_type = get_object_type(zenpy_object)
+        cache_key = self._cache_key_attribute(object_type)
+        return self.get(object_type, getattr(zenpy_object, cache_key))
 
-def query_cache(object_type, cache_key):
-    """ Query the cache for a Zenpy object """
-    if object_type not in cache_mapping:
-        return None
-    cache = cache_mapping[object_type]
-    if cache_key in cache:
-        log.debug("Cache HIT: [%s %s]" % (object_type.capitalize(), cache_key))
-        return cache[cache_key]
-    else:
-        log.debug('Cache MISS: [%s %s]' % (object_type.capitalize(), cache_key))
+    def purge_cache(self, object_type):
+        """ Purge the named cache of all values. If no cache exists for object_type, nothing is done """
+        if object_type in self.mapping:
+            cache = self.mapping[object_type]
+            log.debug("Purging [{}] cache of {} values.".format(object_type, len(cache)))
+            cache.purge()
 
+    def in_cache(self, zenpy_object):
+        """ Determine whether or not this object is in the cache """
+        object_type = get_object_type(zenpy_object)
+        cache_key_attr = self._cache_key_attribute(object_type)
+        return self.get(object_type, getattr(zenpy_object, cache_key_attr)) is not None
 
-def add_to_cache(zenpy_object):
-    """ Add a Zenpy object to the relevant cache. If no cache exists for this object nothing is done. """
-    object_type = get_object_type(zenpy_object)
-    if object_type not in cache_mapping:
-        return
-    attr_name = _cache_key_attribute(object_type)
-    cache_key = getattr(zenpy_object, attr_name)
-    log.debug("Caching: [{}({}={})]".format(zenpy_object.__class__.__name__, attr_name, cache_key))
-    cache_mapping[object_type][cache_key] = zenpy_object
+    def should_cache(self, zenpy_object):
+        """ Determine whether or not this object should be cached (ie, a cache exists for it's object_type) """
+        return get_object_type(zenpy_object) in self.mapping
 
+    def disable(self):
+        self.disabled = True
 
-def purge_cache(object_type):
-    """ Purge the named cache of all values. If no cache exists for object_type, nothing is done """
-    if object_type in cache_mapping:
-        cache = cache_mapping[object_type]
-        log.debug("Purging [{}] cache of {} values.".format(object_type, len(cache)))
-        cache.purge()
+    def enable(self):
+        self.disabled = False
 
-
-def in_cache(zenpy_object):
-    """ Determine whether or not this object is in the cache """
-    object_type = get_object_type(zenpy_object)
-    cache_key_attr = _cache_key_attribute(object_type)
-    return query_cache(object_type, getattr(zenpy_object, cache_key_attr)) is not None
-
-
-def should_cache(zenpy_object):
-    """ Determine whether or not this object should be cached (ie, a cache exists for it's object_type) """
-    return get_object_type(zenpy_object) in cache_mapping
-
-
-def _cache_key_attribute(object_type):
-    """ Return the attribute used as the cache_key for a particular object type. """
-    if object_type in ('user_field', 'organization_field'):
-        key = 'key'
-    else:
-        key = 'id'
-    return key
+    def _cache_key_attribute(self, object_type):
+        """ Return the attribute used as the cache_key for a particular object type. """
+        # This function used to return the key for objects that are not referenced by id.
+        # These objects are no longer cached (UserField, OrganizationalField) and so the
+        # function has no purpose anymore. I'm leaving it here in case it comes in handy again
+        return 'id'
