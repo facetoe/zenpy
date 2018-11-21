@@ -135,7 +135,7 @@ class Zenpy(object):
         self.automations = AutomationApi(config, object_type='automation')
         self.dynamic_content = DynamicContentApi(config)
         self.targets = TargetApi(config, object_type='target')
-        self.talk = TalkApi(config,EndpointFactory('talk'),'talk')
+        self.talk = TalkApi(config)
 
     @staticmethod
     def http_adapter_kwargs():
