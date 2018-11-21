@@ -1862,26 +1862,37 @@ class NpsApi(Api):
         """
         return self._query_zendesk(self.endpoint.responses_incremental, 'responses', start_time=start_time)
 
-class TalkApi(Api):
+class TalkApiBase(Api):
     def __init__(self, config, endpoint, object_type):
-        super(TalkApi, self).__init__(config, object_type=object_type, endpoint=endpoint)
+        super(TalkApiBase, self).__init__(config, object_type=object_type, endpoint=endpoint)
+
         self._object_mapping = TalkObjectMapping(self)
 
-    def current_queue_activity(self, **kwargs):
-        return self._query_zendesk(EndpointFactory('talk').current_queue_activity,'current_queue_activity', **kwargs)
+    def _build_url(self, endpoint):
+        return super(TalkApiBase, self)._build_url(endpoint)
 
-    def agents_activity(self, **kwargs):
-        return self._query_zendesk(EndpointFactory('talk').agents_activity,'agents_activity', **kwargs)
+class TalkApi(TalkApiBase):
+    def __init__(self, config):
+        super(TalkApi, self).__init__(config, endpoint=EndpointFactory('talk'), object_type='talk')
 
-    def availability(self, **kwargs):
-        return self._query_zendesk(EndpointFactory('talk').availability,'availability', **kwargs)
+        self.current_queue_activity = StatsApi(config, self.endpoint.current_queue_activity, object_type='current_queue_activity')
+        self.agents_activity = StatsApi(config, self.endpoint.agents_activity, object_type='agents_activity')
+        self.availability = AvailabilitiesApi(config, self.endpoint.availability, object_type='availability')
+        self.account_overview = StatsApi(config, self.endpoint.account_overview, object_type='account_overview')
+        self.phone_numbers = PhoneNumbersApi(config, self.endpoint.phone_numbers, object_type='phone_numbers')
+        self.agents_overview = StatsApi(config, self.endpoint.agents_overview, object_type='agents_overview')
 
-    def account_overview(self, **kwargs):
-        return self._query_zendesk(EndpointFactory('talk').account_overview,'account_overview', **kwargs)
+    def __call__(self, *args, **kwargs):
+        raise NotImplementedError("Cannot directly call the TalkApi!")
 
-    def phone_numbers(self, **kwargs):
-        for phone_number in self._query_zendesk(EndpointFactory('talk').phone_numbers,'phone_numbers', **kwargs):
-            yield phone_number
+class StatsApi(TalkApiBase):
+    def __init__(self, config, endpoint, object_type):
+             super(StatsApi, self).__init__(config, object_type=object_type, endpoint=endpoint)
 
-    def agents_overview(self):
-        return self._query_zendesk(EndpointFactory('talk').agents_overview,'agents_overview')
+class AvailabilitiesApi(TalkApiBase):
+    def __init__(self, config, endpoint, object_type):
+             super(AvailabilitiesApi, self).__init__(config, object_type=object_type, endpoint=endpoint)
+
+class PhoneNumbersApi(TalkApiBase):
+    def __init__(self, config, endpoint, object_type):
+             super(PhoneNumbersApi, self).__init__(config, object_type=object_type, endpoint=endpoint)
