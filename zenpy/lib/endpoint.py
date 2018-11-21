@@ -126,6 +126,8 @@ class PrimaryEndpoint(BaseEndpoint):
                     parameters['role[]'] = value
                 else:
                     parameters['role[]'] = value[0] + '&' + "&".join(('role[]={}'.format(role) for role in value[1:]))
+            elif key.endswith('ids'):
+                parameters[key] = ",".join(map(str, value)) #if it looks like a type of unknown id, send it through as such
 
         if path == self.endpoint and not path.endswith('.json'):
             path += '.json'
@@ -365,23 +367,6 @@ class ChatEndpoint(BaseEndpoint):
                 break
         return Url(endpoint_path, params=params)
 
-class TalkEndpoint(BaseEndpoint):
-    def __call__(self,**kwargs):
-        params = kwargs
-        if self.endpoint == 'phone_numbers.json':
-            endpoint_path = 'channels/voice/{}'.format(self.endpoint)
-        elif self.endpoint == 'availability':
-            if 'id' in kwargs:
-                agent_id = kwargs['id']
-            else:
-                raise ZenpyException("Availibility endpoint requires an id")
-            endpoint_path = 'channels/voice/availabilities/{}.json'.format(agent_id)
-        else:
-            endpoint_path = 'channels/voice/stats/{}'.format(self.endpoint)
-
-        return Url(endpoint_path, params=params)
-
-
 class ChatSearchEndpoint(BaseEndpoint):
     def __call__(self, *args, **kwargs):
         conditions = list()
@@ -539,12 +524,12 @@ class EndpointFactory(object):
     class Dummy(object): pass
 
     talk = Dummy()
-    talk.current_queue_activity = TalkEndpoint('current_queue_activity.json')
-    talk.agents_activity = TalkEndpoint('agents_activity.json')
-    talk.availability = TalkEndpoint('availability')
-    talk.account_overview = TalkEndpoint('account_overview.json')
-    talk.agents_overview = TalkEndpoint('agents_overview.json')
-    talk.phone_numbers = TalkEndpoint('phone_numbers.json')
+    talk.current_queue_activity = PrimaryEndpoint('channels/voice/stats/current_queue_activity')
+    talk.agents_activity = PrimaryEndpoint('channels/voice/stats/agents_activity')
+    talk.availability = SecondaryEndpoint('channels/voice/availabilities/%(id)s.json')
+    talk.account_overview = PrimaryEndpoint('channels/voice/stats/account_overview')
+    talk.agents_overview = PrimaryEndpoint('channels/voice/stats/agents_overview')
+    talk.phone_numbers = PrimaryEndpoint('channels/voice/phone_numbers.json')
 
     help_centre = Dummy()
     help_centre.articles = PrimaryEndpoint('help_center/articles')
