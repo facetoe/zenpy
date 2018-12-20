@@ -48,6 +48,18 @@ for ticket in zenpy_client.search('PC LOAD LETTER', type='ticket', assignee='fac
 
 ## Examples
 
+##### Searching open and pending tickets for a specific user and sort them by descending
+
+```python
+zenpy_client.search(type='ticket', status_less_than='closed', assignee='foo@mail.foo', sort_order='desc')
+```
+
+##### Searching only opened tickets
+
+```python
+zenpy_client.search(type='ticket', status='open')
+```
+
 ##### Creating a ticket with a different requester
 
 ```python
