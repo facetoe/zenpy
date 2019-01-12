@@ -28,8 +28,16 @@ from zenpy.lib.api_objects.help_centre_objects import (
     Post,
     Subscription
 )
+from zenpy.lib.api_objects.talk_objects import (
+    CurrentQueueActivity,
+    PhoneNumbers,
+    ShowAvailability,
+    AgentsOverview,
+    AccountOverview,
+    AgentsActivity
+)
 from zenpy.lib.exception import *
-from zenpy.lib.mapping import ZendeskObjectMapping, ChatObjectMapping, HelpCentreObjectMapping
+from zenpy.lib.mapping import ZendeskObjectMapping, ChatObjectMapping, HelpCentreObjectMapping, TalkObjectMapping
 from zenpy.lib.request import *
 from zenpy.lib.response import *
 from zenpy.lib.util import as_plural, extract_id, is_iterable_but_not_string, json_encode_for_zendesk
@@ -405,7 +413,6 @@ class Api(BaseApi):
 
     def _get_default_locale(self, locale_id):
         return self._query_zendesk(EndpointFactory('locales'), 'locale', id=locale_id)
-
 
 class CRUDApi(Api):
     """
@@ -1864,3 +1871,38 @@ class NpsApi(Api):
         :param start_time: time to retrieve events from.
         """
         return self._query_zendesk(self.endpoint.responses_incremental, 'responses', start_time=start_time)
+
+class TalkApiBase(Api):
+    def __init__(self, config, endpoint, object_type):
+        super(TalkApiBase, self).__init__(config, object_type=object_type, endpoint=endpoint)
+
+        self._object_mapping = TalkObjectMapping(self)
+
+    def _build_url(self, endpoint):
+        return super(TalkApiBase, self)._build_url(endpoint)
+
+class TalkApi(TalkApiBase):
+    def __init__(self, config):
+        super(TalkApi, self).__init__(config, endpoint=EndpointFactory('talk'), object_type='talk')
+
+        self.current_queue_activity = StatsApi(config, self.endpoint.current_queue_activity, object_type='current_queue_activity')
+        self.agents_activity = StatsApi(config, self.endpoint.agents_activity, object_type='agents_activity')
+        self.availability = AvailabilitiesApi(config, self.endpoint.availability, object_type='availability')
+        self.account_overview = StatsApi(config, self.endpoint.account_overview, object_type='account_overview')
+        self.phone_numbers = PhoneNumbersApi(config, self.endpoint.phone_numbers, object_type='phone_numbers')
+        self.agents_overview = StatsApi(config, self.endpoint.agents_overview, object_type='agents_overview')
+
+    def __call__(self, *args, **kwargs):
+        raise NotImplementedError("Cannot directly call the TalkApi!")
+
+class StatsApi(TalkApiBase):
+    def __init__(self, config, endpoint, object_type):
+             super(StatsApi, self).__init__(config, object_type=object_type, endpoint=endpoint)
+
+class AvailabilitiesApi(TalkApiBase):
+    def __init__(self, config, endpoint, object_type):
+             super(AvailabilitiesApi, self).__init__(config, object_type=object_type, endpoint=endpoint)
+
+class PhoneNumbersApi(TalkApiBase):
+    def __init__(self, config, endpoint, object_type):
+             super(PhoneNumbersApi, self).__init__(config, object_type=object_type, endpoint=endpoint)

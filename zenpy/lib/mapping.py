@@ -5,6 +5,7 @@ from zenpy.lib.api_objects import *
 from zenpy.lib.api_objects.chat_objects import *
 from zenpy.lib.api_objects.help_centre_objects import Article, Category, Section, Label, Translation, Topic, Post, \
     Subscription, Vote, AccessPolicy, UserSegment
+from zenpy.lib.api_objects.talk_objects import *
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.proxy import ProxyDict, ProxyList
 from zenpy.lib.util import as_singular, get_object_type
@@ -232,4 +233,14 @@ class HelpCentreObjectMapping(ZendeskObjectMapping):
         'vote': Vote,
         'access_policy': AccessPolicy,
         'user_segment': UserSegment
+    }
+
+class TalkObjectMapping(ZendeskObjectMapping):
+    class_mapping = {
+        'account_overview': AccountOverview,
+        'agents_activity': AgentsActivity,
+        'agents_overview': AgentsOverview,
+        'current_queue_activity': CurrentQueueActivity,
+        'phone_numbers': PhoneNumbers,
+        'availability': ShowAvailability
     }

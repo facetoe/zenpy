@@ -32,7 +32,7 @@ from zenpy.lib.api import (
     BrandApi,
     TicketFormApi,
     OrganizationFieldsApi,
-    JiraLinkApi, SkipApi)
+    JiraLinkApi, SkipApi, TalkApi)
 from zenpy.lib.cache import ZenpyCache, ZenpyCacheManager
 from zenpy.lib.endpoint import EndpointFactory
 from zenpy.lib.exception import ZenpyException
@@ -135,6 +135,7 @@ class Zenpy(object):
         self.automations = AutomationApi(config, object_type='automation')
         self.dynamic_content = DynamicContentApi(config)
         self.targets = TargetApi(config, object_type='target')
+        self.talk = TalkApi(config)
 
     @staticmethod
     def http_adapter_kwargs():
