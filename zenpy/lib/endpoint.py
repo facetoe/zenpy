@@ -502,6 +502,7 @@ class EndpointFactory(object):
     users.requested = SecondaryEndpoint('users/%(id)s/tickets/requested.json')
     users.requests = SecondaryEndpoint('users/%(id)s/requests.json')
     users.tags = SecondaryEndpoint('users/%(id)s/tags.json')
+    users.set_password = SecondaryEndpoint('users/%(id)s/password.json')
     users.identities = SecondaryEndpoint('users/%(id)s/identities.json')
     users.identities.show = MultipleIDEndpoint('users/{0}/identities/{1}.json')
     users.identities.update = MultipleIDEndpoint('users/{0}/identities/{1}.json')

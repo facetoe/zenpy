@@ -800,6 +800,16 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
         """
         return self._get(self._build_url(self.endpoint.skips(id=user)))
 
+    @extract_id(User)
+    def set_password(self, user, password):
+        """
+        Sets the password for the passed user - https://developer.zendesk.com/rest_api/docs/support/users#set-a-users-password
+        :param user: User object or id
+        :param password: new password
+        """
+        url = self._build_url(self.endpoint.set_password(id=user))
+        return self._post(url, payload=dict(password=password))
+
 
 class AttachmentApi(Api):
     def __init__(self, config):
