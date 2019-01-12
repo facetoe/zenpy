@@ -2,6 +2,8 @@ import logging
 from datetime import date
 from datetime import datetime
 
+from requests.utils import quote
+
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.util import is_iterable_but_not_string, to_unix_ts
 
@@ -253,7 +255,7 @@ class SearchEndpoint(BaseEndpoint):
         search_query = ['%s%s' % (key, value) for (key, value) in renamed_kwargs.items()]
         search_query.extend(modifiers)
         if query is not None:
-            search_query.insert(0, query)
+            search_query.insert(0, quote(query))
         params['query'] = ' '.join(search_query)
 
         return Url(self.endpoint, params)
