@@ -180,6 +180,7 @@ class BaseApi(object):
             while time_since_last_call() < self.ratelimit_request_interval:
                 remaining_sleep = int(self.ratelimit_request_interval - time_since_last_call())
                 log.debug("  -> sleeping: %s more seconds" % remaining_sleep)
+                self.check_ratelimit_budget(1)
                 sleep(1)
             response = http_method(url, **kwargs)
 
