@@ -185,7 +185,7 @@ class BaseApi(object):
             response = http_method(url, **kwargs)
 
         self.callsafety['lastcalltime'] = time()
-        self.callsafety['lastlimitremaining'] = response.headers.get('X-Rate-Limit-Remaining', 0)
+        self.callsafety['lastlimitremaining'] = int(response.headers.get('X-Rate-Limit-Remaining', 0))
         return response
 
     def _update_callsafety(self, response):
