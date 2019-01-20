@@ -109,7 +109,8 @@ class ZendeskObjectMapping(object):
         self.always_dirty = dict(
             conditions=('all', 'any'),
             organization_field=('custom_field_options',),
-            ticket_field=('custom_field_options',)
+            ticket_field=('custom_field_options',),
+            user=('name',)
         )
 
     def object_from_json(self, object_type, object_json, parent=None):
