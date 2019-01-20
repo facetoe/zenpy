@@ -337,7 +337,7 @@ Zendesk imposes rate limiting (https://developer.zendesk.com/rest_api/docs/core/
 
     .. code:: python
 
-        zenpy_client = Zenpy(proactive_ratelimit_request_interval=20, **creds)
+        zenpy_client = Zenpy(proactive_ratelimit=700, **creds)
 
 2. `proactive_ratelimit_request_interval`
 
