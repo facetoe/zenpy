@@ -504,15 +504,22 @@ class HelpdeskAttachmentRequest(BaseZendeskRequest):
     def put(self, api_objects, *args, **kwargs):
         raise NotImplementedError("You cannot update HelpCentre attachments!")
 
-    def post(self, endpoint, attachment, article=None, inline=False):
+    def post(self, endpoint, attachment, article=None, inline=False, file_name=None, content_type=None):
         if article:
             url = self.api._build_url(endpoint(id=article))
         else:
             url = self.api._build_url(endpoint())
 
+        use_file_name = bool(file_name) and bool(content_type)
+        if (bool(file_name) or bool(content_type)) and not use_file_name:
+            raise ZenpyException("Content_type and file_name are expected together!")
+
         if hasattr(attachment, 'read'):
-            return self.api._post(url, payload={}, files=dict(file=attachment))
+            file = attachment if not use_file_name else (file_name, attachment, content_type)
+            return self.api._post(url, payload={}, files=dict(inline=(None, inline), file=file))
         elif os.path.isfile(attachment):
             with open(attachment, 'rb') as fp:
-                return self.api._post(url, payload={}, files=dict(file=fp))
+                file = fp if not use_file_name else (file_name, fp, content_type)
+                return self.api._post(url, payload={}, files=dict(inline=(None, inline), file=file))
+
         raise ValueError("Attachment is not a file-like object or valid path!")
