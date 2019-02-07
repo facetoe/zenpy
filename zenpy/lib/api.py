@@ -1764,11 +1764,13 @@ class ArticleAttachmentApi(HelpCentreApiBase, SubscriptionApi):
         return self._query_zendesk(self.endpoint, 'article_attachment', id=attachment)
 
     @extract_id(Article)
-    def create(self, article, attachment, inline=False):
+    def create(self, article, attachment, inline=False, file_name=None, content_type = None):
         return HelpdeskAttachmentRequest(self).post(self.endpoint.create,
                                                     article=article,
                                                     attachment=attachment,
-                                                    inline=inline)
+                                                    inline=inline,
+                                                    file_name=file_name,
+                                                    content_type=content_type)
 
     def create_unassociated(self, attachment, inline=False):
         return HelpdeskAttachmentRequest(self).post(self.endpoint.create_unassociated,
