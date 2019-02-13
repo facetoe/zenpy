@@ -1745,6 +1745,9 @@ class SectionApi(HelpCentreApiBase, CRUDApi, TranslationApi, SubscriptionApi, Ac
     def articles(self, section):
         return self._query_zendesk(self.endpoint.articles, 'article', id=section)
 
+    def create(self, section):
+        return CRUDRequest(self).post(section, create=True, id=section.category_id)
+
 
 class ArticleAttachmentApi(HelpCentreApiBase, SubscriptionApi):
     @extract_id(Article)
