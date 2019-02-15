@@ -582,6 +582,7 @@ class EndpointFactory(object):
     help_centre.categories.delete_translation = SecondaryEndpoint('help_center/translations/%(id)s.json')
 
     help_centre.sections = PrimaryEndpoint('help_center/sections')
+    help_centre.sections.create = SecondaryEndpoint('help_center/categories/%(id)s/sections.json')
     help_centre.sections.articles = SecondaryEndpoint('help_center/sections/%(id)s/articles.json')
     help_centre.sections.translations = SecondaryEndpoint('help_center/sections/%(id)s/translations.json')
     help_centre.sections.create_translation = SecondaryEndpoint('help_center/sections/%(id)s/translations.json')
