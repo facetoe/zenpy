@@ -129,7 +129,8 @@ class PrimaryEndpoint(BaseEndpoint):
                 else:
                     parameters['role[]'] = value[0] + '&' + "&".join(('role[]={}'.format(role) for role in value[1:]))
             elif key.endswith('ids'):
-                parameters[key] = ",".join(map(str, value)) #if it looks like a type of unknown id, send it through as such
+                # if it looks like a type of unknown id, send it through as such
+                parameters[key] = ",".join(map(str, value))
 
         if path == self.endpoint and not path.endswith('.json'):
             path += '.json'
@@ -252,7 +253,9 @@ class SearchEndpoint(BaseEndpoint):
             elif is_iterable_but_not_string(value):
                 modifiers.append(self.format_or(key, value))
             else:
-                renamed_kwargs.update({key + ':': '"%s"' % value})
+                if isinstance(value, str) and value.count(' ') > 0:
+                    value = '"{}"'.format(value)
+                renamed_kwargs.update({key + ':': '%s' % value})
 
         search_query = ['%s%s' % (key, value) for (key, value) in renamed_kwargs.items()]
         search_query.extend(modifiers)
