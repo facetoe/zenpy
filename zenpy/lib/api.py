@@ -1039,7 +1039,7 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
             endpoint_kwargs['id'] = tickets.id
         url = self._build_url(self.endpoint.deleted(**endpoint_kwargs))
         deleted_ticket_job_id = self._delete(url)
-        self.cache.delete(deleted_ticket_job_id)
+        self.cache.delete(tickets)
         return deleted_ticket_job_id
 
     def deleted(self):
