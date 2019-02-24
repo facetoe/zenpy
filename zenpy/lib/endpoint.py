@@ -474,6 +474,7 @@ class EndpointFactory(object):
     tickets.audits = SecondaryEndpoint('tickets/%(id)s/audits.json')
     tickets.audits.cursor = PrimaryEndpoint('ticket_audits')
     tickets.comments = SecondaryEndpoint('tickets/%(id)s/comments.json')
+    tickets.deleted = PrimaryEndpoint('deleted_tickets')
     tickets.events = IncrementalEndpoint('incremental/ticket_events.json')
     tickets.incremental = IncrementalEndpoint('incremental/tickets.json')
     tickets.metrics = SecondaryEndpoint('tickets/%(id)s/metrics.json')
