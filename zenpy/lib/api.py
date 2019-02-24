@@ -136,7 +136,7 @@ class BaseApi(object):
         if response.status_code == 429:
             while 'retry-after' in response.headers and int(response.headers['retry-after']) > 0:
                 retry_after_seconds = int(response.headers['retry-after'])
-                log.warn(
+                log.warning(
                     "Waiting for requested retry-after period: %s seconds" % retry_after_seconds
                 )
                 while retry_after_seconds > 0:
@@ -173,7 +173,7 @@ class BaseApi(object):
             response = http_method(url, **kwargs)
         else:
             # We hit our limit floor and aren't quite at ratelimit_request_interval value in seconds yet..
-            log.warn(
+            log.warning(
                 "Safety Limit Reached of %s remaining calls and time since last call is under %s seconds"
                 % (self.ratelimit, self.ratelimit_request_interval)
             )
@@ -1560,7 +1560,7 @@ class HelpCentreApiBase(Api):
         self._object_mapping = HelpCentreObjectMapping(self)
         self.locale = ''
 
-    def _process_response(self, response):
+    def _process_response(self, response, object_mapping=None):
         endpoint_path = get_endpoint_path(self, response)
         if endpoint_path.startswith('/help_center') or endpoint_path.startswith('/community'):
             object_mapping = self._object_mapping
