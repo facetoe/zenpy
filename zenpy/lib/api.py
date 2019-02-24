@@ -560,6 +560,7 @@ class IncrementalApi(Api):
     def incremental(self, start_time, include=None):
         """
         Retrieve bulk data from the incremental API.
+
         :param include: list of objects to sideload
         :param start_time: The time of the oldest object you are interested in.
         """
