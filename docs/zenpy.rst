@@ -248,16 +248,16 @@ the number of objects that can be processed at one time (usually 100).
 ``APIException`` if that limit is exceeded, however some simply process
 the first N objects and silently discard the rest.
 
-2. On high intensive job loads (intensive imports, permanent delete operations, etc)
-Zendesk side API does not return `/api/v2/job_statuses/{job_id}.json` page, so if you
-try to query it with:
+2. On high intensive job loads (intensive imports, permanent delete operations,
+etc) Zendesk side API does not return `/api/v2/job_statuses/{job_id}.json`
+page, so if you try to query it with:
 
 .. code:: python
 
     job_status = zenpy_client.job_status(id={job_id})
 
-you will get ``HTTPError``. In same time page: `/api/v2/job_statuses/` always exist and
-contains last 100 jobs. So parse whole job list to get results:
+you will get ``HTTPError``. In same time page: `/api/v2/job_statuses/` always
+exist and contains last 100 jobs. So parse whole job list to get results:
 
 .. code:: python
 
