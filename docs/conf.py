@@ -14,7 +14,6 @@
 
 import sys
 import os
-import shlex
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -27,6 +26,7 @@ sys.path.insert(0, os.path.abspath('../zenpy/lib/objects'))
 sys.path.insert(0, os.path.abspath('../zenpy/lib/objects/ticket'))
 sys.path.insert(0, os.path.abspath('../docs'))
 
+from zenpy import __version__
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -67,7 +67,7 @@ author = u'Facetoe'
 # built documents.
 #
 # The short X.Y version.
-version = '2.0.5'
+version = __version__
 # The full version, including alpha/beta/rc tags.
 release = '2.0'
 

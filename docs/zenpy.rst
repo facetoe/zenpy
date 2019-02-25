@@ -3,7 +3,7 @@ Zenpy
 
 :class:`Zenpy` is a Python wrapper for the Zendesk API. The goal of the project
 is to make it possible to write clean, fast, Pythonic code when
-interacting with Zendesk progmatically. The wrapper tries to keep API
+interacting with Zendesk programmatically. The wrapper tries to keep API
 calls to a minimum. Wherever it makes sense objects are cached, and
 attributes of objects that would trigger an API call are evaluated
 lazily.
@@ -74,9 +74,9 @@ First, create a :class:`Zenpy` object:
 Searching the API
 -----------------
 
-All of the search paramaters defined in the Zendesk search documentation
-(https://support.zendesk.com/hc/en-us/articles/203663226) should work
-fine in Zenpy. Searches are performed by passing keyword arguments to
+All of the search parameters defined in the Zendesk search `documentation
+<https://support.zendesk.com/hc/en-us/articles/203663226>`__ should work
+fine in :class:`Zenpy`. Searches are performed by passing keyword arguments to
 the ``search`` endpoint. The keyword arguments line up with the Zendesk
 search documentation and are mapped as follows:
 
@@ -205,9 +205,9 @@ Next, let's assign all new tickets to this user:
         new_ticket.assignee = modified_user
         ticket_audit = zenpy_client.tickets.update(new_ticket)
 
-When updating a ticket, a ``TicketAudit``
-(https://developer.zendesk.com/rest\_api/docs/core/ticket\_audits)
-object is returned. This object contains the newly updated ``Ticket`` as
+When updating a ticket, a ``TicketAudit`` `object
+<https://developer.zendesk.com/rest\_api/docs/core/ticket\_audits)>`__
+is returned. This object contains the newly updated ``Ticket`` as
 well as some additional information in the ``Audit`` object.
 
 Finally, let's delete all the tickets assigned to the user:
@@ -224,8 +224,8 @@ Bulk Operations
 ---------------
 
 Zendesk supports bulk creating, updating and deleting API objects, and
-so does Zenpy. The ``create``, ``update`` and ``delete`` methods all
-accept either an object, a list of objects.
+so does :class:`Zenpy`. The ``create``, ``update`` and ``delete`` methods all
+accept either an object, or a list of objects.
 
 For example, the code:
 
@@ -235,11 +235,10 @@ For example, the code:
         [Ticket(subject="Ticket%s" % i, description="Bulk") for i in range(0, 20)]
     )
 
-will create 20 tickets in one API call. When performing bulk operations,
-a ``JobStatus`` object is returned
-(https://developer.zendesk.com/rest\_api/docs/core/job\_statuses). The
-only exception to this is bulk ``delete`` operations, which return
-nothing on success and raise a ``APIException`` on failure.
+will create 20 tickets in one API call. When performing bulk operations, a
+``JobStatus`` `object <https://developer.zendesk.com/rest_api/docs/core/job_statuses>`__
+is returned. The only exception to this is bulk ``delete`` operations, which
+return nothing on success and raise a ``APIException`` on failure.
 
 Notes:
 
@@ -271,8 +270,8 @@ contains last 100 jobs. So parse whole job list to get results:
 Incremental Exports
 -------------------
 
-Zendesk has several incremental API endpoints
-(https://developer.zendesk.com/rest\_api/docs/core/incremental\_export)
+Zendesk has several incremental API endpoints (Zendesk `documentation
+<https://developer.zendesk.com/rest_api/docs/core/incremental_export>`__)
 to export items in bulk (up to 1000 items per request) and also to poll
 the API for changes since a point in time.
 
@@ -300,10 +299,12 @@ created or modified since that point in time.
 Pagination
 ----------
 
-Pagination in Zenpy is supported via Python slices. The current implementation has a few limitations:
+Pagination in :class:`Zenpy` is supported via Python slices. The current
+implementation has a few limitations:
 
 * Does not support negative values (no fancy slicing)
-* Always pulls the first 100 objects (sometimes one extra API call than necessary)
+* Always pulls the first 100 objects (sometimes one extra API call than
+  necessary)
 * Does not support multiple accesses of the same slice
 
 Example Usage:
@@ -325,8 +326,9 @@ Example Usage:
 Cursor Based Generators
 -----------------------
 
-Zendesk uses cursor based pagination for the TicketAudit endpoint. The use of a cursor allows you to change
-the direction in which you consume objects. This is supported in Zenpy via the reversed() Python method:
+Zendesk uses cursor based pagination for the TicketAudit endpoint. The use
+of a cursor allows you to change the direction in which you consume objects.
+This is supported in :class:`Zenpy` via the reversed() Python method:
 
 .. code:: python
 
@@ -351,11 +353,14 @@ the direction in which you consume objects. This is supported in Zenpy via the r
 Rate Limiting
 -------------
 
-Zendesk imposes rate limiting (https://developer.zendesk.com/rest_api/docs/core/introduction#rate-limits). By default Zenpy will detect this and wait the required period before trying again, however for some use cases this is not desirable. Zenpy offers two additional configuration options to control rate limiting:
+Zendesk imposes `rate limiting <https://developer.zendesk.com/rest_api/docs/core/introduction#rate-limits>`__.
+By default :class:`Zenpy` will detect this and wait the required period before trying again, however for some use cases
+this is not desirable. :class:`Zenpy` offers two additional configuration options to control rate limiting:
 
 1.  `proactive_ratelimit`
 
-    If you wish to avoid ever hitting the rate limit you can set the `proactive_ratelimit` parameter when instantiating Zenpy:
+    If you wish to avoid ever hitting the rate limit you can set the
+    `proactive_ratelimit` parameter when instantiating :class:`Zenpy`:
 
     .. code:: python
 
@@ -363,11 +368,16 @@ Zendesk imposes rate limiting (https://developer.zendesk.com/rest_api/docs/core/
 
 2. `proactive_ratelimit_request_interval`
 
-    When utilizing the `proactive_ratelimit` feature, you can also specify how long to wait when you are over your `proactive_ratelimit`.
+    When utilizing the `proactive_ratelimit` feature, you can also specify
+    how long to wait when you are over your `proactive_ratelimit`.
 
 3.  `ratelimit_budget`
 
-    If you have a maximum amount of time you are willing to wait for rate limiting, you can set the `ratelimit_budget` parameter. This budget is decremented for every second spent being rate limited, and when the budget is spent throws a RatelimitBudgetExceeded exception. For example, if you wish to wait no more than 60 seconds:
+    If you have a maximum amount of time you are willing to wait for rate
+    limiting, you can set the `ratelimit_budget` parameter. This budget is
+    decremented for every second spent being rate limited, and when the budget
+    is spent throws a RatelimitBudgetExceeded exception. For example, if you
+    wish to wait no more than 60 seconds:
 
     .. code:: python
 
@@ -375,21 +385,32 @@ Zendesk imposes rate limiting (https://developer.zendesk.com/rest_api/docs/core/
 
 Side-Loading
 ------------
-Zendesk supports "side-loading" objects to reduce the number of API calls necessary to retrieve what you are after - https://developer.zendesk.com/rest_api/docs/core/side_loading. Zenpy currently only minimally supports this feature, however I plan to add proper support for it soon. If this is something you really want raise an issue and I will get to it sooner. To take advantage of this feature for those endpoints that support it, simple pass an "include" kwarg with the objects you would like to load, eg:
+Zendesk supports "side-loading" objects to reduce the number of API
+calls necessary to retrieve what you are after Zendesk API `Reference
+<https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
+:class:`Zenpy` currently only minimally supports this feature, however
+I plan to add proper support for it soon.
+If this is something you really want raise an issue and I will get to it
+sooner. To take advantage of this feature for those endpoints that support
+it, simple pass an ``include`` kwarg with the objects you would like to load,
+eg:
 
 .. code:: python
 
     for ticket in zenpy_client.tickets(include=['users']):
         print(ticket.submitter)
 
-The code above will not need to generate an additional API call to retrieve the submitter as it was returned and cached along with the ticket.
+The code above will not need to generate an additional API call to retrieve
+the submitter as it was returned and cached
+along with the ticket.
 
 Caching
 ~~~~~~~
 
-:class:`Zenpy` support caching objects to prevent API calls, and each Zenpy instance has it's own set of caches.
+:class:`Zenpy` support caching objects to prevent API calls, and each
+:class:`Zenpy` instance has it's own set of caches.
 
-If we turn logging on, we can see Zenpy's caching in action. The code:
+If we turn logging on, we can see :class:`Zenpy` caching in action. The code:
 
 .. code:: python
 
@@ -406,9 +427,11 @@ Outputs:
     DEBUG - Cache HIT: [User 116514121092]
     DEBUG - Cache HIT: [User 116514121092]
 
-Here we see that only one API call is generated, as the user already existed in the cache after the first call.
+Here we see that only one API call is generated, as the user already
+existed in the cache after the first call.
 
-This feature is especially useful when combined with "sideloading" (https://developer.zendesk.com/rest_api/docs/core/side_loading). As an example, the following code:
+This feature is especially useful when combined with `side-loading
+<https://developer.zendesk.com/rest_api/docs/core/side_loading>`__. As an example, the following code:
 
 .. code:: python
 
@@ -425,7 +448,8 @@ Outputs:
     DEBUG - Caching: [User(id=116514121092)]
     DEBUG - Cache HIT: [User 116514121092]
 
-We can see that because we "sideloaded" users, an extra API call was not generated when we attempted to access the requester attribute.
+We can see that because we "side-loaded" users, an extra API call was not
+generated when we attempted to access the requester attribute.
 
 Controlling Caching
 -------------------

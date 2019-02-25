@@ -136,7 +136,7 @@ class BaseApi(object):
         if response.status_code == 429:
             while 'retry-after' in response.headers and int(response.headers['retry-after']) > 0:
                 retry_after_seconds = int(response.headers['retry-after'])
-                log.warn(
+                log.warning(
                     "Waiting for requested retry-after period: %s seconds" % retry_after_seconds
                 )
                 while retry_after_seconds > 0:
@@ -173,7 +173,7 @@ class BaseApi(object):
             response = http_method(url, **kwargs)
         else:
             # We hit our limit floor and aren't quite at ratelimit_request_interval value in seconds yet..
-            log.warn(
+            log.warning(
                 "Safety Limit Reached of %s remaining calls and time since last call is under %s seconds"
                 % (self.ratelimit, self.ratelimit_request_interval)
             )
@@ -273,6 +273,7 @@ class BaseApi(object):
     def _check_response(self, response):
         """
         Check the response code returned by Zendesk. If it is outside the 200 range, raise an exception of the correct type.
+
         :param response: requests Response object.
         """
         if response.status_code > 299 or response.status_code < 200:
@@ -515,7 +516,7 @@ class TaggableApi(Api):
         """
         Set (POST) one or more tags.
 
-        :param _id: the id of the object to tag
+        :param id: the id of the object to tag
         :param tags: array of tags to apply to object
         """
         return TagRequest(self).post(tags, id)
@@ -524,7 +525,7 @@ class TaggableApi(Api):
         """
         Delete (DELETE) one or more tags.
 
-        :param _id: the id of the object to delete tag from
+        :param id: the id of the object to delete tag from
         :param tags: array of tags to delete from object
         """
         return TagRequest(self).delete(tags, id)
@@ -560,7 +561,9 @@ class IncrementalApi(Api):
     def incremental(self, start_time, include=None):
         """
         Retrieve bulk data from the incremental API.
-        :param include: list of objects to sideload
+
+        :param include: list of objects to sideload. `Side-loading API Docs 
+            <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param start_time: The time of the oldest object you are interested in.
         """
         return self._query_zendesk(self.endpoint.incremental, self.object_type, start_time=start_time, include=include)
@@ -664,7 +667,8 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
         """
         Retrieve the groups for this user.
 
-        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
+        :param include: list of objects to sideload. `Side-loading API Docs 
+            <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param user: User object or id
         """
         return self._query_zendesk(self.endpoint.groups, 'group', id=user, include=include)
@@ -674,7 +678,8 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
         """
         Retrieve the organizations for this user.
 
-        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
+        :param include: list of objects to sideload. `Side-loading API Docs 
+            <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param user: User object or id
         """
         return self._query_zendesk(self.endpoint.organizations, 'organization', id=user, include=include)
@@ -684,7 +689,8 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
         """
         Retrieve the requested tickets for this user.
 
-        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
+        :param include: list of objects to sideload. `Side-loading API Docs 
+            <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param user: User object or id
         """
         return self._query_zendesk(self.endpoint.requested, 'ticket', id=user, include=include)
@@ -694,7 +700,8 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
         """
         Retrieve the tickets this user is cc'd into.
 
-        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
+        :param include: list of objects to sideload. `Side-loading API Docs 
+            <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param user: User object or id
         """
         return self._query_zendesk(self.endpoint.cced, 'ticket', id=user, include=include)
@@ -704,7 +711,8 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
         """
         Retrieve the assigned tickets for this user.
 
-        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
+        :param include: list of objects to sideload. `Side-loading API Docs 
+            <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param user: User object or id
         """
         return self._query_zendesk(self.endpoint.assigned, 'ticket', id=user, include=include)
@@ -714,7 +722,8 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
         """
         Retrieve the group memberships for this user.
 
-        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
+        :param include: list of objects to sideload. `Side-loading API Docs 
+            <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param user: User object or id
         """
         return self._query_zendesk(self.endpoint.group_memberships, 'group_membership', id=user, include=include)
@@ -736,7 +745,8 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
         """
         Return the logged in user
 
-        :param include: abilities - https://developer.zendesk.com/rest_api/docs/core/side_loading#abilities
+        :param include: list of objects to sideload. `Side-loading API Docs 
+            <https://developer.zendesk.com/rest_api/docs/core/side_loading#abilities>`__.
         """
         return self._query_zendesk(self.endpoint.me, 'user', include=include)
 
@@ -783,9 +793,13 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
     @extract_id(User)
     def permanently_delete(self, user):
         """
-        Permanently delete user - https://developer.zendesk.com/rest_api/docs/core/users#permanently-delete-user
+        Permanently delete user. User should be softly deleted first.
+        Zendesk API `Reference <https://developer.zendesk.com/rest_api/docs/core/users#permanently-delete-user>`__.
 
-        :param user: User object or id
+        Note: This endpoint does not support multiple ids or list of `User` objects.
+
+        :param user: User object or id.
+        :return: User object with `permanently_deleted` status
         """
         url = self._build_url(self.endpoint.deleted(id=user))
         deleted_user = self._delete(url)
@@ -797,21 +811,25 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
         List Deleted Users.
 
         These are users that have been deleted but not permanently yet.
-        See Permanently delete user - https://developer.zendesk.com/rest_api/docs/core/users#permanently-delete-user
+        Zendesk API `Reference <https://developer.zendesk.com/rest_api/docs/core/users#permanently-delete-user>`__.
+
+        :return:
         """
         return self._get(self._build_url(self.endpoint.deleted()))
 
     @extract_id(User)
     def skips(self, user):
         """
-        Skips for user (https://developer.zendesk.com/rest_api/docs/core/ticket_skips)
+        Skips for user. Zendesk API `Reference <https://developer.zendesk.com/rest_api/docs/core/ticket_skips>`__.
         """
         return self._get(self._build_url(self.endpoint.skips(id=user)))
 
     @extract_id(User)
     def set_password(self, user, password):
         """
-        Sets the password for the passed user - https://developer.zendesk.com/rest_api/docs/support/users#set-a-users-password
+        Sets the password for the passed user.
+        Zendesk API `Reference <https://developer.zendesk.com/rest_api/docs/support/users#set-a-users-password>`__.
+
         :param user: User object or id
         :param password: new password
         """
@@ -836,8 +854,8 @@ class AttachmentApi(Api):
                    uploaded
         :param token: upload token for uploading multiple files
         :param target_name: name of the file inside¡ Zendesk
-        :return: :class:`Upload` object containing a token and other information
-                    (see https://developer.zendesk.com/rest_api/docs/core/attachments#uploading-files)
+        :return: :class:`Upload` object containing a token and other information see
+            Zendesk API `Reference <https://developer.zendesk.com/rest_api/docs/core/attachments#uploading-files>`__.
         """
         return UploadRequest(self).post(fp, token=token, target_name=target_name, content_type=content_type)
 
@@ -845,10 +863,9 @@ class AttachmentApi(Api):
         """
         Download an attachment from Zendesk.
 
-
         :param attachment_id: id of the attachment to download
         :param destination: destination path. If a directory, the file will be placed in the directory with
-                            the filename from the Atttachment object.
+                            the filename from the Attachment object.
         :return: the path the file was written to
         """
         attachment = self(id=attachment_id)
@@ -918,7 +935,8 @@ class OrganizationApi(TaggableApi, IncrementalApi, CRUDExternalApi):
         """
         Locate an Organization by it's external_id attribute.
 
-        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
+        :param include: list of objects to sideload. `Side-loading API Docs 
+            <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param external_id: external id of organization
         """
         return self._query_zendesk(self.endpoint.external, 'organization', id=external_id, include=include)
@@ -958,6 +976,7 @@ class OrganizationFieldsApi(CRUDApi):
     def reorder(self, organization_fields):
         """
         Reorder organization fields.
+
         :param organization_fields: list of OrganizationField objects or ids in the desired order.
         """
         return OrganizationFieldReorderRequest(self).put(organization_fields)
@@ -985,7 +1004,8 @@ class MacroApi(CRUDApi):
     @extract_id(Macro)
     def apply(self, macro):
         """
-        Show what a macro would do - https://developer.zendesk.com/rest_api/docs/core/macros#show-changes-to-ticket
+        Show what a macro would do
+        Zendesk API `Reference <https://developer.zendesk.com/rest_api/docs/core/macros#show-changes-to-ticket>`__.
 
         :param macro: Macro object or id.
         """
@@ -1006,7 +1026,8 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         """
         Retrieve the tickets for this organization.
 
-        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
+        :param include: list of objects to sideload. `Side-loading API Docs
+            <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param organization: Organization object or id
         """
         return self._query_zendesk(self.endpoint.organizations, 'ticket', id=organization, include=include)
@@ -1060,7 +1081,8 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         """
         Retrieve TicketEvents
 
-        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
+        :param include: list of objects to sideload. `Side-loading API Docs 
+            <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param start_time: time to retrieve events from.
         """
         return self._query_zendesk(self.endpoint.events, 'ticket_event', start_time=start_time, include=include)
@@ -1081,9 +1103,11 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
             for audit in reversed(zenpy_client.tickets.audits()):
                 print(audit)
 
-        See the Zendesk docs for information on additional parameters - https://developer.zendesk.com/rest_api/docs/core/ticket_audits#pagination
+        See the `Zendesk docs <https://developer.zendesk.com/rest_api/docs/core/ticket_audits#pagination>`__ for
+        information on additional parameters.
 
-        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
+        :param include: list of objects to sideload. `Side-loading API Docs 
+            <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param ticket: Ticket object or id
         """
         if ticket is not None:
@@ -1095,6 +1119,7 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
     def metrics(self, ticket):
         """
         Retrieve TicketMetric.
+
         :param ticket: Ticket object or id
         """
         return self._query_zendesk(self.endpoint.metrics, 'ticket_metric', id=ticket)
@@ -1102,6 +1127,7 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
     def metrics_incremental(self, start_time):
         """
         Retrieve TicketMetric incremental
+
         :param start_time: time to retrieve events from.
         """
         return self._query_zendesk(self.endpoint.metrics.incremental, 'ticket_metric_events', start_time=start_time)
@@ -1140,7 +1166,7 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
     @extract_id(Ticket)
     def skips(self, ticket):
         """
-        Skips for ticket (https://developer.zendesk.com/rest_api/docs/core/ticket_skips)
+        Skips for ticket See Zendesk API `Reference <https://developer.zendesk.com/rest_api/docs/core/ticket_skips>`__.
         """
 
         return self._get(self._build_url(self.endpoint.skips(id=ticket)))
@@ -1196,7 +1222,8 @@ class TicketCustomFieldOptionApi(Api):
     def create_or_update(self, ticket_field, custom_field_option):
         """
         Create or update a CustomFieldOption for a TicketField. If passed CustomFieldOption has no id, a new option
-        will be created, otherwise it is updated - https://developer.zendesk.com/rest_api/docs/core/ticket_fields#create-or-update-a-ticket-field-option.
+        will be created, otherwise it is updated - See: Zendesk API `Reference
+        <https://developer.zendesk.com/rest_api/docs/core/ticket_fields#create-or-update-a-ticket-field-option>`__.
 
         :param ticket_field: TicketField object or id
         :param custom_field_option: CustomFieldOption object
@@ -1331,8 +1358,9 @@ class RequestAPI(CRUDApi):
 
     def search(self, *args, **kwargs):
         """
-        Search for requests. See the Zendesk docs for more information on the syntax
-         https://developer.zendesk.com/rest_api/docs/core/requests#searching-requests
+        Search for requests. See the `Zendesk docs
+        <https://developer.zendesk.com/rest_api/docs/core/requests#searching-requests>`__ for more information on the
+        syntax.
         """
         return self._query_zendesk(self.endpoint.search, 'request', *args, **kwargs)
 
@@ -1353,9 +1381,10 @@ class GroupApi(CRUDApi):
     @extract_id(Group)
     def memberships(self, group, include=None):
         """
-        Return the GroupMemberships for this group
+        Return the GroupMemberships for this group.
 
-        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
+        :param include: list of objects to sideload. `Side-loading API Docs 
+            <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param group: Group object or id
         """
         return self._get(self._build_url(self.endpoint.memberships(id=group, include=include)))
@@ -1365,7 +1394,8 @@ class GroupApi(CRUDApi):
         """
         Return memberships that are assignable for this group.
 
-        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
+        :param include: list of objects to sideload. `Side-loading API Docs 
+            <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param group: Group object or id
         """
         return self._get(self._build_url(self.endpoint.memberships_assignable(id=group, include=include)))
@@ -1383,7 +1413,8 @@ class ViewApi(CRUDApi):
 
     def compact(self, include=None):
         """
-        Return compact views - https://developer.zendesk.com/rest_api/docs/core/views#list-views---compact
+        Return compact views - See: Zendesk API `Reference
+        <https://developer.zendesk.com/rest_api/docs/core/views#list-views---compact>`__
         """
         return self._get(self._build_url(self.endpoint.compact(include=include)))
 
@@ -1392,7 +1423,8 @@ class ViewApi(CRUDApi):
         """
         Execute a view.
 
-        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
+        :param include: list of objects to sideload. `Side-loading API Docs 
+            <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param view: View or view id
         """
         return self._get(self._build_url(self.endpoint.execute(id=view, include=include)))
@@ -1402,7 +1434,8 @@ class ViewApi(CRUDApi):
         """
         Return the tickets in a view.
 
-        :param include: Optionally include more data. See https://developer.zendesk.com/rest_api/docs/core/side_loading
+        :param include: list of objects to sideload. `Side-loading API Docs 
+            <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param view: View or view id
         """
         return self._get(self._build_url(self.endpoint.tickets(id=view, include=include)))
@@ -1412,7 +1445,8 @@ class ViewApi(CRUDApi):
         """
         Return a ViewCount for a view.
 
-        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
+        :param include: list of objects to sideload. `Side-loading API Docs 
+            <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param view: View or view id
         """
         return self._get(self._build_url(self.endpoint.count(id=view, include=include)))
@@ -1422,7 +1456,8 @@ class ViewApi(CRUDApi):
         """
         Return many ViewCounts.
 
-        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
+        :param include: list of objects to sideload. `Side-loading API Docs 
+            <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param views: iterable of View or view ids
         """
         return self._get(self._build_url(self.endpoint(count_many=views, include=include)))
@@ -1432,7 +1467,8 @@ class ViewApi(CRUDApi):
         """
         Export a view. Returns an Export object.
 
-        :param include: https://developer.zendesk.com/rest_api/docs/core/side_loading
+        :param include: list of objects to sideload. `Side-loading API Docs 
+
         :param view: View or view id
         :return:
         """
@@ -1440,7 +1476,7 @@ class ViewApi(CRUDApi):
 
     def search(self, *args, **kwargs):
         """
-        Search views. See - https://developer.zendesk.com/rest_api/docs/core/views#search-views.
+        Search views. See Zendesk API `Reference <https://developer.zendesk.com/rest_api/docs/core/views#search-views>`__.
 
         :param args: query is the only accepted arg.
         :param kwargs: search parameters
@@ -1589,7 +1625,7 @@ class HelpCentreApiBase(Api):
         self._object_mapping = HelpCentreObjectMapping(self)
         self.locale = ''
 
-    def _process_response(self, response):
+    def _process_response(self, response, object_mapping=None):
         endpoint_path = get_endpoint_path(self, response)
         if endpoint_path.startswith('/help_center') or endpoint_path.startswith('/community'):
             object_mapping = self._object_mapping
@@ -1675,7 +1711,8 @@ class ArticleApi(HelpCentreApiBase, TranslationApi, SubscriptionApi, VoteApi, Vo
     @extract_id(Section)
     def create(self, section, article):
         """
-        Create (POST) an Article - https://developer.zendesk.com/rest_api/docs/help_center/articles#create-article
+        Create (POST) an Article - See: Zendesk API `Reference
+        <https://developer.zendesk.com/rest_api/docs/help_center/articles#create-article>`__.
 
         :param section: Section ID or object
         :param article: Article to create
@@ -1684,7 +1721,8 @@ class ArticleApi(HelpCentreApiBase, TranslationApi, SubscriptionApi, VoteApi, Vo
 
     def update(self, article):
         """
-        Update (PUT) and Article - https://developer.zendesk.com/rest_api/docs/help_center/articles#update-article
+        Update (PUT) and Article - See: Zendesk API `Reference
+        <https://developer.zendesk.com/rest_api/docs/help_center/articles#update-article>`__.
 
         :param article: Article to update
         """
@@ -1692,7 +1730,8 @@ class ArticleApi(HelpCentreApiBase, TranslationApi, SubscriptionApi, VoteApi, Vo
 
     def archive(self, article):
         """
-        Archive (DELETE) an Article - https://developer.zendesk.com/rest_api/docs/help_center/articles#archive-article
+        Archive (DELETE) an Article - See: Zendesk API `Reference
+        <https://developer.zendesk.com/rest_api/docs/help_center/articles#archive-article>`__.
 
         :param article: Article to archive
         """
@@ -1897,6 +1936,7 @@ class NpsApi(Api):
     def recipients_incremental(self, start_time):
         """
         Retrieve NPS Recipients incremental
+
         :param start_time: time to retrieve events from.
         """
         return self._query_zendesk(self.endpoint.recipients_incremental, 'recipients', start_time=start_time)
@@ -1904,6 +1944,7 @@ class NpsApi(Api):
     def responses_incremental(self, start_time):
         """
         Retrieve NPS Responses incremental
+
         :param start_time: time to retrieve events from.
         """
         return self._query_zendesk(self.endpoint.responses_incremental, 'responses', start_time=start_time)

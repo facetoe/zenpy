@@ -1,5 +1,4 @@
 import logging
-
 import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3 import Retry
@@ -42,6 +41,7 @@ from zenpy.lib.mapping import ZendeskObjectMapping
 log = logging.getLogger()
 
 __author__ = 'facetoe'
+__version__ = '2.0.8'
 
 
 class Zenpy(object):
@@ -176,7 +176,7 @@ class Zenpy(object):
             else:
                 raise ZenpyException("Invalid arguments to _init_session()!")
 
-        headers = {'User-Agent': 'Zenpy/1.2'}
+        headers = {'User-Agent': 'Zenpy/{}'.format(__version__)}
         session.headers.update(headers)
         return session
 
