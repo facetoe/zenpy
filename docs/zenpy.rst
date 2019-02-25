@@ -240,11 +240,32 @@ will create 20 tickets in one API call. When performing bulk operations, a
 is returned. The only exception to this is bulk ``delete`` operations, which
 return nothing on success and raise a ``APIException`` on failure.
 
-It is important to note that these bulk endpoints have restrictions on
+Notes:
+
+1. It is important to note that these bulk endpoints have restrictions on
 the number of objects that can be processed at one time (usually 100).
 :class:`Zenpy` makes no attempt to regulate this. Most endpoints will throw an
 ``APIException`` if that limit is exceeded, however some simply process
 the first N objects and silently discard the rest.
+
+2. On high intensive job loads (intensive imports, permanent delete operations, etc)
+Zendesk side API does not return `/api/v2/job_statuses/{job_id}.json` page, so if you
+try to query it with:
+
+.. code:: python
+
+    job_status = zenpy_client.job_status(id={job_id})
+
+you will get ``HTTPError``. In same time page: `/api/v2/job_statuses/` always exist and
+contains last 100 jobs. So parse whole job list to get results:
+
+.. code:: python
+
+    job_id = 'some Zendesk job id'
+    job_statuses = zenpy_client.job_status()
+    for job in job_statuses:
+        if job.id == job_id:
+            do something
 
 Incremental Exports
 -------------------

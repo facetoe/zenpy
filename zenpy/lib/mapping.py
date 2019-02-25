@@ -21,6 +21,7 @@ class ZendeskObjectMapping(object):
     """
     class_mapping = {
         'ticket': Ticket,
+        'deleted_ticket': Ticket,
         'user': User,
         'deleted_user': User,
         'organization': Organization,
