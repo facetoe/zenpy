@@ -1026,6 +1026,36 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         """
         return self._query_zendesk(self.endpoint.comments, 'comment', id=ticket)
 
+    def permanently_delete(self, tickets):
+        """
+        Permanently delete ticket. `See Zendesk API docs <https://developer.zendesk.com/rest_api/docs/support/tickets#delete-ticket-permanently>`_
+
+        Ticket should be softly deleted first with regular `delete` method.
+
+        :param tickets: Ticket object or list of tickets objects
+        :return: JobStatus object
+        """
+        endpoint_kwargs = dict()
+        if isinstance(tickets, collections.Iterable):
+            endpoint_kwargs['destroy_ids'] = [i.id for i in tickets]
+        else:
+            endpoint_kwargs['id'] = tickets.id
+        url = self._build_url(self.endpoint.deleted(**endpoint_kwargs))
+        deleted_ticket_job_id = self._delete(url)
+        self.cache.delete(tickets)
+        return deleted_ticket_job_id
+
+    def deleted(self):
+        """
+        List Deleted Tickets.
+
+        These are tickets that have been deleted but not permanently yet.
+        See Permanently delete ticket in `Zendesk API docs <https://developer.zendesk.com/rest_api/docs/support/tickets#delete-ticket-permanently>`_
+
+        :return: ResultGenerator with Tickets objects with length 0 of no deleted tickets exist.
+        """
+        return self._get(self._build_url(self.endpoint.deleted()))
+
     def events(self, start_time, include=None):
         """
         Retrieve TicketEvents
