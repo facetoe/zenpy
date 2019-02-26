@@ -130,7 +130,7 @@ Querying the API
 ----------------
 
 The :class:`Zenpy` object contains methods for accessing many top level
-endpoints, and they can be called in one of two ways - no arguments
+endpoints, and they can be called in one of three ways - no arguments
 returns all results (as a generator):
 
 .. code:: python
@@ -138,11 +138,23 @@ returns all results (as a generator):
     for user in zenpy_client.users():
         print user.name
 
-And called with an ID returns the object with that ID:
+Called with an `id` returns the object with that ID:
 
 .. code:: python
 
     print zenpy_client.users(id=1159307768)
+
+And the last option for many endpoints to get list of several items, use
+`ids` for this. Accepts lists of ids, not list of objects! ``show_many.json``
+should exist in Zendesk endpoint, search API
+`docs <https://developer.zendesk.com/rest_api/docs/zendesk-apis/resources>`__.
+
+Example with several ids, returns generator objects:
+
+.. code:: python
+
+    print zenpy_client.users(ids=[1000000001, 1000000002])
+
 
 You can also filter by passing in ``permission_set`` or ``role``.
 
