@@ -243,6 +243,18 @@ class Zenpy(object):
         """
         self.cache.enable()
 
+    def caching_status(self):
+        """
+        Returns caching status.
+        """
+        self.cache.status()
+
+    def caching_engines(self):
+        """
+        Returns available caching engines.
+        """
+        self.cache.get_cache_engines()
+
     def _get_cache(self, cache_name):
         if cache_name not in self.cache.mapping:
             raise ZenpyException("No such cache - %s" % cache_name)

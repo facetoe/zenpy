@@ -187,7 +187,8 @@ class AttachmentEndpoint(BaseEndpoint):
 
 class SearchEndpoint(BaseEndpoint):
     """
-    The search endpoint accepts all the parameters defined in the Zendesk `Search Documentation <https://developer.zendesk.com/rest_api/docs/core/search>`_.
+    The search endpoint accepts all the parameters defined in the Zendesk
+    `Search Documentation <https://developer.zendesk.com/rest_api/docs/core/search>`_.
     Zenpy defines several keywords that are mapped to the Zendesk comparison operators:
 
     +-----------------+------------------+

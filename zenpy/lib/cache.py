@@ -17,6 +17,7 @@ class ZenpyCache(object):
     Wrapper class for the various cachetools caches. Adds ability to change cache implementations
     on the fly and change the maxsize setting.
     """
+
     AVAILABLE_CACHES = [c for c in dir(cachetools) if c.endswith('Cache') and c != 'Cache']
 
     def __init__(self, cache_impl, maxsize, **kwargs):
@@ -27,6 +28,7 @@ class ZenpyCache(object):
         """
         Change cache implementation. The contents of the old cache will
         be transferred to the new one.
+
         :param cache_impl: Name of cache implementation, must exist in AVAILABLE_CACHES
         """
         new_cache = self._get_cache_impl(cache_impl, maxsize, **kwargs)
@@ -177,10 +179,20 @@ class ZenpyCacheManager:
         return get_object_type(zenpy_object) in self.mapping
 
     def disable(self):
+        """Disables cache"""
         self.disabled = True
 
     def enable(self):
+        """Enables cache"""
         self.disabled = False
+
+    def status(self):
+        """Returns current cache status"""
+        return 'Cache disabled' if self.disabled else 'Cache enabled'
+
+    def get_cache_engines(self):
+        """Returns list of caches available in cachetools"""
+        return ZenpyCache.AVAILABLE_CACHES
 
     def _cache_key_attribute(self, object_type):
         """ Return the attribute used as the cache_key for a particular object type. """
