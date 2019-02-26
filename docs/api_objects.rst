@@ -158,9 +158,25 @@ parent knows it has been modified. As a result, we can detect changes to lists
 or dicts and properly update Zendesk when they occur.
 
 
-Api Object Reference
---------------------
+Api Objects Reference
+---------------------
 
 ..  automodule:: zenpy.lib.api_objects
+    :members:
+    :undoc-members:
+
+Cache Objects Reference
+-----------------------
+
+..  automodule:: zenpy.lib.cache
+    :members:
+    :undoc-members:
+
+Exceptions Objects Reference
+----------------------------
+
+Here is complete list of all exceptions implemented in :class:`Zenpy`.
+
+..  automodule:: zenpy.lib.exception
     :members:
     :undoc-members:
