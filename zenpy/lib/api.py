@@ -853,7 +853,7 @@ class AttachmentApi(Api):
         :param fp: file object, StringIO instance, content, or file path to be
                    uploaded
         :param token: upload token for uploading multiple files
-        :param target_name: name of the file inside¡ Zendesk
+        :param target_name: name of the file inside Zendesk
         :return: :class:`Upload` object containing a token and other information see
             Zendesk API `Reference <https://developer.zendesk.com/rest_api/docs/core/attachments#uploading-files>`__.
         """
@@ -1821,14 +1821,36 @@ class SectionApi(HelpCentreApiBase, CRUDApi, TranslationApi, SubscriptionApi, Ac
 class ArticleAttachmentApi(HelpCentreApiBase, SubscriptionApi):
     @extract_id(Article)
     def __call__(self, article):
+        """
+        Returns all attachments associated with article_id either ``inline=True`` or ``inline=False``.
+
+        :param article: Numeric article id or :class:`Article` object.
+        :return: Generator with all associated articles attachments.
+        """
         return self._query_zendesk(self.endpoint, 'article_attachment', id=article)
 
     @extract_id(Article)
     def inline(self, article):
+        """
+        Returns all inline attachments associated with article_id where (Such attachments has ``inline=True`` flag).
+
+        Inline attachments and its url can be referenced in the HTML body of the article.
+
+        :param article: Numeric article id or :class:`Article` object.
+        :return: Generator with all associated inline attachments.
+        """
         return self._query_zendesk(self.endpoint.inline, 'article_attachment', id=article)
 
     @extract_id(Article)
     def block(self, article):
+        """
+        Returns all block attachments associated with article_id (Such attachments has ``inline=False``).
+
+        Block attachments are displayed as separated files attached to Article.
+
+        :param article: Numeric article id or :class:`Article` object.
+        :return: Generator with all associated block attachments.
+        """
         return self._query_zendesk(self.endpoint.block, 'article_attachment', id=article)
 
     @extract_id(ArticleAttachment)
@@ -1836,7 +1858,20 @@ class ArticleAttachmentApi(HelpCentreApiBase, SubscriptionApi):
         return self._query_zendesk(self.endpoint, 'article_attachment', id=attachment)
 
     @extract_id(Article)
-    def create(self, article, attachment, inline=False, file_name=None, content_type = None):
+    def create(self, article, attachment, inline=False, file_name=None, content_type=None):
+        """
+        This function creates attachment attached to article.
+
+        :param article: Numeric article id or :class:`Article` object.
+        :param attachment: File object or os path to file
+        :param inline: If true, the attached file is shown in the dedicated admin UI
+            for inline attachments and its url can be referenced in the HTML body of
+            the article. If false, the attachment is listed in the list of attachments.
+            Default is `false`
+        :param file_name: you can set filename on file upload.
+        :param content_type: The content type of the file. `Example: image/png`, Zendesk can ignore it.
+        :return: :class:`ArticleAttachment` object
+        """
         return HelpdeskAttachmentRequest(self).post(self.endpoint.create,
                                                     article=article,
                                                     attachment=attachment,
@@ -1844,13 +1879,36 @@ class ArticleAttachmentApi(HelpCentreApiBase, SubscriptionApi):
                                                     file_name=file_name,
                                                     content_type=content_type)
 
-    def create_unassociated(self, attachment, inline=False):
+    def create_unassociated(self, attachment, inline=False, file_name=None, content_type=None):
+        """
+        You can use this endpoint for bulk imports.
+        It lets you upload a file without associating it to an article until later.
+        Check Zendesk documentation `important notes
+        <https://developer.zendesk.com/rest_api/docs/help_center/article_attachments#create-unassociated-attachment>
+
+        :param attachment: File object or os path to file
+        :param inline: If true, the attached file is shown in the dedicated admin UI
+            for inline attachments and its url can be referenced in the HTML body of
+            the article. If false, the attachment is listed in the list of attachments.
+            Default is `false`
+        :param file_name: you can set filename on file upload.
+        :param content_type: The content type of the file. `Example: image/png`, Zendesk can ignore it.
+        :return: :class:`ArticleAttachment` object
+        """
         return HelpdeskAttachmentRequest(self).post(self.endpoint.create_unassociated,
                                                     attachment=attachment,
-                                                    inline=inline)
+                                                    inline=inline,
+                                                    file_name=file_name,
+                                                    content_type=content_type)
 
     @extract_id(ArticleAttachment)
     def delete(self, article_attachment):
+        """
+        This function completely wipes attachment from Zendesk Helpdesk article.
+
+        :param article_attachment: :class:`ArticleAttachment` object or numeric article attachment id.
+        :return: status_code == 204 on success
+        """
         return HelpdeskAttachmentRequest(self).delete(self.endpoint.delete, article_attachment)
 
 

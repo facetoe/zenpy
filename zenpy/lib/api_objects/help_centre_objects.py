@@ -296,10 +296,16 @@ class ArticleAttachment(BaseObject):
                  article_id=None,
                  content_type=None,
                  content_url=None,
+                 created_at=None,
+                 display_file_name=None,
                  file_name=None,
                  id=None,
                  inline=None,
+                 legacy=None,
+                 relative_path=None,
                  size=None,
+                 updated_at=None,
+                 url=None,
                  **kwargs):
 
         self.api = api
@@ -316,6 +322,11 @@ class ArticleAttachment(BaseObject):
         # Type: string
         self.content_url = content_url
 
+        # Comment: The time at which the article attachment was created
+        # Type: timestamp
+        self.created_at = created_at
+        self.display_file_name = display_file_name
+
         # Comment: The name of the file
         # Type: string
         self.file_name = file_name
@@ -327,10 +338,20 @@ class ArticleAttachment(BaseObject):
         # Comment: If true, the attached file is shown in the dedicated admin UI for inline attachments and its url can be referenced in the HTML body of the article. If false, the attachment is listed in the list of attachments. Default is false
         # Type: boolean
         self.inline = inline
+        self.legacy = legacy
+        self.relative_path = relative_path
 
         # Comment: The size of the attachment file in bytes
         # Type: integer
         self.size = size
+
+        # Comment: The time at which the article attachment was last updated
+        # Type: timestamp
+        self.updated_at = updated_at
+
+        # Comment: The API url of this article attachment
+        # Type: string
+        self.url = url
 
         for key, value in kwargs.items():
             setattr(self, key, value)
@@ -355,6 +376,32 @@ class ArticleAttachment(BaseObject):
         if article:
             self.article_id = article.id
             self._article = article
+
+    @property
+    def created(self):
+        """
+        |  Comment: The time at which the article attachment was created
+        """
+        if self.created_at:
+            return dateutil.parser.parse(self.created_at)
+
+    @created.setter
+    def created(self, created):
+        if created:
+            self.created_at = created
+
+    @property
+    def updated(self):
+        """
+        |  Comment: The time at which the article attachment was last updated
+        """
+        if self.updated_at:
+            return dateutil.parser.parse(self.updated_at)
+
+    @updated.setter
+    def updated(self, updated):
+        if updated:
+            self.updated_at = updated
 
 
 class Category(BaseObject):
