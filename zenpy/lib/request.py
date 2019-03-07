@@ -3,7 +3,7 @@ import os
 
 from zenpy.lib.api_objects.chat_objects import Shortcut, Trigger
 from zenpy.lib.endpoint import EndpointFactory
-from zenpy.lib.exception import ZenpyException
+from zenpy.lib.exception import ZenpyException, TooManyValuesException
 from zenpy.lib.util import get_object_type, as_plural, is_iterable_but_not_string
 
 
@@ -497,6 +497,9 @@ class TranslationRequest(HelpCentreRequest):
 
 
 class HelpdeskAttachmentRequest(BaseZendeskRequest):
+    def build_payload(self, ids):
+        return {'attachment_ids': ids}
+
     def delete(self, endpoint, article_attachment):
         url = self.api._build_url(endpoint(id=article_attachment))
         return self.api._delete(url)
@@ -531,3 +534,15 @@ class HelpdeskAttachmentRequest(BaseZendeskRequest):
                                       )
 
         raise ValueError("Attachment is not a file-like object or valid path!")
+
+    def bulk_associate(self, endpoint, attachments, article):
+        url = self.api._build_url(endpoint(id=article))
+        self.check_type(attachments)
+        if isinstance(attachments, collections.Iterable):
+            if len(attachments) > 20:
+                raise TooManyValuesException('Maximum 20 attachments objects allowed')
+            ids = [attachment.id for attachment in attachments]
+        else:
+            ids = attachments.id
+        content_type = "application/json"
+        return self.api._post(url, payload=self.build_payload(ids), content_type=content_type)

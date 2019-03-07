@@ -557,7 +557,7 @@ class EndpointFactory(object):
     help_centre.articles.search = HelpDeskSearchEndpoint('help_center/articles/search.json')
     help_centre.articles.subscriptions = SecondaryEndpoint('help_center/articles/%(id)s/subscriptions.json')
     help_centre.articles.subscriptions_delete = MultipleIDEndpoint('help_center/articles/{}/subscriptions/{}.json')
-    help_centre.articles.votes = SecondaryEndpoint('help_center//articles/%(id)s/votes.json')
+    help_centre.articles.votes = SecondaryEndpoint('help_center/articles/%(id)s/votes.json')
     help_centre.articles.votes.up = SecondaryEndpoint('help_center/articles/%(id)s/up.json')
     help_centre.articles.votes.down = SecondaryEndpoint('help_center/articles/%(id)s/down.json')
     help_centre.articles.comment_votes = MultipleIDEndpoint('help_center/articles/{}/comments/{}/votes.json')
@@ -574,6 +574,7 @@ class EndpointFactory(object):
     help_centre.attachments.create = SecondaryEndpoint('help_center/articles/%(id)s/attachments.json')
     help_centre.attachments.create_unassociated = PrimaryEndpoint('help_center/articles/attachments')
     help_centre.attachments.delete = SecondaryEndpoint('help_center/articles/attachments/%(id)s.json')
+    help_centre.attachments.bulk_attachments = SecondaryEndpoint('help_center/articles/%(id)s/bulk_attachments.json')
 
     help_centre.categories = PrimaryEndpoint('help_center/categories')
     help_centre.categories.articles = SecondaryEndpoint('help_center/categories/%(id)s/articles.json')
