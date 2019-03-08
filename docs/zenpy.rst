@@ -130,7 +130,7 @@ Querying the API
 ----------------
 
 The :class:`Zenpy` object contains methods for accessing many top level
-endpoints, and they can be called in one of two ways - no arguments
+endpoints, and they can be called in one of three ways - no arguments
 returns all results (as a generator):
 
 .. code:: python
@@ -138,11 +138,23 @@ returns all results (as a generator):
     for user in zenpy_client.users():
         print user.name
 
-And called with an ID returns the object with that ID:
+Called with an `id` returns the object with that ID:
 
 .. code:: python
 
     print zenpy_client.users(id=1159307768)
+
+And the last option for many endpoints to get list of several items, use
+`ids` for this. Accepts lists of ids, not list of objects! ``show_many.json``
+should exist in Zendesk endpoint, search API
+`docs <https://developer.zendesk.com/rest_api/docs/zendesk-apis/resources>`__.
+
+Example with several ids, returns generator objects:
+
+.. code:: python
+
+    print zenpy_client.users(ids=[1000000001, 1000000002])
+
 
 You can also filter by passing in ``permission_set`` or ``role``.
 
@@ -248,16 +260,16 @@ the number of objects that can be processed at one time (usually 100).
 ``APIException`` if that limit is exceeded, however some simply process
 the first N objects and silently discard the rest.
 
-2. On high intensive job loads (intensive imports, permanent delete operations, etc)
-Zendesk side API does not return `/api/v2/job_statuses/{job_id}.json` page, so if you
-try to query it with:
+2. On high intensive job loads (intensive imports, permanent delete operations,
+etc) Zendesk side API does not return `/api/v2/job_statuses/{job_id}.json`
+page, so if you try to query it with:
 
 .. code:: python
 
     job_status = zenpy_client.job_status(id={job_id})
 
-you will get ``HTTPError``. In same time page: `/api/v2/job_statuses/` always exist and
-contains last 100 jobs. So parse whole job list to get results:
+you will get ``HTTPError``. In same time page: `/api/v2/job_statuses/` always
+exist and contains last 100 jobs. So parse whole job list to get results:
 
 .. code:: python
 
