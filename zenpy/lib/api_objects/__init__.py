@@ -5,7 +5,7 @@
 
 import json
 import dateutil.parser
-from zenpy.lib.util import json_encode_for_printing
+from zenpy.lib.util import json_encode_for_printing, json_encode_for_zendesk
 
 
 class BaseObject(object):
@@ -54,6 +54,19 @@ class BaseObject(object):
         return json.dumps(self, default=json_encode_for_printing, indent=indent)
 
     def to_dict(self, serialize=False):
+        """
+        This method returns the object as a Python dict. If serialize is passed, only those attributes
+        that have been modified will be included in the result.
+        :param serialize:
+        :return:
+        """
+        if serialize:
+            encode_method = json_encode_for_zendesk
+        else:
+            encode_method = json_encode_for_printing
+        return json.loads(json.dumps(self._to_dict(serialize=serialize), default=encode_method))
+
+    def _to_dict(self, serialize=False):
         """
         This method works by copying self.__dict__, and removing everything that should not be serialized.
         """
