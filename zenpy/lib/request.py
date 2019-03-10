@@ -507,42 +507,41 @@ class HelpdeskAttachmentRequest(BaseZendeskRequest):
     def put(self, api_objects, *args, **kwargs):
         raise NotImplementedError("You cannot update HelpCentre attachments!")
 
-    def post(self, endpoint, attachment, article=None, inline=False, file_name=None, content_type=None):
+    def post(self, endpoint, attachments, article=None, inline=False, file_name=None, content_type=None):
         if article:
             url = self.api._build_url(endpoint(id=article))
         else:
             url = self.api._build_url(endpoint())
 
-        if hasattr(attachment, 'read'):
-            file = (file_name if file_name else attachment.name, attachment, content_type)
-            return self.api._post(url,
-                                      payload={},
-                                      files=dict(
-                                                 inline=(None, 'true' if inline else 'false'),
-                                                 file=file
-                                                 )
-                                      )
-        elif os.path.isfile(attachment):
-            with open(attachment, 'rb') as fp:
-                file = (file_name if file_name else fp.name, fp, content_type)
+        if endpoint == self.api.endpoint.bulk_attachments:
+            self.check_type(attachments)
+            if isinstance(attachments, collections.Iterable):
+                if len(attachments) > 20:
+                    raise TooManyValuesException('Maximum 20 attachments objects allowed')
+                ids = [attachment.id for attachment in attachments]
+            else:
+                ids = attachments.id
+            content_type = "application/json"
+            return self.api._post(url, payload=self.build_payload(ids), content_type=content_type)
+        else:
+            if hasattr(attachments, 'read'):
+                file = (file_name if file_name else attachments.name, attachments, content_type)
                 return self.api._post(url,
-                                      payload={},
-                                      files=dict(
-                                                 inline=(None, 'true' if inline else 'false'),
-                                                 file=file
-                                                 )
-                                      )
+                                          payload={},
+                                          files=dict(
+                                                     inline=(None, 'true' if inline else 'false'),
+                                                     file=file
+                                                     )
+                                          )
+            elif os.path.isfile(attachments):
+                with open(attachments, 'rb') as fp:
+                    file = (file_name if file_name else fp.name, fp, content_type)
+                    return self.api._post(url,
+                                          payload={},
+                                          files=dict(
+                                                     inline=(None, 'true' if inline else 'false'),
+                                                     file=file
+                                                     )
+                                          )
 
         raise ValueError("Attachment is not a file-like object or valid path!")
-
-    def bulk_associate(self, endpoint, attachments, article):
-        url = self.api._build_url(endpoint(id=article))
-        self.check_type(attachments)
-        if isinstance(attachments, collections.Iterable):
-            if len(attachments) > 20:
-                raise TooManyValuesException('Maximum 20 attachments objects allowed')
-            ids = [attachment.id for attachment in attachments]
-        else:
-            ids = attachments.id
-        content_type = "application/json"
-        return self.api._post(url, payload=self.build_payload(ids), content_type=content_type)

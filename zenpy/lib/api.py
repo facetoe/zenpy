@@ -1874,7 +1874,7 @@ class ArticleAttachmentApi(HelpCentreApiBase, SubscriptionApi):
         """
         return HelpdeskAttachmentRequest(self).post(self.endpoint.create,
                                                     article=article,
-                                                    attachment=attachment,
+                                                    attachments=attachment,
                                                     inline=inline,
                                                     file_name=file_name,
                                                     content_type=content_type)
@@ -1896,7 +1896,7 @@ class ArticleAttachmentApi(HelpCentreApiBase, SubscriptionApi):
         :return: :class:`ArticleAttachment` object
         """
         return HelpdeskAttachmentRequest(self).post(self.endpoint.create_unassociated,
-                                                    attachment=attachment,
+                                                    attachments=attachment,
                                                     inline=inline,
                                                     file_name=file_name,
                                                     content_type=content_type)
@@ -1918,13 +1918,13 @@ class ArticleAttachmentApi(HelpCentreApiBase, SubscriptionApi):
         unassociated attachments).
 
         :param article: Article id or :class:`Article` object
-        :param attachments: class:`ArticleAttachment` object, or list of :class:`ArticleAttachment` objects,
+        :param attachments: :class:`ArticleAttachment` object, or list of :class:`ArticleAttachment` objects,
         up to 20 supported. `Zendesk documentation.
         <https://developer.zendesk.com/rest_api/docs/help_center/articles#associate-attachments-in-bulk-to-article>`__
         :return:
         """
-        return HelpdeskAttachmentRequest(self).bulk_associate(self.endpoint.bulk_attachments, article=article,
-                                                              attachments=attachments)
+        return HelpdeskAttachmentRequest(self).post(self.endpoint.bulk_attachments, article=article,
+                                                    attachments=attachments)
 
 class LabelApi(HelpCentreApiBase):
     @extract_id(Article)
