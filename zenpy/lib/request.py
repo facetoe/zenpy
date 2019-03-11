@@ -3,7 +3,7 @@ import os
 
 from zenpy.lib.api_objects.chat_objects import Shortcut, Trigger
 from zenpy.lib.endpoint import EndpointFactory
-from zenpy.lib.exception import ZenpyException
+from zenpy.lib.exception import ZenpyException, TooManyValuesException
 from zenpy.lib.util import get_object_type, as_plural, is_iterable_but_not_string
 
 
@@ -497,6 +497,9 @@ class TranslationRequest(HelpCentreRequest):
 
 
 class HelpdeskAttachmentRequest(BaseZendeskRequest):
+    def build_payload(self, ids):
+        return {'attachment_ids': ids}
+
     def delete(self, endpoint, article_attachment):
         url = self.api._build_url(endpoint(id=article_attachment))
         return self.api._delete(url)
@@ -504,30 +507,41 @@ class HelpdeskAttachmentRequest(BaseZendeskRequest):
     def put(self, api_objects, *args, **kwargs):
         raise NotImplementedError("You cannot update HelpCentre attachments!")
 
-    def post(self, endpoint, attachment, article=None, inline=False, file_name=None, content_type=None):
+    def post(self, endpoint, attachments, article=None, inline=False, file_name=None, content_type=None):
         if article:
             url = self.api._build_url(endpoint(id=article))
         else:
             url = self.api._build_url(endpoint())
 
-        if hasattr(attachment, 'read'):
-            file = (file_name if file_name else attachment.name, attachment, content_type)
-            return self.api._post(url,
-                                      payload={},
-                                      files=dict(
-                                                 inline=(None, 'true' if inline else 'false'),
-                                                 file=file
-                                                 )
-                                      )
-        elif os.path.isfile(attachment):
-            with open(attachment, 'rb') as fp:
-                file = (file_name if file_name else fp.name, fp, content_type)
+        if endpoint == self.api.endpoint.bulk_attachments:
+            self.check_type(attachments)
+            if isinstance(attachments, collections.Iterable):
+                if len(attachments) > 20:
+                    raise TooManyValuesException('Maximum 20 attachments objects allowed')
+                ids = [attachment.id for attachment in attachments]
+            else:
+                ids = attachments.id
+            content_type = "application/json"
+            return self.api._post(url, payload=self.build_payload(ids), content_type=content_type)
+        else:
+            if hasattr(attachments, 'read'):
+                file = (file_name if file_name else attachments.name, attachments, content_type)
                 return self.api._post(url,
-                                      payload={},
-                                      files=dict(
-                                                 inline=(None, 'true' if inline else 'false'),
-                                                 file=file
-                                                 )
-                                      )
+                                          payload={},
+                                          files=dict(
+                                                     inline=(None, 'true' if inline else 'false'),
+                                                     file=file
+                                                     )
+                                          )
+            elif os.path.isfile(attachments):
+                with open(attachments, 'rb') as fp:
+                    file = (file_name if file_name else fp.name, fp, content_type)
+                    return self.api._post(url,
+                                          payload={},
+                                          files=dict(
+                                                     inline=(None, 'true' if inline else 'false'),
+                                                     file=file
+                                                     )
+                                          )
 
         raise ValueError("Attachment is not a file-like object or valid path!")
