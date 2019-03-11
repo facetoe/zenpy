@@ -17,7 +17,7 @@ __author__ = 'facetoe'
 
 class ZendeskObjectMapping(object):
     """
-    Handle converting Zendesk JSON objects to Python ones.
+    Handle converting Zendesk Support JSON objects to Python ones.
     """
     class_mapping = {
         'ticket': Ticket,
@@ -195,7 +195,7 @@ class ZendeskObjectMapping(object):
 class ChatObjectMapping(ZendeskObjectMapping):
     """
     Handle converting Chat API objects to Python ones. This class exists
-    mainly to prevent namespace collisions between the two APIs.
+    to prevent namespace collisions between APIs.
     """
     class_mapping = {
         'chat': Chat,
@@ -221,6 +221,10 @@ class ChatObjectMapping(ZendeskObjectMapping):
 
 
 class HelpCentreObjectMapping(ZendeskObjectMapping):
+    """
+    Handle converting Helpdesk API objects to Python ones. This class exists
+    to prevent namespace collisions between APIs.
+    """
     class_mapping = {
         'article': Article,
         'category': Category,
@@ -238,6 +242,10 @@ class HelpCentreObjectMapping(ZendeskObjectMapping):
     }
 
 class TalkObjectMapping(ZendeskObjectMapping):
+    """
+    Handle converting Talk API objects to Python ones. This class exists
+    to prevent namespace collisions between APIs.
+    """
     class_mapping = {
         'account_overview': AccountOverview,
         'agents_activity': AgentsActivity,
