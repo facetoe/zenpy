@@ -41,7 +41,7 @@ from zenpy.lib.mapping import ZendeskObjectMapping
 log = logging.getLogger()
 
 __author__ = 'facetoe'
-__version__ = '2.0.8'
+__version__ = '2.0.9'
 
 
 class Zenpy(object):
