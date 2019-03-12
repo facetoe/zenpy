@@ -1,17 +1,16 @@
 from setuptools import setup
 import setuptools
-from zenpy import __version__
 
 setup(
     name='zenpy',
     packages=setuptools.find_packages(),
-    version=__version__,
+    version='2.0.10',
     description='Python wrapper for the Zendesk API',
     license='GPLv3',
     author='Face Toe',
     author_email='facetoe@facetoe.com.au',
     url='https://github.com/facetoe/zenpy',
-    download_url='https://github.com/facetoe/zenpy/releases/tag/{}'.format(__version__),
+    download_url='https://github.com/facetoe/zenpy/releases/tag/2.0.10',
     install_requires=[
         'requests>=2.14.2',
         'python-dateutil>=2.7.5',
