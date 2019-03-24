@@ -32,7 +32,8 @@ from zenpy.lib.api import (
     BrandApi,
     TicketFormApi,
     OrganizationFieldsApi,
-    JiraLinkApi, SkipApi, TalkApi)
+    JiraLinkApi, SkipApi, TalkApi,
+    CustomAgentRolesApi)
 from zenpy.lib.cache import ZenpyCache, ZenpyCacheManager
 from zenpy.lib.endpoint import EndpointFactory
 from zenpy.lib.exception import ZenpyException
@@ -137,6 +138,7 @@ class Zenpy(object):
         self.dynamic_content = DynamicContentApi(config)
         self.targets = TargetApi(config, object_type='target')
         self.talk = TalkApi(config)
+        self.custom_agent_roles = CustomAgentRolesApi(config, object_type='custom_agent_role')
 
     @staticmethod
     def http_adapter_kwargs():

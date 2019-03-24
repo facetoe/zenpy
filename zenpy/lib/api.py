@@ -401,9 +401,8 @@ class Api(BaseApi):
     def _get_article(self, article_id):
         return self._query_zendesk(EndpointFactory('help_centre').articles, 'article', id=article_id)
 
-    # TODO: Need Enterprise account to implement this
     def _get_custom_role(self, custom_role_id):
-        pass
+        return self._query_zendesk(EndpointFactory('custom_agent_roles'), 'custom_role', id=custom_role_id)
 
     # TODO: Implement these methods when the NPS API is done
     def _get_delivery(self, delivery_id):
@@ -2054,3 +2053,6 @@ class AvailabilitiesApi(TalkApiBase):
 class PhoneNumbersApi(TalkApiBase):
     def __init__(self, config, endpoint, object_type):
              super(PhoneNumbersApi, self).__init__(config, object_type=object_type, endpoint=endpoint)
+
+class CustomAgentRolesApi(CRUDApi):
+    pass
