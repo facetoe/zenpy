@@ -262,11 +262,10 @@ class BaseApi(object):
             # This could be optimized to only request the missing objects.
             for _id in endpoint_kwargs['ids']:
                 obj = self.cache.get(object_type, _id)
-                if obj:
-                    cached_objects.append(obj)
-                else:
+                if not obj:
                     return self._get(self._build_url(endpoint=endpoint(*endpoint_args, **endpoint_kwargs)))
-            return cached_objects
+                cached_objects.append(obj)
+            return ZendeskResultGenerator(self, {}, response_objects=cached_objects, object_type=object_type)
         else:
             return self._get(self._build_url(endpoint=endpoint(*endpoint_args, **endpoint_kwargs)))
 
