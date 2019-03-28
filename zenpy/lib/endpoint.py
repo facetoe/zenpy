@@ -138,8 +138,22 @@ class PrimaryEndpoint(BaseEndpoint):
 
 
 class SecondaryEndpoint(BaseEndpoint):
-    def __call__(self, id, include=None):
-        return Url(self.endpoint % dict(id=id), params=dict(include=include) if include else None)
+    def __call__(self, id, **kwargs):
+        parameters = {}
+        for key, value in kwargs.items():
+            if key == 'include':
+                if is_iterable_but_not_string(value):
+                    parameters[key] = ",".join(value)
+                elif value:
+                    parameters[key] = value
+
+            elif key == 'include_inline_images':
+                if value:
+                    parameters[key] = 'true'
+        return Url(
+            self.endpoint % dict(id=id),
+            params=(parameters or None)
+        )
 
 
 class MultipleIDEndpoint(BaseEndpoint):
