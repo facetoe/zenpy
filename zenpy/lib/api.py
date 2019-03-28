@@ -1042,8 +1042,8 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         Retrieve the comments for a ticket.
 
         :param ticket: Ticket object or id
-        :param include_inline_images: inline image attachments will be included
-            in each comments' `attachment` field.
+        :param include_inline_images: Boolean. If `True`, inline image attachments will be
+            returned in each comments' `attachments` field alongside non-inline attachments
         """
         return self._query_zendesk(
             self.endpoint.comments, 'comment', id=ticket,
