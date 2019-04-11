@@ -138,8 +138,8 @@ class PrimaryEndpoint(BaseEndpoint):
 
 
 class SecondaryEndpoint(BaseEndpoint):
-    def __call__(self, id, include=None):
-        return Url(self.endpoint % dict(id=id), params=dict(include=include) if include else None)
+    def __call__(self, id, **kwargs):
+        return Url(self.endpoint % dict(id=id), params=kwargs)
 
 
 class MultipleIDEndpoint(BaseEndpoint):
