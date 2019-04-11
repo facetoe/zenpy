@@ -1037,13 +1037,15 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         return self._query_zendesk(self.endpoint.recent, 'ticket', id=None, include=include)
 
     @extract_id(Ticket)
-    def comments(self, ticket):
+    def comments(self, ticket, include_inline_images=False):
         """
         Retrieve the comments for a ticket.
 
         :param ticket: Ticket object or id
+        :param include_inline_images: Boolean. If `True`, inline image attachments will be
+            returned in each comments' `attachments` field alongside non-inline attachments
         """
-        return self._query_zendesk(self.endpoint.comments, 'comment', id=ticket)
+        return self._query_zendesk(self.endpoint.comments, 'comment', id=ticket, include_inline_images=repr(include_inline_images).lower())
 
     def permanently_delete(self, tickets):
         """
