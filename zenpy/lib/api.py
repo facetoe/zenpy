@@ -567,6 +567,21 @@ class IncrementalApi(Api):
         return self._query_zendesk(self.endpoint.incremental, self.object_type, start_time=start_time, include=include)
 
 
+class ChatIncrementalApi(Api):
+    """
+    ChatIncrementalApi supports the chat incremental endpoint.
+    """
+
+    def incremental(self, start_time, **kwargs):
+        """
+        Retrieve bulk data from the chat incremental API.
+
+        :param fields: list of fields to retrieve. `Chat API Docs
+            <https://developer.zendesk.com/rest_api/docs/chat/incremental_export#usage-notes-resource-expansion>`__.
+        :param start_time: The time of the oldest object you are interested in.
+        """
+        return self._query_zendesk(self.endpoint.incremental, self.object_type, start_time=start_time, **kwargs)
+
 class UserIdentityApi(Api):
     def __init__(self, config):
         super(UserIdentityApi, self).__init__(config,
@@ -1597,7 +1612,7 @@ class AgentApi(ChatApiBase):
         return self._get(self._build_url(self.endpoint.me()))
 
 
-class ChatApi(ChatApiBase):
+class ChatApi(ChatApiBase, ChatIncrementalApi):
     def __init__(self, config, endpoint):
         super(ChatApi, self).__init__(config, endpoint=endpoint)
 
