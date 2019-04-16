@@ -2,7 +2,7 @@ from abc import abstractmethod
 
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.generator import SearchResultGenerator, ZendeskResultGenerator, ChatResultGenerator, ViewResultGenerator, \
-    TicketAuditGenerator
+    TicketAuditGenerator, ChatIncrementalResultGenerator
 from zenpy.lib.util import as_singular, as_plural, get_endpoint_path
 
 
@@ -291,7 +291,8 @@ class ChatResponseHandler(ResponseHandler):
 
     @staticmethod
     def applies_to(api, response):
-        return get_endpoint_path(api, response).startswith('/chats')
+        path = get_endpoint_path(api, response)
+        return path.startswith('/chats') or path.startswith('/incremental/chats')
 
     def deserialize(self, response_json):
         chats = list()
@@ -308,7 +309,10 @@ class ChatResponseHandler(ResponseHandler):
     def build(self, response):
         response_json = response.json()
         if 'chats' in response_json or 'docs' in response_json:
-            return ChatResultGenerator(self, response_json)
+            if 'next_page' in response_json:
+                return ChatIncrementalResultGenerator(self, response_json)
+            else:
+                return ChatResultGenerator(self, response_json)
         else:
             return self.object_mapping.object_from_json('chat', response_json)
 

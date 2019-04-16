@@ -235,6 +235,19 @@ class ChatResultGenerator(BaseResultGenerator):
         return self.response_handler.deserialize(self._response_json)
 
 
+class ChatIncrementalResultGenerator(BaseResultGenerator):
+    """
+    Generator for Chat Incremental Api objects
+    """
+
+    def __init__(self, response_handler, response_json):
+        super(ChatIncrementalResultGenerator, self).__init__(response_handler, response_json)
+        self.next_page_attr = 'next_page'
+
+    def process_page(self):
+        return self.response_handler.deserialize(self._response_json)
+
+
 class ViewResultGenerator(BaseResultGenerator):
     def process_page(self):
         return self.response_handler.deserialize(self._response_json)

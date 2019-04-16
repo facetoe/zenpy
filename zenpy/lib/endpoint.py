@@ -179,6 +179,42 @@ class IncrementalEndpoint(BaseEndpoint):
                 params.update(dict(include=include))
         return Url(self.endpoint, params=params)
 
+class ChatIncrementalEndpoint(BaseEndpoint):
+    """
+    An ChatsIncrementalEndpoint takes parameters
+    for querying the chats incremental api endpoint.
+
+    Note: The Zendesk API expects UTC time. If a timezone aware datetime object is passed
+    Zenpy will convert it to UTC, however if a naive object or unix timestamp is passed there is nothing
+    Zenpy can do. It is recommended to always pass timezone aware objects to this endpoint.
+
+    :param start_time: unix timestamp or datetime object
+    :param fields: list of chat fields to load without "chats(xxx)". Defaults to "*"
+    """
+
+    def __call__(self, start_time=None, **kwargs):
+        if start_time is None:
+            raise ZenpyException("Incremental Endpoint requires a start_time parameter!")
+
+        elif isinstance(start_time, datetime):
+            unix_time = to_unix_ts(start_time)
+        else:
+            unix_time = start_time
+
+        params = kwargs
+        params.update(dict(start_time=str(unix_time)))
+
+        if 'fields' in kwargs:
+            if is_iterable_but_not_string(kwargs['fields']):
+                f =  ",".join(kwargs['fields'])
+            else:
+                f = kwargs['fields']
+        else:
+            f = "*"
+        params.update(dict(fields="chats(" + f + ")"))
+
+        return Url(self.endpoint, params=params)
+
 
 class AttachmentEndpoint(BaseEndpoint):
     def __call__(self, **kwargs):
@@ -411,6 +447,7 @@ class EndpointFactory(object):
     chats.visitors = ChatEndpoint('visitors')
     chats.search = ChatSearchEndpoint('chats/search')
     chats.stream = ChatSearchEndpoint('stream/chats')
+    chats.incremental = ChatIncrementalEndpoint('incremental/chats')
     custom_agent_roles = PrimaryEndpoint('custom_roles')
     dynamic_contents = PrimaryEndpoint('dynamic_content/items')
     dynamic_contents.variants = SecondaryEndpoint('dynamic_content/items/%(id)s/variants.json')
