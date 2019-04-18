@@ -1,0 +1,77 @@
+run_tests: &run_tests
+    - run:
+        name: install zenpy
+        command: |
+          python -m venv venv
+          . venv/bin/activate
+          pip install -r requirements.dev
+          nosetests -v --stop
+
+version: 2
+jobs:
+  python2.7:
+    docker:
+      - image: circleci/python:2.7.16-stretch
+    working_director: ~/repo
+    steps:
+      - run:
+          name: install virtualenv
+          command: sudo pip2 install virtualenv
+      - checkout
+      - run:
+          name: install zenpy
+          command: |
+            python2 -m virtualenv venv
+            . venv/bin/activate
+            pip2 install -r requirements.dev
+            nosetests -v --stop
+  python3.5:
+    docker:
+      - image: circleci/python:3.5.7-stretch
+    working_director: ~/repo
+    steps:
+      - run:
+          name: install virtualenv
+          command: sudo pip3 install virtualenv
+      - checkout
+      - <<: *run_tests
+  python3.6:
+    docker:
+      - image: circleci/python:3.6.8-stretch
+    working_director: ~/repo
+    steps:
+      - run:
+          name: install virtualenv
+          command: sudo pip3 install virtualenv
+      - checkout
+      - <<: *run_tests
+  python3.7:
+    docker:
+      - image: circleci/python:3.7.3-stretch
+    working_director: ~/repo
+    steps:
+      - run:
+          name: install virtualenv
+          command: sudo pip3 install virtualenv
+      - checkout
+      - <<: *run_tests
+  python3.8:
+    docker:
+      - image: circleci/python:3.8.0a3-stretch
+    working_director: ~/repo
+    steps:
+      - run:
+          name: install virtualenv
+          command: sudo pip3 install virtualenv
+      - checkout
+      - <<: *run_tests
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - python2.7
+      - python3.5
+      - python3.6
+      - python3.7
+      - python3.8
