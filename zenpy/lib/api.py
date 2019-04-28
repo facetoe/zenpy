@@ -1207,7 +1207,7 @@ class TicketImportAPI(CRUDApi):
                                               endpoint=EndpointFactory('ticket_import'))
 
     def __call__(self, *args, **kwargs):
-        raise ZenpyException("You must pass ticket objects to this endpoint!")
+        raise ZenpyException("This endpoint cannot be called directly!")
 
     def update(self, items, **kwargs):
         raise ZenpyException("You cannot update objects using ticket_import endpoint!")
