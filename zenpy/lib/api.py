@@ -1722,7 +1722,7 @@ class VoteCommentApi(Api):
         return self._post(url, payload={})
 
 
-class ArticleApi(HelpCentreApiBase, TranslationApi, SubscriptionApi, VoteApi, VoteCommentApi):
+class ArticleApi(HelpCentreApiBase, TranslationApi, SubscriptionApi, VoteApi, VoteCommentApi, IncrementalApi):
     @extract_id(Section)
     def create(self, section, article):
         """

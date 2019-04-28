@@ -602,6 +602,7 @@ class EndpointFactory(object):
     help_centre.articles.comment_votes = MultipleIDEndpoint('help_center/articles/{}/comments/{}/votes.json')
     help_centre.articles.comment_votes.up = MultipleIDEndpoint('help_center/articles/{}/comments/{}/up.json')
     help_centre.articles.comment_votes.down = MultipleIDEndpoint('help_center/articles/{}/comments/{}/down.json')
+    help_centre.articles.incremental = IncrementalEndpoint('help_center/incremental/articles.json')
 
     help_centre.labels = PrimaryEndpoint('help_center/articles/labels')
     help_centre.labels.create = SecondaryEndpoint('help_center/articles/%(id)s/labels.json')
