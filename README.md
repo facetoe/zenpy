@@ -109,7 +109,7 @@ zenpy_client.tickets.update(ticket)
 from zenpy.lib.api_objects import Comment
 
 # Upload the file (or file-like object) to Zendesk and obtain an Upload instance
-upload_instance = zenpy_client.attachments.upload('/tmp/awesome_file.txt')
+upload_instance = zenpy_client.attachments.upload('/tmp/awesome_file.txt', target_name="awesome_file.txt")
 
 ticket = zenpy_client.tickets(id=some_ticket_id)
 ticket.comment = Comment(body='This comment has my file attached', uploads=[upload_instance.token])
