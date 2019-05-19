@@ -87,6 +87,7 @@ class ProxyList(list):
             def clear():
                 list.clear(self)
                 self._set_dirty()
+
             self.clear = clear
 
     def _clean_dirty(self):
@@ -122,7 +123,7 @@ class ProxyList(list):
     def __iter__(self):
         for index, element in enumerate(list.__iter__(self), start=0):
             wrapped = self._wrap_element(element)
-            self[index] = wrapped
+            list.__setitem__(self, index, wrapped)
             yield wrapped
 
     def pop(self, index=-1):
