@@ -327,9 +327,7 @@ class VariantRequest(BaseZendeskRequest):
 
     def delete(self, item, variant):
         url = self.api._build_url(self.api.endpoint.delete(item, variant))
-        deleted = self.api._delete(url)
-        delete_from_cache(deleted)
-        return deleted
+        return self.api._delete(url)
 
 
 class ChatApiRequest(RequestHandler):
@@ -527,21 +525,19 @@ class HelpdeskAttachmentRequest(BaseZendeskRequest):
             if hasattr(attachments, 'read'):
                 file = (file_name if file_name else attachments.name, attachments, content_type)
                 return self.api._post(url,
-                                          payload={},
-                                          files=dict(
-                                                     inline=(None, 'true' if inline else 'false'),
-                                                     file=file
-                                                     )
-                                          )
+                                      payload={},
+                                      files=dict(
+                                          inline=(None, 'true' if inline else 'false'),
+                                          file=file)
+                                      )
             elif os.path.isfile(attachments):
                 with open(attachments, 'rb') as fp:
                     file = (file_name if file_name else fp.name, fp, content_type)
                     return self.api._post(url,
                                           payload={},
                                           files=dict(
-                                                     inline=(None, 'true' if inline else 'false'),
-                                                     file=file
-                                                     )
+                                              inline=(None, 'true' if inline else 'false'),
+                                              file=file)
                                           )
 
         raise ValueError("Attachment is not a file-like object or valid path!")
