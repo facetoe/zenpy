@@ -4,10 +4,19 @@ python:
   - "2.7"
   - "3.5"
   - "3.6"
+  - "3.7"
 matrix:
   include:
     - python: "3.7"
       dist: xenial  # required for Python >= 3.7 (travis-ci/travis-ci#9069)
     - python: "3.8-dev"
       dist: xenial  # required for Python >= 3.7 (travis-ci/travis-ci#9069)
-script: "pip install -r requirements.dev && nosetests -v --stop && flake8"
+script:
+  - pip install -r requirements.dev
+  - nosetests -v --stop
+  - flake8 docs/
+  - flake8 tests/
+  - flake8 tools/
+  - flake8 zenpy/
+  - flake8 *.py
+  - sphinx-build docs/ /tmp/foo
