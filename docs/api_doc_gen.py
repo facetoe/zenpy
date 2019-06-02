@@ -18,9 +18,7 @@ def get_api_class_info(obj):
     ignore_methods = [x[0] for x in inspect.getmembers(Api)]
 
     def valid_method(m):
-        return inspect.ismethod(m) \
-               and not m.__name__.startswith('_') \
-               and m.__name__ not in ignore_methods
+        return inspect.ismethod(m) and not m.__name__.startswith('_') and m.__name__ not in ignore_methods
 
     results = list()
     for name, api in inspect.getmembers(obj, lambda x: issubclass(x.__class__, Api)):

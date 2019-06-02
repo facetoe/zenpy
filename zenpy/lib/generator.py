@@ -1,20 +1,19 @@
 from __future__ import division
 
 import collections
+import logging
 import re
 from abc import abstractmethod
 from datetime import datetime, timedelta
+from math import ceil
 
 from future.standard_library import install_aliases
 
 from zenpy.lib.util import as_plural
 
 install_aliases()
-from math import ceil
 
 __author__ = 'facetoe'
-
-import logging
 
 log = logging.getLogger(__name__)
 
@@ -75,10 +74,10 @@ class BaseResultGenerator(collections.Iterable):
         """ When slicing, remove the per_page and page parameters and pass to requests in the params dict """
         params = dict()
         if page_num is not None:
-            url = re.sub('page=\d+', '', url)
+            url = re.sub(r'page=\d+', '', url)
             params['page'] = page_num
         if page_size is not None:
-            url = re.sub('per_page=\d+', '', url)
+            url = re.sub(r'per_page=\d+', '', url)
             params['per_page'] = page_size
         return params, url
 
@@ -90,9 +89,11 @@ class BaseResultGenerator(collections.Iterable):
     def _handle_slice(self, slice_object):
         if self._has_sliced:
             raise NotImplementedError("the current slice implementation does not support multiple accesses!")
-        start, stop, page_size = slice_object.start or 0, \
-                                 slice_object.stop or len(self), \
-                                 slice_object.step or 100
+
+        start = slice_object.start or 0
+        stop = slice_object.stop or len(self)
+        page_size = slice_object.step or 100
+
         if any((val < 0 for val in (start, stop, page_size))):
             raise ValueError("negative values not supported in slice operations!")
 
