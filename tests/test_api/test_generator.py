@@ -64,4 +64,3 @@ class TestTicketGeneratorSlice(ZenpyApiTestCase):
             self.assertIsInstance(values[i], Ticket)
             self.assertTrue(values[i].id == n,
                             msg="expected Ticket id: {}, found: {}, values: {}".format(n, values[i], values))
-

@@ -425,6 +425,7 @@ def process_specification_directory(glob_pattern, outfile_name, namespace, write
 
         out_file.write("\n\n\n".join((header, formatted_code)))
 
+
 process_specification_directory('zendesk/*.json', 'api_objects/__init__.py',
                                 namespace='core')
 process_specification_directory('chat/*.json', 'api_objects/chat_objects.py',
