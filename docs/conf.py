@@ -15,6 +15,7 @@
 import sys
 import os
 from datetime import datetime
+from zenpy import __version__
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -27,7 +28,6 @@ sys.path.insert(0, os.path.abspath('../zenpy/lib/objects'))
 sys.path.insert(0, os.path.abspath('../zenpy/lib/objects/ticket'))
 sys.path.insert(0, os.path.abspath('../docs'))
 
-from zenpy import __version__
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -41,7 +41,7 @@ extensions = [
     'sphinx.ext.coverage',
     'sphinx.ext.viewcode',
     'sphinx.ext.inheritance_diagram',
-        'api_doc_gen'
+    'api_doc_gen'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -220,25 +220,25 @@ htmlhelp_basename = 'Zenpydoc'
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {
-# The paper size ('letterpaper' or 'a4paper').
-#'papersize': 'letterpaper',
+    # The paper size ('letterpaper' or 'a4paper').
+    #'papersize': 'letterpaper',
 
-# The font size ('10pt', '11pt' or '12pt').
-#'pointsize': '10pt',
+    # The font size ('10pt', '11pt' or '12pt').
+    #'pointsize': '10pt',
 
-# Additional stuff for the LaTeX preamble.
-#'preamble': '',
+    # Additional stuff for the LaTeX preamble.
+    #'preamble': '',
 
-# Latex figure (float) alignment
-#'figure_align': 'htbp',
+    # Latex figure (float) alignment
+    #'figure_align': 'htbp',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  (master_doc, 'Zenpy.tex', u'Zenpy Documentation',
-   u'Facetoe', 'manual'),
+    (master_doc, 'Zenpy.tex', u'Zenpy Documentation',
+     u'Facetoe', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -281,9 +281,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  (master_doc, 'Zenpy', u'Zenpy Documentation',
-   author, 'Zenpy', 'One line description of project.',
-   'Miscellaneous'),
+    (master_doc, 'Zenpy', u'Zenpy Documentation',
+     author, 'Zenpy', 'One line description of project.',
+     'Miscellaneous'),
 ]
 
 # Documents to append as an appendix to all manuals.

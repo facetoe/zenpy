@@ -1,11 +1,22 @@
 import logging
 
 import zenpy
-from zenpy.lib.api_objects import *
-from zenpy.lib.api_objects.chat_objects import *
+from zenpy.lib.api_objects import Ticket, User, Group, Organization, Brand, Comment, Attachment, Thumbnail, Metadata, \
+    System, CreateEvent, ChangeEvent, NotificationEvent, VoiceCommentEvent, CommentPrivacyChangeEvent, \
+    SatisfactionRatingEvent, TicketSharingEvent, OrganizationActivityEvent, ErrorEvent, TweetEvent, FacebookEvent, \
+    FacebookCommentEvent, ExternalEvent, LogmeinTranscriptEvent, PushEvent, CcEvent, Via, Source, JobStatus, \
+    JobStatusResult, Audit, TicketAudit, TicketEvent, TicketField, TicketForm, TicketMetric, TicketMetricEvent, Tag, \
+    SuspendedTicket, SatisfactionRating, Activity, GroupMembership, Status, TicketMetricItem, UserField, Request, \
+    OrganizationField, OrganizationMembership, UserRelated, Upload, SharingAgreement, Macro, MacroResult, \
+    AgentMacroReference, Identity, View, ViewRow, ViewCount, Conditions, Export, SlaPolicy, PolicyMetric, Definitions, \
+    Recipient, RecipientAddress, Response, Automation, Item, Target, Locale, Link, Skip, Variant, Schedule, \
+    CustomFieldOption, CustomAgentRole
+from zenpy.lib.api_objects.chat_objects import Chat, OfflineMessage, Session, ResponseTime, Visitor, Webpath, Count, \
+    Shortcut, Account, Agent, Ban, IpAddress, Department, Roles, Billing, Plan, SearchResult, Goal
 from zenpy.lib.api_objects.help_centre_objects import Article, Category, Section, Label, Translation, Topic, Post, \
     Subscription, Vote, AccessPolicy, UserSegment
-from zenpy.lib.api_objects.talk_objects import *
+from zenpy.lib.api_objects.talk_objects import AccountOverview, AgentsActivity, AgentsOverview, CurrentQueueActivity, \
+    PhoneNumbers, ShowAvailability
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.proxy import ProxyDict, ProxyList
 from zenpy.lib.util import as_singular, get_object_type
@@ -241,6 +252,7 @@ class HelpCentreObjectMapping(ZendeskObjectMapping):
         'access_policy': AccessPolicy,
         'user_segment': UserSegment
     }
+
 
 class TalkObjectMapping(ZendeskObjectMapping):
     """

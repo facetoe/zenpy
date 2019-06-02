@@ -1,5 +1,4 @@
 import calendar
-import datetime
 import logging
 import re
 

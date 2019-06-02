@@ -25,10 +25,8 @@ else:
     basestring = basestring
 
 try:
-    from urllib import urlencode
     from urlparse import urlunsplit, SplitResult
 except ImportError:
-    from urllib.parse import urlencode
     from urllib.parse import urlunsplit, SplitResult
 
 log = logging.getLogger(__name__)
@@ -179,6 +177,7 @@ class IncrementalEndpoint(BaseEndpoint):
                 params.update(dict(include=include))
         return Url(self.endpoint, params=params)
 
+
 class ChatIncrementalEndpoint(BaseEndpoint):
     """
     An ChatsIncrementalEndpoint takes parameters
@@ -206,7 +205,7 @@ class ChatIncrementalEndpoint(BaseEndpoint):
 
         if 'fields' in kwargs:
             if is_iterable_but_not_string(kwargs['fields']):
-                f =  ",".join(kwargs['fields'])
+                f = ",".join(kwargs['fields'])
             else:
                 f = kwargs['fields']
         else:
@@ -232,17 +231,17 @@ class SearchEndpoint(BaseEndpoint):
     +-----------------+------------------+
     | keyword         | : (equality)     |
     +-----------------+------------------+
-    | \*_greater_than | > (numeric|type) |
+    | *_greater_than  | > (numeric|type) |
     +-----------------+------------------+
-    | \*_less_than    | < (numeric|type) |
+    | *_less_than     | < (numeric|type) |
     +-----------------+------------------+
-    | \*_after        | > (time|date)    |
+    | *_after         | > (time|date)    |
     +-----------------+------------------+
-    | \*_before       | < (time|date)    |
+    | *_before        | < (time|date)    |
     +-----------------+------------------+
-    | minus           | \- (negation)    |
+    | minus           | -- (negation)    |
     +-----------------+------------------+
-    | \*_between      | > < (dates only) |
+    | *_between       | > < (dates only) |
     +-----------------+------------------+
 
     For example the call:
@@ -409,6 +408,7 @@ class ChatEndpoint(BaseEndpoint):
                 break
         return Url(endpoint_path, params=params)
 
+
 class ChatSearchEndpoint(BaseEndpoint):
     def __call__(self, *args, **kwargs):
         conditions = list()
@@ -567,7 +567,8 @@ class EndpointFactory(object):
     views.search = ViewSearchEndpoint('views/search.json')
     recipient_addresses = PrimaryEndpoint('recipient_addresses')
 
-    class Dummy(object): pass
+    class Dummy(object):
+        pass
 
     talk = Dummy()
     talk.current_queue_activity = PrimaryEndpoint('channels/voice/stats/current_queue_activity')

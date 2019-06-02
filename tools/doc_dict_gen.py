@@ -4,6 +4,7 @@ import os
 import requests
 from bs4 import BeautifulSoup, SoupStrainer
 from collections import defaultdict
+from multiprocessing.pool import ThreadPool
 
 base_url = "https://developer.zendesk.com"
 
@@ -63,8 +64,6 @@ def parse_link(link):
     print("Parsing Completed for: " + link)
     return namespace, object_info
 
-
-from multiprocessing.pool import ThreadPool
 
 with ThreadPool(processes=50) as pool:
     results = pool.map(parse_link, get_links())
