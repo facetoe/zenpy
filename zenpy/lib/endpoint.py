@@ -293,7 +293,7 @@ class SearchEndpoint(BaseEndpoint):
                     value = '"{}"'.format(value)
                 renamed_kwargs.update({key + ':': '%s' % value})
 
-        search_query = ['%s%s' % (key, value) for (key, value) in renamed_kwargs.items()]
+        search_query = ['%s%s' % (k, v) for (k, v) in renamed_kwargs.items()]
         search_query.extend(modifiers)
         if query is not None:
             search_query.insert(0, quote(query))

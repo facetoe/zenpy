@@ -4,14 +4,11 @@ import collections
 import logging
 import re
 from abc import abstractmethod
+
 from datetime import datetime, timedelta
 from math import ceil
 
-from future.standard_library import install_aliases
-
 from zenpy.lib.util import as_plural
-
-install_aliases()
 
 __author__ = 'facetoe'
 
@@ -117,8 +114,8 @@ class BaseResultGenerator(collections.Iterable):
 
     def _retrieve_slice(self, start, stop, page_size):
         # Calculate our range of pages.
-        min_page = ceil(start / page_size)
-        max_page = ceil(stop / page_size) + 1
+        min_page = int(ceil(start / page_size))
+        max_page = int(ceil(stop / page_size)) + 1
 
         # Calculate the lower and upper bounds for the final slice.
         padding = ((max_page - min_page) - 1) * page_size
