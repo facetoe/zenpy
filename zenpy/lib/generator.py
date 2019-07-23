@@ -9,6 +9,11 @@ from future.standard_library import install_aliases
 
 from zenpy.lib.util import as_plural
 
+try:
+    from collections.abc import Iterable
+except ImportError:
+    from collections import Iterable
+
 install_aliases()
 from math import ceil
 
@@ -19,7 +24,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class BaseResultGenerator(collections.Iterable):
+class BaseResultGenerator(Iterable):
     """
     Base class for result generators. Subclasses should implement process_page()
     and return a list of results.
