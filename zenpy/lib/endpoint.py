@@ -314,7 +314,7 @@ class SearchEndpoint(BaseEndpoint):
             dates = [v.strftime(self.ISO_8601_FORMAT) for v in values]
         else:
             dates = [str(v.replace(microsecond=0).isoformat()) for v in values]
-        return "%s>%s %s<%s" % (key, dates[0], key, dates[1])
+        return "%s>%s %s<%s" % (key, dates[0].replace('+', '%2B'), key, dates[1].replace('+', '%2B'))
 
     def format_or(self, key, values):
         return " ".join(['%s:"%s"' % (key, v) for v in values])
