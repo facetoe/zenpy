@@ -304,16 +304,16 @@ class SearchEndpoint(BaseEndpoint):
 
     def format_between(self, key, values):
         if not is_iterable_but_not_string(values):
-            raise ZenpyException("*_between requires an iterable (list, set, tuple etc)")
+            raise ValueError("*_between requires an iterable (list, set, tuple etc)")
         elif not len(values) == 2:
             raise ZenpyException("*_between requires exactly 2 items!")
-        elif not all([isinstance(d, datetime) for d in values]):
-            raise ZenpyException("*_between only works with dates!")
+        for value in values:
+            if not isinstance(value, datetime):
+                raise ValueError("*_between only works with datetime objects!")
+            elif value.tzinfo is not None and value.utcoffset().total_seconds() != 0:
+                log.warning("search parameter '{}' requires UTC time, results likely incorrect.".format(key))
         key = key.replace('_between', '')
-        if values[0].tzinfo is None or values[1].tzinfo is None:
-            dates = [v.strftime(self.ISO_8601_FORMAT) for v in values]
-        else:
-            dates = [str(v.replace(microsecond=0).isoformat()) for v in values]
+        dates = [v.strftime(self.ISO_8601_FORMAT) for v in values]
         return "%s>%s %s<%s" % (key, dates[0], key, dates[1])
 
     def format_or(self, key, values):
