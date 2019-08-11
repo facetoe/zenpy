@@ -42,6 +42,11 @@ from zenpy.lib.request import *
 from zenpy.lib.response import *
 from zenpy.lib.util import as_plural, extract_id, is_iterable_but_not_string, json_encode_for_zendesk
 
+try:
+    from collections.abc import Iterable
+except ImportError:
+    from collections import Iterable
+
 __author__ = 'facetoe'
 
 log = logging.getLogger(__name__)
@@ -459,7 +464,7 @@ class CRUDExternalApi(CRUDApi):
 
         :param api_objects:
         """
-        if not isinstance(api_objects, collections.Iterable):
+        if not isinstance(api_objects, Iterable):
             api_objects = [api_objects]
         return CRUDRequest(self).put(api_objects, update_many_external=True)
 
@@ -469,7 +474,7 @@ class CRUDExternalApi(CRUDApi):
 
         :param api_objects:
         """
-        if not isinstance(api_objects, collections.Iterable):
+        if not isinstance(api_objects, Iterable):
             api_objects = [api_objects]
         return CRUDRequest(self).delete(api_objects, destroy_many_external=True)
 
@@ -1072,7 +1077,7 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         :return: JobStatus object
         """
         endpoint_kwargs = dict()
-        if isinstance(tickets, collections.Iterable):
+        if isinstance(tickets, Iterable):
             endpoint_kwargs['destroy_ids'] = [i.id for i in tickets]
         else:
             endpoint_kwargs['id'] = tickets.id
@@ -1541,12 +1546,12 @@ class SlaPolicyApi(CRUDApi):
         super(SlaPolicyApi, self).__init__(config, object_type='sla_policy')
 
     def create(self, api_objects, **kwargs):
-        if isinstance(api_objects, collections.Iterable):
+        if isinstance(api_objects, Iterable):
             raise ZenpyException("Cannot create multiple sla policies!")
         super(SlaPolicyApi, self).create(api_objects, **kwargs)
 
     def update(self, api_objects, **kwargs):
-        if isinstance(api_objects, collections.Iterable):
+        if isinstance(api_objects, Iterable):
             raise ZenpyException("Cannot update multiple sla policies!")
         super(SlaPolicyApi, self).update(api_objects, **kwargs)
 

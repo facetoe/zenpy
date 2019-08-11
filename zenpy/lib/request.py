@@ -1,10 +1,14 @@
-import collections
 import os
 
 from zenpy.lib.api_objects.chat_objects import Shortcut, Trigger
 from zenpy.lib.endpoint import EndpointFactory
 from zenpy.lib.exception import ZenpyException, TooManyValuesException
 from zenpy.lib.util import get_object_type, as_plural, is_iterable_but_not_string
+
+try:
+    from collections.abc import Iterable
+except ImportError:
+    from collections import Iterable
 
 
 class RequestHandler(object):
@@ -33,7 +37,7 @@ class BaseZendeskRequest(RequestHandler):
     """
 
     def build_payload(self, api_objects):
-        if isinstance(api_objects, collections.Iterable):
+        if isinstance(api_objects, Iterable):
             payload_key = as_plural(self.api.object_type)
         else:
             payload_key = self.api.object_type
@@ -42,7 +46,7 @@ class BaseZendeskRequest(RequestHandler):
     def check_type(self, zenpy_objects):
         """ Ensure the passed type matches this API's object_type. """
         expected_type = self.api._object_mapping.class_for_type(self.api.object_type)
-        if not isinstance(zenpy_objects, collections.Iterable):
+        if not isinstance(zenpy_objects, Iterable):
             zenpy_objects = [zenpy_objects]
         for zenpy_object in zenpy_objects:
             if type(zenpy_object) is not expected_type:
@@ -61,10 +65,10 @@ class CRUDRequest(BaseZendeskRequest):
 
         create_or_update = kwargs.pop('create_or_update', False)
         create = kwargs.pop('create', False)
-        if isinstance(api_objects, collections.Iterable) and create_or_update:
+        if isinstance(api_objects, Iterable) and create_or_update:
             kwargs['create_or_update_many'] = True
             endpoint = self.api.endpoint.create_or_update_many
-        elif isinstance(api_objects, collections.Iterable):
+        elif isinstance(api_objects, Iterable):
             kwargs['create_many'] = True
             endpoint = self.api.endpoint
         elif create_or_update:
@@ -83,7 +87,7 @@ class CRUDRequest(BaseZendeskRequest):
 
         if update_many_external:
             kwargs['update_many_external'] = [o.external_id for o in api_objects]
-        elif isinstance(api_objects, collections.Iterable):
+        elif isinstance(api_objects, Iterable):
             kwargs['update_many'] = True
         else:
             kwargs['id'] = api_objects.id
@@ -96,7 +100,7 @@ class CRUDRequest(BaseZendeskRequest):
         self.check_type(api_objects)
         if destroy_many_external:
             kwargs['destroy_many_external'] = [o.external_id for o in api_objects]
-        elif isinstance(api_objects, collections.Iterable):
+        elif isinstance(api_objects, Iterable):
             kwargs['destroy_ids'] = [i.id for i in api_objects]
         else:
             kwargs['id'] = api_objects.id
@@ -118,7 +122,7 @@ class SuspendedTicketRequest(BaseZendeskRequest):
     def put(self, tickets, *args, **kwargs):
         self.check_type(tickets)
         endpoint_kwargs = dict()
-        if isinstance(tickets, collections.Iterable):
+        if isinstance(tickets, Iterable):
             endpoint_kwargs['recover_ids'] = [i.id for i in tickets]
             endpoint = self.api.endpoint
         else:
@@ -131,7 +135,7 @@ class SuspendedTicketRequest(BaseZendeskRequest):
     def delete(self, tickets, *args, **kwargs):
         self.check_type(tickets)
         endpoint_kwargs = dict()
-        if isinstance(tickets, collections.Iterable):
+        if isinstance(tickets, Iterable):
             endpoint_kwargs['destroy_ids'] = [i.id for i in tickets]
         else:
             endpoint_kwargs['id'] = tickets.id
@@ -308,7 +312,7 @@ class TicketFieldOptionRequest(BaseZendeskRequest):
 
 class VariantRequest(BaseZendeskRequest):
     def post(self, item, variant):
-        if isinstance(variant, collections.Iterable):
+        if isinstance(variant, Iterable):
             endpoint = self.api.endpoint.create_many
         else:
             endpoint = self.api.endpoint
@@ -317,7 +321,7 @@ class VariantRequest(BaseZendeskRequest):
         return self.api._post(url, payload=payload)
 
     def put(self, item, variant):
-        if isinstance(variant, collections.Iterable):
+        if isinstance(variant, Iterable):
             url = self.api._build_url(self.api.endpoint.update_many(id=item))
         else:
             url = self.api._build_url(self.api.endpoint.update(item, variant.id))
@@ -515,7 +519,7 @@ class HelpdeskAttachmentRequest(BaseZendeskRequest):
 
         if endpoint == self.api.endpoint.bulk_attachments:
             self.check_type(attachments)
-            if isinstance(attachments, collections.Iterable):
+            if isinstance(attachments, Iterable):
                 if len(attachments) > 20:
                     raise TooManyValuesException('Maximum 20 attachments objects allowed')
                 ids = [attachment.id for attachment in attachments]
