@@ -123,6 +123,7 @@ class Zenpy(object):
         self.group_memberships = GroupMembershipApi(config)
         self.end_user = EndUserApi(config)
         self.ticket_metrics = Api(config, object_type='ticket_metric')
+        self.ticket_metric_events = Api(config, object_type='ticket_metric_events')
         self.ticket_fields = TicketFieldApi(config)
         self.ticket_forms = TicketFormApi(config, object_type='ticket_form')
         self.ticket_import = TicketImportAPI(config)
