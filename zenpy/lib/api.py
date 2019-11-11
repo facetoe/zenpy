@@ -14,6 +14,7 @@ from zenpy.lib.api_objects import (
     GroupMembership,
     OrganizationField,
     TicketField,
+    Comment as TicketComment,
     CustomFieldOption,
     Item, Variant, Ticket, BaseObject)
 from zenpy.lib.api_objects.help_centre_objects import (
@@ -1066,6 +1067,22 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
             returned in each comments' `attachments` field alongside non-inline attachments
         """
         return self._query_zendesk(self.endpoint.comments, 'comment', id=ticket, include_inline_images=repr(include_inline_images).lower())
+
+    @extract_id(Ticket, TicketComment)
+    def comment_redact(self, ticket, comment, text) -> TicketComment:
+        """
+        Redact text from ticket comment.
+
+        :param ticket: Ticket object or id
+        :param comment: Comment object or id
+        :param text: Text to be redacted from comment
+        :return Comment: Ticket Comment object
+        """
+
+        url = self._build_url(self.endpoint.comments.redact(ticket, comment))
+        redacted_comment = self._put(url, {'text': text})
+        redacted_comment._set_dirty()
+        return redacted_comment
 
     def permanently_delete(self, tickets):
         """
