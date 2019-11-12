@@ -1071,7 +1071,7 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
     @extract_id(Ticket, TicketComment)
     def comment_redact(self, ticket, comment, text):
         """
-        Redact text from ticket comment.
+        Redact text from ticket comment. `See Zendesk API docs <https://developer.zendesk.com/rest_api/docs/support/ticket_comments#redact-string-in-comment>`_
 
         :param ticket: Ticket object or id
         :param comment: Comment object or id
