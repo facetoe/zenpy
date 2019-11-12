@@ -1069,7 +1069,7 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         return self._query_zendesk(self.endpoint.comments, 'comment', id=ticket, include_inline_images=repr(include_inline_images).lower())
 
     @extract_id(Ticket, TicketComment)
-    def comment_redact(self, ticket, comment, text) -> TicketComment:
+    def comment_redact(self, ticket, comment, text):
         """
         Redact text from ticket comment.
 
@@ -1079,10 +1079,7 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         :return Comment: Ticket Comment object
         """
 
-        url = self._build_url(self.endpoint.comments.redact(ticket, comment))
-        redacted_comment = self._put(url, {'text': text})
-        redacted_comment._set_dirty()
-        return redacted_comment
+        return self._put(self._build_url(self.endpoint.comments.redact(ticket, comment)), {'text': text})
 
     def permanently_delete(self, tickets):
         """
