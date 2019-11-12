@@ -232,6 +232,26 @@ class CombinationResponseHandler(GenericZendeskResponseHandler):
             return zenpy_objects['ticket_audit']
         raise ZenpyException("Could not process response: {}".format(response))
 
+class JobStatusesResponseHandler(GenericZendeskResponseHandler):
+
+    @staticmethod
+    def applies_to(api, response):
+        try:
+            response_json = response.json()
+            if 'job_statuses' in response_json:
+                return True
+        except ValueError:
+            return False
+
+    def build(self, response):
+        response_objects = {'job_statuses': []}
+        for object_json in response.json()['job_statuses']:
+            zenpy_object = self.object_mapping.object_from_json(
+                'job_status',
+                object_json
+            )
+            response_objects['job_statuses'].append(zenpy_object)
+        return response_objects
 
 class TagResponseHandler(ResponseHandler):
     """ Tags aint complicated, just return them. """

@@ -78,6 +78,7 @@ class BaseApi(object):
             DeleteResponseHandler,
             TagResponseHandler,
             SearchResponseHandler,
+            JobStatusesResponseHandler,
             CombinationResponseHandler,
             ViewResponseHandler,
             SlaPolicyResponseHandler,
