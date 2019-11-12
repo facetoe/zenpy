@@ -617,7 +617,7 @@ class UserIdentityApi(Api):
         """
         return UserIdentityRequest(self).post(user, identity)
 
-    @extract_id(User, Identity)
+    @extract_id(User)
     def update(self, user, identity):
         """
         Update specified identity for the specified user

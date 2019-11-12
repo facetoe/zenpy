@@ -190,8 +190,13 @@ class UserIdentityRequest(BaseZendeskRequest):
         return self.api._post(url, payload=payload)
 
     def put(self, endpoint, user, identity):
+        """ PUT request for update user identity
+        :param endpoint: Endpoint path
+        :param int user: User ID
+        :type identity: zenpy.lib.api_objects.Identity
+        """
         payload = self.build_payload(identity)
-        url = self.api._build_url(endpoint(user, identity))
+        url = self.api._build_url(endpoint(user, identity.id))
         return self.api._put(url, payload=payload)
 
     def delete(self, user, identity):
