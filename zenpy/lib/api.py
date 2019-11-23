@@ -1032,6 +1032,17 @@ class MacroApi(CRUDApi):
 
         return self._query_zendesk(self.endpoint.apply, 'result', id=macro)
 
+    @extract_id(Macro)
+    def attachments(self, macro):
+        """
+        Shows attachments for a macro.
+        Zendesk API `Reference <https://developer.zendesk.com/rest_api/docs/support/macros#create-macro-attachment>`__.
+
+        :param macro: Macro object or id.
+        """
+
+        return self._query_zendesk(self.endpoint.attachments, 'macro_attachment', id=macro)
+
 
 class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
     """

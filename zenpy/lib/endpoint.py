@@ -470,6 +470,7 @@ class EndpointFactory(object):
     links = PrimaryEndpoint('services/jira/links')
     macros = MacroEndpoint('macros')
     macros.apply = SecondaryEndpoint('macros/%(id)s/apply.json')
+    macros.attachments = SecondaryEndpoint('macros/%(id)s/attachments.json')
 
     nps = PrimaryEndpoint('nps')
     nps.recipients_incremental = IncrementalEndpoint('nps/incremental/recipients.json')
