@@ -252,11 +252,17 @@ class UploadRequest(RequestHandler):
             elif api_object == "unassociated_macro":
                 url = self.api._build_url(self.api.endpoint.attachments_upload_unassociated(id=None))
                 
-            return self.api._post(url, data=data, files=files, content_type=content_type)
+            response = self.api._post(url, data=data, files=files, content_type=content_type)
             
         else:
             url = self.api._build_url(self.api.endpoint.upload(filename=target_name, token=token))
-            return self.api._post(url, data=fp, payload={}, content_type=content_type)
+            response = self.api._post(url, data=fp, payload={}, content_type=content_type)
+
+        if hasattr(fp, "close"):
+            fp.close()
+
+        return response
+
 
     def put(self, api_objects, *args, **kwargs):
         raise NotImplementedError("POST is not implemented fpr UploadRequest!")

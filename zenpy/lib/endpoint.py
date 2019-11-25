@@ -471,7 +471,6 @@ class EndpointFactory(object):
     macros = MacroEndpoint('macros')
     macros.apply = SecondaryEndpoint('macros/%(id)s/apply.json')
     macros.attachments = SecondaryEndpoint('macros/%(id)s/attachments.json')
-    macros.attachments_download = SecondaryEndpoint('macros/attachments/%(id)s/content')
     macros.attachments_upload = SecondaryEndpoint('macros/%(id)s/attachments.json')
     macros.attachments_upload_unassociated = SecondaryEndpoint('macros/attachments.json')
 
