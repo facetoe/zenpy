@@ -1,5 +1,6 @@
 import os
 
+from zenpy.lib.api_objects import Macro
 from zenpy.lib.api_objects.chat_objects import Shortcut, Trigger
 from zenpy.lib.endpoint import EndpointFactory
 from zenpy.lib.exception import ZenpyException, TooManyValuesException
@@ -208,7 +209,7 @@ class UserIdentityRequest(BaseZendeskRequest):
 class UploadRequest(RequestHandler):
     """ Handles uploading files to Zendesk. """
 
-    def post(self, fp, token=None, target_name=None, content_type=None):
+    def post(self, fp, token=None, target_name=None, content_type=None, api_object=None):
         if hasattr(fp, 'read'):
             # File-like objects such as:
             #   PY3: io.StringIO, io.TextIOBase, io.BufferedIOBase
@@ -218,6 +219,15 @@ class UploadRequest(RequestHandler):
                 raise ZenpyException("upload requires a target file name")
             else:
                 target_name = target_name or fp.name
+
+        if hasattr(fp, 'name'):
+            # Path objects (pathlib.Path)
+            if fp.name == '':
+                raise ZenpyException("upload requires a target file name")
+
+            target_name = target_name or fp.name
+
+            fp = open(fp, 'rb')
 
         elif isinstance(fp, str):
             if os.path.isfile(fp):
@@ -231,8 +241,28 @@ class UploadRequest(RequestHandler):
             # Other serializable types accepted by requests (like dict)
             raise ZenpyException("upload requires a target file name")
 
-        url = self.api._build_url(self.api.endpoint.upload(filename=target_name, token=token))
-        return self.api._post(url, data=fp, payload={}, content_type=content_type)
+        if isinstance(api_object, Macro) or api_object == "unassociated_macro":
+            # Macro attachment API requires attachment as well as filename
+            data = {"filename": target_name}
+            files = {"attachment": fp}
+            
+            if isinstance(api_object, Macro):
+                url = self.api._build_url(self.api.endpoint.attachments_upload(id=api_object.id))
+
+            elif api_object == "unassociated_macro":
+                url = self.api._build_url(self.api.endpoint.attachments_upload_unassociated(id=None))
+                
+            response = self.api._post(url, data=data, files=files, content_type=content_type)
+            
+        else:
+            url = self.api._build_url(self.api.endpoint.upload(filename=target_name, token=token))
+            response = self.api._post(url, data=fp, payload={}, content_type=content_type)
+
+        if hasattr(fp, "close"):
+            fp.close()
+
+        return response
+
 
     def put(self, api_objects, *args, **kwargs):
         raise NotImplementedError("POST is not implemented fpr UploadRequest!")

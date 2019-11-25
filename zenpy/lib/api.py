@@ -92,7 +92,7 @@ class BaseApi(object):
         # is successfully processed, and then call the objects _clean_dirty() method.
         self._dirty_object = None
 
-    def _post(self, url, payload, content_type=None, **kwargs):
+    def _post(self, url, payload=None, content_type=None, **kwargs):
         if 'data' in kwargs:
             if content_type:
                 headers = {'Content-Type': content_type}
@@ -100,11 +100,19 @@ class BaseApi(object):
                 headers = {'Content-Type': 'application/octet-stream'}
         else:
             headers = None
-        response = self._call_api(self.session.post, url,
-                                  json=self._serialize(payload),
-                                  timeout=self.timeout,
-                                  headers=headers,
-                                  **kwargs)
+
+        if payload:
+            response = self._call_api(self.session.post, url,
+                                    json=self._serialize(payload),
+                                    timeout=self.timeout,
+                                    headers=headers,
+                                    **kwargs)
+        # Omit payload and headers to support multipart formpost.
+        else:
+            response = self._call_api(self.session.post, url,
+                                    timeout=self.timeout,
+                                    **kwargs)
+        
         return self._process_response(response)
 
     def _put(self, url, payload):
@@ -1031,6 +1039,59 @@ class MacroApi(CRUDApi):
         """
 
         return self._query_zendesk(self.endpoint.apply, 'result', id=macro)
+
+    @extract_id(Macro)
+    def attachments(self, macro):
+        """
+        Shows attachments for a macro.
+        Zendesk API `Reference <https://developer.zendesk.com/rest_api/docs/support/macros#create-macro-attachment>`__.
+
+        :param macro: Macro object or id.
+        """
+
+        return self._query_zendesk(self.endpoint.attachments, 'macro_attachment', id=macro)
+
+    def upload_attachment(self, fp, api_object=None, target_name=None, content_type=None):
+        """
+        Upload a file to Zendesk.
+
+        :param fp: file object, StringIO instance, content, or file path to be
+                   uploaded
+        :param api_object: macro to associate file with. if None, it is not associated to a macro.
+        :param token: upload token for uploading multiple files
+        :param target_name: name of the file inside Zendesk
+        :return: :class:`Upload` object containing a token and other information see
+            Zendesk API `Reference <https://developer.zendesk.com/rest_api/docs/core/attachments#uploading-files>`__.
+        """
+
+        if api_object:
+            return UploadRequest(self).post(fp, target_name=target_name, content_type=content_type, api_object=api_object)
+        
+        else:
+            return UploadRequest(self).post(fp, target_name=target_name, content_type=content_type, api_object="unassociated_macro")
+
+    def download_attachment(self, attachment, destination):
+        """
+        Download an attachment from Zendesk.
+
+        :param attachment_id: id of the attachment to download
+        :param destination: destination path. If a directory, the file will be placed in the directory with
+                            the filename from the Attachment object.
+        :return: the path the file was written to
+        """
+
+        if os.path.isdir(destination):
+            destination = os.path.join(destination, attachment.filename)
+        return self._download_file(attachment.content_url, destination)
+
+    def _download_file(self, source_url, destination_path):
+        r = self.session.get(source_url, stream=True)
+        with open(destination_path, 'wb') as f:
+            # chunk_size of None will read data as it arrives in whatever size the chunks are received.
+            for chunk in r.iter_content(chunk_size=None):
+                if chunk:
+                    f.write(chunk)
+        return destination_path
 
 
 class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
