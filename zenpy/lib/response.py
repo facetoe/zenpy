@@ -205,13 +205,13 @@ class SearchResponseHandler(GenericZendeskResponseHandler):
         return SearchResultGenerator(self, response.json())
 
 class CountResponseHandler(GenericZendeskResponseHandler):
-    """ Handles Zendesk search results. """
+    """ Handles Zendesk search results counts. """
 
     @staticmethod
     def applies_to(api, response):
         try:
             response_json = response.json()
-            return len(response_json) == 1 and 'count' in response.json()
+            return len(response_json) == 1 and 'count' in response_json
         except ValueError:
             return False
 
