@@ -33,7 +33,9 @@ from zenpy.lib.api import (
     TicketFormApi,
     OrganizationFieldsApi,
     JiraLinkApi, SkipApi, TalkApi,
-    CustomAgentRolesApi)
+    CustomAgentRolesApi,
+    SearchApi)
+
 from zenpy.lib.cache import ZenpyCache, ZenpyCacheManager
 from zenpy.lib.endpoint import EndpointFactory
 from zenpy.lib.exception import ZenpyException
@@ -109,7 +111,7 @@ class Zenpy(object):
         self.organization_fields = OrganizationFieldsApi(config)
         self.tickets = TicketApi(config)
         self.suspended_tickets = SuspendedTicketApi(config, object_type='suspended_ticket')
-        self.search = Api(config, object_type='results', endpoint=EndpointFactory('search'))
+        self.search = SearchApi(config)
         self.topics = Api(config, object_type='topic')
         self.attachments = AttachmentApi(config)
         self.brands = BrandApi(config, object_type='brand')
