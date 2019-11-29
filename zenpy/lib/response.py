@@ -204,6 +204,20 @@ class SearchResponseHandler(GenericZendeskResponseHandler):
     def build(self, response):
         return SearchResultGenerator(self, response.json())
 
+class CountResponseHandler(GenericZendeskResponseHandler):
+    """ Handles Zendesk search results counts. """
+
+    @staticmethod
+    def applies_to(api, response):
+        try:
+            response_json = response.json()
+            return len(response_json) == 1 and 'count' in response_json
+        except ValueError:
+            return False
+
+    def build(self, response):
+        return response.json()['count']
+
 
 class CombinationResponseHandler(GenericZendeskResponseHandler):
     """ Handles a few special cases where the return type is made up of two objects. """

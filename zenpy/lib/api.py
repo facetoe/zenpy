@@ -76,6 +76,7 @@ class BaseApi(object):
         }
         self.ratelimit_request_interval = ratelimit_request_interval
         self._response_handlers = (
+            CountResponseHandler,
             DeleteResponseHandler,
             TagResponseHandler,
             SearchResponseHandler,
@@ -2154,3 +2155,19 @@ class PhoneNumbersApi(TalkApiBase):
 
 class CustomAgentRolesApi(CRUDApi):
     pass
+
+class SearchApi(BaseApi):
+    def __init__(self, config):
+        self.object_type = 'results'
+        self.endpoint = EndpointFactory('search')
+        super(SearchApi, self).__init__(**config)
+        self._object_mapping = ZendeskObjectMapping(self)
+
+    def __call__(self, *args, **kwargs):
+        return self._query_zendesk(self.endpoint, self.object_type, *args, **kwargs)
+
+    def count(self, *args, **kwargs):
+        """
+        Returns results count only
+        """
+        return self._query_zendesk(self.endpoint.count, 'search_count', *args, **kwargs)
