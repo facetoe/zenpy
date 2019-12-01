@@ -142,6 +142,7 @@ class Zenpy(object):
         self.targets = TargetApi(config, object_type='target')
         self.talk = TalkApi(config)
         self.custom_agent_roles = CustomAgentRolesApi(config, object_type='custom_agent_role')
+        self.articles = HelpCentreApi(config).articles
 
     @staticmethod
     def http_adapter_kwargs():
