@@ -1,7 +1,7 @@
 from test_api.fixtures.__init__ import SingleCreateApiTestCase, CRUDApiTestCase, \
-    SingleUpdateApiTestCase, SingleDeleteApiTestCase
+    SingleUpdateApiTestCase, SingleDeleteApiTestCase, ZenpyApiTestCase
 from zenpy.lib.api_objects import Ticket, TicketAudit, Group, User, Organization, Macro, RecipientAddress, TicketField, \
-    OrganizationField
+    OrganizationField, Upload
 
 
 class TestTicketCreateUpdateDelete(CRUDApiTestCase):
@@ -69,3 +69,37 @@ class TestTicketFieldCreateUpdateDelete(SingleCreateApiTestCase,
     ZenpyType = TicketField
     object_kwargs = dict(type='text', title='I AM A TEST')
     api_name = 'ticket_fields'
+
+
+class TestAttachmentUpload(ZenpyApiTestCase):
+    __test__ = True
+
+    def call_upload_method(self, *args, **kwargs):
+        with self.recorder.use_cassette(
+            "{}-upload-single".format(
+                self.generate_cassette_name()
+            ),
+            serialize_with='prettyjson'
+        ):
+            return self.zenpy_client.attachments.upload(
+                *args, **kwargs
+            )
+
+    def test_upload_with_file_obj(self):
+        f = open('README.md', 'r')
+        upload = self.call_upload_method(f, target_name='README.md')
+        self.assertTrue(isinstance(upload, Upload))
+
+    def test_upload_with_path_str(self):
+        upload = self.call_upload_method('README.md', target_name='README.md')
+        self.assertTrue(isinstance(upload, Upload))
+
+    def test_upload_with_pathlib_path(self):
+        try:
+            from pathlib import Path
+        except ImportError:
+            # probably python2
+            return
+        path = Path('README.md')
+        upload = self.call_upload_method(path)
+        self.assertTrue(isinstance(upload, Upload))

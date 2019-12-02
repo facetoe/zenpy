@@ -220,7 +220,7 @@ class UploadRequest(RequestHandler):
             else:
                 target_name = target_name or fp.name
 
-        if hasattr(fp, 'name'):
+        elif hasattr(fp, 'name'):
             # Path objects (pathlib.Path)
             if fp.name == '':
                 raise ZenpyException("upload requires a target file name")

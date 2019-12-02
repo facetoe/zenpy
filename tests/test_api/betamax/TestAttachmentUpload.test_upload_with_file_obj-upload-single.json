@@ -1,0 +1,128 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2019-12-02T23:56:02",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": ""
+        },
+        "headers": {
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic ZXhhbXBsZUBleGFtcGxlLmNvbS90b2tlbjpub3QgcmVhbGx5IGEgdG9rZW4="
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "5160"
+          ],
+          "User-Agent": [
+            "Zenpy/2.0.10"
+          ]
+        },
+        "method": "POST",
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/uploads.json?filename=README.md"
+      },
+      "response": {
+        "body": {
+          "encoding": "UTF-8",
+          "string": "{\"upload\":{\"token\":\"yxkP6lh9ZqZZPebhHG3cIUlm3\",\"expires_at\":\"2019-12-05T23:56:02Z\",\"attachments\":[{\"url\":\"https://d3v-zenpydev.zendesk.com/api/v2/attachments/371680310431.json\",\"id\":371680310431,\"file_name\":\"README.md\",\"content_url\":\"https://d3v-zenpydev.zendesk.com/attachments/token/7lnRsOfSkQm42XDqczJA2YSxo/?name=README.md\",\"mapped_content_url\":\"https://d3v-zenpydev.zendesk.com/attachments/token/7lnRsOfSkQm42XDqczJA2YSxo/?name=README.md\",\"content_type\":\"application/x-genesis-rom\",\"size\":5160,\"width\":null,\"height\":null,\"inline\":false,\"deleted\":false,\"thumbnails\":[]}],\"attachment\":{\"url\":\"https://d3v-zenpydev.zendesk.com/api/v2/attachments/371680310431.json\",\"id\":371680310431,\"file_name\":\"README.md\",\"content_url\":\"https://d3v-zenpydev.zendesk.com/attachments/token/7lnRsOfSkQm42XDqczJA2YSxo/?name=README.md\",\"mapped_content_url\":\"https://d3v-zenpydev.zendesk.com/attachments/token/7lnRsOfSkQm42XDqczJA2YSxo/?name=README.md\",\"content_type\":\"application/x-genesis-rom\",\"size\":5160,\"width\":null,\"height\":null,\"inline\":false,\"deleted\":false,\"thumbnails\":[]}}}"
+        },
+        "headers": {
+          "Access-Control-Allow-Credentials": [
+            "true"
+          ],
+          "Access-Control-Allow-Origin": [
+            "*"
+          ],
+          "Access-Control-Expose-Headers": [
+            "X-Zendesk-API-Warn,X-Zendesk-User-Id,X-Zendesk-User-Session-Expires-At"
+          ],
+          "CF-Cache-Status": [
+            "DYNAMIC"
+          ],
+          "CF-RAY": [
+            "53f13c34cdd329e7-SEA"
+          ],
+          "Cache-Control": [
+            "max-age=0, private, must-revalidate"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "1065"
+          ],
+          "Content-Type": [
+            "text/plain; charset=UTF-8"
+          ],
+          "Date": [
+            "Mon, 02 Dec 2019 23:56:02 GMT"
+          ],
+          "ETag": [
+            "W/\"73916dc38c5577ae27580931762c3021\""
+          ],
+          "Expect-CT": [
+            "max-age=604800, report-uri=\"https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct\""
+          ],
+          "Location": [
+            "https://d3v-zenpydev.zendesk.com/api/v2/attachments/371680310431.json"
+          ],
+          "Server": [
+            "cloudflare"
+          ],
+          "Set-Cookie": [
+            "__cfduid=d82fa5b748c8f5dc889c172ca680bb8691575330962; expires=Wed, 01-Jan-20 23:56:02 GMT; path=/; domain=.d3v-zenpydev.zendesk.com; HttpOnly",
+            "__cfruid=a85403f23fcdd285801801d5409e5c1cd36fd923-1575330962; path=/; domain=.d3v-zenpydev.zendesk.com; HttpOnly"
+          ],
+          "Strict-Transport-Security": [
+            "max-age=31536000;"
+          ],
+          "X-Content-Type-Options": [
+            "nosniff"
+          ],
+          "X-Frame-Options": [
+            "SAMEORIGIN"
+          ],
+          "X-Rate-Limit": [
+            "700"
+          ],
+          "X-Rate-Limit-Remaining": [
+            "700"
+          ],
+          "X-Request-Id": [
+            "53f13c34cdd329e7-PDX"
+          ],
+          "X-Runtime": [
+            "0.236804"
+          ],
+          "X-Zendesk-API-Version": [
+            "v2"
+          ],
+          "X-Zendesk-API-Warn": [
+            "Removed restricted keys [\"!.Build Status.(https://travis-ci.org/facetoe/zenpy.svg?branch\", \"!.Build Status\", \"!\"] from parameters according to whitelist"
+          ],
+          "X-Zendesk-Application-Version": [
+            "v3708.19"
+          ],
+          "X-Zendesk-Origin-Server": [
+            "classic-app-server-5f684dd4d8-ckqb5"
+          ]
+        },
+        "status": {
+          "code": 201,
+          "message": "Created"
+        },
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/uploads.json?filename=README.md"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.8.1"
+}
