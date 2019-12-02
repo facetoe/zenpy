@@ -113,7 +113,7 @@ class BaseApi(object):
             response = self._call_api(self.session.post, url,
                                     timeout=self.timeout,
                                     **kwargs)
-        
+
         return self._process_response(response)
 
     def _put(self, url, payload):
@@ -1067,7 +1067,7 @@ class MacroApi(CRUDApi):
 
         if api_object:
             return UploadRequest(self).post(fp, target_name=target_name, content_type=content_type, api_object=api_object)
-        
+
         else:
             return UploadRequest(self).post(fp, target_name=target_name, content_type=content_type, api_object="unassociated_macro")
 
@@ -2156,11 +2156,9 @@ class PhoneNumbersApi(TalkApiBase):
 class CustomAgentRolesApi(CRUDApi):
     pass
 
-class SearchApi(BaseApi):
+class SearchApi(Api):
     def __init__(self, config):
-        self.object_type = 'results'
-        self.endpoint = EndpointFactory('search')
-        super(SearchApi, self).__init__(**config)
+        super(SearchApi, self).__init__(config, object_type='results', endpoint=EndpointFactory('search'))
         self._object_mapping = ZendeskObjectMapping(self)
 
     def __call__(self, *args, **kwargs):
