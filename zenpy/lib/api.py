@@ -104,15 +104,15 @@ class BaseApi(object):
 
         if payload:
             response = self._call_api(self.session.post, url,
-                                    json=self._serialize(payload),
-                                    timeout=self.timeout,
-                                    headers=headers,
-                                    **kwargs)
+                                      json=self._serialize(payload),
+                                      timeout=self.timeout,
+                                      headers=headers,
+                                      **kwargs)
         # Omit payload and headers to support multipart formpost.
         else:
             response = self._call_api(self.session.post, url,
-                                    timeout=self.timeout,
-                                    **kwargs)
+                                      timeout=self.timeout,
+                                      **kwargs)
 
         return self._process_response(response)
 
@@ -430,6 +430,7 @@ class Api(BaseApi):
     def _get_default_locale(self, locale_id):
         return self._query_zendesk(EndpointFactory('locales'), 'locale', id=locale_id)
 
+
 class CRUDApi(Api):
     """
     CRUDApi supports create/update/delete operations
@@ -597,6 +598,7 @@ class ChatIncrementalApi(Api):
         :param start_time: The time of the oldest object you are interested in.
         """
         return self._query_zendesk(self.endpoint.incremental, self.object_type, start_time=start_time, **kwargs)
+
 
 class UserIdentityApi(Api):
     def __init__(self, config):
@@ -1066,10 +1068,12 @@ class MacroApi(CRUDApi):
         """
 
         if api_object:
-            return UploadRequest(self).post(fp, target_name=target_name, content_type=content_type, api_object=api_object)
+            return UploadRequest(self).post(fp, target_name=target_name, content_type=content_type,
+                                            api_object=api_object)
 
         else:
-            return UploadRequest(self).post(fp, target_name=target_name, content_type=content_type, api_object="unassociated_macro")
+            return UploadRequest(self).post(fp, target_name=target_name, content_type=content_type,
+                                            api_object="unassociated_macro")
 
     def download_attachment(self, attachment, destination):
         """
@@ -1129,7 +1133,8 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         :param include_inline_images: Boolean. If `True`, inline image attachments will be
             returned in each comments' `attachments` field alongside non-inline attachments
         """
-        return self._query_zendesk(self.endpoint.comments, 'comment', id=ticket, include_inline_images=repr(include_inline_images).lower())
+        return self._query_zendesk(self.endpoint.comments, 'comment', id=ticket,
+                                   include_inline_images=repr(include_inline_images).lower())
 
     @extract_id(Ticket, TicketComment)
     def comment_redact(self, ticket, comment, text):
@@ -2023,6 +2028,7 @@ class ArticleAttachmentApi(HelpCentreApiBase, SubscriptionApi):
         return HelpdeskAttachmentRequest(self).post(self.endpoint.bulk_attachments, article=article,
                                                     attachments=attachments)
 
+
 class LabelApi(HelpCentreApiBase):
     @extract_id(Article)
     def create(self, article, label):
@@ -2118,6 +2124,7 @@ class NpsApi(Api):
         """
         return self._query_zendesk(self.endpoint.responses_incremental, 'responses', start_time=start_time)
 
+
 class TalkApiBase(Api):
     def __init__(self, config, endpoint, object_type):
         super(TalkApiBase, self).__init__(config, object_type=object_type, endpoint=endpoint)
@@ -2127,11 +2134,13 @@ class TalkApiBase(Api):
     def _build_url(self, endpoint):
         return super(TalkApiBase, self)._build_url(endpoint)
 
+
 class TalkApi(TalkApiBase):
     def __init__(self, config):
         super(TalkApi, self).__init__(config, endpoint=EndpointFactory('talk'), object_type='talk')
 
-        self.current_queue_activity = StatsApi(config, self.endpoint.current_queue_activity, object_type='current_queue_activity')
+        self.current_queue_activity = StatsApi(config, self.endpoint.current_queue_activity,
+                                               object_type='current_queue_activity')
         self.agents_activity = StatsApi(config, self.endpoint.agents_activity, object_type='agents_activity')
         self.availability = AvailabilitiesApi(config, self.endpoint.availability, object_type='availability')
         self.account_overview = StatsApi(config, self.endpoint.account_overview, object_type='account_overview')
@@ -2141,20 +2150,25 @@ class TalkApi(TalkApiBase):
     def __call__(self, *args, **kwargs):
         raise NotImplementedError("Cannot directly call the TalkApi!")
 
+
 class StatsApi(TalkApiBase):
     def __init__(self, config, endpoint, object_type):
-             super(StatsApi, self).__init__(config, object_type=object_type, endpoint=endpoint)
+        super(StatsApi, self).__init__(config, object_type=object_type, endpoint=endpoint)
+
 
 class AvailabilitiesApi(TalkApiBase):
     def __init__(self, config, endpoint, object_type):
-             super(AvailabilitiesApi, self).__init__(config, object_type=object_type, endpoint=endpoint)
+        super(AvailabilitiesApi, self).__init__(config, object_type=object_type, endpoint=endpoint)
+
 
 class PhoneNumbersApi(TalkApiBase):
     def __init__(self, config, endpoint, object_type):
-             super(PhoneNumbersApi, self).__init__(config, object_type=object_type, endpoint=endpoint)
+        super(PhoneNumbersApi, self).__init__(config, object_type=object_type, endpoint=endpoint)
+
 
 class CustomAgentRolesApi(CRUDApi):
     pass
+
 
 class SearchApi(Api):
     def __init__(self, config):
