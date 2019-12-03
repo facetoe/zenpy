@@ -1,5 +1,8 @@
+import os
+
 from test_api.fixtures.__init__ import SingleCreateApiTestCase, CRUDApiTestCase, \
     SingleUpdateApiTestCase, SingleDeleteApiTestCase, ZenpyApiTestCase
+
 from zenpy.lib.api_objects import Ticket, TicketAudit, Group, User, Organization, Macro, RecipientAddress, TicketField, \
     OrganizationField, Upload
 
@@ -74,9 +77,22 @@ class TestTicketFieldCreateUpdateDelete(SingleCreateApiTestCase,
 class TestAttachmentUpload(ZenpyApiTestCase):
     __test__ = True
 
+    @property
+    def file_path(self):
+        '''
+        Use the projects README.md file (readonly!) as a test file to upload.
+
+        Should work across various python versions and regardless of current
+        working dir.
+        '''
+        base_test_dir = os.path.dirname(
+            os.path.dirname(os.path.abspath(__file__))
+        )
+        return base_test_dir.replace('/tests', '/README.md')
+
     def call_upload_method(self, *args, **kwargs):
         with self.recorder.use_cassette(
-            "{}-upload-single".format(
+            '{}-upload-single'.format(
                 self.generate_cassette_name()
             ),
             serialize_with='prettyjson'
@@ -86,12 +102,14 @@ class TestAttachmentUpload(ZenpyApiTestCase):
             )
 
     def test_upload_with_file_obj(self):
-        f = open('README.md', 'r')
+        f = open(self.file_path, 'r')
         upload = self.call_upload_method(f, target_name='README.md')
         self.assertTrue(isinstance(upload, Upload))
 
     def test_upload_with_path_str(self):
-        upload = self.call_upload_method('README.md', target_name='README.md')
+        upload = self.call_upload_method(
+            self.file_path, target_name='README.md'
+        )
         self.assertTrue(isinstance(upload, Upload))
 
     def test_upload_with_pathlib_path(self):
@@ -100,6 +118,6 @@ class TestAttachmentUpload(ZenpyApiTestCase):
         except ImportError:
             # probably python2
             return
-        path = Path('README.md')
+        path = Path(self.file_path)
         upload = self.call_upload_method(path)
         self.assertTrue(isinstance(upload, Upload))
