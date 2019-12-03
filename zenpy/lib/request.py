@@ -220,14 +220,16 @@ class UploadRequest(RequestHandler):
             else:
                 target_name = target_name or fp.name
 
-        if hasattr(fp, 'name'):
+        elif hasattr(fp, 'name'):
             # Path objects (pathlib.Path)
             if fp.name == '':
                 raise ZenpyException("upload requires a target file name")
 
             target_name = target_name or fp.name
-
-            fp = open(fp, 'rb')
+            # PathLike objects only compatible with python3.6 and above, so
+            # we convert to string at this point
+            # https://stackoverflow.com/a/42694113/4664727
+            fp = open(str(fp), 'rb')
 
         elif isinstance(fp, str):
             if os.path.isfile(fp):
