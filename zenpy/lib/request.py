@@ -185,19 +185,15 @@ class RateRequest(RequestHandler):
 class UserIdentityRequest(BaseZendeskRequest):
     """ Handle CRUD operations on UserIdentities. """
 
-    def post(self, user, identity):
+    def post(self, user_id, identity):
         payload = self.build_payload(identity)
-        url = self.api._build_url(self.api.endpoint(id=user))
+        url = self.api._build_url(self.api.endpoint(id=user_id))
         return self.api._post(url, payload=payload)
 
-    def put(self, endpoint, user, identity):
-        """ PUT request for update user identity
-        :param endpoint: Endpoint path
-        :param int user: User ID
-        :type identity: zenpy.lib.api_objects.Identity
-        """
-        payload = self.build_payload(identity)
-        url = self.api._build_url(endpoint(user, identity.id))
+
+    def put(self, endpoint, user_id, identity_id, identity=None):
+        payload = self.build_payload(identity) if identity else {}
+        url = self.api._build_url(endpoint(user_id, identity_id))
         return self.api._put(url, payload=payload)
 
     def delete(self, user, identity):

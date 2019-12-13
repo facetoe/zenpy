@@ -626,7 +626,7 @@ class UserIdentityApi(Api):
         :param user: User id or object
         :param identity: Identity object to be created
         """
-        return UserIdentityRequest(self).post(user, identity)
+        return UserIdentityRequest(self).post(user_id=user, identity=identity)
 
     @extract_id(User)
     def update(self, user, identity):
@@ -637,7 +637,10 @@ class UserIdentityApi(Api):
         :param identity: Identity object to be updated.
         :return: The updated Identity
         """
-        return UserIdentityRequest(self).put(self.endpoint.update, user, identity)
+        return UserIdentityRequest(self).put(self.endpoint.update,
+                                             user_id=user,
+                                             identity_id=identity.id,
+                                             identity=identity)
 
     @extract_id(User, Identity)
     def make_primary(self, user, identity):
@@ -648,7 +651,9 @@ class UserIdentityApi(Api):
         :param identity: Identity object or id
         :return: list of user's Identities
         """
-        return UserIdentityRequest(self).put(self.endpoint.make_primary, user, identity)
+        return UserIdentityRequest(self).put(self.endpoint.make_primary,
+                                             user_id=user,
+                                             identity_id=identity)
 
     @extract_id(User, Identity)
     def request_verification(self, user, identity):
@@ -659,7 +664,9 @@ class UserIdentityApi(Api):
         :param identity: Identity id or object
         :return: requests Response object
         """
-        return UserIdentityRequest(self).put(self.endpoint.request_verification, user, identity)
+        return UserIdentityRequest(self).put(self.endpoint.request_verification,
+                                             user_id=user,
+                                             identity_id=identity)
 
     @extract_id(User, Identity)
     def verify(self, user, identity):
@@ -670,7 +677,9 @@ class UserIdentityApi(Api):
         :param identity: Identity id or object
         :return: the verified Identity
         """
-        return UserIdentityRequest(self).put(self.endpoint.verify, user, identity)
+        return UserIdentityRequest(self).put(self.endpoint.verify,
+                                             user_id=user,
+                                             identity_id=identity)
 
     @extract_id(User, Identity)
     def delete(self, user, identity):
