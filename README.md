@@ -6,8 +6,6 @@ Zenpy is a Python wrapper for the Zendesk, Chat and HelpCentre APIs. The goal of
 
 Zenpy supports both Python2 and Python3.
 
-**Note:** HelpCentre API support is in beta.
-
 Please report bugs!
 
 * [Quickstart](#quickstart)
