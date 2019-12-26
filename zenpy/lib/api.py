@@ -305,7 +305,7 @@ class BaseApi(object):
             except ValueError:
                 response.raise_for_status()
 
-    def _build_url(self, endpoint):
+    def _build_url(self, endpoint, api_prefix=None):
         """ Build complete URL """
         if not issubclass(type(self), ChatApiBase) and not self.subdomain:
             raise ZenpyException("subdomain is required when accessing the Zendesk API!")
@@ -315,7 +315,7 @@ class BaseApi(object):
         else:
             endpoint.netloc = self.domain
 
-        endpoint.prefix_path(self.api_prefix)
+        endpoint.prefix_path(api_prefix or self.api_prefix)
         return endpoint.build()
 
 
@@ -1630,6 +1630,12 @@ class JiraLinkApi(CRUDApi):
 
     def update(self, api_objects, **kwargs):
         raise ZenpyException("Cannot update Jira Links!")
+
+    def _build_url(self, endpoint):
+        if not endpoint.path == 'services/jira/links.json':
+            return super(JiraLinkApi, self)._build_url(endpoint, 'api/v2')
+        else:
+            return super(JiraLinkApi, self)._build_url(endpoint)
 
 
 class SlaPolicyApi(CRUDApi):
