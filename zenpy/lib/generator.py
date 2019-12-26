@@ -227,6 +227,24 @@ class TicketAuditGenerator(ZendeskResultGenerator):
         return iter(self)
 
 
+class JiraLinkGenerator(ZendeskResultGenerator):
+    def __init__(self, response_handler, response_json):
+        super(JiraLinkGenerator, self).__init__(response_handler, response_json,
+                                                   response_objects=None,
+                                                   object_type='links')
+        self.next_page_attr = 'since_id'
+
+    def get_next_page(self, page_num=None, page_size=None):
+        try:
+            url = self._response_json['links'][-1]['url']
+            url = re.sub('/\d+', '', url)
+            params = {'since_id': self._response_json['links'][-1]['id']}
+            response = self.response_handler.api._get(url, raw_response=True, params=params)
+            return response.json()
+        except (IndexError, KeyError):
+            raise StopIteration()
+
+
 class ChatResultGenerator(BaseResultGenerator):
     """
     Generator for ChatApi objects
