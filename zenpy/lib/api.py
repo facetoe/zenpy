@@ -102,15 +102,16 @@ class BaseApi(object):
         else:
             headers = None
 
-        if payload:
+        if payload is not None:
             response = self._call_api(self.session.post, url,
                                       json=self._serialize(payload),
                                       timeout=self.timeout,
                                       headers=headers,
                                       **kwargs)
-        # Omit payload and headers to support multipart formpost.
         else:
+            # Omit payload to support multipart formpost.
             response = self._call_api(self.session.post, url,
+                                      headers=headers,
                                       timeout=self.timeout,
                                       **kwargs)
 
