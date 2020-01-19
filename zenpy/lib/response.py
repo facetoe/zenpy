@@ -46,7 +46,7 @@ class GenericZendeskResponseHandler(ResponseHandler):
     @staticmethod
     def applies_to(api, response):
         try:
-            return 'zendesk.com' in response.request.url and response.json()
+            return api.domain in response.request.url and response.json()
         except ValueError:
             return False
 

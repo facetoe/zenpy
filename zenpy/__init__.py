@@ -52,7 +52,8 @@ class Zenpy(object):
 
     DEFAULT_TIMEOUT = 60.0
 
-    def __init__(self, subdomain=None,
+    def __init__(self, domain='zendesk.com',
+                 subdomain=None,
                  email=None,
                  token=None,
                  oauth_token=None,
@@ -93,6 +94,7 @@ class Zenpy(object):
         self.cache = ZenpyCacheManager(disable_cache)
 
         config = dict(
+            domain=domain,
             subdomain=subdomain,
             session=session,
             timeout=timeout,

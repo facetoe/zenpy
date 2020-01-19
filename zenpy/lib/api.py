@@ -59,8 +59,16 @@ class BaseApi(object):
     rate limiting and deserializing responses.
     """
 
-    def __init__(self, subdomain, session, timeout, ratelimit, ratelimit_budget, ratelimit_request_interval, cache):
-        self.domain = 'zendesk.com'
+    def __init__(self,
+                 subdomain,
+                 session,
+                 timeout,
+                 ratelimit,
+                 ratelimit_budget,
+                 ratelimit_request_interval,
+                 cache,
+                 domain):
+        self.domain = domain
         self.subdomain = subdomain
         self.session = session
         self.timeout = timeout
@@ -69,7 +77,7 @@ class BaseApi(object):
         self.cache = cache
         self.protocol = 'https'
         self.api_prefix = 'api/v2'
-        self._url_template = "%(protocol)s://%(subdomain)s.zendesk.com/%(api_prefix)s"
+        self._url_template = "%(protocol)s://%(subdomain)s.%(domain)s/%(api_prefix)s"
         self.callsafety = {
             'lastcalltime': None,
             'lastlimitremaining': None
