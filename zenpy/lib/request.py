@@ -1,6 +1,5 @@
 import os
 
-from zenpy.lib.api_objects import Macro
 from zenpy.lib.api_objects.chat_objects import Shortcut, Trigger
 from zenpy.lib.endpoint import EndpointFactory
 from zenpy.lib.exception import ZenpyException, TooManyValuesException
@@ -190,7 +189,6 @@ class UserIdentityRequest(BaseZendeskRequest):
         url = self.api._build_url(self.api.endpoint(id=user_id))
         return self.api._post(url, payload=payload)
 
-
     def put(self, endpoint, user_id, identity_id, identity=None):
         payload = self.build_payload(identity) if identity else {}
         url = self.api._build_url(endpoint(user_id, identity_id))
@@ -239,28 +237,13 @@ class UploadRequest(RequestHandler):
             # Other serializable types accepted by requests (like dict)
             raise ZenpyException("upload requires a target file name")
 
-        if isinstance(api_object, Macro) or api_object == "unassociated_macro":
-            # Macro attachment API requires attachment as well as filename
-            data = {"filename": target_name}
-            files = {"attachment": fp}
-            
-            if isinstance(api_object, Macro):
-                url = self.api._build_url(self.api.endpoint.attachments_upload(id=api_object.id))
-
-            elif api_object == "unassociated_macro":
-                url = self.api._build_url(self.api.endpoint.attachments_upload_unassociated(id=None))
-                
-            response = self.api._post(url, data=data, files=files, content_type=content_type)
-            
-        else:
-            url = self.api._build_url(self.api.endpoint.upload(filename=target_name, token=token))
-            response = self.api._post(url, data=fp, payload={}, content_type=content_type)
+        url = self.api._build_url(self.api.endpoint.upload(filename=target_name, token=token))
+        response = self.api._post(url, data=fp, payload={}, content_type=content_type)
 
         if hasattr(fp, "close"):
             fp.close()
 
         return response
-
 
     def put(self, api_objects, *args, **kwargs):
         raise NotImplementedError("POST is not implemented fpr UploadRequest!")
@@ -564,21 +547,21 @@ class HelpdeskAttachmentRequest(BaseZendeskRequest):
             if hasattr(attachments, 'read'):
                 file = (file_name if file_name else attachments.name, attachments, content_type)
                 return self.api._post(url,
-                                          payload={},
-                                          files=dict(
-                                                     inline=(None, 'true' if inline else 'false'),
-                                                     file=file
-                                                     )
-                                          )
+                                      payload={},
+                                      files=dict(
+                                          inline=(None, 'true' if inline else 'false'),
+                                          file=file
+                                      )
+                                      )
             elif os.path.isfile(attachments):
                 with open(attachments, 'rb') as fp:
                     file = (file_name if file_name else fp.name, fp, content_type)
                     return self.api._post(url,
                                           payload={},
                                           files=dict(
-                                                     inline=(None, 'true' if inline else 'false'),
-                                                     file=file
-                                                     )
+                                              inline=(None, 'true' if inline else 'false'),
+                                              file=file
+                                          )
                                           )
 
         raise ValueError("Attachment is not a file-like object or valid path!")

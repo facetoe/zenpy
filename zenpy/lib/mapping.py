@@ -75,7 +75,6 @@ class ZendeskObjectMapping(object):
         'sharing_agreement': SharingAgreement,
         'macro': Macro,
         'result': MacroResult,
-        'macro_attachment': MacroAttachment,
         'job_status_result': JobStatusResult,
         'agentmacroreference': AgentMacroReference,
         'identity': Identity,
