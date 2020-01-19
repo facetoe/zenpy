@@ -1,4 +1,5 @@
 import os
+from io import BytesIO
 
 from test_api.fixtures.__init__ import SingleCreateApiTestCase, CRUDApiTestCase, \
     SingleUpdateApiTestCase, SingleDeleteApiTestCase, ZenpyApiTestCase
@@ -102,8 +103,15 @@ class TestAttachmentUpload(ZenpyApiTestCase):
             )
 
     def test_upload_with_file_obj(self):
-        f = open(self.file_path, 'r')
-        upload = self.call_upload_method(f, target_name='README.md')
+        with open(self.file_path, 'r') as f:
+            upload = self.call_upload_method(f, target_name='README.md')
+            self.assertTrue(isinstance(upload, Upload))
+
+    def test_upload_with_bytes_io(self):
+        buffer = BytesIO(b"a"*1024*1024)
+        upload = self.call_upload_method(
+            buffer, target_name="fancybytes.txt"
+        )
         self.assertTrue(isinstance(upload, Upload))
 
     def test_upload_with_path_str(self):
