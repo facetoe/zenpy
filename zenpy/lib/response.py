@@ -4,6 +4,7 @@ from zenpy.lib.exception import ZenpyException
 from zenpy.lib.generator import SearchResultGenerator, ZendeskResultGenerator, ChatResultGenerator, ViewResultGenerator, \
     TicketAuditGenerator, ChatIncrementalResultGenerator
 from zenpy.lib.util import as_singular, as_plural, get_endpoint_path
+from urllib.parse import urlparse
 
 
 class ResponseHandler(object):
@@ -204,6 +205,7 @@ class SearchResponseHandler(GenericZendeskResponseHandler):
     def build(self, response):
         return SearchResultGenerator(self, response.json())
 
+
 class CountResponseHandler(GenericZendeskResponseHandler):
     """ Handles Zendesk search results counts. """
 
@@ -246,6 +248,7 @@ class CombinationResponseHandler(GenericZendeskResponseHandler):
             return zenpy_objects['ticket_audit']
         raise ZenpyException("Could not process response: {}".format(response))
 
+
 class JobStatusesResponseHandler(GenericZendeskResponseHandler):
 
     @staticmethod
@@ -267,13 +270,14 @@ class JobStatusesResponseHandler(GenericZendeskResponseHandler):
             response_objects['job_statuses'].append(zenpy_object)
         return response_objects
 
+
 class TagResponseHandler(ResponseHandler):
     """ Tags aint complicated, just return them. """
 
     @staticmethod
     def applies_to(api, response):
-        _, params = response.request.url.split(api.api_prefix)
-        return params.endswith('tags.json')
+        result = urlparse(response.request.url)
+        return result.path.endswith('tags.json')
 
     def deserialize(self, response_json):
         return response_json['tags']
