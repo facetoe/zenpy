@@ -1,0 +1,128 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2020-01-19T03:20:53",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": ""
+        },
+        "headers": {
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic ZXhhbXBsZUBleGFtcGxlLmNvbS90b2tlbjpub3QgcmVhbGx5IGEgdG9rZW4="
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "1048576"
+          ],
+          "Content-Type": [
+            "application/octet-stream"
+          ],
+          "User-Agent": [
+            "Zenpy/2.0.10"
+          ]
+        },
+        "method": "POST",
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/uploads.json?filename=fancybytes.txt"
+      },
+      "response": {
+        "body": {
+          "encoding": "UTF-8",
+          "string": "{\"upload\":{\"token\":\"ln17tN04nn1zbRESOsC9ZpOPb\",\"expires_at\":\"2020-01-22T03:20:53Z\",\"attachments\":[{\"url\":\"https://d3v-zenpydev.zendesk.com/api/v2/attachments/372772228171.json\",\"id\":372772228171,\"file_name\":\"fancybytes.txt\",\"content_url\":\"https://d3v-zenpydev.zendesk.com/attachments/token/6r9wdZJAmoZ91FME1hw0OQtpZ/?name=fancybytes.txt\",\"mapped_content_url\":\"https://d3v-zenpydev.zendesk.com/attachments/token/6r9wdZJAmoZ91FME1hw0OQtpZ/?name=fancybytes.txt\",\"content_type\":\"text/plain\",\"size\":1048576,\"width\":null,\"height\":null,\"inline\":false,\"deleted\":false,\"thumbnails\":[]}],\"attachment\":{\"url\":\"https://d3v-zenpydev.zendesk.com/api/v2/attachments/372772228171.json\",\"id\":372772228171,\"file_name\":\"fancybytes.txt\",\"content_url\":\"https://d3v-zenpydev.zendesk.com/attachments/token/6r9wdZJAmoZ91FME1hw0OQtpZ/?name=fancybytes.txt\",\"mapped_content_url\":\"https://d3v-zenpydev.zendesk.com/attachments/token/6r9wdZJAmoZ91FME1hw0OQtpZ/?name=fancybytes.txt\",\"content_type\":\"text/plain\",\"size\":1048576,\"width\":null,\"height\":null,\"inline\":false,\"deleted\":false,\"thumbnails\":[]}}}"
+        },
+        "headers": {
+          "Access-Control-Allow-Credentials": [
+            "true"
+          ],
+          "Access-Control-Allow-Origin": [
+            "*"
+          ],
+          "Access-Control-Expose-Headers": [
+            "X-Zendesk-API-Warn,X-Zendesk-User-Id,X-Zendesk-User-Session-Expires-At"
+          ],
+          "CF-Cache-Status": [
+            "DYNAMIC"
+          ],
+          "CF-RAY": [
+            "5575acd7b9ba6537-SYD"
+          ],
+          "Cache-Control": [
+            "max-age=0, private, must-revalidate"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "1071"
+          ],
+          "Content-Type": [
+            "text/plain; charset=UTF-8"
+          ],
+          "Date": [
+            "Sun, 19 Jan 2020 03:20:53 GMT"
+          ],
+          "ETag": [
+            "W/\"d9745ab24ce1be8c132f6757c85cdbbd\""
+          ],
+          "Expect-CT": [
+            "max-age=604800, report-uri=\"https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct\""
+          ],
+          "Location": [
+            "https://d3v-zenpydev.zendesk.com/api/v2/attachments/372772228171.json"
+          ],
+          "Server": [
+            "cloudflare"
+          ],
+          "Set-Cookie": [
+            "__cfduid=d26b8d0b911b783238ff03c22b355d63f1579404051; expires=Tue, 18-Feb-20 03:20:51 GMT; path=/; domain=.d3v-zenpydev.zendesk.com; HttpOnly; SameSite=Lax",
+            "__cfruid=059a847285e8b0989a7fdb56edb25b5c488a126a-1579404053; path=/; domain=.d3v-zenpydev.zendesk.com; HttpOnly; Secure; SameSite=None"
+          ],
+          "Strict-Transport-Security": [
+            "max-age=31536000;"
+          ],
+          "X-Content-Type-Options": [
+            "nosniff"
+          ],
+          "X-Frame-Options": [
+            "SAMEORIGIN"
+          ],
+          "X-Rate-Limit": [
+            "700"
+          ],
+          "X-Rate-Limit-Remaining": [
+            "700"
+          ],
+          "X-Request-Id": [
+            "5575acd7b9ba6537-SEA"
+          ],
+          "X-Runtime": [
+            "0.236897"
+          ],
+          "X-Zendesk-API-Version": [
+            "v2"
+          ],
+          "X-Zendesk-Application-Version": [
+            "v4051.3"
+          ],
+          "X-Zendesk-Origin-Server": [
+            "classic-app-server-797c9c449c-gvmcn"
+          ]
+        },
+        "status": {
+          "code": 201,
+          "message": "Created"
+        },
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/uploads.json?filename=fancybytes.txt"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.8.1"
+}
