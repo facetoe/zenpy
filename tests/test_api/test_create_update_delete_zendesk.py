@@ -5,7 +5,7 @@ from test_api.fixtures.__init__ import SingleCreateApiTestCase, CRUDApiTestCase,
     SingleUpdateApiTestCase, SingleDeleteApiTestCase, ZenpyApiTestCase
 
 from zenpy.lib.api_objects import Ticket, TicketAudit, Group, User, Organization, Macro, RecipientAddress, TicketField, \
-    OrganizationField, Upload
+    OrganizationField, Upload, UserField
 
 
 class TestTicketCreateUpdateDelete(CRUDApiTestCase):
@@ -129,3 +129,14 @@ class TestAttachmentUpload(ZenpyApiTestCase):
         path = Path(self.file_path)
         upload = self.call_upload_method(path)
         self.assertTrue(isinstance(upload, Upload))
+
+
+class UserFieldsCreateUpdateDelete(SingleCreateApiTestCase,
+                                               SingleDeleteApiTestCase,
+                                               SingleUpdateApiTestCase):
+    __test__ = True
+    ZenpyType = UserField
+    object_kwargs = dict(description='test', title='i am test', key='somethingsomethingsomething')
+    ignore_update_kwargs = ['key']  # Can't update key after creation.
+    api_name = 'user_fields'
+
