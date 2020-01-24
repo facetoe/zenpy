@@ -1,5 +1,5 @@
 import os
-
+from zenpy.lib.api_objects import Macro
 from zenpy.lib.api_objects.chat_objects import Shortcut, Trigger
 from zenpy.lib.endpoint import EndpointFactory
 from zenpy.lib.exception import ZenpyException, TooManyValuesException
@@ -204,20 +204,41 @@ class UploadRequest(RequestHandler):
     """ Handles uploading files to Zendesk. """
 
     def post(self, fp, token=None, target_name=None, content_type=None, api_object=None):
+        file_pointer_properties = self._get_file_pointer_properties(fp, target_name=target_name)
+
+        fp = file_pointer_properties["file_pointer"]
+
+        if not target_name:
+            target_name = file_pointer_properties["target_name"]
+
+        if target_name is False:
+            raise ZenpyException("upload requires a target file name")
+
+        url = self.api._build_url(self.api.endpoint.upload(filename=target_name, token=token))
+        response = self.api._post(url, data=fp, payload={}, content_type=content_type)
+
+        if hasattr(fp, "close"):
+            fp.close()
+
+        return response
+
+    def _get_file_pointer_properties(self, fp, target_name=None):
+        """Gets properties for a given file pointer."""
+
         if hasattr(fp, 'read'):
             # File-like objects such as:
             #   PY3: io.StringIO, io.TextIOBase, io.BufferedIOBase
             #   PY2: file, io.StringIO, StringIO.StringIO, cStringIO.StringIO
 
             if not hasattr(fp, 'name') and not target_name:
-                raise ZenpyException("upload requires a target file name")
+                target_name = False
             else:
                 target_name = target_name or fp.name
 
         elif hasattr(fp, 'name'):
             # Path objects (pathlib.Path)
             if fp.name == '':
-                raise ZenpyException("upload requires a target file name")
+                target_name = False
 
             target_name = target_name or fp.name
             # PathLike objects only compatible with python3.6 and above, so
@@ -231,14 +252,47 @@ class UploadRequest(RequestHandler):
                 target_name = target_name or fp.name
             elif not target_name:
                 # Valid string, which is not a path, and without a target name
-                raise ZenpyException("upload requires a target file name")
+                target_name = False
 
         elif not target_name:
             # Other serializable types accepted by requests (like dict)
+            target_name = False
+
+        return {"target_name": target_name, "file_pointer": fp}
+
+    def put(self, api_objects, *args, **kwargs):
+        raise NotImplementedError("PUT is not implemented for UploadRequest!")
+
+    def delete(self, api_objects, *args, **kwargs):
+        raise NotImplementedError("DELETE is not implemented for UploadRequest!")
+
+class MacroAttachmentUploadRequest(UploadRequest):
+    """ Handles uploading macro attachment files to Zendesk. """
+
+    def post(self, fp, token=None, target_name=None, api_object=None):
+        if not isinstance(api_object, Macro) and api_object != "unassociated_macro":
+            raise ZenpyException("MacroAttachmentUploadRequest only supports macro or unassociated_macro upload.")
+
+        file_pointer_properties = self._get_file_pointer_properties(fp, target_name=target_name)
+
+        fp = file_pointer_properties["file_pointer"]
+
+        if not target_name:
+            target_name = file_pointer_properties["target_name"]
+
+        if target_name is False:
             raise ZenpyException("upload requires a target file name")
 
-        url = self.api._build_url(self.api.endpoint.upload(filename=target_name, token=token))
-        response = self.api._post(url, data=fp, payload={}, content_type=content_type)
+        data = {"filename": target_name}
+        files = {"attachment": fp}
+
+        if isinstance(api_object, Macro):
+            url = self.api._build_url(self.api.endpoint.attachments_upload(id=api_object.id))
+        
+        elif api_object == "unassociated_macro":
+            url = self.api._build_url(self.api.endpoint.attachments_upload_unassociated(id=None))
+
+        response = self.api._post_optional(url, data=data, files=files)
 
         if hasattr(fp, "close"):
             fp.close()
@@ -246,11 +300,10 @@ class UploadRequest(RequestHandler):
         return response
 
     def put(self, api_objects, *args, **kwargs):
-        raise NotImplementedError("POST is not implemented fpr UploadRequest!")
+        raise NotImplementedError("PUT is not implemented for MacroAttachmentUploadRequest!")
 
     def delete(self, api_objects, *args, **kwargs):
-        raise NotImplementedError("DELETE is not implemented fpr UploadRequest!")
-
+        raise NotImplementedError("DELETE is not implemented for MacroAttachmentUploadRequest!")
 
 class UserMergeRequest(BaseZendeskRequest):
     """ Handles merging two users. """
