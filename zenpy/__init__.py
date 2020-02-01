@@ -34,7 +34,7 @@ from zenpy.lib.api import (
     OrganizationFieldsApi,
     JiraLinkApi, SkipApi, TalkApi,
     CustomAgentRolesApi,
-    SearchApi)
+    SearchApi, UserFieldsApi)
 
 from zenpy.lib.cache import ZenpyCache, ZenpyCacheManager
 from zenpy.lib.endpoint import EndpointFactory
@@ -105,7 +105,7 @@ class Zenpy(object):
         )
 
         self.users = UserApi(config)
-        self.user_fields = Api(config, object_type='user_field')
+        self.user_fields = UserFieldsApi(config)
         self.groups = GroupApi(config)
         self.macros = MacroApi(config)
         self.organizations = OrganizationApi(config)

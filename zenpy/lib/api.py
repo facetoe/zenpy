@@ -2144,3 +2144,9 @@ class SearchApi(Api):
         Returns results count only
         """
         return self._query_zendesk(self.endpoint.count, 'search_count', *args, **kwargs)
+
+
+class UserFieldsApi(CRUDApi):
+    def __init__(self, config):
+        super(UserFieldsApi, self).__init__(config, object_type='user_field')
+        
