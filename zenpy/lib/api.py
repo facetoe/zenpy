@@ -301,6 +301,8 @@ class BaseApi(object):
                     raise RecordNotFoundException(json.dumps(_json), response=response)
                 elif err_type == "TooManyValues":
                     raise TooManyValuesException(json.dumps(_json), response=response)
+                elif err_type == "invalid" and response.status_code == 422:
+                    raise SearchResponseLimitExceeded(json.dumps(_json), response=response)
                 else:
                     raise APIException(json.dumps(_json), response=response)
             except ValueError:

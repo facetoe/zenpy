@@ -39,3 +39,10 @@ class TooManyValuesException(APIException):
     """
     A ``TooManyValuesException`` is raised when too many values have been passed to an endpoint.
     """
+
+class SearchResponseLimitExceeded(APIException):
+    """
+    A ``SearchResponseLimitExceeded`` is raised when a search has too many results
+
+    See https://develop.zendesk.com/hc/en-us/articles/360022563994--BREAKING-New-Search-API-Result-Limits
+    """
