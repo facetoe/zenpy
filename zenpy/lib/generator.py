@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 from future.standard_library import install_aliases
 
 from zenpy.lib.util import as_plural
+from zenpy.lib.exception import SearchResponseLimitExceeded
 
 try:
     from collections.abc import Iterable
@@ -199,6 +200,13 @@ class SearchResultGenerator(BaseResultGenerator):
             object_type = object_json.pop('result_type')
             search_results.append(self.response_handler.api._object_mapping.object_from_json(object_type, object_json))
         return search_results
+
+    def get_next_page(self, page_num, page_size):
+        try:
+            return super(SearchResultGenerator, self).get_next_page(page_num, page_size)
+        except SearchResponseLimitExceeded:
+            log.error('This search has resulted in more results than zendesk allows. We got what we could.')
+            raise StopIteration()
 
 
 class TicketAuditGenerator(ZendeskResultGenerator):
