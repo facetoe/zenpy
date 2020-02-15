@@ -46,6 +46,9 @@ class GenericZendeskResponseHandler(ResponseHandler):
     @staticmethod
     def applies_to(api, response):
         try:
+            if api.forced_netloc is not None:
+                return api.forced_netloc in response.request.url and response.json()
+
             return api.domain in response.request.url and response.json()
         except ValueError:
             return False

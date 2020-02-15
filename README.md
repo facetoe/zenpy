@@ -154,6 +154,27 @@ user.remote_photo_url = 'http://domain/example_photo.jpg'
 zenpy_client.users.update(user)
 ```
 
+## Environment variables
+
+By default zenpy will make request to
+
+```
+https://{subdomain}.{domain}/{endpoint}
+```
+
+(with domain being by default `zendesk.com`), in some cases you may want to override this behaviour
+(like for local testing or if you have a custom domain for zendesk)
+You can do this by setting the environment variables
+
+  * `ZENPY_FORCE_NETLOC`
+  * `ZENPY_FORCE_SCHEME` (default to https)
+
+when set it will force request on
+
+```
+{scheme}://{netloc}/endpoint
+```
+
 ## Documentation
 
 Check out the [documentation](http://docs.facetoe.com.au/) for more info.

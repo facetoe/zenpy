@@ -1,5 +1,6 @@
 # coding=utf-8
 
+import os
 import json
 import logging
 from time import sleep, time
@@ -58,6 +59,9 @@ class BaseApi(object):
     Base class for API. Responsible for submitting requests to Zendesk, controlling
     rate limiting and deserializing responses.
     """
+
+    forced_netloc = os.environ.get("ZENPY_FORCE_NETLOC")
+    forced_scheme = os.environ.get("ZENPY_FORCE_SCHEME", "https")
 
     def __init__(self,
                  subdomain,
@@ -313,7 +317,10 @@ class BaseApi(object):
         if not issubclass(type(self), ChatApiBase) and not self.subdomain:
             raise ZenpyException("subdomain is required when accessing the Zendesk API!")
 
-        if self.subdomain:
+        if self.forced_netloc is not None:
+            endpoint.netloc = self.forced_netloc
+            endpoint.scheme = self.forced_scheme
+        elif self.subdomain:
             endpoint.netloc = '{}.{}'.format(self.subdomain, self.domain)
         else:
             endpoint.netloc = self.domain
