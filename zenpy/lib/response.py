@@ -4,7 +4,7 @@ from zenpy.lib.exception import ZenpyException
 from zenpy.lib.generator import SearchResultGenerator, ZendeskResultGenerator, ChatResultGenerator, ViewResultGenerator, \
     TicketAuditGenerator, ChatIncrementalResultGenerator, JiraLinkGenerator
 from zenpy.lib.util import as_singular, as_plural, get_endpoint_path
-from urllib.parse import urlparse
+from six.moves.urllib.parse import urlparse
 
 
 class ResponseHandler(object):
