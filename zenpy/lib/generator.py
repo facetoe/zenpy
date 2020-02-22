@@ -5,8 +5,6 @@ import re
 from abc import abstractmethod
 from datetime import datetime, timedelta
 
-from future.standard_library import install_aliases
-
 from zenpy.lib.util import as_plural
 from zenpy.lib.exception import SearchResponseLimitExceeded
 
@@ -15,7 +13,7 @@ try:
 except ImportError:
     from collections import Iterable
 
-install_aliases()
+import six
 from math import ceil
 
 __author__ = 'facetoe'
@@ -124,6 +122,10 @@ class BaseResultGenerator(Iterable):
         # Calculate our range of pages.
         min_page = ceil(start / page_size)
         max_page = ceil(stop / page_size) + 1
+
+        if six.PY2:
+            min_page = int(min_page)
+            max_page = int(max_page)
 
         # Calculate the lower and upper bounds for the final slice.
         padding = ((max_page - min_page) - 1) * page_size

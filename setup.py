@@ -16,7 +16,7 @@ setup(
         'python-dateutil>=2.7.5',
         'cachetools>=3.1.0',
         'pytz>=2018.9',
-        'future>=0.17.1'
+        'six>=1.14.0',
     ],
     keywords=['zendesk', 'api', 'wrapper'],
     classifiers=[
