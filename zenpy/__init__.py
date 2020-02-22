@@ -170,7 +170,7 @@ class Zenpy(object):
         if not hasattr(session, 'authorized') or not session.authorized:
             # session is not an OAuth session that has been authorized, so authorize the session.
             if not password and not token and not oath_token:
-                raise ZenpyException("password, token or oauth_token are required!")
+                raise ZenpyException("password, token or oauth_token are required! {}".format(locals()))
             elif password and token:
                 raise ZenpyException("password and token "
                                      "are mutually exclusive!")

@@ -44,12 +44,11 @@ class CacheDoc(Directive):
     has_content = True
 
     def run(self):
-        zenpy = Zenpy.__new__(Zenpy)
-        zenpy.__init__(zenpy, ' ', ' ')
+        zenpy_client = Zenpy(subdomain="party", email="face@toe", password="Yer")
 
         node_list = []
         cache_node = container()
-        cache_sections = self.generate_cache_sections(zenpy)
+        cache_sections = self.generate_cache_sections(zenpy_client)
         for cache_section in cache_sections:
             node = paragraph()
             self.state.nested_parse(StringList(cache_section.split('\n')), 0, node)
@@ -75,14 +74,13 @@ class ApiDoc(Directive):
     ignore_methods = [x[0] for x in inspect.getmembers(Api)]
 
     def run(self):
-        zenpy = Zenpy.__new__(Zenpy)
-        zenpy.__init__(zenpy, ' ', ' ')
+        zenpy_client = Zenpy(subdomain="party", email="face@toe", password="Yer")
 
         node_list = []
-        doc_sections = self.generate_sections(zenpy)
+        doc_sections = self.generate_sections(zenpy_client)
 
-        output = '.. py:class:: Zenpy%s\n\n' % inspect.signature(zenpy.__class__)
-        output += '  %s' % zenpy.__doc__
+        output = '.. py:class:: Zenpy%s\n\n' % inspect.signature(zenpy_client.__class__)
+        output += '  %s' % zenpy_client.__doc__
 
         node = container()
         self.state.nested_parse(StringList(output.split('\n')), 0, node)
