@@ -313,13 +313,22 @@ class BaseApi(object):
         if not issubclass(type(self), ChatApiBase) and not self.subdomain:
             raise ZenpyException("subdomain is required when accessing the Zendesk API!")
 
-        if self.subdomain:
-            endpoint.netloc = '{}.{}'.format(self.subdomain, self.domain)
-        else:
-            endpoint.netloc = self.domain
-
+        endpoint.scheme = os.environ.get("ZENPY_FORCE_SCHEME", self.protocol)
+        endpoint.netloc = self.base_url
         endpoint.prefix_path(api_prefix or self.api_prefix)
         return endpoint.build()
+
+    @property
+    def base_url(self):
+        override = os.environ.get("ZENPY_FORCE_NETLOC")
+        if override:
+            return override
+        # This is for Zendesk APIs as they require a subdomain
+        elif self.subdomain:
+            return '{}.{}'.format(self.subdomain, self.domain)
+        # Chat APIs do not require a subdomain (it is always zopim.com)
+        else:
+            return self.domain
 
 
 class Api(BaseApi):

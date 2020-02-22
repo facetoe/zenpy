@@ -71,6 +71,27 @@ First, create a :class:`Zenpy` object:
     session.mount('https://', MyAdapter(**Zenpy.http_adapter_kwargs()))
     zenpy_client = Zenpy(**creds, session=some_session)
 
+Custom Domains
+--------------
+By default zenpy will make request to:
+
+    https://{subdomain}.{domain}/{endpoint}
+
+
+(with domain being by default `zendesk.com`), in some cases you may want to override this behaviour
+(like for local testing or if you have a custom domain for zendesk)
+You can do this by setting the environment variables:
+
+* `ZENPY_FORCE_NETLOC`
+* `ZENPY_FORCE_SCHEME` (default to https)
+
+when set it will force request on:
+
+    {scheme}://{netloc}/endpoint
+
+
+
+
 Searching the API
 -----------------
 
