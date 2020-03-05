@@ -1184,6 +1184,15 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
             return self._query_zendesk(self.endpoint.audits.cursor, 'ticket_audit', include=include, **kwargs)
 
     @extract_id(Ticket)
+    def incidents(self, ticket):
+        """
+        Retrieve incidents related to Ticket.
+
+        :param ticket: Ticket object or id
+        """
+        return self._query_zendesk(self.endpoint.incidents, 'ticket', id=ticket)
+
+    @extract_id(Ticket)
     def metrics(self, ticket):
         """
         Retrieve TicketMetric.
@@ -1451,7 +1460,7 @@ class GroupApi(CRUDApi):
         """
         Return the GroupMemberships for this group.
 
-        :param include: list of objects to sideload. `Side-loading API Docs 
+        :param include: list of objects to sideload. `Side-loading API Docs
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param group: Group object or id
         """
@@ -1462,7 +1471,7 @@ class GroupApi(CRUDApi):
         """
         Return memberships that are assignable for this group.
 
-        :param include: list of objects to sideload. `Side-loading API Docs 
+        :param include: list of objects to sideload. `Side-loading API Docs
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param group: Group object or id
         """
@@ -1491,7 +1500,7 @@ class ViewApi(CRUDApi):
         """
         Execute a view.
 
-        :param include: list of objects to sideload. `Side-loading API Docs 
+        :param include: list of objects to sideload. `Side-loading API Docs
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param view: View or view id
         """
@@ -1502,7 +1511,7 @@ class ViewApi(CRUDApi):
         """
         Return the tickets in a view.
 
-        :param include: list of objects to sideload. `Side-loading API Docs 
+        :param include: list of objects to sideload. `Side-loading API Docs
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param view: View or view id
         """
@@ -1513,7 +1522,7 @@ class ViewApi(CRUDApi):
         """
         Return a ViewCount for a view.
 
-        :param include: list of objects to sideload. `Side-loading API Docs 
+        :param include: list of objects to sideload. `Side-loading API Docs
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param view: View or view id
         """
@@ -1524,7 +1533,7 @@ class ViewApi(CRUDApi):
         """
         Return many ViewCounts.
 
-        :param include: list of objects to sideload. `Side-loading API Docs 
+        :param include: list of objects to sideload. `Side-loading API Docs
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param views: iterable of View or view ids
         """
@@ -1535,7 +1544,7 @@ class ViewApi(CRUDApi):
         """
         Export a view. Returns an Export object.
 
-        :param include: list of objects to sideload. `Side-loading API Docs 
+        :param include: list of objects to sideload. `Side-loading API Docs
 
         :param view: View or view id
         :return:
@@ -2160,4 +2169,3 @@ class SearchApi(Api):
 class UserFieldsApi(CRUDApi):
     def __init__(self, config):
         super(UserFieldsApi, self).__init__(config, object_type='user_field')
-        
