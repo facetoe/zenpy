@@ -238,7 +238,10 @@ class TicketAuditGenerator(ZendeskResultGenerator):
 
 
 class JiraLinkGenerator(ZendeskResultGenerator):
-    def __init__(self, response_handler, response_json, response=None):
+    def __init__(self, response_handler, response_json, response):
+        # The Jira links API does not provide a next_page in the JSON response.
+        # Save the raw requests response to support filtering (e.g. ticket_id or 
+        # issue_id) during pagination.
         self.response = response
         super(JiraLinkGenerator, self).__init__(response_handler, response_json,
                                                    response_objects=None,
@@ -246,14 +249,33 @@ class JiraLinkGenerator(ZendeskResultGenerator):
         self.next_page_attr = 'since_id'
 
     def get_next_page(self, page_num=None, page_size=None):
-        try:
-            url = self._response_json['links'][-1]['url']
-            url = re.sub('/\d+', '', url)
-            params = {'since_id': self._response_json['links'][-1]['id']}
-            response = self.response_handler.api._get(url, raw_response=True, params=params)
-            return response.json()
-        except (IndexError, KeyError):
+        if self._response_json.get('total', 0) < 1:
             raise StopIteration()
+
+        url = self.response.url
+
+        # The since_id param is exclusive. Use the last id of the current page as
+        # the since_id for the next page.
+        since_id = str(self._response_json['links'][-1]['id'])
+        
+        if 'since_id' in url:
+            # Replace the previous since_id parameter.
+            url = re.sub('since_id=\d+', 'since_id={}'.format(since_id), url)
+        else:
+            if len(url.split('?')) > 1:
+                # Add since_id to existing query parameters
+                url += '&since_id={}'.format(since_id)
+            else:
+                # Add since_id as the first and only query parameter
+                url += '?since_id={}'.format(since_id)
+
+        # Save the raw requests response again.
+        self.response = self.response_handler.api._get(url, raw_response=True)
+        return self.response.json()
+
+
+    def _handle_slice(self, slice_object):
+        raise NotImplementedError("the current Jira Links implementation does not support incremental APIs!")
 
 
 class ChatResultGenerator(BaseResultGenerator):
