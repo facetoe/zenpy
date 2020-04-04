@@ -3370,6 +3370,18 @@
         "mandatory": "no",
         "comment": "The id of the section to which this article belongs"
       },
+      "user_segment_id": {
+        "type": "integer",
+        "read-only": "no",
+        "mandatory": "yes",
+        "comment": "The id of the user segment which defines who can see this article. Set to null to make it accessible to everyone"
+      },
+      "permission_group_id": {
+        "type": "integer",
+        "read-only": "no",
+        "mandatory": "yes",
+        "comment": "The id of the permission group which defines who can edit and publish this article"
+      },      
       "created_at": {
         "type": "timestamp",
         "read-only": "yes",
