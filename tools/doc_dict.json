@@ -4050,6 +4050,50 @@
         "mandatory": "no",
         "comment": "Whether the user segment is built-in. Built-in user segments cannot be modified"
       }
+    },
+    "permission_groups": {
+      "id": {
+        "type": "integer",
+        "read-only": "yes",
+        "mandatory": "no",
+        "comment": "Automatically assigned when the permission group is created"
+      },
+      "name": {
+        "type": "string",
+        "read-only": "no",
+        "mandatory": "no",
+        "comment": "Permission group name"
+      },
+      "edit": {
+        "type": "array",
+        "read-only": "no",
+        "mandatory": "no",
+        "comment": "The ids of user segments that have edit privileges"
+      },
+      "publish": {
+        "type": "array",
+        "read-only": "no",
+        "mandatory": "no",
+        "comment": "The ids of user segments that have publish privileges"
+      },
+      "created_at": {
+        "type": "timestamp",
+        "read-only": "yes",
+        "mandatory": "no",
+        "comment": "When the permission group was created"
+      },
+      "updated_at": {
+        "type": "timestamp",
+        "read-only": "yes",
+        "mandatory": "no",
+        "comment": "When the permission group was last updated"
+      },
+      "built_in": {
+        "type": "boolean",
+        "read-only": "yes",
+        "mandatory": "no",
+        "comment": "Whether the permission group is built-in. Built-in permission groups cannot be modified"
+      }
     }
   },
   "chat": {
