@@ -238,7 +238,8 @@ class TicketAuditGenerator(ZendeskResultGenerator):
 
 
 class JiraLinkGenerator(ZendeskResultGenerator):
-    def __init__(self, response_handler, response_json):
+    def __init__(self, response_handler, response_json, response=None):
+        self.response = response
         super(JiraLinkGenerator, self).__init__(response_handler, response_json,
                                                    response_objects=None,
                                                    object_type='links')
