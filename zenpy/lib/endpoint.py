@@ -669,5 +669,8 @@ class EndpointFactory(object):
     help_centre.user_segments.sections = SecondaryEndpoint('help_center/user_segments/%(id)s/sections.json')
     help_centre.user_segments.topics = SecondaryEndpoint('help_center/user_segments/%(id)s/topics.json')
 
+    # Note the use of "guide" instead of "help_center" in the API endpoint
+    help_centre.permission_groups = PrimaryEndpoint('guide/permission_groups')
+
     def __new__(cls, endpoint_name):
         return getattr(cls, endpoint_name)
