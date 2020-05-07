@@ -103,7 +103,7 @@ class GenericZendeskResponseHandler(ResponseHandler):
 
         # Special case for Jira links.
         if get_endpoint_path(self.api, response).startswith('/services/jira/links'):
-            return JiraLinkGenerator(self, response_json)
+            return JiraLinkGenerator(self, response_json, response)
 
         zenpy_objects = self.deserialize(response_json)
 
