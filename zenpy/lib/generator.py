@@ -79,10 +79,10 @@ class BaseResultGenerator(Iterable):
         """ When slicing, remove the per_page and page parameters and pass to requests in the params dict """
         params = dict()
         if page_num is not None:
-            url = re.sub('page=\d+', '', url)
+            url = re.sub(r'page=\d+', '', url)
             params['page'] = page_num
         if page_size is not None:
-            url = re.sub('per_page=\d+', '', url)
+            url = re.sub(r'per_page=\d+', '', url)
             params['per_page'] = page_size
         return params, url
 
@@ -240,7 +240,7 @@ class TicketAuditGenerator(ZendeskResultGenerator):
 class JiraLinkGenerator(ZendeskResultGenerator):
     def __init__(self, response_handler, response_json, response):
         # The Jira links API does not provide a next_page in the JSON response.
-        # Save the raw requests response to support filtering (e.g. ticket_id or 
+        # Save the raw requests response to support filtering (e.g. ticket_id or
         # issue_id) during pagination.
         self.response = response
         super(JiraLinkGenerator, self).__init__(response_handler, response_json,
@@ -257,10 +257,10 @@ class JiraLinkGenerator(ZendeskResultGenerator):
         # The since_id param is exclusive. Use the last id of the current page as
         # the since_id for the next page.
         since_id = str(self._response_json['links'][-1]['id'])
-        
+
         if 'since_id' in url:
             # Replace the previous since_id parameter.
-            url = re.sub('since_id=\d+', 'since_id={}'.format(since_id), url)
+            url = re.sub(r'since_id=\d+', 'since_id={}'.format(since_id), url)
         else:
             if len(url.split('?')) > 1:
                 # Add since_id to existing query parameters
