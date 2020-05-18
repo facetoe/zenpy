@@ -712,6 +712,17 @@ class UserSearchApi(Api):
                                               endpoint=EndpointFactory('users').search)
 
     def __call__(self, query=None, external_id=None):
+        """
+        Exposes:
+            GET /api/v2/users/search.json?query={query}
+            GET /api/v2/users/search.json?external_id={external_id}
+
+        For more info see:
+            https://developer.zendesk.com/rest_api/docs/support/users#search-users
+
+        :param query: str of some user property like email
+        :param external_id: external_id of resource
+        """
         try:
             assert query or external_id
             assert not (query and external_id)
