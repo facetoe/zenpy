@@ -3370,6 +3370,18 @@
         "mandatory": "no",
         "comment": "The id of the section to which this article belongs"
       },
+      "user_segment_id": {
+        "type": "integer",
+        "read-only": "no",
+        "mandatory": "yes",
+        "comment": "The id of the user segment which defines who can see this article. Set to null to make it accessible to everyone"
+      },
+      "permission_group_id": {
+        "type": "integer",
+        "read-only": "no",
+        "mandatory": "yes",
+        "comment": "The id of the permission group which defines who can edit and publish this article"
+      },      
       "created_at": {
         "type": "timestamp",
         "read-only": "yes",
@@ -4037,6 +4049,50 @@
         "read-only": "yes",
         "mandatory": "no",
         "comment": "Whether the user segment is built-in. Built-in user segments cannot be modified"
+      }
+    },
+    "permission_groups": {
+      "id": {
+        "type": "integer",
+        "read-only": "yes",
+        "mandatory": "no",
+        "comment": "Automatically assigned when the permission group is created"
+      },
+      "name": {
+        "type": "string",
+        "read-only": "no",
+        "mandatory": "no",
+        "comment": "Permission group name"
+      },
+      "edit": {
+        "type": "array",
+        "read-only": "no",
+        "mandatory": "no",
+        "comment": "The ids of user segments that have edit privileges"
+      },
+      "publish": {
+        "type": "array",
+        "read-only": "no",
+        "mandatory": "no",
+        "comment": "The ids of user segments that have publish privileges"
+      },
+      "created_at": {
+        "type": "timestamp",
+        "read-only": "yes",
+        "mandatory": "no",
+        "comment": "When the permission group was created"
+      },
+      "updated_at": {
+        "type": "timestamp",
+        "read-only": "yes",
+        "mandatory": "no",
+        "comment": "When the permission group was last updated"
+      },
+      "built_in": {
+        "type": "boolean",
+        "read-only": "yes",
+        "mandatory": "no",
+        "comment": "Whether the permission group is built-in. Built-in permission groups cannot be modified"
       }
     }
   },

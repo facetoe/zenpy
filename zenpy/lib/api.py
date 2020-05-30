@@ -1710,7 +1710,8 @@ class HelpCentreApiBase(Api):
 
     def _process_response(self, response, object_mapping=None):
         endpoint_path = get_endpoint_path(self, response)
-        if endpoint_path.startswith('/help_center') or endpoint_path.startswith('/community'):
+        if (endpoint_path.startswith('/help_center') or endpoint_path.startswith('/community')
+                or endpoint_path.startswith('/guide')):
             object_mapping = self._object_mapping
         else:
             object_mapping = ZendeskObjectMapping(self)
@@ -2064,6 +2065,9 @@ class UserSegmentApi(HelpCentreApiBase, CRUDApi):
         return self._query_zendesk(self.endpoint.topics, object_type='topic', id=topic)
 
 
+class PermissionGroupApi(HelpCentreApiBase, CRUDApi):
+    pass
+
 class HelpCentreApi(HelpCentreApiBase):
     def __init__(self, config):
         super(HelpCentreApi, self).__init__(config, endpoint=EndpointFactory('help_centre'), object_type='help_centre')
@@ -2077,6 +2081,8 @@ class HelpCentreApi(HelpCentreApiBase):
         self.topics = TopicApi(config, self.endpoint.topics, object_type='topic')
         self.posts = PostApi(config, self.endpoint.posts, object_type='post')
         self.user_segments = UserSegmentApi(config, self.endpoint.user_segments, object_type='user_segment')
+        self.permission_groups = PermissionGroupApi(config, self.endpoint.permission_groups,
+                                                    object_type='permission_group')
 
     def __call__(self, *args, **kwargs):
         raise NotImplementedError("Cannot directly call the HelpCentreApi!")

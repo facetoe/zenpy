@@ -4,7 +4,7 @@ import zenpy
 from zenpy.lib.api_objects import *
 from zenpy.lib.api_objects.chat_objects import *
 from zenpy.lib.api_objects.help_centre_objects import Article, Category, Section, Label, Translation, Topic, Post, \
-    Subscription, Vote, AccessPolicy, UserSegment
+    Subscription, Vote, AccessPolicy, UserSegment, ManagementPermissionGroup
 from zenpy.lib.api_objects.talk_objects import *
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.proxy import ProxyDict, ProxyList
@@ -239,7 +239,8 @@ class HelpCentreObjectMapping(ZendeskObjectMapping):
         'subscription': Subscription,
         'vote': Vote,
         'access_policy': AccessPolicy,
-        'user_segment': UserSegment
+        'user_segment': UserSegment,
+        'permission_group': ManagementPermissionGroup
     }
 
 class TalkObjectMapping(ZendeskObjectMapping):
