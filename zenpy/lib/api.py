@@ -589,7 +589,7 @@ class IncrementalApi(Api):
         """
         Retrieve bulk data from the incremental API.
 
-        :param include: list of objects to sideload. `Side-loading API Docs 
+        :param include: list of objects to sideload. `Side-loading API Docs
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param start_time: The time of the oldest object you are interested in.
         """
@@ -705,6 +705,40 @@ class UserIdentityApi(Api):
         return UserIdentityRequest(self).delete(user, identity)
 
 
+class UserSearchApi(Api):
+    def __init__(self, config):
+        super(UserSearchApi, self).__init__(config,
+                                              object_type='user',
+                                              endpoint=EndpointFactory('users').search)
+
+    def __call__(self, query=None, external_id=None):
+        """
+        Exposes:
+            GET /api/v2/users/search.json?query={query}
+            GET /api/v2/users/search.json?external_id={external_id}
+
+        For more info see:
+            https://developer.zendesk.com/rest_api/docs/support/users#search-users
+
+        :param query: str of some user property like email
+        :param external_id: external_id of resource
+        """
+        try:
+            assert query or external_id
+            assert not (query and external_id)
+        except AssertionError:
+            raise ZenpyException(
+                "Must provide either `query` or `external_id` arg to search. Not Both."
+            )
+
+        if query:
+            params = dict(query=query)
+        if external_id:
+            params = dict(external_id=external_id)
+        url = self._build_url(self.endpoint())
+        return self._get(url, params=params)
+
+
 class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
     """
     The UserApi adds some User specific functionality
@@ -713,13 +747,14 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
     def __init__(self, config):
         super(UserApi, self).__init__(config, object_type='user')
         self.identities = UserIdentityApi(config)
+        self.search = UserSearchApi(config)
 
     @extract_id(User)
     def groups(self, user, include=None):
         """
         Retrieve the groups for this user.
 
-        :param include: list of objects to sideload. `Side-loading API Docs 
+        :param include: list of objects to sideload. `Side-loading API Docs
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param user: User object or id
         """
@@ -730,7 +765,7 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
         """
         Retrieve the organizations for this user.
 
-        :param include: list of objects to sideload. `Side-loading API Docs 
+        :param include: list of objects to sideload. `Side-loading API Docs
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param user: User object or id
         """
@@ -741,7 +776,7 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
         """
         Retrieve the requested tickets for this user.
 
-        :param include: list of objects to sideload. `Side-loading API Docs 
+        :param include: list of objects to sideload. `Side-loading API Docs
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param user: User object or id
         """
@@ -752,7 +787,7 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
         """
         Retrieve the tickets this user is cc'd into.
 
-        :param include: list of objects to sideload. `Side-loading API Docs 
+        :param include: list of objects to sideload. `Side-loading API Docs
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param user: User object or id
         """
@@ -763,7 +798,7 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
         """
         Retrieve the assigned tickets for this user.
 
-        :param include: list of objects to sideload. `Side-loading API Docs 
+        :param include: list of objects to sideload. `Side-loading API Docs
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param user: User object or id
         """
@@ -774,7 +809,7 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
         """
         Retrieve the group memberships for this user.
 
-        :param include: list of objects to sideload. `Side-loading API Docs 
+        :param include: list of objects to sideload. `Side-loading API Docs
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param user: User object or id
         """
@@ -797,7 +832,7 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
         """
         Return the logged in user
 
-        :param include: list of objects to sideload. `Side-loading API Docs 
+        :param include: list of objects to sideload. `Side-loading API Docs
             <https://developer.zendesk.com/rest_api/docs/core/side_loading#abilities>`__.
         """
         return self._query_zendesk(self.endpoint.me, 'user', include=include)
@@ -987,7 +1022,7 @@ class OrganizationApi(TaggableApi, IncrementalApi, CRUDExternalApi):
         """
         Locate an Organization by it's external_id attribute.
 
-        :param include: list of objects to sideload. `Side-loading API Docs 
+        :param include: list of objects to sideload. `Side-loading API Docs
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param external_id: external id of organization
         """
@@ -1149,7 +1184,7 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         """
         Retrieve TicketEvents
 
-        :param include: list of objects to sideload. `Side-loading API Docs 
+        :param include: list of objects to sideload. `Side-loading API Docs
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param start_time: time to retrieve events from.
         """
@@ -1174,7 +1209,7 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         See the `Zendesk docs <https://developer.zendesk.com/rest_api/docs/core/ticket_audits#pagination>`__ for
         information on additional parameters.
 
-        :param include: list of objects to sideload. `Side-loading API Docs 
+        :param include: list of objects to sideload. `Side-loading API Docs
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param ticket: Ticket object or id
         """

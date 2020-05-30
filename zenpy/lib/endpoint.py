@@ -561,6 +561,7 @@ class EndpointFactory(object):
     users.identities.request_verification = MultipleIDEndpoint('users/{0}/identities/{1}/request_verification.json')
     users.identities.delete = MultipleIDEndpoint('users/{0}/identities/{1}.json')
     users.skips = SecondaryEndpoint('users/%(id)s/skips.json')
+    users.search = PrimaryEndpoint('users/search.json')
     views = PrimaryEndpoint('views')
     views.active = PrimaryEndpoint('views/active')
     views.compact = PrimaryEndpoint('views/compact')
