@@ -439,6 +439,9 @@ class Api(BaseApi):
     def _get_survey(self, survery_id):
         pass
 
+    def _get_permission_group(self, permission_group_id):
+        return self._query_zendesk(EndpointFactory('help_centre').permission_groups, 'permission_group', id=permission_group_id)
+
     def _get_default_locale(self, locale_id):
         return self._query_zendesk(EndpointFactory('locales'), 'locale', id=locale_id)
 
