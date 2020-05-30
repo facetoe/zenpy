@@ -49,7 +49,7 @@ class BaseZendeskRequest(RequestHandler):
         if not isinstance(zenpy_objects, Iterable):
             zenpy_objects = [zenpy_objects]
         for zenpy_object in zenpy_objects:
-            if type(zenpy_object) is not expected_type:
+            if not isinstance(zenpy_object, expected_type):
                 raise ZenpyException(
                     "Invalid type - expected {} found {}".format(expected_type, type(zenpy_object))
                 )
