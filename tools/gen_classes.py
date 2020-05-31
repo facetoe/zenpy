@@ -179,13 +179,13 @@ class Attribute(object):
         self.parent_object = parent_object
         self.key = '_{}'.format(attr_name) if attr_name.endswith('timestamp') else attr_name
         self.attr_docs = attr_docs
-        self.object_type = self.get_object_type(attr_name)
+        self.object_type = self.get_object_type(attr_name, attr_value)
         self.object_name = self.get_object_name(attr_name, attr_value)
-        self.attr_name = self.get_attr_name(self.object_name, attr_name, attr_value)
+        self.attr_name = self.get_attr_name(attr_name=attr_name, attr_type=self.object_type)
         self.attr_assignment = self.get_attr_assignment(self.object_name, self.object_type, attr_name)
         self.is_property = self.get_is_property(attr_name)
 
-    def get_object_type(self, attr_name):
+    def get_object_type(self, attr_name, attr_value):
         if attr_name in ('assignee_id', 'submitter_id', 'requester_id',
                          'author_id', 'updater_id', 'recipient_id',
                          'created_by_id', 'updated_by_id'):
@@ -198,14 +198,15 @@ class Attribute(object):
             object_type = 'users'
         elif attr_name in ('forum_topic_id',):
             object_type = 'topic'
-        elif attr_name.endswith('_at') or attr_name.endswith('timestamp'):
+        elif (attr_name.endswith('_at') or attr_name.endswith('timestamp')) and not isinstance(attr_value, int):
             object_type = 'date'
         else:
             object_type = attr_name.replace('_id', '')
+
         return object_type
 
-    def get_attr_name(self, object_name, attr_name, attr_value):
-        should_modify = attr_name.endswith('timestamp')
+    def get_attr_name(self, attr_type, attr_name):
+        should_modify = attr_name.endswith('timestamp') and attr_type != "timestamp"
         if should_modify:
             return "_%s" % attr_name
         else:
