@@ -297,9 +297,8 @@ class SearchEndpoint(BaseEndpoint):
         search_query = ['%s%s' % (key, value) for (key, value) in renamed_kwargs.items()]
         search_query.extend(modifiers)
         if query is not None:
-            search_query.insert(0, quote(query))
-        params['query'] = ' '.join(search_query)
-
+            search_query.insert(0, query)
+        params['query'] = quote(' '.join(search_query))
         return Url(self.endpoint, params)
 
     def format_between(self, key, values):
