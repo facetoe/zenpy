@@ -27,7 +27,6 @@ class BaseResultGenerator(Iterable):
     Base class for result generators. Subclasses should implement process_page()
     and return a list of results.
     """
-
     def __init__(self, response_handler, response_json):
         self.response_handler = response_handler
         self._response_json = response_json
@@ -54,7 +53,8 @@ class BaseResultGenerator(Iterable):
 
     def handle_pagination(self, page_num=None, page_size=None):
         """ Handle retrieving and processing the next page of results. """
-        self._response_json = self.get_next_page(page_num=page_num, page_size=page_size)
+        self._response_json = self.get_next_page(page_num=page_num,
+                                                 page_size=page_size)
         self.update_attrs()
         self.position = 0
         self.values = self.process_page()
@@ -71,7 +71,9 @@ class BaseResultGenerator(Iterable):
         if url is None:
             raise StopIteration()
         params, url = self.process_url(page_num, page_size, url)
-        response = self.response_handler.api._get(url, raw_response=True, params=params)
+        response = self.response_handler.api._get(url,
+                                                  raw_response=True,
+                                                  params=params)
         return response.json()
 
     def process_url(self, page_num, page_size, url):
@@ -92,19 +94,25 @@ class BaseResultGenerator(Iterable):
 
     def _handle_slice(self, slice_object):
         if self._has_sliced:
-            raise NotImplementedError("the current slice implementation does not support multiple accesses!")
+            raise NotImplementedError(
+                "the current slice implementation does not support multiple accesses!"
+            )
         start, stop, page_size = slice_object.start or 0, \
                                  slice_object.stop or len(self), \
                                  slice_object.step or 100
         if any((val < 0 for val in (start, stop, page_size))):
-            raise ValueError("negative values not supported in slice operations!")
+            raise ValueError(
+                "negative values not supported in slice operations!")
 
         next_page = self._response_json.get("next_page")
         if next_page and 'incremental' in next_page:
-            raise NotImplementedError("the current slice implementation does not support incremental APIs!")
+            raise NotImplementedError(
+                "the current slice implementation does not support incremental APIs!"
+            )
 
         if self._response_json.get("before_cursor", None):
-            raise NotImplementedError("cursor based pagination cannot be sliced!")
+            raise NotImplementedError(
+                "cursor based pagination cannot be sliced!")
 
         if self.values is None:
             self.values = self.process_page()
@@ -165,14 +173,19 @@ class BaseResultGenerator(Iterable):
 
 class ZendeskResultGenerator(BaseResultGenerator):
     """ Generic result generator. """
-
-    def __init__(self, response_handler, response_json, response_objects=None, object_type=None):
-        super(ZendeskResultGenerator, self).__init__(response_handler, response_json)
+    def __init__(self,
+                 response_handler,
+                 response_json,
+                 response_objects=None,
+                 object_type=None):
+        super(ZendeskResultGenerator, self).__init__(response_handler,
+                                                     response_json)
         self.object_type = object_type or self.response_handler.api.object_type
         self.values = response_objects or None
 
     def process_page(self):
-        response_objects = self.response_handler.deserialize(self._response_json)
+        response_objects = self.response_handler.deserialize(
+            self._response_json)
         return response_objects[as_plural(self.object_type)]
 
     def get_next_page(self, page_num=None, page_size=None):
@@ -181,32 +194,39 @@ class ZendeskResultGenerator(BaseResultGenerator):
         if end_time:
             # We can't request updates from an incremental api if the
             # start_time value is less than 5 minutes in the future.
-            if (datetime.fromtimestamp(int(end_time)) + timedelta(minutes=5)) > datetime.now():
+            if (datetime.fromtimestamp(int(end_time)) +
+                    timedelta(minutes=5)) > datetime.now():
                 raise StopIteration
-        return super(ZendeskResultGenerator, self).get_next_page(page_num, page_size)
+        return super(ZendeskResultGenerator,
+                     self).get_next_page(page_num, page_size)
 
 
 class SearchResultGenerator(BaseResultGenerator):
     """ Result generator for search queries. """
-
     def process_page(self):
         search_results = list()
         for object_json in self._response_json['results']:
             object_type = object_json.pop('result_type')
-            search_results.append(self.response_handler.api._object_mapping.object_from_json(object_type, object_json))
+            search_results.append(
+                self.response_handler.api._object_mapping.object_from_json(
+                    object_type, object_json))
         return search_results
 
     def get_next_page(self, page_num, page_size):
         try:
-            return super(SearchResultGenerator, self).get_next_page(page_num, page_size)
+            return super(SearchResultGenerator,
+                         self).get_next_page(page_num, page_size)
         except SearchResponseLimitExceeded:
-            log.error('This search has resulted in more results than zendesk allows. We got what we could.')
+            log.error(
+                'This search has resulted in more results than zendesk allows. We got what we could.'
+            )
             raise StopIteration()
 
 
 class TicketAuditGenerator(ZendeskResultGenerator):
     def __init__(self, response_handler, response_json):
-        super(TicketAuditGenerator, self).__init__(response_handler, response_json,
+        super(TicketAuditGenerator, self).__init__(response_handler,
+                                                   response_json,
                                                    response_objects=None,
                                                    object_type='audit')
         self.next_page_attr = 'after_url'
@@ -236,9 +256,10 @@ class JiraLinkGenerator(ZendeskResultGenerator):
         # Save the raw requests response to support filtering (e.g. ticket_id or
         # issue_id) during pagination.
         self.response = response
-        super(JiraLinkGenerator, self).__init__(response_handler, response_json,
-                                                   response_objects=None,
-                                                   object_type='links')
+        super(JiraLinkGenerator, self).__init__(response_handler,
+                                                response_json,
+                                                response_objects=None,
+                                                object_type='links')
         self.next_page_attr = 'since_id'
 
     def get_next_page(self, page_num=None, page_size=None):
@@ -266,18 +287,19 @@ class JiraLinkGenerator(ZendeskResultGenerator):
         self.response = self.response_handler.api._get(url, raw_response=True)
         return self.response.json()
 
-
     def _handle_slice(self, slice_object):
-        raise NotImplementedError("the current Jira Links implementation does not support incremental APIs!")
+        raise NotImplementedError(
+            "the current Jira Links implementation does not support incremental APIs!"
+        )
 
 
 class ChatResultGenerator(BaseResultGenerator):
     """
     Generator for ChatApi objects
     """
-
     def __init__(self, response_handler, response_json):
-        super(ChatResultGenerator, self).__init__(response_handler, response_json)
+        super(ChatResultGenerator, self).__init__(response_handler,
+                                                  response_json)
         self.next_page_attr = 'next_url'
 
     def process_page(self):
@@ -288,9 +310,9 @@ class ChatIncrementalResultGenerator(BaseResultGenerator):
     """
     Generator for Chat Incremental Api objects
     """
-
     def __init__(self, response_handler, response_json):
-        super(ChatIncrementalResultGenerator, self).__init__(response_handler, response_json)
+        super(ChatIncrementalResultGenerator,
+              self).__init__(response_handler, response_json)
         self.next_page_attr = 'next_page'
 
     def process_page(self):

@@ -5,7 +5,7 @@ run_tests: &run_tests
           python -m venv venv
           . venv/bin/activate
           pip install -r requirements.dev
-          nosetests -v --stop
+          make unittest
 
 version: 2
 jobs:
@@ -24,7 +24,7 @@ jobs:
             python2 -m virtualenv venv
             . venv/bin/activate
             pip2 install -r requirements.dev
-            nosetests -v --stop
+            make unittest
   python3.5:
     docker:
       - image: circleci/python:3.5.7-stretch

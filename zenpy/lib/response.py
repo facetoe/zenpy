@@ -17,7 +17,6 @@ class ResponseHandler(object):
     When adding a new handler, it is important to place the most general handlers last, and the most
     specific first.
     """
-
     def __init__(self, api, object_mapping=None):
         self.api = api
         self.object_mapping = object_mapping or api._object_mapping
@@ -42,7 +41,6 @@ class ResponseHandler(object):
 
 class GenericZendeskResponseHandler(ResponseHandler):
     """ The most generic handler for responses from the Zendesk API. """
-
     @staticmethod
     def applies_to(api, response):
         try:
@@ -60,18 +58,15 @@ class GenericZendeskResponseHandler(ResponseHandler):
         """
         response_objects = dict()
         if all((t in response_json for t in ('ticket', 'audit'))):
-            response_objects["ticket_audit"] = self.object_mapping.object_from_json(
-                "ticket_audit",
-                response_json
-            )
+            response_objects[
+                "ticket_audit"] = self.object_mapping.object_from_json(
+                    "ticket_audit", response_json)
 
         # Locate and store the single objects.
         for zenpy_object_name in self.object_mapping.class_mapping:
             if zenpy_object_name in response_json:
                 zenpy_object = self.object_mapping.object_from_json(
-                    zenpy_object_name,
-                    response_json[zenpy_object_name]
-                )
+                    zenpy_object_name, response_json[zenpy_object_name])
                 response_objects[zenpy_object_name] = zenpy_object
 
         # Locate and store the collections of objects.
@@ -82,9 +77,7 @@ class GenericZendeskResponseHandler(ResponseHandler):
                     response_objects[key] = []
                     for object_json in response_json[key]:
                         zenpy_object = self.object_mapping.object_from_json(
-                            zenpy_object_name,
-                            object_json
-                        )
+                            zenpy_object_name, object_json)
                         response_objects[key].append(zenpy_object)
         return response_objects
 
@@ -98,11 +91,13 @@ class GenericZendeskResponseHandler(ResponseHandler):
         response_json = response.json()
 
         # Special case for ticket audits.
-        if get_endpoint_path(self.api, response).startswith('/ticket_audits.json'):
+        if get_endpoint_path(self.api,
+                             response).startswith('/ticket_audits.json'):
             return TicketAuditGenerator(self, response_json)
 
         # Special case for Jira links.
-        if get_endpoint_path(self.api, response).startswith('/services/jira/links'):
+        if get_endpoint_path(self.api,
+                             response).startswith('/services/jira/links'):
             return JiraLinkGenerator(self, response_json, response)
 
         zenpy_objects = self.deserialize(response_json)
@@ -110,7 +105,10 @@ class GenericZendeskResponseHandler(ResponseHandler):
         # Collection of objects (eg, users/tickets)
         plural_object_type = as_plural(self.api.object_type)
         if plural_object_type in zenpy_objects:
-            return ZendeskResultGenerator(self, response_json, response_objects=zenpy_objects[plural_object_type])
+            return ZendeskResultGenerator(
+                self,
+                response_json,
+                response_objects=zenpy_objects[plural_object_type])
 
         # Here the response matches the API object_type, seems legit.
         if self.api.object_type in zenpy_objects:
@@ -125,7 +123,8 @@ class GenericZendeskResponseHandler(ResponseHandler):
         for zenpy_object_name in self.object_mapping.class_mapping:
             plural_zenpy_object_name = as_plural(zenpy_object_name)
             if plural_zenpy_object_name in zenpy_objects:
-                return ZendeskResultGenerator(self, response_json, object_type=plural_zenpy_object_name)
+                return ZendeskResultGenerator(
+                    self, response_json, object_type=plural_zenpy_object_name)
 
         # Bummer, bail out.
         raise ZenpyException("Unknown Response: " + str(response_json))
@@ -133,13 +132,13 @@ class GenericZendeskResponseHandler(ResponseHandler):
 
 class HTTPOKResponseHandler(ResponseHandler):
     """ The name is on the box, handles 200 responses. """
-
     @staticmethod
     def applies_to(api, response):
         return response.status_code == 200
 
     def deserialize(self, response_json):
-        raise NotImplementedError("HTTPOKResponseHandler cannot handle deserialization")
+        raise NotImplementedError(
+            "HTTPOKResponseHandler cannot handle deserialization")
 
     def build(self, response):
         return response
@@ -149,17 +148,18 @@ class ViewResponseHandler(GenericZendeskResponseHandler):
     """
     Handles the various responses returned by the View endpoint.
     """
-
     @staticmethod
     def applies_to(api, response):
         return get_endpoint_path(api, response).startswith('/views')
 
     def deserialize(self, response_json):
-        deserialized_response = super(ViewResponseHandler, self).deserialize(response_json)
+        deserialized_response = super(ViewResponseHandler,
+                                      self).deserialize(response_json)
         if 'rows' in response_json:
             views = list()
             for row in response_json['rows']:
-                views.append(self.object_mapping.object_from_json('view_row', row))
+                views.append(
+                    self.object_mapping.object_from_json('view_row', row))
             return views
         elif 'views' in deserialized_response:
             return deserialized_response['views']
@@ -176,7 +176,10 @@ class ViewResponseHandler(GenericZendeskResponseHandler):
 
     def build(self, response):
         response_json = response.json()
-        if any([key in response_json for key in ['rows', 'view_counts', 'tickets']]):
+        if any([
+                key in response_json
+                for key in ['rows', 'view_counts', 'tickets']
+        ]):
             return ViewResultGenerator(self, response_json)
         else:
             return self.deserialize(response_json)
@@ -184,7 +187,6 @@ class ViewResponseHandler(GenericZendeskResponseHandler):
 
 class DeleteResponseHandler(GenericZendeskResponseHandler):
     """ Yup, handles 204 No Content. """
-
     @staticmethod
     def applies_to(api, response):
         return response.status_code == 204
@@ -198,7 +200,6 @@ class DeleteResponseHandler(GenericZendeskResponseHandler):
 
 class SearchResponseHandler(GenericZendeskResponseHandler):
     """ Handles Zendesk search results. """
-
     @staticmethod
     def applies_to(api, response):
         try:
@@ -212,7 +213,6 @@ class SearchResponseHandler(GenericZendeskResponseHandler):
 
 class CountResponseHandler(GenericZendeskResponseHandler):
     """ Handles Zendesk search results counts. """
-
     @staticmethod
     def applies_to(api, response):
         try:
@@ -227,7 +227,6 @@ class CountResponseHandler(GenericZendeskResponseHandler):
 
 class CombinationResponseHandler(GenericZendeskResponseHandler):
     """ Handles a few special cases where the return type is made up of two objects. """
-
     @staticmethod
     def applies_to(api, response):
         try:
@@ -254,7 +253,6 @@ class CombinationResponseHandler(GenericZendeskResponseHandler):
 
 
 class JobStatusesResponseHandler(GenericZendeskResponseHandler):
-
     @staticmethod
     def applies_to(api, response):
         try:
@@ -268,16 +266,13 @@ class JobStatusesResponseHandler(GenericZendeskResponseHandler):
         response_objects = {'job_statuses': []}
         for object_json in response.json()['job_statuses']:
             zenpy_object = self.object_mapping.object_from_json(
-                'job_status',
-                object_json
-            )
+                'job_status', object_json)
             response_objects['job_statuses'].append(zenpy_object)
         return response_objects
 
 
 class TagResponseHandler(ResponseHandler):
     """ Tags aint complicated, just return them. """
-
     @staticmethod
     def applies_to(api, response):
         result = urlparse(response.request.url)
@@ -297,7 +292,8 @@ class SlaPolicyResponseHandler(GenericZendeskResponseHandler):
 
     def deserialize(self, response_json):
         if 'definitions' in response_json:
-            definitions = self.object_mapping.object_from_json('definitions', response_json['definitions'])
+            definitions = self.object_mapping.object_from_json(
+                'definitions', response_json['definitions'])
             return dict(definitions=definitions)
         return super(SlaPolicyResponseHandler, self).deserialize(response_json)
 
@@ -305,36 +301,45 @@ class SlaPolicyResponseHandler(GenericZendeskResponseHandler):
         response_json = response.json()
         response_objects = self.deserialize(response_json)
         if 'sla_policies' in response_objects:
-            return ZendeskResultGenerator(self, response.json(), response_objects=response_objects['sla_policies'])
+            return ZendeskResultGenerator(
+                self,
+                response.json(),
+                response_objects=response_objects['sla_policies'])
         elif 'sla_policy' in response_objects:
             return response_objects['sla_policy']
         elif response_objects:
             return response_objects['definitions']
-        raise ZenpyException("Could not handle response: {}".format(response_json))
+        raise ZenpyException(
+            "Could not handle response: {}".format(response_json))
 
 
 class RequestCommentResponseHandler(GenericZendeskResponseHandler):
     @staticmethod
     def applies_to(api, response):
         endpoint_path = get_endpoint_path(api, response)
-        return endpoint_path.startswith('/requests') and endpoint_path.endswith('comments.json')
+        return endpoint_path.startswith(
+            '/requests') and endpoint_path.endswith('comments.json')
 
     def deserialize(self, response_json):
-        return super(RequestCommentResponseHandler, self).deserialize(response_json)
+        return super(RequestCommentResponseHandler,
+                     self).deserialize(response_json)
 
     def build(self, response):
         response_json = response.json()
         response_objects = self.deserialize(response_json)
-        return ZendeskResultGenerator(self, response_json, response_objects['comments'], object_type='comment')
+        return ZendeskResultGenerator(self,
+                                      response_json,
+                                      response_objects['comments'],
+                                      object_type='comment')
 
 
 class ChatResponseHandler(ResponseHandler):
     """ Handles Chat responses. """
-
     @staticmethod
     def applies_to(api, response):
         path = get_endpoint_path(api, response)
-        return path.startswith('/chats') or path.startswith('/incremental/chats')
+        return path.startswith('/chats') or path.startswith(
+            '/incremental/chats')
 
     def deserialize(self, response_json):
         chats = list()
@@ -343,7 +348,8 @@ class ChatResponseHandler(ResponseHandler):
         elif 'docs' in response_json:
             chat_list = response_json['docs'].values()
         else:
-            raise ZenpyException("Unexpected response: {}".format(response_json))
+            raise ZenpyException(
+                "Unexpected response: {}".format(response_json))
         for chat in chat_list:
             chats.append(self.object_mapping.object_from_json('chat', chat))
         return chats
@@ -361,7 +367,6 @@ class ChatResponseHandler(ResponseHandler):
 
 class AccountResponseHandler(ResponseHandler):
     """ Handles Chat API Account responses. """
-
     @staticmethod
     def applies_to(api, response):
         _, endpoint_name = response.request.url.split(api.api_prefix)
@@ -376,7 +381,6 @@ class AccountResponseHandler(ResponseHandler):
 
 class ChatSearchResponseHandler(ResponseHandler):
     """ Yep, handles Chat API search responses. """
-
     @staticmethod
     def applies_to(api, response):
         return get_endpoint_path(api, response).startswith('/chats/search')
@@ -384,7 +388,8 @@ class ChatSearchResponseHandler(ResponseHandler):
     def deserialize(self, response_json):
         search_results = list()
         for result in response_json['results']:
-            search_results.append(self.object_mapping.object_from_json('search_result', result))
+            search_results.append(
+                self.object_mapping.object_from_json('search_result', result))
         return search_results
 
     def build(self, response):
@@ -401,10 +406,13 @@ class ChatApiResponseHandler(ResponseHandler):
     def deserialize(self, response_json):
         agents = list()
         if isinstance(response_json, dict):
-            return self.object_mapping.object_from_json(self.object_type, response_json)
+            return self.object_mapping.object_from_json(
+                self.object_type, response_json)
         else:
             for agent in response_json:
-                agents.append(self.object_mapping.object_from_json(self.object_type, agent))
+                agents.append(
+                    self.object_mapping.object_from_json(
+                        self.object_type, agent))
             return agents
 
     def build(self, response):

@@ -47,14 +47,16 @@ def is_timezone_aware(datetime_obj):
     """
     Determine whether or not a given datetime object is timezone aware.
     """
-    return datetime_obj.tzinfo is not None and datetime_obj.tzinfo.utcoffset(datetime_obj) is not None
+    return datetime_obj.tzinfo is not None and datetime_obj.tzinfo.utcoffset(
+        datetime_obj) is not None
 
 
 def is_iterable_but_not_string(obj):
     """
     Determine whether or not obj is iterable but not a string (eg, a list, set, tuple etc).
     """
-    return hasattr(obj, '__iter__') and not isinstance(obj, str) and not isinstance(obj, bytes)
+    return hasattr(obj, '__iter__') and not isinstance(
+        obj, str) and not isinstance(obj, bytes)
 
 
 def as_singular(result_key):
@@ -99,7 +101,6 @@ def extract_id(*object_types):
     """
     Decorator for extracting id from passed parameters for specific types.
     """
-
     def outer(func):
         def inner(*args, **kwargs):
             def id_of(x):

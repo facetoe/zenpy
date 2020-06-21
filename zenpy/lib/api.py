@@ -4,39 +4,19 @@ import json
 import logging
 from time import sleep, time
 
-from zenpy.lib.api_objects import (
-    User,
-    Macro,
-    Identity,
-    View,
-    Organization,
-    Group,
-    GroupMembership,
-    OrganizationField,
-    TicketField,
-    Comment as TicketComment,
-    CustomFieldOption,
-    Item, Variant, Ticket, BaseObject)
+from zenpy.lib.api_objects import (User, Macro, Identity, View, Organization,
+                                   Group, GroupMembership, OrganizationField,
+                                   TicketField, Comment as TicketComment,
+                                   CustomFieldOption, Item, Variant, Ticket,
+                                   BaseObject)
 from zenpy.lib.api_objects.help_centre_objects import (
-    Section,
-    Article,
-    Comment,
-    ArticleAttachment,
-    Label,
-    Category,
-    Translation,
-    Topic,
-    Post,
-    Subscription
-)
-from zenpy.lib.api_objects.talk_objects import (
-    CurrentQueueActivity,
-    PhoneNumbers,
-    ShowAvailability,
-    AgentsOverview,
-    AccountOverview,
-    AgentsActivity
-)
+    Section, Article, Comment, ArticleAttachment, Label, Category, Translation,
+    Topic, Post, Subscription)
+from zenpy.lib.api_objects.talk_objects import (CurrentQueueActivity,
+                                                PhoneNumbers, ShowAvailability,
+                                                AgentsOverview,
+                                                AccountOverview,
+                                                AgentsActivity)
 from zenpy.lib.exception import *
 from zenpy.lib.mapping import ZendeskObjectMapping, ChatObjectMapping, HelpCentreObjectMapping, TalkObjectMapping
 from zenpy.lib.request import *
@@ -58,16 +38,8 @@ class BaseApi(object):
     Base class for API. Responsible for submitting requests to Zendesk, controlling
     rate limiting and deserializing responses.
     """
-
-    def __init__(self,
-                 subdomain,
-                 session,
-                 timeout,
-                 ratelimit,
-                 ratelimit_budget,
-                 ratelimit_request_interval,
-                 cache,
-                 domain):
+    def __init__(self, subdomain, session, timeout, ratelimit,
+                 ratelimit_budget, ratelimit_request_interval, cache, domain):
         self.domain = domain
         self.subdomain = subdomain
         self.session = session
@@ -78,10 +50,7 @@ class BaseApi(object):
         self.protocol = 'https'
         self.api_prefix = 'api/v2'
         self._url_template = "%(protocol)s://%(subdomain)s.%(domain)s/%(api_prefix)s"
-        self.callsafety = {
-            'lastcalltime': None,
-            'lastlimitremaining': None
-        }
+        self.callsafety = {'lastcalltime': None, 'lastlimitremaining': None}
         self.ratelimit_request_interval = ratelimit_request_interval
         self._response_handlers = (
             CountResponseHandler,
@@ -110,7 +79,8 @@ class BaseApi(object):
         else:
             headers = None
 
-        response = self._call_api(self.session.post, url,
+        response = self._call_api(self.session.post,
+                                  url,
                                   json=self._serialize(payload),
                                   timeout=self.timeout,
                                   headers=headers,
@@ -118,15 +88,24 @@ class BaseApi(object):
         return self._process_response(response)
 
     def _put(self, url, payload):
-        response = self._call_api(self.session.put, url, json=self._serialize(payload), timeout=self.timeout)
+        response = self._call_api(self.session.put,
+                                  url,
+                                  json=self._serialize(payload),
+                                  timeout=self.timeout)
         return self._process_response(response)
 
     def _delete(self, url, payload=None):
-        response = self._call_api(self.session.delete, url, json=payload, timeout=self.timeout)
+        response = self._call_api(self.session.delete,
+                                  url,
+                                  json=payload,
+                                  timeout=self.timeout)
         return self._process_response(response)
 
     def _get(self, url, raw_response=False, **kwargs):
-        response = self._call_api(self.session.get, url, timeout=self.timeout, **kwargs)
+        response = self._call_api(self.session.get,
+                                  url,
+                                  timeout=self.timeout,
+                                  **kwargs)
         if raw_response:
             return response
         else:
@@ -142,24 +121,29 @@ class BaseApi(object):
         :param url: The url to pass to to the requests method.
         :param kwargs: Any additional kwargs to pass on to requests.
         """
-        log.debug("{}: {} - {}".format(http_method.__name__.upper(), url, kwargs))
+        log.debug("{}: {} - {}".format(http_method.__name__.upper(), url,
+                                       kwargs))
         if self.ratelimit is not None:
             # This path indicates we're taking a proactive approach to not hit the rate limit
-            response = self._ratelimit(http_method=http_method, url=url, **kwargs)
+            response = self._ratelimit(http_method=http_method,
+                                       url=url,
+                                       **kwargs)
         else:
             response = http_method(url, **kwargs)
 
         # If we are being rate-limited, wait the required period before trying again.
         if response.status_code == 429:
-            while 'retry-after' in response.headers and int(response.headers['retry-after']) > 0:
+            while 'retry-after' in response.headers and int(
+                    response.headers['retry-after']) > 0:
                 retry_after_seconds = int(response.headers['retry-after'])
                 log.warning(
-                    "Waiting for requested retry-after period: %s seconds" % retry_after_seconds
-                )
+                    "Waiting for requested retry-after period: %s seconds" %
+                    retry_after_seconds)
                 while retry_after_seconds > 0:
                     retry_after_seconds -= 1
                     self.check_ratelimit_budget(1)
-                    log.debug("    -> sleeping: %s more seconds" % retry_after_seconds)
+                    log.debug("    -> sleeping: %s more seconds" %
+                              retry_after_seconds)
                     sleep(1)
                 response = http_method(url, **kwargs)
 
@@ -176,7 +160,6 @@ class BaseApi(object):
 
     def _ratelimit(self, http_method, url, **kwargs):
         """ Ensure we do not hit the rate limit. """
-
         def time_since_last_call():
             if self.callsafety['lastcalltime'] is not None:
                 return int(time() - self.callsafety['lastcalltime'])
@@ -192,24 +175,26 @@ class BaseApi(object):
             # We hit our limit floor and aren't quite at ratelimit_request_interval value in seconds yet..
             log.warning(
                 "Safety Limit Reached of %s remaining calls and time since last call is under %s seconds"
-                % (self.ratelimit, self.ratelimit_request_interval)
-            )
+                % (self.ratelimit, self.ratelimit_request_interval))
             while time_since_last_call() < self.ratelimit_request_interval:
-                remaining_sleep = int(self.ratelimit_request_interval - time_since_last_call())
+                remaining_sleep = int(self.ratelimit_request_interval -
+                                      time_since_last_call())
                 log.debug("  -> sleeping: %s more seconds" % remaining_sleep)
                 self.check_ratelimit_budget(1)
                 sleep(1)
             response = http_method(url, **kwargs)
 
         self.callsafety['lastcalltime'] = time()
-        self.callsafety['lastlimitremaining'] = int(response.headers.get('X-Rate-Limit-Remaining', 0))
+        self.callsafety['lastlimitremaining'] = int(
+            response.headers.get('X-Rate-Limit-Remaining', 0))
         return response
 
     def _update_callsafety(self, response):
         """ Update the callsafety data structure """
         if self.ratelimit is not None:
             self.callsafety['lastcalltime'] = time()
-            self.callsafety['lastlimitremaining'] = int(response.headers.get('X-Rate-Limit-Remaining', 0))
+            self.callsafety['lastlimitremaining'] = int(
+                response.headers.get('X-Rate-Limit-Remaining', 0))
 
     def _process_response(self, response, object_mapping=None):
         """
@@ -222,11 +207,13 @@ class BaseApi(object):
             pretty_response = response
         for handler in self._response_handlers:
             if handler.applies_to(self, response):
-                log.debug("{} matched: {}".format(handler.__name__, pretty_response))
+                log.debug("{} matched: {}".format(handler.__name__,
+                                                  pretty_response))
                 r = handler(self, object_mapping).build(response)
                 self._clean_dirty_objects()
                 return r
-        raise ZenpyException("Could not handle response: {}".format(pretty_response))
+        raise ZenpyException(
+            "Could not handle response: {}".format(pretty_response))
 
     def _clean_dirty_objects(self):
         """
@@ -249,9 +236,11 @@ class BaseApi(object):
         if not type(zenpy_object) == dict:
             log.debug("Setting dirty object: {}".format(zenpy_object))
             self._dirty_object = zenpy_object
-        return json.loads(json.dumps(zenpy_object, default=json_encode_for_zendesk))
+        return json.loads(
+            json.dumps(zenpy_object, default=json_encode_for_zendesk))
 
-    def _query_zendesk(self, endpoint, object_type, *endpoint_args, **endpoint_kwargs):
+    def _query_zendesk(self, endpoint, object_type, *endpoint_args,
+                       **endpoint_kwargs):
         """
         Query Zendesk for items. If an id or list of ids are passed, attempt to locate these items
          in the relevant cache. If they cannot be found, or no ids are passed, execute a call to Zendesk
@@ -271,7 +260,8 @@ class BaseApi(object):
             if item:
                 return item
             else:
-                return self._get(url=self._build_url(endpoint(*endpoint_args, **endpoint_kwargs)))
+                return self._get(url=self._build_url(
+                    endpoint(*endpoint_args, **endpoint_kwargs)))
         elif 'ids' in endpoint_kwargs:
             cached_objects = []
             # Check to see if we have all objects in the cache.
@@ -280,11 +270,17 @@ class BaseApi(object):
             for _id in endpoint_kwargs['ids']:
                 obj = self.cache.get(object_type, _id)
                 if not obj:
-                    return self._get(self._build_url(endpoint=endpoint(*endpoint_args, **endpoint_kwargs)))
+                    return self._get(
+                        self._build_url(endpoint=endpoint(
+                            *endpoint_args, **endpoint_kwargs)))
                 cached_objects.append(obj)
-            return ZendeskResultGenerator(self, {}, response_objects=cached_objects, object_type=object_type)
+            return ZendeskResultGenerator(self, {},
+                                          response_objects=cached_objects,
+                                          object_type=object_type)
         else:
-            return self._get(self._build_url(endpoint=endpoint(*endpoint_args, **endpoint_kwargs)))
+            return self._get(
+                self._build_url(
+                    endpoint=endpoint(*endpoint_args, **endpoint_kwargs)))
 
     def _check_response(self, response):
         """
@@ -293,16 +289,20 @@ class BaseApi(object):
         :param response: requests Response object.
         """
         if response.status_code > 299 or response.status_code < 200:
-            log.debug("Received response code [%s] - headers: %s" % (response.status_code, str(response.headers)))
+            log.debug("Received response code [%s] - headers: %s" %
+                      (response.status_code, str(response.headers)))
             try:
                 _json = response.json()
                 err_type = _json.get("error", '')
                 if err_type == 'RecordNotFound':
-                    raise RecordNotFoundException(json.dumps(_json), response=response)
+                    raise RecordNotFoundException(json.dumps(_json),
+                                                  response=response)
                 elif err_type == "TooManyValues":
-                    raise TooManyValuesException(json.dumps(_json), response=response)
+                    raise TooManyValuesException(json.dumps(_json),
+                                                 response=response)
                 elif err_type == "invalid" and response.status_code == 422:
-                    raise SearchResponseLimitExceeded(json.dumps(_json), response=response)
+                    raise SearchResponseLimitExceeded(json.dumps(_json),
+                                                      response=response)
                 else:
                     raise APIException(json.dumps(_json), response=response)
             except ValueError:
@@ -311,7 +311,8 @@ class BaseApi(object):
     def _build_url(self, endpoint, api_prefix=None):
         """ Build complete URL """
         if not issubclass(type(self), ChatApiBase) and not self.subdomain:
-            raise ZenpyException("subdomain is required when accessing the Zendesk API!")
+            raise ZenpyException(
+                "subdomain is required when accessing the Zendesk API!")
 
         endpoint.scheme = os.environ.get("ZENPY_FORCE_SCHEME", self.protocol)
         endpoint.netloc = self.base_url
@@ -338,7 +339,6 @@ class Api(BaseApi):
     This class also contains many methods for retrieving specific objects or collections of objects.
     These methods are called by the classes found in zenpy.lib.api_objects.
     """
-
     def __init__(self, config, object_type, endpoint=None):
         self.object_type = object_type
         self.endpoint = endpoint or EndpointFactory(as_plural(object_type))
@@ -346,7 +346,8 @@ class Api(BaseApi):
         self._object_mapping = ZendeskObjectMapping(self)
 
     def __call__(self, *args, **kwargs):
-        return self._query_zendesk(self.endpoint, self.object_type, *args, **kwargs)
+        return self._query_zendesk(self.endpoint, self.object_type, *args,
+                                   **kwargs)
 
     def _get_user(self, user_id):
         if int(user_id) < 0:
@@ -354,36 +355,51 @@ class Api(BaseApi):
         return self._query_zendesk(EndpointFactory('users'), 'user', id=user_id)
 
     def _get_users(self, user_ids):
-        return self._query_zendesk(endpoint=EndpointFactory('users'), object_type='user', ids=user_ids)
+        return self._query_zendesk(endpoint=EndpointFactory('users'),
+                                   object_type='user',
+                                   ids=user_ids)
 
     def _get_comment(self, comment_id):
-        return self._query_zendesk(endpoint=EndpointFactory('tickets').comments, object_type='comment', id=comment_id)
+        return self._query_zendesk(
+            endpoint=EndpointFactory('tickets').comments,
+            object_type='comment',
+            id=comment_id)
 
     def _get_organization(self, organization_id):
-        return self._query_zendesk(endpoint=EndpointFactory('organizations'), object_type='organization',
+        return self._query_zendesk(endpoint=EndpointFactory('organizations'),
+                                   object_type='organization',
                                    id=organization_id)
 
     def _get_group(self, group_id):
-        return self._query_zendesk(endpoint=EndpointFactory('groups'), object_type='group', id=group_id)
+        return self._query_zendesk(endpoint=EndpointFactory('groups'),
+                                   object_type='group',
+                                   id=group_id)
 
     def _get_brand(self, brand_id):
-        return self._query_zendesk(endpoint=EndpointFactory('brands'), object_type='brand', id=brand_id)
+        return self._query_zendesk(endpoint=EndpointFactory('brands'),
+                                   object_type='brand',
+                                   id=brand_id)
 
     def _get_ticket(self, ticket_id):
-        return self._query_zendesk(endpoint=EndpointFactory('tickets'), object_type='ticket', id=ticket_id)
+        return self._query_zendesk(endpoint=EndpointFactory('tickets'),
+                                   object_type='ticket',
+                                   id=ticket_id)
 
     def _get_sharing_agreements(self, sharing_agreement_ids):
         sharing_agreements = []
         for _id in sharing_agreement_ids:
-            sharing_agreement = self._query_zendesk(endpoint=EndpointFactory('sharing_agreements'),
-                                                    object_type='sharing_agreement',
-                                                    id=_id)
+            sharing_agreement = self._query_zendesk(
+                endpoint=EndpointFactory('sharing_agreements'),
+                object_type='sharing_agreement',
+                id=_id)
             if sharing_agreement:
                 sharing_agreements.append(sharing_agreement)
         return sharing_agreements
 
     def _get_problem(self, problem_id):
-        return self._query_zendesk(EndpointFactory('tickets'), 'ticket', id=problem_id)
+        return self._query_zendesk(EndpointFactory('tickets'),
+                                   'ticket',
+                                   id=problem_id)
 
     # This will be deprecated soon - https://developer.zendesk.com/rest_api/docs/web-portal/forums
     def _get_forum(self, forum_id):
@@ -391,48 +407,77 @@ class Api(BaseApi):
 
     def _get_restricted_brands(self, brand_ids):
         for brand_id in brand_ids:
-            yield self._query_zendesk(EndpointFactory('brands'), 'brand', id=brand_id)
+            yield self._query_zendesk(EndpointFactory('brands'),
+                                      'brand',
+                                      id=brand_id)
 
     def _get_restricted_organizations(self, organization_ids):
         for org_id in organization_ids:
-            yield self._query_zendesk(EndpointFactory("organizations"), 'organization', id=org_id)
+            yield self._query_zendesk(EndpointFactory("organizations"),
+                                      'organization',
+                                      id=org_id)
 
     def _get_ticket_fields(self, ticket_field_ids):
         for field_id in ticket_field_ids:
-            yield self._query_zendesk(EndpointFactory('ticket_fields'), 'ticket_field', id=field_id)
+            yield self._query_zendesk(EndpointFactory('ticket_fields'),
+                                      'ticket_field',
+                                      id=field_id)
 
     def _get_view(self, view_id):
-        return self._query_zendesk(EndpointFactory('views'), 'view', id=view_id)
+        return self._query_zendesk(EndpointFactory('views'),
+                                   'view',
+                                   id=view_id)
 
     def _get_topic(self, forum_topic_id):
-        return self._query_zendesk(EndpointFactory('help_centre').topics, 'topic', id=forum_topic_id)
+        return self._query_zendesk(EndpointFactory('help_centre').topics,
+                                   'topic',
+                                   id=forum_topic_id)
 
     def _get_category(self, category_id):
-        return self._query_zendesk(EndpointFactory('help_centre').categories, 'category', id=category_id)
+        return self._query_zendesk(EndpointFactory('help_centre').categories,
+                                   'category',
+                                   id=category_id)
 
     def _get_macro(self, macro_id):
-        return self._query_zendesk(EndpointFactory('macros'), 'macro', id=macro_id)
+        return self._query_zendesk(EndpointFactory('macros'),
+                                   'macro',
+                                   id=macro_id)
 
     def _get_sla(self, sla_id):
-        return self._query_zendesk(EndpointFactory('sla_policies'), 'sla_policy', id=sla_id)
+        return self._query_zendesk(EndpointFactory('sla_policies'),
+                                   'sla_policy',
+                                   id=sla_id)
 
     def _get_department(self, department_id):
-        return self._query_zendesk(EndpointFactory('chats').departments, 'department', id=department_id)
+        return self._query_zendesk(EndpointFactory('chats').departments,
+                                   'department',
+                                   id=department_id)
 
     def _get_zendesk_ticket(self, ticket_id):
-        return self._query_zendesk(EndpointFactory('tickets'), 'ticket', id=ticket_id)
+        return self._query_zendesk(EndpointFactory('tickets'),
+                                   'ticket',
+                                   id=ticket_id)
 
     def _get_user_segment(self, user_segment_id):
-        return self._query_zendesk(EndpointFactory('help_centre').user_segments, 'segment', id=user_segment_id)
+        return self._query_zendesk(
+            EndpointFactory('help_centre').user_segments,
+            'segment',
+            id=user_segment_id)
 
     def _get_section(self, section_id):
-        return self._query_zendesk(EndpointFactory('help_centre').sections, 'section', id=section_id)
+        return self._query_zendesk(EndpointFactory('help_centre').sections,
+                                   'section',
+                                   id=section_id)
 
     def _get_article(self, article_id):
-        return self._query_zendesk(EndpointFactory('help_centre').articles, 'article', id=article_id)
+        return self._query_zendesk(EndpointFactory('help_centre').articles,
+                                   'article',
+                                   id=article_id)
 
     def _get_custom_role(self, custom_role_id):
-        return self._query_zendesk(EndpointFactory('custom_agent_roles'), 'custom_role', id=custom_role_id)
+        return self._query_zendesk(EndpointFactory('custom_agent_roles'),
+                                   'custom_role',
+                                   id=custom_role_id)
 
     # TODO: Implement these methods when the NPS API is done
     def _get_delivery(self, delivery_id):
@@ -442,17 +487,21 @@ class Api(BaseApi):
         pass
 
     def _get_permission_group(self, permission_group_id):
-        return self._query_zendesk(EndpointFactory('help_centre').permission_groups, 'permission_group', id=permission_group_id)
+        return self._query_zendesk(
+            EndpointFactory('help_centre').permission_groups,
+            'permission_group',
+            id=permission_group_id)
 
     def _get_default_locale(self, locale_id):
-        return self._query_zendesk(EndpointFactory('locales'), 'locale', id=locale_id)
+        return self._query_zendesk(EndpointFactory('locales'),
+                                   'locale',
+                                   id=locale_id)
 
 
 class CRUDApi(Api):
     """
     CRUDApi supports create/update/delete operations
     """
-
     def create(self, api_objects, **kwargs):
         """
         Create (POST) one or more API objects. Before being submitted to Zendesk the object or objects
@@ -486,7 +535,6 @@ class CRUDExternalApi(CRUDApi):
     """
     The CRUDExternalApi exposes some extra methods for operating on external ids.
     """
-
     def update_by_external_id(self, api_objects):
         """
         Update (PUT) one or more API objects by external_id.
@@ -505,14 +553,14 @@ class CRUDExternalApi(CRUDApi):
         """
         if not isinstance(api_objects, Iterable):
             api_objects = [api_objects]
-        return CRUDRequest(self).delete(api_objects, destroy_many_external=True)
+        return CRUDRequest(self).delete(api_objects,
+                                        destroy_many_external=True)
 
 
 class SuspendedTicketApi(Api):
     """
     The SuspendedTicketApi adds some SuspendedTicket specific functionality
     """
-
     def recover(self, tickets):
         """
         Recover (PUT) one or more SuspendedTickets.
@@ -534,7 +582,6 @@ class TaggableApi(Api):
     """
     TaggableApi supports getting, setting, adding and deleting tags.
     """
-
     def add_tags(self, id, tags):
         """
         Add (PUT) one or more tags.
@@ -574,7 +621,6 @@ class RateableApi(Api):
     """
     Supports rating with a SatisfactionRating
     """
-
     def rate(self, id, rating):
         """
         Add (POST) a satisfaction rating.
@@ -589,7 +635,6 @@ class IncrementalApi(Api):
     """
     IncrementalApi supports the incremental endpoint.
     """
-
     def incremental(self, start_time, include=None, per_page=None):
         """
         Retrieve bulk data from the incremental API.
@@ -605,7 +650,6 @@ class ChatIncrementalApi(Api):
     """
     ChatIncrementalApi supports the chat incremental endpoint.
     """
-
     def incremental(self, start_time, **kwargs):
         """
         Retrieve bulk data from the chat incremental API.
@@ -614,14 +658,18 @@ class ChatIncrementalApi(Api):
             <https://developer.zendesk.com/rest_api/docs/chat/incremental_export#usage-notes-resource-expansion>`__.
         :param start_time: The time of the oldest object you are interested in.
         """
-        return self._query_zendesk(self.endpoint.incremental, self.object_type, start_time=start_time, **kwargs)
+        return self._query_zendesk(self.endpoint.incremental,
+                                   self.object_type,
+                                   start_time=start_time,
+                                   **kwargs)
 
 
 class UserIdentityApi(Api):
     def __init__(self, config):
-        super(UserIdentityApi, self).__init__(config,
-                                              object_type='identity',
-                                              endpoint=EndpointFactory('users').identities)
+        super(UserIdentityApi,
+              self).__init__(config,
+                             object_type='identity',
+                             endpoint=EndpointFactory('users').identities)
 
     @extract_id(User, Identity)
     def show(self, user, identity):
@@ -681,9 +729,10 @@ class UserIdentityApi(Api):
         :param identity: Identity id or object
         :return: requests Response object
         """
-        return UserIdentityRequest(self).put(self.endpoint.request_verification,
-                                             user_id=user,
-                                             identity_id=identity)
+        return UserIdentityRequest(self).put(
+            self.endpoint.request_verification,
+            user_id=user,
+            identity_id=identity)
 
     @extract_id(User, Identity)
     def verify(self, user, identity):
@@ -712,9 +761,10 @@ class UserIdentityApi(Api):
 
 class UserSearchApi(Api):
     def __init__(self, config):
-        super(UserSearchApi, self).__init__(config,
-                                              object_type='user',
-                                              endpoint=EndpointFactory('users').search)
+        super(UserSearchApi,
+              self).__init__(config,
+                             object_type='user',
+                             endpoint=EndpointFactory('users').search)
 
     def __call__(self, query=None, external_id=None):
         """
@@ -748,7 +798,6 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
     """
     The UserApi adds some User specific functionality
     """
-
     def __init__(self, config):
         super(UserApi, self).__init__(config, object_type='user')
         self.identities = UserIdentityApi(config)
@@ -763,7 +812,10 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param user: User object or id
         """
-        return self._query_zendesk(self.endpoint.groups, 'group', id=user, include=include)
+        return self._query_zendesk(self.endpoint.groups,
+                                   'group',
+                                   id=user,
+                                   include=include)
 
     @extract_id(User)
     def organizations(self, user, include=None):
@@ -774,7 +826,10 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param user: User object or id
         """
-        return self._query_zendesk(self.endpoint.organizations, 'organization', id=user, include=include)
+        return self._query_zendesk(self.endpoint.organizations,
+                                   'organization',
+                                   id=user,
+                                   include=include)
 
     @extract_id(User)
     def requested(self, user, include=None):
@@ -785,7 +840,10 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param user: User object or id
         """
-        return self._query_zendesk(self.endpoint.requested, 'ticket', id=user, include=include)
+        return self._query_zendesk(self.endpoint.requested,
+                                   'ticket',
+                                   id=user,
+                                   include=include)
 
     @extract_id(User)
     def cced(self, user, include=None):
@@ -796,7 +854,10 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param user: User object or id
         """
-        return self._query_zendesk(self.endpoint.cced, 'ticket', id=user, include=include)
+        return self._query_zendesk(self.endpoint.cced,
+                                   'ticket',
+                                   id=user,
+                                   include=include)
 
     @extract_id(User)
     def assigned(self, user, include=None):
@@ -807,7 +868,10 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param user: User object or id
         """
-        return self._query_zendesk(self.endpoint.assigned, 'ticket', id=user, include=include)
+        return self._query_zendesk(self.endpoint.assigned,
+                                   'ticket',
+                                   id=user,
+                                   include=include)
 
     @extract_id(User)
     def group_memberships(self, user, include=None):
@@ -818,7 +882,10 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param user: User object or id
         """
-        return self._query_zendesk(self.endpoint.group_memberships, 'group_membership', id=user, include=include)
+        return self._query_zendesk(self.endpoint.group_memberships,
+                                   'group_membership',
+                                   id=user,
+                                   include=include)
 
     def requests(self, **kwargs):
         return self._query_zendesk(self.endpoint.requests, 'request', **kwargs)
@@ -831,7 +898,9 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
         :param user: User object or id
         :return: UserRelated
         """
-        return self._query_zendesk(self.endpoint.related, 'user_related', id=user)
+        return self._query_zendesk(self.endpoint.related,
+                                   'user_related',
+                                   id=user)
 
     def me(self, include=None):
         """
@@ -860,7 +929,9 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
 
         :param user: User object or id
         """
-        return self._query_zendesk(self.endpoint.user_fields, 'user_field', id=user)
+        return self._query_zendesk(self.endpoint.user_fields,
+                                   'user_field',
+                                   id=user)
 
     @extract_id(User)
     def organization_memberships(self, user):
@@ -869,7 +940,9 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
 
         :param user: User object or id
         """
-        return self._query_zendesk(self.endpoint.organization_memberships, 'organization_membership', id=user)
+        return self._query_zendesk(self.endpoint.organization_memberships,
+                                   'organization_membership',
+                                   id=user)
 
     def create_or_update(self, users):
         """
@@ -949,7 +1022,10 @@ class AttachmentApi(Api):
         :return: :class:`Upload` object containing a token and other information see
             Zendesk API `Reference <https://developer.zendesk.com/rest_api/docs/core/attachments#uploading-files>`__.
         """
-        return UploadRequest(self).post(fp, token=token, target_name=target_name, content_type=content_type)
+        return UploadRequest(self).post(fp,
+                                        token=token,
+                                        target_name=target_name,
+                                        content_type=content_type)
 
     def download(self, attachment_id, destination):
         """
@@ -979,9 +1055,10 @@ class EndUserApi(CRUDApi):
     """
     EndUsers can only update.
     """
-
     def __init__(self, config):
-        super(EndUserApi, self).__init__(config, object_type='user', endpoint=EndpointFactory('end_user'))
+        super(EndUserApi, self).__init__(config,
+                                         object_type='user',
+                                         endpoint=EndpointFactory('end_user'))
 
     def __call__(self, *args, **kwargs):
         raise ZenpyException("EndUserApi is not callable!")
@@ -999,11 +1076,14 @@ class EndUserApi(CRUDApi):
 
 class OrganizationApi(TaggableApi, IncrementalApi, CRUDExternalApi):
     def __init__(self, config):
-        super(OrganizationApi, self).__init__(config, object_type='organization')
+        super(OrganizationApi, self).__init__(config,
+                                              object_type='organization')
 
     @extract_id(Organization)
     def users(self, organization, include=None):
-        return self._get(self._build_url(self.endpoint.users(id=organization, include=include)))
+        return self._get(
+            self._build_url(
+                self.endpoint.users(id=organization, include=include)))
 
     @extract_id(Organization)
     def organization_fields(self, organization):
@@ -1012,7 +1092,9 @@ class OrganizationApi(TaggableApi, IncrementalApi, CRUDExternalApi):
 
         :param organization: Organization object or id
         """
-        return self._query_zendesk(self.endpoint.organization_fields, 'organization_field', id=organization)
+        return self._query_zendesk(self.endpoint.organization_fields,
+                                   'organization_field',
+                                   id=organization)
 
     @extract_id(Organization)
     def organization_memberships(self, organization):
@@ -1021,7 +1103,9 @@ class OrganizationApi(TaggableApi, IncrementalApi, CRUDExternalApi):
 
         :param organization: Organization object or id
         """
-        return self._query_zendesk(self.endpoint.organization_memberships, 'organization_membership', id=organization)
+        return self._query_zendesk(self.endpoint.organization_memberships,
+                                   'organization_membership',
+                                   id=organization)
 
     def external(self, external_id, include=None):
         """
@@ -1031,7 +1115,10 @@ class OrganizationApi(TaggableApi, IncrementalApi, CRUDExternalApi):
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param external_id: external id of organization
         """
-        return self._query_zendesk(self.endpoint.external, 'organization', id=external_id, include=include)
+        return self._query_zendesk(self.endpoint.external,
+                                   'organization',
+                                   id=external_id,
+                                   include=include)
 
     def requests(self, **kwargs):
         return self._query_zendesk(self.endpoint.requests, 'request', **kwargs)
@@ -1052,9 +1139,9 @@ class OrganizationMembershipApi(CRUDApi):
     """
     The OrganizationMembershipApi allows the creation and deletion of Organization Memberships
     """
-
     def __init__(self, config):
-        super(OrganizationMembershipApi, self).__init__(config, object_type='organization_membership')
+        super(OrganizationMembershipApi,
+              self).__init__(config, object_type='organization_membership')
 
     def update(self, items, **kwargs):
         raise ZenpyException("You cannot update Organization Memberships!")
@@ -1062,7 +1149,8 @@ class OrganizationMembershipApi(CRUDApi):
 
 class OrganizationFieldsApi(CRUDApi):
     def __init__(self, config):
-        super(OrganizationFieldsApi, self).__init__(config, object_type='organization_field')
+        super(OrganizationFieldsApi,
+              self).__init__(config, object_type='organization_field')
 
     @extract_id(OrganizationField)
     def reorder(self, organization_fields):
@@ -1076,7 +1164,8 @@ class OrganizationFieldsApi(CRUDApi):
 
 class SatisfactionRatingApi(Api):
     def __init__(self, config):
-        super(SatisfactionRatingApi, self).__init__(config, object_type='satisfaction_rating')
+        super(SatisfactionRatingApi,
+              self).__init__(config, object_type='satisfaction_rating')
 
     @extract_id(Ticket)
     def create(self, ticket, satisfaction_rating):
@@ -1086,7 +1175,8 @@ class SatisfactionRatingApi(Api):
         :param ticket: Ticket object or id
         :param satisfaction_rating: SatisfactionRating object.
         """
-        return SatisfactionRatingRequest(self).post(ticket, satisfaction_rating)
+        return SatisfactionRatingRequest(self).post(ticket,
+                                                    satisfaction_rating)
 
 
 class MacroApi(CRUDApi):
@@ -1109,7 +1199,6 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
     """
     The TicketApi adds some Ticket specific functionality
     """
-
     def __init__(self, config):
         super(TicketApi, self).__init__(config, object_type='ticket')
 
@@ -1122,13 +1211,19 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param organization: Organization object or id
         """
-        return self._query_zendesk(self.endpoint.organizations, 'ticket', id=organization, include=include)
+        return self._query_zendesk(self.endpoint.organizations,
+                                   'ticket',
+                                   id=organization,
+                                   include=include)
 
     def recent(self, include=None):
         """
         Retrieve the most recent tickets
         """
-        return self._query_zendesk(self.endpoint.recent, 'ticket', id=None, include=include)
+        return self._query_zendesk(self.endpoint.recent,
+                                   'ticket',
+                                   id=None,
+                                   include=include)
 
     @extract_id(Ticket)
     def comments(self, ticket, include_inline_images=False):
@@ -1139,8 +1234,11 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         :param include_inline_images: Boolean. If `True`, inline image attachments will be
             returned in each comments' `attachments` field alongside non-inline attachments
         """
-        return self._query_zendesk(self.endpoint.comments, 'comment', id=ticket,
-                                   include_inline_images=repr(include_inline_images).lower())
+        return self._query_zendesk(
+            self.endpoint.comments,
+            'comment',
+            id=ticket,
+            include_inline_images=repr(include_inline_images).lower())
 
     @extract_id(Ticket, TicketComment)
     def comment_redact(self, ticket, comment, text):
@@ -1153,7 +1251,9 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         :return Comment: Ticket Comment object
         """
 
-        return self._put(self._build_url(self.endpoint.comments.redact(ticket, comment)), {'text': text})
+        return self._put(
+            self._build_url(self.endpoint.comments.redact(ticket, comment)),
+            {'text': text})
 
     def permanently_delete(self, tickets):
         """
@@ -1219,9 +1319,15 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         :param ticket: Ticket object or id
         """
         if ticket is not None:
-            return self._query_zendesk(self.endpoint.audits, 'ticket_audit', id=ticket, include=include)
+            return self._query_zendesk(self.endpoint.audits,
+                                       'ticket_audit',
+                                       id=ticket,
+                                       include=include)
         else:
-            return self._query_zendesk(self.endpoint.audits.cursor, 'ticket_audit', include=include, **kwargs)
+            return self._query_zendesk(self.endpoint.audits.cursor,
+                                       'ticket_audit',
+                                       include=include,
+                                       **kwargs)
 
     @extract_id(Ticket)
     def incidents(self, ticket):
@@ -1230,7 +1336,9 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
 
         :param ticket: Ticket object or id
         """
-        return self._query_zendesk(self.endpoint.incidents, 'ticket', id=ticket)
+        return self._query_zendesk(self.endpoint.incidents,
+                                   'ticket',
+                                   id=ticket)
 
     @extract_id(Ticket)
     def metrics(self, ticket):
@@ -1239,7 +1347,9 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
 
         :param ticket: Ticket object or id
         """
-        return self._query_zendesk(self.endpoint.metrics, 'ticket_metric', id=ticket)
+        return self._query_zendesk(self.endpoint.metrics,
+                                   'ticket_metric',
+                                   id=ticket)
 
     def metrics_incremental(self, start_time):
         """
@@ -1247,7 +1357,9 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
 
         :param start_time: time to retrieve events from.
         """
-        return self._query_zendesk(self.endpoint.metrics.incremental, 'ticket_metric_events', start_time=start_time)
+        return self._query_zendesk(self.endpoint.metrics.incremental,
+                                   'ticket_metric_events',
+                                   start_time=start_time)
 
     @extract_id(Ticket, Macro)
     def show_macro_effect(self, ticket, macro):
@@ -1264,8 +1376,7 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         return macro_effect
 
     @extract_id(Ticket)
-    def merge(self, target, source,
-              target_comment=None, source_comment=None):
+    def merge(self, target, source, target_comment=None, source_comment=None):
         """
         Merge the ticket(s) or ticket ID(s) in source into the target ticket.
 
@@ -1276,7 +1387,8 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
 
         :return: a JobStatus object
         """
-        return TicketMergeRequest(self).post(target, source,
+        return TicketMergeRequest(self).post(target,
+                                             source,
                                              target_comment=target_comment,
                                              source_comment=source_comment)
 
@@ -1304,26 +1416,29 @@ class SkipApi(CRUDApi):
 
 class TicketImportAPI(CRUDApi):
     def __init__(self, config):
-        super(TicketImportAPI, self).__init__(config,
-                                              object_type='ticket',
-                                              endpoint=EndpointFactory('ticket_import'))
+        super(TicketImportAPI,
+              self).__init__(config,
+                             object_type='ticket',
+                             endpoint=EndpointFactory('ticket_import'))
 
     def __call__(self, *args, **kwargs):
         raise ZenpyException("This endpoint cannot be called directly!")
 
     def update(self, items, **kwargs):
-        raise ZenpyException("You cannot update objects using ticket_import endpoint!")
+        raise ZenpyException(
+            "You cannot update objects using ticket_import endpoint!")
 
     def delete(self, api_objects, **kwargs):
-        raise ZenpyException("You cannot delete objects using the ticket_import endpoint!")
+        raise ZenpyException(
+            "You cannot delete objects using the ticket_import endpoint!")
 
 
 class TicketCustomFieldOptionApi(Api):
-
     def __init__(self, config):
-        super(TicketCustomFieldOptionApi, self).__init__(config,
-                                                         object_type='custom_field_option',
-                                                         endpoint=EndpointFactory('ticket_field_options'))
+        super(TicketCustomFieldOptionApi,
+              self).__init__(config,
+                             object_type='custom_field_option',
+                             endpoint=EndpointFactory('ticket_field_options'))
 
     @extract_id(TicketField, CustomFieldOption)
     def show(self, ticket_field, custom_field_option):
@@ -1333,7 +1448,8 @@ class TicketCustomFieldOptionApi(Api):
         :param ticket_field: TicketFieldOption or id
         :param custom_field_option: CustomFieldOption or id
         """
-        return self._query_zendesk(self.endpoint.show, 'custom_field_option', ticket_field, custom_field_option)
+        return self._query_zendesk(self.endpoint.show, 'custom_field_option',
+                                   ticket_field, custom_field_option)
 
     @extract_id(TicketField)
     def create_or_update(self, ticket_field, custom_field_option):
@@ -1345,7 +1461,8 @@ class TicketCustomFieldOptionApi(Api):
         :param ticket_field: TicketField object or id
         :param custom_field_option: CustomFieldOption object
         """
-        return TicketFieldOptionRequest(self).post(ticket_field, custom_field_option)
+        return TicketFieldOptionRequest(self).post(ticket_field,
+                                                   custom_field_option)
 
     @extract_id(TicketField, CustomFieldOption)
     def delete(self, ticket_field, custom_field_option):
@@ -1355,11 +1472,11 @@ class TicketCustomFieldOptionApi(Api):
         :param ticket_field: TicketField object or id.
         :param custom_field_option: CustomFieldOption
         """
-        return TicketFieldOptionRequest(self).delete(ticket_field, custom_field_option)
+        return TicketFieldOptionRequest(self).delete(ticket_field,
+                                                     custom_field_option)
 
 
 class TicketFieldApi(CRUDApi):
-
     def __init__(self, config):
         super(TicketFieldApi, self).__init__(config, 'ticket_field')
         self.options = TicketCustomFieldOptionApi(config)
@@ -1416,9 +1533,10 @@ class VariantApi(Api):
 
 class DynamicContentApi(CRUDApi):
     def __init__(self, config):
-        super(DynamicContentApi, self).__init__(config,
-                                                object_type='item',
-                                                endpoint=EndpointFactory('dynamic_contents'))
+        super(DynamicContentApi,
+              self).__init__(config,
+                             object_type='item',
+                             endpoint=EndpointFactory('dynamic_contents'))
         self.variants = VariantApi(config, endpoint=self.endpoint.variants)
 
 
@@ -1468,7 +1586,9 @@ class RequestAPI(CRUDApi):
         """
         Return comments for request
         """
-        return self._query_zendesk(self.endpoint.comments, 'comment', id=request_id)
+        return self._query_zendesk(self.endpoint.comments,
+                                   'comment',
+                                   id=request_id)
 
     def delete(self, api_objects, **kwargs):
         raise ZenpyException("You cannot delete requests!")
@@ -1479,12 +1599,14 @@ class RequestAPI(CRUDApi):
         <https://developer.zendesk.com/rest_api/docs/core/requests#searching-requests>`__ for more information on the
         syntax.
         """
-        return self._query_zendesk(self.endpoint.search, 'request', *args, **kwargs)
+        return self._query_zendesk(self.endpoint.search, 'request', *args,
+                                   **kwargs)
 
 
 class SharingAgreementAPI(CRUDApi):
     def __init__(self, config):
-        super(SharingAgreementAPI, self).__init__(config, object_type='sharing_agreement')
+        super(SharingAgreementAPI,
+              self).__init__(config, object_type='sharing_agreement')
 
 
 class GroupApi(CRUDApi):
@@ -1493,7 +1615,8 @@ class GroupApi(CRUDApi):
 
     @extract_id(Group)
     def users(self, group, include=None):
-        return self._get(self._build_url(self.endpoint.users(id=group, include=include)))
+        return self._get(
+            self._build_url(self.endpoint.users(id=group, include=include)))
 
     @extract_id(Group)
     def memberships(self, group, include=None):
@@ -1504,7 +1627,9 @@ class GroupApi(CRUDApi):
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param group: Group object or id
         """
-        return self._get(self._build_url(self.endpoint.memberships(id=group, include=include)))
+        return self._get(
+            self._build_url(
+                self.endpoint.memberships(id=group, include=include)))
 
     @extract_id(Group)
     def memberships_assignable(self, group, include=None):
@@ -1515,7 +1640,10 @@ class GroupApi(CRUDApi):
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param group: Group object or id
         """
-        return self._get(self._build_url(self.endpoint.memberships_assignable(id=group, include=include)))
+        return self._get(
+            self._build_url(
+                self.endpoint.memberships_assignable(id=group,
+                                                     include=include)))
 
 
 class ViewApi(CRUDApi):
@@ -1526,14 +1654,16 @@ class ViewApi(CRUDApi):
         """
         Return all active views.
         """
-        return self._get(self._build_url(self.endpoint.active(include=include)))
+        return self._get(self._build_url(
+            self.endpoint.active(include=include)))
 
     def compact(self, include=None):
         """
         Return compact views - See: Zendesk API `Reference
         <https://developer.zendesk.com/rest_api/docs/core/views#list-views---compact>`__
         """
-        return self._get(self._build_url(self.endpoint.compact(include=include)))
+        return self._get(
+            self._build_url(self.endpoint.compact(include=include)))
 
     @extract_id(View)
     def execute(self, view, include=None):
@@ -1544,7 +1674,8 @@ class ViewApi(CRUDApi):
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param view: View or view id
         """
-        return self._get(self._build_url(self.endpoint.execute(id=view, include=include)))
+        return self._get(
+            self._build_url(self.endpoint.execute(id=view, include=include)))
 
     @extract_id(View)
     def tickets(self, view, include=None):
@@ -1555,7 +1686,8 @@ class ViewApi(CRUDApi):
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param view: View or view id
         """
-        return self._get(self._build_url(self.endpoint.tickets(id=view, include=include)))
+        return self._get(
+            self._build_url(self.endpoint.tickets(id=view, include=include)))
 
     @extract_id(View)
     def count(self, view, include=None):
@@ -1566,7 +1698,8 @@ class ViewApi(CRUDApi):
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param view: View or view id
         """
-        return self._get(self._build_url(self.endpoint.count(id=view, include=include)))
+        return self._get(
+            self._build_url(self.endpoint.count(id=view, include=include)))
 
     @extract_id(View)
     def count_many(self, views, include=None):
@@ -1577,7 +1710,8 @@ class ViewApi(CRUDApi):
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param views: iterable of View or view ids
         """
-        return self._get(self._build_url(self.endpoint(count_many=views, include=include)))
+        return self._get(
+            self._build_url(self.endpoint(count_many=views, include=include)))
 
     @extract_id(View)
     def export(self, view, include=None):
@@ -1589,7 +1723,8 @@ class ViewApi(CRUDApi):
         :param view: View or view id
         :return:
         """
-        return self._get(self._build_url(self.endpoint.export(id=view, include=include)))
+        return self._get(
+            self._build_url(self.endpoint.export(id=view, include=include)))
 
     def search(self, *args, **kwargs):
         """
@@ -1598,7 +1733,8 @@ class ViewApi(CRUDApi):
         :param args: query is the only accepted arg.
         :param kwargs: search parameters
         """
-        return self._get(self._build_url(self.endpoint.search(*args, **kwargs)))
+        return self._get(self._build_url(self.endpoint.search(*args,
+                                                              **kwargs)))
 
     # TODO: https://github.com/facetoe/zenpy/issues/123
     def _get_sla(self, sla_id):
@@ -1607,7 +1743,8 @@ class ViewApi(CRUDApi):
 
 class GroupMembershipApi(CRUDApi):
     def __init__(self, config):
-        super(GroupMembershipApi, self).__init__(config, object_type='group_membership')
+        super(GroupMembershipApi,
+              self).__init__(config, object_type='group_membership')
 
     def update(self, api_objects, **kwargs):
         raise ZenpyException("Cannot update GroupMemberships")
@@ -1626,7 +1763,9 @@ class GroupMembershipApi(CRUDApi):
         :param user: User object or id
         :param group_membership: GroupMembership object or id
         """
-        return self._put(self._build_url(self.endpoint.make_default(user, group_membership)), payload={})
+        return self._put(self._build_url(
+            self.endpoint.make_default(user, group_membership)),
+                         payload={})
 
 
 class JiraLinkApi(CRUDApi):
@@ -1665,7 +1804,8 @@ class SlaPolicyApi(CRUDApi):
 
 class RecipientAddressApi(CRUDApi):
     def __init__(self, config):
-        super(RecipientAddressApi, self).__init__(config, object_type='recipient_address')
+        super(RecipientAddressApi,
+              self).__init__(config, object_type='recipient_address')
 
 
 class ChatApiBase(Api):
@@ -1673,7 +1813,6 @@ class ChatApiBase(Api):
     Implements most generic ChatApi functionality. Most if the actual work is delegated to
     Request and Response handlers.
     """
-
     def __init__(self, config, endpoint, request_handler=None):
         super(ChatApiBase, self).__init__(config,
                                           object_type='chat',
@@ -1682,19 +1821,15 @@ class ChatApiBase(Api):
         self.subdomain = ''
         self._request_handler = request_handler or ChatApiRequest
         self._object_mapping = ChatObjectMapping(self)
-        self._response_handlers = (
-            DeleteResponseHandler,
-            ChatSearchResponseHandler,
-            ChatResponseHandler,
-            AccountResponseHandler,
-            AgentResponseHandler,
-            VisitorResponseHandler,
-            ShortcutResponseHandler,
-            TriggerResponseHandler,
-            BanResponseHandler,
-            DepartmentResponseHandler,
-            GoalResponseHandler
-        )
+        self._response_handlers = (DeleteResponseHandler,
+                                   ChatSearchResponseHandler,
+                                   ChatResponseHandler, AccountResponseHandler,
+                                   AgentResponseHandler,
+                                   VisitorResponseHandler,
+                                   ShortcutResponseHandler,
+                                   TriggerResponseHandler, BanResponseHandler,
+                                   DepartmentResponseHandler,
+                                   GoalResponseHandler)
 
     def create(self, *args, **kwargs):
         return self._request_handler(self).post(*args, **kwargs)
@@ -1724,9 +1859,13 @@ class ChatApi(ChatApiBase, ChatIncrementalApi):
     def __init__(self, config, endpoint):
         super(ChatApi, self).__init__(config, endpoint=endpoint)
 
-        self.accounts = ChatApiBase(config, endpoint.account, request_handler=AccountRequest)
+        self.accounts = ChatApiBase(config,
+                                    endpoint.account,
+                                    request_handler=AccountRequest)
         self.agents = AgentApi(config, endpoint.agents)
-        self.visitors = ChatApiBase(config, endpoint.visitors, request_handler=VisitorRequest)
+        self.visitors = ChatApiBase(config,
+                                    endpoint.visitors,
+                                    request_handler=VisitorRequest)
         self.shortcuts = ChatApiBase(config, endpoint.shortcuts)
         self.triggers = ChatApiBase(config, endpoint.triggers)
         self.bans = ChatApiBase(config, endpoint.bans)
@@ -1741,21 +1880,26 @@ class ChatApi(ChatApiBase, ChatIncrementalApi):
 
 class HelpCentreApiBase(Api):
     def __init__(self, config, endpoint, object_type):
-        super(HelpCentreApiBase, self).__init__(config, object_type=object_type, endpoint=endpoint)
+        super(HelpCentreApiBase, self).__init__(config,
+                                                object_type=object_type,
+                                                endpoint=endpoint)
 
-        self._response_handlers = (MissingTranslationHandler,) + self._response_handlers
+        self._response_handlers = (
+            MissingTranslationHandler, ) + self._response_handlers
 
         self._object_mapping = HelpCentreObjectMapping(self)
         self.locale = ''
 
     def _process_response(self, response, object_mapping=None):
         endpoint_path = get_endpoint_path(self, response)
-        if (endpoint_path.startswith('/help_center') or endpoint_path.startswith('/community')
+        if (endpoint_path.startswith('/help_center')
+                or endpoint_path.startswith('/community')
                 or endpoint_path.startswith('/guide')):
             object_mapping = self._object_mapping
         else:
             object_mapping = ZendeskObjectMapping(self)
-        return super(HelpCentreApiBase, self)._process_response(response, object_mapping)
+        return super(HelpCentreApiBase,
+                     self)._process_response(response, object_mapping)
 
     def _build_url(self, endpoint):
         return super(HelpCentreApiBase, self)._build_url(endpoint)
@@ -1764,37 +1908,49 @@ class HelpCentreApiBase(Api):
 class TranslationApi(Api):
     @extract_id(Article, Section, Category)
     def translations(self, help_centre_object):
-        return self._query_zendesk(self.endpoint.translations, object_type='translation', id=help_centre_object)
+        return self._query_zendesk(self.endpoint.translations,
+                                   object_type='translation',
+                                   id=help_centre_object)
 
     @extract_id(Article, Section, Category)
     def missing_translations(self, help_centre_object):
-        return self._query_zendesk(self.endpoint.missing_translations, object_type='translation', id=help_centre_object)
+        return self._query_zendesk(self.endpoint.missing_translations,
+                                   object_type='translation',
+                                   id=help_centre_object)
 
     @extract_id(Article, Section, Category)
     def create_translation(self, help_centre_object, translation):
-        return TranslationRequest(self).post(self.endpoint.create_translation, help_centre_object, translation)
+        return TranslationRequest(self).post(self.endpoint.create_translation,
+                                             help_centre_object, translation)
 
     @extract_id(Article, Section, Category)
     def update_translation(self, help_centre_object, translation):
-        return TranslationRequest(self).put(self.endpoint.update_translation, help_centre_object, translation)
+        return TranslationRequest(self).put(self.endpoint.update_translation,
+                                            help_centre_object, translation)
 
     @extract_id(Translation)
     def delete_translation(self, translation):
-        return TranslationRequest(self).delete(self.endpoint.delete_translation, translation)
+        return TranslationRequest(self).delete(
+            self.endpoint.delete_translation, translation)
 
 
 class SubscriptionApi(Api):
     @extract_id(Article, Section, Post, Topic)
     def subscriptions(self, help_centre_object):
-        return self._query_zendesk(self.endpoint.subscriptions, object_type='subscriptions', id=help_centre_object)
+        return self._query_zendesk(self.endpoint.subscriptions,
+                                   object_type='subscriptions',
+                                   id=help_centre_object)
 
     @extract_id(Article, Section, Post, Topic)
     def create_subscription(self, help_centre_object, subscription):
-        return SubscriptionRequest(self).post(self.endpoint.subscriptions, help_centre_object, subscription)
+        return SubscriptionRequest(self).post(self.endpoint.subscriptions,
+                                              help_centre_object, subscription)
 
     @extract_id(Article, Section, Post, Topic, Subscription)
     def delete_subscription(self, help_centre_object, subscription):
-        return SubscriptionRequest(self).delete(self.endpoint.subscriptions_delete, help_centre_object, subscription)
+        return SubscriptionRequest(self).delete(
+            self.endpoint.subscriptions_delete, help_centre_object,
+            subscription)
 
 
 class VoteApi(Api):
@@ -1817,21 +1973,25 @@ class VoteApi(Api):
 class VoteCommentApi(Api):
     @extract_id(Article, Post, Comment)
     def comment_votes(self, help_centre_object, comment):
-        url = self._build_url(self.endpoint.comment_votes(help_centre_object, comment))
+        url = self._build_url(
+            self.endpoint.comment_votes(help_centre_object, comment))
         return self._get(url)
 
     @extract_id(Article, Post, Comment)
     def vote_comment_up(self, help_centre_object, comment):
-        url = self._build_url(self.endpoint.comment_votes.up(help_centre_object, comment))
+        url = self._build_url(
+            self.endpoint.comment_votes.up(help_centre_object, comment))
         return self._post(url, payload={})
 
     @extract_id(Article, Post, Comment)
     def vote_comment_down(self, help_centre_object, comment):
-        url = self._build_url(self.endpoint.comment_votes.down(help_centre_object, comment))
+        url = self._build_url(
+            self.endpoint.comment_votes.down(help_centre_object, comment))
         return self._post(url, payload={})
 
 
-class ArticleApi(HelpCentreApiBase, TranslationApi, SubscriptionApi, VoteApi, VoteCommentApi, IncrementalApi):
+class ArticleApi(HelpCentreApiBase, TranslationApi, SubscriptionApi, VoteApi,
+                 VoteCommentApi, IncrementalApi):
     @extract_id(Section)
     def create(self, section, article):
         """
@@ -1868,11 +2028,15 @@ class ArticleApi(HelpCentreApiBase, TranslationApi, SubscriptionApi, VoteApi, Vo
 
         :param article: Article ID or object
         """
-        return self._query_zendesk(self.endpoint.comments, object_type='comment', id=article)
+        return self._query_zendesk(self.endpoint.comments,
+                                   object_type='comment',
+                                   id=article)
 
     @extract_id(Article)
     def labels(self, article):
-        return self._query_zendesk(self.endpoint.labels, object_type='label', id=article)
+        return self._query_zendesk(self.endpoint.labels,
+                                   object_type='label',
+                                   id=article)
 
     @extract_id(Article)
     def show_translation(self, article, locale):
@@ -1900,46 +2064,63 @@ class CommentApi(HelpCentreApiBase):
                 "locale is required when creating comments - "
                 "https://developer.zendesk.com/rest_api/docs/help_center/comments#create-comment"
             )
-        return HelpdeskCommentRequest(self).post(self.endpoint.comments, article, comment)
+        return HelpdeskCommentRequest(self).post(self.endpoint.comments,
+                                                 article, comment)
 
     @extract_id(Article)
     def update(self, article, comment):
-        return HelpdeskCommentRequest(self).put(self.endpoint.comments_update, article, comment)
+        return HelpdeskCommentRequest(self).put(self.endpoint.comments_update,
+                                                article, comment)
 
     @extract_id(Article, Comment)
     def delete(self, article, comment):
-        return HelpdeskCommentRequest(self).delete(self.endpoint.comments_delete, article, comment)
+        return HelpdeskCommentRequest(self).delete(
+            self.endpoint.comments_delete, article, comment)
 
     @extract_id(User)
     def user_comments(self, user):
-        return self._query_zendesk(self.endpoint.user_comments, object_type='comment', id=user)
+        return self._query_zendesk(self.endpoint.user_comments,
+                                   object_type='comment',
+                                   id=user)
 
 
 class CategoryApi(HelpCentreApiBase, CRUDApi, TranslationApi):
     def articles(self, category_id):
-        return self._query_zendesk(self.endpoint.articles, 'article', id=category_id)
+        return self._query_zendesk(self.endpoint.articles,
+                                   'article',
+                                   id=category_id)
 
     def sections(self, category_id):
-        return self._query_zendesk(self.endpoint.sections, 'section', id=category_id)
+        return self._query_zendesk(self.endpoint.sections,
+                                   'section',
+                                   id=category_id)
 
 
 class AccessPolicyApi(Api):
     @extract_id(Topic, Section)
     def access_policies(self, help_centre_object):
-        return self._query_zendesk(self.endpoint.access_policies, 'access_policy', id=help_centre_object)
+        return self._query_zendesk(self.endpoint.access_policies,
+                                   'access_policy',
+                                   id=help_centre_object)
 
     @extract_id(Topic, Section)
     def update_access_policy(self, help_centre_object, access_policy):
-        return AccessPolicyRequest(self).put(self.endpoint.access_policies, help_centre_object, access_policy)
+        return AccessPolicyRequest(self).put(self.endpoint.access_policies,
+                                             help_centre_object, access_policy)
 
 
-class SectionApi(HelpCentreApiBase, CRUDApi, TranslationApi, SubscriptionApi, AccessPolicyApi):
+class SectionApi(HelpCentreApiBase, CRUDApi, TranslationApi, SubscriptionApi,
+                 AccessPolicyApi):
     @extract_id(Section)
     def articles(self, section):
-        return self._query_zendesk(self.endpoint.articles, 'article', id=section)
+        return self._query_zendesk(self.endpoint.articles,
+                                   'article',
+                                   id=section)
 
     def create(self, section):
-        return CRUDRequest(self).post(section, create=True, id=section.category_id)
+        return CRUDRequest(self).post(section,
+                                      create=True,
+                                      id=section.category_id)
 
 
 class ArticleAttachmentApi(HelpCentreApiBase, SubscriptionApi):
@@ -1951,7 +2132,9 @@ class ArticleAttachmentApi(HelpCentreApiBase, SubscriptionApi):
         :param article: Numeric article id or :class:`Article` object.
         :return: Generator with all associated articles attachments.
         """
-        return self._query_zendesk(self.endpoint, 'article_attachment', id=article)
+        return self._query_zendesk(self.endpoint,
+                                   'article_attachment',
+                                   id=article)
 
     @extract_id(Article)
     def inline(self, article):
@@ -1963,7 +2146,9 @@ class ArticleAttachmentApi(HelpCentreApiBase, SubscriptionApi):
         :param article: Numeric article id or :class:`Article` object.
         :return: Generator with all associated inline attachments.
         """
-        return self._query_zendesk(self.endpoint.inline, 'article_attachment', id=article)
+        return self._query_zendesk(self.endpoint.inline,
+                                   'article_attachment',
+                                   id=article)
 
     @extract_id(Article)
     def block(self, article):
@@ -1975,14 +2160,23 @@ class ArticleAttachmentApi(HelpCentreApiBase, SubscriptionApi):
         :param article: Numeric article id or :class:`Article` object.
         :return: Generator with all associated block attachments.
         """
-        return self._query_zendesk(self.endpoint.block, 'article_attachment', id=article)
+        return self._query_zendesk(self.endpoint.block,
+                                   'article_attachment',
+                                   id=article)
 
     @extract_id(ArticleAttachment)
     def show(self, attachment):
-        return self._query_zendesk(self.endpoint, 'article_attachment', id=attachment)
+        return self._query_zendesk(self.endpoint,
+                                   'article_attachment',
+                                   id=attachment)
 
     @extract_id(Article)
-    def create(self, article, attachment, inline=False, file_name=None, content_type=None):
+    def create(self,
+               article,
+               attachment,
+               inline=False,
+               file_name=None,
+               content_type=None):
         """
         This function creates attachment attached to article.
 
@@ -2003,7 +2197,11 @@ class ArticleAttachmentApi(HelpCentreApiBase, SubscriptionApi):
                                                     file_name=file_name,
                                                     content_type=content_type)
 
-    def create_unassociated(self, attachment, inline=False, file_name=None, content_type=None):
+    def create_unassociated(self,
+                            attachment,
+                            inline=False,
+                            file_name=None,
+                            content_type=None):
         """
         You can use this endpoint for bulk imports.
         It lets you upload a file without associating it to an article until later.
@@ -2019,11 +2217,12 @@ class ArticleAttachmentApi(HelpCentreApiBase, SubscriptionApi):
         :param content_type: The content type of the file. `Example: image/png`, Zendesk can ignore it.
         :return: :class:`ArticleAttachment` object
         """
-        return HelpdeskAttachmentRequest(self).post(self.endpoint.create_unassociated,
-                                                    attachments=attachment,
-                                                    inline=inline,
-                                                    file_name=file_name,
-                                                    content_type=content_type)
+        return HelpdeskAttachmentRequest(self).post(
+            self.endpoint.create_unassociated,
+            attachments=attachment,
+            inline=inline,
+            file_name=file_name,
+            content_type=content_type)
 
     @extract_id(ArticleAttachment)
     def delete(self, article_attachment):
@@ -2033,7 +2232,8 @@ class ArticleAttachmentApi(HelpCentreApiBase, SubscriptionApi):
         :param article_attachment: :class:`ArticleAttachment` object or numeric article attachment id.
         :return: status_code == 204 on success
         """
-        return HelpdeskAttachmentRequest(self).delete(self.endpoint.delete, article_attachment)
+        return HelpdeskAttachmentRequest(self).delete(self.endpoint.delete,
+                                                      article_attachment)
 
     @extract_id(Article)
     def bulk_attachments(self, article, attachments):
@@ -2047,18 +2247,22 @@ class ArticleAttachmentApi(HelpCentreApiBase, SubscriptionApi):
         <https://developer.zendesk.com/rest_api/docs/help_center/articles#associate-attachments-in-bulk-to-article>`__
         :return:
         """
-        return HelpdeskAttachmentRequest(self).post(self.endpoint.bulk_attachments, article=article,
-                                                    attachments=attachments)
+        return HelpdeskAttachmentRequest(self).post(
+            self.endpoint.bulk_attachments,
+            article=article,
+            attachments=attachments)
 
 
 class LabelApi(HelpCentreApiBase):
     @extract_id(Article)
     def create(self, article, label):
-        return HelpCentreRequest(self).post(self.endpoint.create, article, label)
+        return HelpCentreRequest(self).post(self.endpoint.create, article,
+                                            label)
 
     @extract_id(Article, Label)
     def delete(self, article, label):
-        return HelpCentreRequest(self).delete(self.endpoint.delete, article, label)
+        return HelpCentreRequest(self).delete(self.endpoint.delete, article,
+                                              label)
 
 
 class TopicApi(HelpCentreApiBase, CRUDApi, SubscriptionApi):
@@ -2079,11 +2283,13 @@ class PostCommentApi(HelpCentreApiBase, VoteCommentApi):
 
     @extract_id(Post)
     def update(self, post, comment):
-        return PostCommentRequest(self).put(self.endpoint.update, post, comment)
+        return PostCommentRequest(self).put(self.endpoint.update, post,
+                                            comment)
 
     @extract_id(Post, Comment)
     def delete(self, post, comment):
-        return PostCommentRequest(self).delete(self.endpoint.delete, post, comment)
+        return PostCommentRequest(self).delete(self.endpoint.delete, post,
+                                               comment)
 
 
 class PostApi(HelpCentreApiBase, CRUDApi, SubscriptionApi, VoteApi):
@@ -2094,35 +2300,63 @@ class PostApi(HelpCentreApiBase, CRUDApi, SubscriptionApi, VoteApi):
 
 class UserSegmentApi(HelpCentreApiBase, CRUDApi):
     def applicable(self):
-        return self._query_zendesk(self.endpoint.applicable, object_type='user_segment')
+        return self._query_zendesk(self.endpoint.applicable,
+                                   object_type='user_segment')
 
     @extract_id(Section)
     def sections(self, section):
-        return self._query_zendesk(self.endpoint.sections, object_type='section', id=section)
+        return self._query_zendesk(self.endpoint.sections,
+                                   object_type='section',
+                                   id=section)
 
     @extract_id(Topic)
     def topics(self, topic):
-        return self._query_zendesk(self.endpoint.topics, object_type='topic', id=topic)
+        return self._query_zendesk(self.endpoint.topics,
+                                   object_type='topic',
+                                   id=topic)
 
 
 class PermissionGroupApi(HelpCentreApiBase, CRUDApi):
     pass
 
+
 class HelpCentreApi(HelpCentreApiBase):
     def __init__(self, config):
-        super(HelpCentreApi, self).__init__(config, endpoint=EndpointFactory('help_centre'), object_type='help_centre')
+        super(HelpCentreApi,
+              self).__init__(config,
+                             endpoint=EndpointFactory('help_centre'),
+                             object_type='help_centre')
 
-        self.articles = ArticleApi(config, self.endpoint.articles, object_type='article')
-        self.comments = CommentApi(config, self.endpoint.articles, object_type='comment')
-        self.sections = SectionApi(config, self.endpoint.sections, object_type='section')
-        self.categories = CategoryApi(config, self.endpoint.categories, object_type='category')
-        self.attachments = ArticleAttachmentApi(config, self.endpoint.attachments, object_type='article_attachment')
-        self.labels = LabelApi(config, self.endpoint.labels, object_type='label')
-        self.topics = TopicApi(config, self.endpoint.topics, object_type='topic')
+        self.articles = ArticleApi(config,
+                                   self.endpoint.articles,
+                                   object_type='article')
+        self.comments = CommentApi(config,
+                                   self.endpoint.articles,
+                                   object_type='comment')
+        self.sections = SectionApi(config,
+                                   self.endpoint.sections,
+                                   object_type='section')
+        self.categories = CategoryApi(config,
+                                      self.endpoint.categories,
+                                      object_type='category')
+        self.attachments = ArticleAttachmentApi(
+            config,
+            self.endpoint.attachments,
+            object_type='article_attachment')
+        self.labels = LabelApi(config,
+                               self.endpoint.labels,
+                               object_type='label')
+        self.topics = TopicApi(config,
+                               self.endpoint.topics,
+                               object_type='topic')
         self.posts = PostApi(config, self.endpoint.posts, object_type='post')
-        self.user_segments = UserSegmentApi(config, self.endpoint.user_segments, object_type='user_segment')
-        self.permission_groups = PermissionGroupApi(config, self.endpoint.permission_groups,
-                                                    object_type='permission_group')
+        self.user_segments = UserSegmentApi(config,
+                                            self.endpoint.user_segments,
+                                            object_type='user_segment')
+        self.permission_groups = PermissionGroupApi(
+            config,
+            self.endpoint.permission_groups,
+            object_type='permission_group')
 
     def __call__(self, *args, **kwargs):
         raise NotImplementedError("Cannot directly call the HelpCentreApi!")
@@ -2141,7 +2375,9 @@ class NpsApi(Api):
 
         :param start_time: time to retrieve events from.
         """
-        return self._query_zendesk(self.endpoint.recipients_incremental, 'recipients', start_time=start_time)
+        return self._query_zendesk(self.endpoint.recipients_incremental,
+                                   'recipients',
+                                   start_time=start_time)
 
     def responses_incremental(self, start_time):
         """
@@ -2149,12 +2385,16 @@ class NpsApi(Api):
 
         :param start_time: time to retrieve events from.
         """
-        return self._query_zendesk(self.endpoint.responses_incremental, 'responses', start_time=start_time)
+        return self._query_zendesk(self.endpoint.responses_incremental,
+                                   'responses',
+                                   start_time=start_time)
 
 
 class TalkApiBase(Api):
     def __init__(self, config, endpoint, object_type):
-        super(TalkApiBase, self).__init__(config, object_type=object_type, endpoint=endpoint)
+        super(TalkApiBase, self).__init__(config,
+                                          object_type=object_type,
+                                          endpoint=endpoint)
 
         self._object_mapping = TalkObjectMapping(self)
 
@@ -2164,15 +2404,29 @@ class TalkApiBase(Api):
 
 class TalkApi(TalkApiBase):
     def __init__(self, config):
-        super(TalkApi, self).__init__(config, endpoint=EndpointFactory('talk'), object_type='talk')
+        super(TalkApi, self).__init__(config,
+                                      endpoint=EndpointFactory('talk'),
+                                      object_type='talk')
 
-        self.current_queue_activity = StatsApi(config, self.endpoint.current_queue_activity,
-                                               object_type='current_queue_activity')
-        self.agents_activity = StatsApi(config, self.endpoint.agents_activity, object_type='agents_activity')
-        self.availability = AvailabilitiesApi(config, self.endpoint.availability, object_type='availability')
-        self.account_overview = StatsApi(config, self.endpoint.account_overview, object_type='account_overview')
-        self.phone_numbers = PhoneNumbersApi(config, self.endpoint.phone_numbers, object_type='phone_numbers')
-        self.agents_overview = StatsApi(config, self.endpoint.agents_overview, object_type='agents_overview')
+        self.current_queue_activity = StatsApi(
+            config,
+            self.endpoint.current_queue_activity,
+            object_type='current_queue_activity')
+        self.agents_activity = StatsApi(config,
+                                        self.endpoint.agents_activity,
+                                        object_type='agents_activity')
+        self.availability = AvailabilitiesApi(config,
+                                              self.endpoint.availability,
+                                              object_type='availability')
+        self.account_overview = StatsApi(config,
+                                         self.endpoint.account_overview,
+                                         object_type='account_overview')
+        self.phone_numbers = PhoneNumbersApi(config,
+                                             self.endpoint.phone_numbers,
+                                             object_type='phone_numbers')
+        self.agents_overview = StatsApi(config,
+                                        self.endpoint.agents_overview,
+                                        object_type='agents_overview')
 
     def __call__(self, *args, **kwargs):
         raise NotImplementedError("Cannot directly call the TalkApi!")
@@ -2180,17 +2434,23 @@ class TalkApi(TalkApiBase):
 
 class StatsApi(TalkApiBase):
     def __init__(self, config, endpoint, object_type):
-        super(StatsApi, self).__init__(config, object_type=object_type, endpoint=endpoint)
+        super(StatsApi, self).__init__(config,
+                                       object_type=object_type,
+                                       endpoint=endpoint)
 
 
 class AvailabilitiesApi(TalkApiBase):
     def __init__(self, config, endpoint, object_type):
-        super(AvailabilitiesApi, self).__init__(config, object_type=object_type, endpoint=endpoint)
+        super(AvailabilitiesApi, self).__init__(config,
+                                                object_type=object_type,
+                                                endpoint=endpoint)
 
 
 class PhoneNumbersApi(TalkApiBase):
     def __init__(self, config, endpoint, object_type):
-        super(PhoneNumbersApi, self).__init__(config, object_type=object_type, endpoint=endpoint)
+        super(PhoneNumbersApi, self).__init__(config,
+                                              object_type=object_type,
+                                              endpoint=endpoint)
 
 
 class CustomAgentRolesApi(CRUDApi):
@@ -2199,17 +2459,21 @@ class CustomAgentRolesApi(CRUDApi):
 
 class SearchApi(Api):
     def __init__(self, config):
-        super(SearchApi, self).__init__(config, object_type='results', endpoint=EndpointFactory('search'))
+        super(SearchApi, self).__init__(config,
+                                        object_type='results',
+                                        endpoint=EndpointFactory('search'))
         self._object_mapping = ZendeskObjectMapping(self)
 
     def __call__(self, *args, **kwargs):
-        return self._query_zendesk(self.endpoint, self.object_type, *args, **kwargs)
+        return self._query_zendesk(self.endpoint, self.object_type, *args,
+                                   **kwargs)
 
     def count(self, *args, **kwargs):
         """
         Returns results count only
         """
-        return self._query_zendesk(self.endpoint.count, 'search_count', *args, **kwargs)
+        return self._query_zendesk(self.endpoint.count, 'search_count', *args,
+                                   **kwargs)
 
 
 class UserFieldsApi(CRUDApi):

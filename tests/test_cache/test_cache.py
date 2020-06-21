@@ -8,7 +8,7 @@ from zenpy.lib.util import get_object_type
 
 class TestZenpyCache(TestCase):
     def setUp(self):
-        self.cache = ZenpyCache('LRUCache', 100)
+        self.cache = ZenpyCache("LRUCache", 100)
 
     def test_throws_cache_exception_on_invalid_object(self):
         with self.assertRaises(ZenpyCacheException):
@@ -48,7 +48,6 @@ class TestZenpyCache(TestCase):
 
 
 class TestCacheManager(TestCase):
-
     @classmethod
     def setUpClass(cls):
         cls.cache = ZenpyCacheManager()
@@ -61,7 +60,9 @@ class TestCacheManager(TestCase):
     def test_remove_from_cache(self):
         cache_key = 1
         zenpy_object = self.cache_item(id=cache_key)
-        self.assertIs(self.cache.get(get_object_type(zenpy_object), cache_key), zenpy_object)
+        self.assertIs(
+            self.cache.get(get_object_type(zenpy_object), cache_key), zenpy_object
+        )
         self.cache.delete(zenpy_object)
         self.assertIs(self.cache.get(get_object_type(zenpy_object), cache_key), None)
 
