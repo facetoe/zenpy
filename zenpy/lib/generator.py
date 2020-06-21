@@ -1,6 +1,5 @@
 from __future__ import division
 
-import collections
 import re
 from abc import abstractmethod
 from datetime import datetime, timedelta
@@ -180,12 +179,6 @@ class ZendeskResultGenerator(BaseResultGenerator):
         end_time = self._response_json.get('end_time', None)
         # If we are calling an incremental API, make sure to honour the restrictions
         if end_time:
-            # Incremental APIs return values in blocks of 1000 and the count value is
-            # decremented by 1000 for each block that is consumed. If we have < 1000
-            # then there is nothing left to retrieve.
-            if self._response_json.get('count', 0) < 1000:
-                raise StopIteration
-
             # We can't request updates from an incremental api if the
             # start_time value is less than 5 minutes in the future.
             if (datetime.fromtimestamp(int(end_time)) + timedelta(minutes=5)) > datetime.now():

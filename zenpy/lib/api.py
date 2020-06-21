@@ -588,7 +588,7 @@ class IncrementalApi(Api):
     IncrementalApi supports the incremental endpoint.
     """
 
-    def incremental(self, start_time, include=None):
+    def incremental(self, start_time, include=None, per_page=None):
         """
         Retrieve bulk data from the incremental API.
 
@@ -596,7 +596,7 @@ class IncrementalApi(Api):
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param start_time: The time of the oldest object you are interested in.
         """
-        return self._query_zendesk(self.endpoint.incremental, self.object_type, start_time=start_time, include=include)
+        return self._query_zendesk(self.endpoint.incremental, self.object_type, start_time=start_time, include=include, per_page=per_page)
 
 
 class ChatIncrementalApi(Api):
@@ -1183,7 +1183,7 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         """
         return self._get(self._build_url(self.endpoint.deleted()))
 
-    def events(self, start_time, include=None):
+    def events(self, start_time, include=None, per_page=None):
         """
         Retrieve TicketEvents
 
@@ -1191,7 +1191,7 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param start_time: time to retrieve events from.
         """
-        return self._query_zendesk(self.endpoint.events, 'ticket_event', start_time=start_time, include=include)
+        return self._query_zendesk(self.endpoint.events, 'ticket_event', start_time=start_time, include=include, per_page=per_page)
 
     @extract_id(Ticket)
     def audits(self, ticket=None, include=None, **kwargs):
