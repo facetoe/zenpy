@@ -349,6 +349,8 @@ class Api(BaseApi):
         return self._query_zendesk(self.endpoint, self.object_type, *args, **kwargs)
 
     def _get_user(self, user_id):
+        if int(user_id) < 0:
+            return None
         return self._query_zendesk(EndpointFactory('users'), 'user', id=user_id)
 
     def _get_users(self, user_ids):
