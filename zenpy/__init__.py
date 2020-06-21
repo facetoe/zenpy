@@ -24,7 +24,8 @@ from zenpy.lib.api import (
     GroupMembershipApi,
     HelpCentreApi,
     RecipientAddressApi,
-    NpsApi, TicketFieldApi,
+    NpsApi,
+    TicketFieldApi,
     TriggerApi,
     AutomationApi,
     DynamicContentApi,
@@ -32,9 +33,13 @@ from zenpy.lib.api import (
     BrandApi,
     TicketFormApi,
     OrganizationFieldsApi,
-    JiraLinkApi, SkipApi, TalkApi,
+    JiraLinkApi,
+    SkipApi,
+    TalkApi,
     CustomAgentRolesApi,
-    SearchApi, UserFieldsApi)
+    SearchApi,
+    UserFieldsApi,
+)
 
 from zenpy.lib.cache import ZenpyCache, ZenpyCacheManager
 from zenpy.lib.endpoint import EndpointFactory
@@ -43,8 +48,8 @@ from zenpy.lib.mapping import ZendeskObjectMapping
 
 log = logging.getLogger()
 
-__author__ = 'facetoe'
-__version__ = '2.0.10'
+__author__ = "facetoe"
+__version__ = "2.0.10"
 
 
 class Zenpy(object):
@@ -52,18 +57,21 @@ class Zenpy(object):
 
     DEFAULT_TIMEOUT = 60.0
 
-    def __init__(self, domain='zendesk.com',
-                 subdomain=None,
-                 email=None,
-                 token=None,
-                 oauth_token=None,
-                 password=None,
-                 session=None,
-                 timeout=None,
-                 ratelimit_budget=None,
-                 proactive_ratelimit=None,
-                 proactive_ratelimit_request_interval=10,
-                 disable_cache=False):
+    def __init__(
+        self,
+        domain="zendesk.com",
+        subdomain=None,
+        email=None,
+        token=None,
+        oauth_token=None,
+        password=None,
+        session=None,
+        timeout=None,
+        ratelimit_budget=None,
+        proactive_ratelimit=None,
+        proactive_ratelimit_request_interval=10,
+        disable_cache=False,
+    ):
         """
         Python Wrapper for the Zendesk API.
 
@@ -98,10 +106,14 @@ class Zenpy(object):
             subdomain=subdomain,
             session=session,
             timeout=timeout,
-            ratelimit=int(proactive_ratelimit) if proactive_ratelimit is not None else None,
-            ratelimit_budget=int(ratelimit_budget) if ratelimit_budget is not None else None,
+            ratelimit=int(proactive_ratelimit)
+            if proactive_ratelimit is not None
+            else None,
+            ratelimit_budget=int(ratelimit_budget)
+            if ratelimit_budget is not None
+            else None,
             ratelimit_request_interval=int(proactive_ratelimit_request_interval),
-            cache=self.cache
+            cache=self.cache,
         )
 
         self.users = UserApi(config)
@@ -112,38 +124,44 @@ class Zenpy(object):
         self.organization_memberships = OrganizationMembershipApi(config)
         self.organization_fields = OrganizationFieldsApi(config)
         self.tickets = TicketApi(config)
-        self.suspended_tickets = SuspendedTicketApi(config, object_type='suspended_ticket')
+        self.suspended_tickets = SuspendedTicketApi(
+            config, object_type="suspended_ticket"
+        )
         self.search = SearchApi(config)
-        self.topics = Api(config, object_type='topic')
+        self.topics = Api(config, object_type="topic")
         self.attachments = AttachmentApi(config)
-        self.brands = BrandApi(config, object_type='brand')
-        self.job_status = Api(config, object_type='job_status', endpoint=EndpointFactory('job_statuses'))
+        self.brands = BrandApi(config, object_type="brand")
+        self.job_status = Api(
+            config, object_type="job_status", endpoint=EndpointFactory("job_statuses")
+        )
         self.jira_links = JiraLinkApi(config)
-        self.tags = Api(config, object_type='tag')
+        self.tags = Api(config, object_type="tag")
         self.satisfaction_ratings = SatisfactionRatingApi(config)
         self.sharing_agreements = SharingAgreementAPI(config)
         self.skips = SkipApi(config)
-        self.activities = Api(config, object_type='activity')
+        self.activities = Api(config, object_type="activity")
         self.group_memberships = GroupMembershipApi(config)
         self.end_user = EndUserApi(config)
-        self.ticket_metrics = Api(config, object_type='ticket_metric')
-        self.ticket_metric_events = Api(config, object_type='ticket_metric_events')
+        self.ticket_metrics = Api(config, object_type="ticket_metric")
+        self.ticket_metric_events = Api(config, object_type="ticket_metric_events")
         self.ticket_fields = TicketFieldApi(config)
-        self.ticket_forms = TicketFormApi(config, object_type='ticket_form')
+        self.ticket_forms = TicketFormApi(config, object_type="ticket_form")
         self.ticket_import = TicketImportAPI(config)
         self.requests = RequestAPI(config)
-        self.chats = ChatApi(config, endpoint=EndpointFactory('chats'))
+        self.chats = ChatApi(config, endpoint=EndpointFactory("chats"))
         self.views = ViewApi(config)
         self.sla_policies = SlaPolicyApi(config)
         self.help_center = HelpCentreApi(config)
         self.recipient_addresses = RecipientAddressApi(config)
         self.nps = NpsApi(config)
-        self.triggers = TriggerApi(config, object_type='trigger')
-        self.automations = AutomationApi(config, object_type='automation')
+        self.triggers = TriggerApi(config, object_type="trigger")
+        self.automations = AutomationApi(config, object_type="automation")
         self.dynamic_content = DynamicContentApi(config)
-        self.targets = TargetApi(config, object_type='target')
+        self.targets = TargetApi(config, object_type="target")
         self.talk = TalkApi(config)
-        self.custom_agent_roles = CustomAgentRolesApi(config, object_type='custom_agent_role')
+        self.custom_agent_roles = CustomAgentRolesApi(
+            config, object_type="custom_agent_role"
+        )
 
     @staticmethod
     def http_adapter_kwargs():
@@ -156,8 +174,10 @@ class Zenpy(object):
             # in the Api._call_api() method.
             max_retries=Retry(
                 total=3,
-                status_forcelist=[r for r in Retry.RETRY_AFTER_STATUS_CODES if r != 429],
-                respect_retry_after_header=False
+                status_forcelist=[
+                    r for r in Retry.RETRY_AFTER_STATUS_CODES if r != 429
+                ],
+                respect_retry_after_header=False,
             )
         )
 
@@ -165,25 +185,26 @@ class Zenpy(object):
         if not session:
             session = requests.Session()
             # Workaround for possible race condition - https://github.com/kennethreitz/requests/issues/3661
-            session.mount('https://', HTTPAdapter(**self.http_adapter_kwargs()))
+            session.mount("https://", HTTPAdapter(**self.http_adapter_kwargs()))
 
-        if not hasattr(session, 'authorized') or not session.authorized:
+        if not hasattr(session, "authorized") or not session.authorized:
             # session is not an OAuth session that has been authorized, so authorize the session.
             if not password and not token and not oath_token:
-                raise ZenpyException("password, token or oauth_token are required! {}".format(locals()))
+                raise ZenpyException(
+                    "password, token or oauth_token are required! {}".format(locals())
+                )
             elif password and token:
-                raise ZenpyException("password and token "
-                                     "are mutually exclusive!")
+                raise ZenpyException("password and token " "are mutually exclusive!")
             if password:
                 session.auth = (email, password)
             elif token:
-                session.auth = ('%s/token' % email, token)
+                session.auth = ("%s/token" % email, token)
             elif oath_token:
-                session.headers.update({'Authorization': 'Bearer %s' % oath_token})
+                session.headers.update({"Authorization": "Bearer %s" % oath_token})
             else:
                 raise ZenpyException("Invalid arguments to _init_session()!")
 
-        headers = {'User-Agent': 'Zenpy/{}'.format(__version__)}
+        headers = {"User-Agent": "Zenpy/{}".format(__version__)}
         session.headers.update(headers)
         return session
 

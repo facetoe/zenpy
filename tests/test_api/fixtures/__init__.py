@@ -7,7 +7,11 @@ from unittest import TestCase
 from test_api import configure
 from zenpy.lib.api_objects import BaseObject
 from zenpy.lib.endpoint import basestring
-from zenpy.lib.exception import TooManyValuesException, ZenpyException, RecordNotFoundException
+from zenpy.lib.exception import (
+    TooManyValuesException,
+    ZenpyException,
+    RecordNotFoundException,
+)
 from zenpy.lib.generator import BaseResultGenerator
 
 
@@ -22,9 +26,9 @@ class ZenpyApiTestCase(TestCase):
         """
         Taken from BetamaxTestCase.
         """
-        cls = getattr(self, '__class__')
+        cls = getattr(self, "__class__")
         test = self._testMethodName
-        return '{0}.{1}'.format(cls.__name__, test)
+        return "{0}.{1}".format(cls.__name__, test)
 
     def assertInCache(self, zenpy_object):
         """ If an object should be cached, assert that it is """
@@ -106,7 +110,9 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
         super(ModifiableApiTestCase, self).tearDown()
         if self.created_objects:
             cassette_name = "{}-tearDown".format(self.generate_cassette_name())
-            with self.recorder.use_cassette(cassette_name=cassette_name, serialize_with='prettyjson'):
+            with self.recorder.use_cassette(
+                cassette_name=cassette_name, serialize_with="prettyjson"
+            ):
                 if len(self.created_objects) == 1:
                     self.delete_method(self.created_objects[0])
                 else:
@@ -124,17 +130,17 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
     @property
     def create_method(self):
         """ Return the method used for creating objects. """
-        return self.get_api_method('create')
+        return self.get_api_method("create")
 
     @property
     def update_method(self):
         """ Return the method used for updating objects. """
-        return self.get_api_method('update')
+        return self.get_api_method("update")
 
     @property
     def delete_method(self):
         """ Return the method used for deleting objects. """
-        return self.get_api_method('delete')
+        return self.get_api_method("delete")
 
     def get_api_method(self, method_name):
         """ Return the named method. If it doesn't exist, raise an Exception. """
@@ -171,7 +177,9 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
         zenpy_object = self.instantiate_zenpy_object(dummy=dummy)
         return self.create_method(zenpy_object)
 
-    def create_multiple_zenpy_objects(self, num_objects, wait_on_job_status=True, dummy=False):
+    def create_multiple_zenpy_objects(
+        self, num_objects, wait_on_job_status=True, dummy=False
+    ):
         """ Helper method for creating multiple Zenpy objects. """
         to_create = list()
         for i in range(num_objects):
@@ -193,7 +201,7 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
         obj_kwargs = self.object_kwargs.copy()
         for key in obj_kwargs:
             value = obj_kwargs[key]
-            if '{}' in value:
+            if "{}" in value:
                 if format_val is None:
                     print("Formatter found in object_kwargs but format_val is None!")
                 obj_kwargs[key] = value.format(format_val)
@@ -201,7 +209,9 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
         zenpy_object = self.ZenpyType(**obj_kwargs) if not dummy else None
         if zenpy_object:
             # Ensure creating a new object sets the passed attributes as dirty.
-            self.assertTrue(all(k in zenpy_object.to_dict(serialize=True) for k in obj_kwargs))
+            self.assertTrue(
+                all(k in zenpy_object.to_dict(serialize=True) for k in obj_kwargs)
+            )
         return zenpy_object
 
     def modify_object(self, zenpy_object):
@@ -215,11 +225,16 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
 
         new_kwargs = self.object_kwargs.copy()
         for attr_name in new_kwargs:
-            if isinstance(new_kwargs[attr_name], basestring) and attr_name not in self.ignore_update_kwargs:
+            if (
+                isinstance(new_kwargs[attr_name], basestring)
+                and attr_name not in self.ignore_update_kwargs
+            ):
                 new_kwargs[attr_name] += hash_of(new_kwargs[attr_name])
                 setattr(zenpy_object, attr_name, new_kwargs[attr_name])
-                self.assertTrue(attr_name in zenpy_object._dirty_attributes,
-                                msg="Object modification failed to set _dirty_attributes!")
+                self.assertTrue(
+                    attr_name in zenpy_object._dirty_attributes,
+                    msg="Object modification failed to set _dirty_attributes!",
+                )
         return zenpy_object, new_kwargs
 
     def verify_object_updated(self, new_kwargs, zenpy_object):
@@ -229,7 +244,9 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
         self.assertInCache(updated_object)
         for attr_name, attr in new_kwargs.items():
             if isinstance(attr, basestring):
-                self.assertEqual(getattr(updated_object, attr_name), new_kwargs[attr_name])
+                self.assertEqual(
+                    getattr(updated_object, attr_name), new_kwargs[attr_name]
+                )
                 self.assertCacheUpdated(updated_object, attr_name, attr)
         # Ensure that updating the object cleared the dirty attributes.
         self.assertFalse(updated_object._dirty_attributes)
@@ -237,9 +254,7 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
     def create_dummy_objects(self):
         """ Create some dummy objects for checking invalid types. """
         self.create_multiple_zenpy_objects(
-            num_objects=10,
-            wait_on_job_status=True,
-            dummy=True
+            num_objects=10, wait_on_job_status=True, dummy=True
         )
 
 
@@ -253,7 +268,9 @@ class MultipleCreateApiTestCase(ModifiableApiTestCase):
         self.create_and_verify_multiple_objects_creation(50)
 
     def test_full_objects_create(self):
-        self.create_and_verify_multiple_objects_creation(100)  # Maximum the endpoint supports
+        self.create_and_verify_multiple_objects_creation(
+            100
+        )  # Maximum the endpoint supports
 
     def test_raises_toomanyvaluesexception_create(self):
         with self.assertRaises(TooManyValuesException):
@@ -261,11 +278,12 @@ class MultipleCreateApiTestCase(ModifiableApiTestCase):
 
     def create_and_verify_multiple_objects_creation(self, num_objects):
         """ Generate Zenpy objects and ensure they are created correctly. """
-        with self.recorder.use_cassette(cassette_name="{}-create-multiple".format(self.generate_cassette_name()),
-                                        serialize_with='prettyjson'):
+        with self.recorder.use_cassette(
+            cassette_name="{}-create-multiple".format(self.generate_cassette_name()),
+            serialize_with="prettyjson",
+        ):
             job_status = self.create_multiple_zenpy_objects(
-                num_objects=num_objects,
-                wait_on_job_status=True
+                num_objects=num_objects, wait_on_job_status=True
             )
             self.assertEqual(len(job_status.results), num_objects)
             for zenpy_object in self.api(ids=[r.id for r in job_status.results]):
@@ -291,8 +309,10 @@ class SingleCreateApiTestCase(ModifiableApiTestCase):
 
     def create_and_verify_single_object_creation(self):
         """ Generate a single Zenpy object and ensure it is created correctly.  """
-        with self.recorder.use_cassette("{}-create-single".format(self.generate_cassette_name()),
-                                        serialize_with='prettyjson'):
+        with self.recorder.use_cassette(
+            "{}-create-single".format(self.generate_cassette_name()),
+            serialize_with="prettyjson",
+        ):
             zenpy_object = self.create_single_zenpy_object()
             self.assertIsInstance(zenpy_object, self.single_response_type)
             zenpy_object = self.unpack_object(zenpy_object)
@@ -314,15 +334,17 @@ class SingleDeleteApiTestCase(ModifiableApiTestCase):
 
     def test_single_delete_raises_recordnotfoundexception(self):
         cassette_name = "{}-recordnotfound-delete".format(self.generate_cassette_name())
-        with self.recorder.use_cassette(cassette_name, serialize_with='prettyjson'):
-            hopefully_not_real_id = 9223372036854775807  # This is the largest id that Zendesk will accept.
+        with self.recorder.use_cassette(cassette_name, serialize_with="prettyjson"):
+            hopefully_not_real_id = (
+                9223372036854775807  # This is the largest id that Zendesk will accept.
+            )
             with self.assertRaises(RecordNotFoundException):
                 self.delete_method(self.ZenpyType(id=hopefully_not_real_id))
 
     def create_and_verify_single_object_deletion(self):
         """ Generate a single Zenpy object and ensure it is deleted correctly.  """
         cassette_name = "{}-delete-single".format(self.generate_cassette_name())
-        with self.recorder.use_cassette(cassette_name, serialize_with='prettyjson'):
+        with self.recorder.use_cassette(cassette_name, serialize_with="prettyjson"):
             zenpy_object = self.create_single_zenpy_object()
             zenpy_object = self.unpack_object(zenpy_object)
             self.delete_method(zenpy_object)
@@ -340,7 +362,7 @@ class SingleUpdateApiTestCase(ModifiableApiTestCase):
 
     def test_single_update_raises_recordnotfoundexception(self):
         cassette_name = "{}-recordnotfound-update".format(self.generate_cassette_name())
-        with self.recorder.use_cassette(cassette_name, serialize_with='prettyjson'):
+        with self.recorder.use_cassette(cassette_name, serialize_with="prettyjson"):
             with self.assertRaises(RecordNotFoundException):
                 zenpy_object = self.instantiate_zenpy_object()
                 hopefully_not_real_id = 9223372036854775807  # This is the largest id that Zendesk will accept.
@@ -349,7 +371,9 @@ class SingleUpdateApiTestCase(ModifiableApiTestCase):
 
     def create_and_verify_single_object_update(self):
         cassette_name = "{}-update-single".format(self.generate_cassette_name())
-        with self.recorder.use_cassette(cassette_name=cassette_name, serialize_with='prettyjson'):
+        with self.recorder.use_cassette(
+            cassette_name=cassette_name, serialize_with="prettyjson"
+        ):
             zenpy_object = self.create_single_zenpy_object()
             zenpy_object = self.unpack_object(zenpy_object)
             zenpy_object, new_kwargs = self.modify_object(zenpy_object)
@@ -380,7 +404,9 @@ class MultipleUpdateApiTestCase(ModifiableApiTestCase):
 
     def create_and_verify_multiple_object_update(self, num_objects):
         cassette_name = "{}-update-many".format(self.generate_cassette_name())
-        with self.recorder.use_cassette(cassette_name=cassette_name, serialize_with='prettyjson'):
+        with self.recorder.use_cassette(
+            cassette_name=cassette_name, serialize_with="prettyjson"
+        ):
             job_status = self.create_multiple_zenpy_objects(num_objects)
             self.assertEqual(len(job_status.results), num_objects)
             updated_objects = list()
@@ -412,7 +438,9 @@ class MultipleDeleteApiTestCase(ModifiableApiTestCase):
 
     def create_and_verify_multiple_object_delete(self, num_objects):
         cassette_name = "{}-delete-many".format(self.generate_cassette_name())
-        with self.recorder.use_cassette(cassette_name=cassette_name, serialize_with='prettyjson'):
+        with self.recorder.use_cassette(
+            cassette_name=cassette_name, serialize_with="prettyjson"
+        ):
             job_status = self.create_multiple_zenpy_objects(num_objects)
             self.assertEqual(len(job_status.results), num_objects)
             returned_objects = self.api(ids=[r.id for r in job_status.results])
@@ -420,10 +448,12 @@ class MultipleDeleteApiTestCase(ModifiableApiTestCase):
             [self.created_objects.remove(obj) for obj in returned_objects]
 
 
-class CRUDApiTestCase(SingleCreateApiTestCase,
-                      SingleUpdateApiTestCase,
-                      SingleDeleteApiTestCase,
-                      MultipleCreateApiTestCase,
-                      MultipleUpdateApiTestCase,
-                      MultipleDeleteApiTestCase):
+class CRUDApiTestCase(
+    SingleCreateApiTestCase,
+    SingleUpdateApiTestCase,
+    SingleDeleteApiTestCase,
+    MultipleCreateApiTestCase,
+    MultipleUpdateApiTestCase,
+    MultipleDeleteApiTestCase,
+):
     pass

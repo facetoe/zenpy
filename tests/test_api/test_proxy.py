@@ -10,7 +10,7 @@ class TestProxyList(TestCase):
     def setUp(self):
         self.test_element = Comment()
         self.test_object = Ticket(comments=ProxyList([self.test_element]))
-        self.attribute_name = 'comments'
+        self.attribute_name = "comments"
         self.proxy_list = getattr(self.test_object, self.attribute_name)
         self.test_object._clean_dirty()
         self.proxy_list._clean_dirty()
@@ -50,7 +50,7 @@ class TestProxyList(TestCase):
 
     def test_proxy_list_clear(self):
         # Doesn't exist in 2.7
-        if hasattr(self.proxy_list, 'clear'):
+        if hasattr(self.proxy_list, "clear"):
             self.proxy_list.clear()
             self._assert_dirty()
 
@@ -98,20 +98,22 @@ class TestProxyDict(TestCase):
     __test__ = True
 
     def setUp(self):
-        self.test_object = Ticket(comments=ProxyDict(dict(comment=Comment(),
-                                                          list=[1, 3, 4],
-                                                          dict={1: 2, 3: 4})))
-        self.attribute_name = 'comments'
+        self.test_object = Ticket(
+            comments=ProxyDict(
+                dict(comment=Comment(), list=[1, 3, 4], dict={1: 2, 3: 4})
+            )
+        )
+        self.attribute_name = "comments"
         self.proxy_dict = getattr(self.test_object, self.attribute_name)
         self.proxy_dict._clean_dirty()
         self.test_object._clean_dirty()
 
     def test_proxy_dict_assign(self):
-        self.proxy_dict['things'] = True
+        self.proxy_dict["things"] = True
         self._assert_dirty()
 
     def test_proxy_dict_del(self):
-        del self.proxy_dict['comment']
+        del self.proxy_dict["comment"]
         self._assert_dirty()
 
     def test_proxy_dict_update(self):
@@ -131,15 +133,15 @@ class TestProxyDict(TestCase):
         self._assert_dirty()
 
     def test_proxy_dict_wraps_list(self):
-        some_list = self.proxy_dict['list']
+        some_list = self.proxy_dict["list"]
         self.assertIsInstance(some_list, ProxyList)
 
     def test_proxy_list_wraps_dict(self):
-        some_dict = self.proxy_dict['dict']
+        some_dict = self.proxy_dict["dict"]
         self.assertIsInstance(some_dict, ProxyDict)
 
     def test_proxy_dict_wraps_zenpy_object(self):
-        comment = self.proxy_dict['comment']
+        comment = self.proxy_dict["comment"]
         self.assertTrue(callable(comment._dirty_callback))
 
     def _assert_dirty(self):

@@ -17,7 +17,6 @@ class RequestHandler(object):
     DELETE are handled. Subclasses implement the logic needed to correctly serialize the request
     to JSON and send off to the relevant API.
     """
-
     def __init__(self, api):
         self.api = api
 
@@ -35,7 +34,6 @@ class BaseZendeskRequest(RequestHandler):
     """
     Base class for Zendesk requests. Provides a few handy methods.
     """
-
     def build_payload(self, api_objects):
         if isinstance(api_objects, Iterable):
             payload_key = as_plural(self.api.object_type)
@@ -45,21 +43,21 @@ class BaseZendeskRequest(RequestHandler):
 
     def check_type(self, zenpy_objects):
         """ Ensure the passed type matches this API's object_type. """
-        expected_type = self.api._object_mapping.class_for_type(self.api.object_type)
+        expected_type = self.api._object_mapping.class_for_type(
+            self.api.object_type)
         if not isinstance(zenpy_objects, Iterable):
             zenpy_objects = [zenpy_objects]
         for zenpy_object in zenpy_objects:
             if not isinstance(zenpy_object, expected_type):
                 raise ZenpyException(
-                    "Invalid type - expected {} found {}".format(expected_type, type(zenpy_object))
-                )
+                    "Invalid type - expected {} found {}".format(
+                        expected_type, type(zenpy_object)))
 
 
 class CRUDRequest(BaseZendeskRequest):
     """
     Generic CRUD request. Most CRUD operations are handled by this class.
     """
-
     def post(self, api_objects, *args, **kwargs):
         self.check_type(api_objects)
 
@@ -86,7 +84,9 @@ class CRUDRequest(BaseZendeskRequest):
         self.check_type(api_objects)
 
         if update_many_external:
-            kwargs['update_many_external'] = [o.external_id for o in api_objects]
+            kwargs['update_many_external'] = [
+                o.external_id for o in api_objects
+            ]
         elif isinstance(api_objects, Iterable):
             kwargs['update_many'] = True
         else:
@@ -96,10 +96,16 @@ class CRUDRequest(BaseZendeskRequest):
         url = self.api._build_url(self.api.endpoint(*args, **kwargs))
         return self.api._put(url, payload=payload)
 
-    def delete(self, api_objects, destroy_many_external=False, *args, **kwargs):
+    def delete(self,
+               api_objects,
+               destroy_many_external=False,
+               *args,
+               **kwargs):
         self.check_type(api_objects)
         if destroy_many_external:
-            kwargs['destroy_many_external'] = [o.external_id for o in api_objects]
+            kwargs['destroy_many_external'] = [
+                o.external_id for o in api_objects
+            ]
         elif isinstance(api_objects, Iterable):
             kwargs['destroy_ids'] = [i.id for i in api_objects]
         else:
@@ -115,9 +121,9 @@ class SuspendedTicketRequest(BaseZendeskRequest):
     """
     Handle updating and deleting SuspendedTickets.
     """
-
     def post(self, api_objects, *args, **kwargs):
-        raise NotImplementedError("POST is not implemented for suspended tickets!")
+        raise NotImplementedError(
+            "POST is not implemented for suspended tickets!")
 
     def put(self, tickets, *args, **kwargs):
         self.check_type(tickets)
@@ -150,7 +156,6 @@ class TagRequest(RequestHandler):
     """
     Handle tag operations.
     """
-
     def post(self, tags, *args, **kwargs):
         return self.modify_tags(self.api._post, tags, *args)
 
@@ -168,9 +173,9 @@ class TagRequest(RequestHandler):
 
 class RateRequest(RequestHandler):
     """ Handles submitting ratings. """
-
     def post(self, rating, *args, **kwargs):
-        url = self.api._build_url(self.api.endpoint.satisfaction_ratings(*args))
+        url = self.api._build_url(
+            self.api.endpoint.satisfaction_ratings(*args))
         payload = {get_object_type(rating): self.api._serialize(rating)}
         return self.api._post(url, payload=payload)
 
@@ -183,7 +188,6 @@ class RateRequest(RequestHandler):
 
 class UserIdentityRequest(BaseZendeskRequest):
     """ Handle CRUD operations on UserIdentities. """
-
     def post(self, user_id, identity):
         payload = self.build_payload(identity)
         url = self.api._build_url(self.api.endpoint(id=user_id))
@@ -202,8 +206,12 @@ class UserIdentityRequest(BaseZendeskRequest):
 
 class UploadRequest(RequestHandler):
     """ Handles uploading files to Zendesk. """
-
-    def post(self, fp, token=None, target_name=None, content_type=None, api_object=None):
+    def post(self,
+             fp,
+             token=None,
+             target_name=None,
+             content_type=None,
+             api_object=None):
         if hasattr(fp, 'read'):
             # File-like objects such as:
             #   PY3: io.StringIO, io.TextIOBase, io.BufferedIOBase
@@ -237,8 +245,12 @@ class UploadRequest(RequestHandler):
             # Other serializable types accepted by requests (like dict)
             raise ZenpyException("upload requires a target file name")
 
-        url = self.api._build_url(self.api.endpoint.upload(filename=target_name, token=token))
-        response = self.api._post(url, data=fp, payload={}, content_type=content_type)
+        url = self.api._build_url(
+            self.api.endpoint.upload(filename=target_name, token=token))
+        response = self.api._post(url,
+                                  data=fp,
+                                  payload={},
+                                  content_type=content_type)
 
         if hasattr(fp, "close"):
             fp.close()
@@ -249,62 +261,64 @@ class UploadRequest(RequestHandler):
         raise NotImplementedError("POST is not implemented fpr UploadRequest!")
 
     def delete(self, api_objects, *args, **kwargs):
-        raise NotImplementedError("DELETE is not implemented fpr UploadRequest!")
+        raise NotImplementedError(
+            "DELETE is not implemented fpr UploadRequest!")
 
 
 class UserMergeRequest(BaseZendeskRequest):
     """ Handles merging two users. """
-
     def put(self, source, destination):
         url = self.api._build_url(self.api.endpoint.merge(id=source))
         payload = {self.api.object_type: dict(id=destination)}
         return self.api._put(url, payload=payload)
 
     def post(self, *args, **kwargs):
-        raise NotImplementedError("POST is not implemented for UserMergeRequest!")
+        raise NotImplementedError(
+            "POST is not implemented for UserMergeRequest!")
 
     def delete(self, api_objects, *args, **kwargs):
-        raise NotImplementedError("DELETE is not implemented for UserMergeRequest!")
+        raise NotImplementedError(
+            "DELETE is not implemented for UserMergeRequest!")
 
 
 class TicketMergeRequest(RequestHandler):
     """ Handles merging one or more tickets.  """
-
     def post(self, target, source, target_comment=None, source_comment=None):
         if not is_iterable_but_not_string(source):
             source = [source]
-        payload = dict(
-            ids=source,
-            target_comment=target_comment,
-            source_comment=source_comment
-        )
+        payload = dict(ids=source,
+                       target_comment=target_comment,
+                       source_comment=source_comment)
         url = self.api._build_url(self.api.endpoint.merge(id=target))
         return self.api._post(url, payload=payload)
 
     def put(self, api_objects, *args, **kwargs):
-        raise NotImplementedError("PUT is not implemented for TicketMergeRequest!")
+        raise NotImplementedError(
+            "PUT is not implemented for TicketMergeRequest!")
 
     def delete(self, api_objects, *args, **kwargs):
-        raise NotImplementedError("DELETE is not implemented fpr TicketMergeRequest!")
+        raise NotImplementedError(
+            "DELETE is not implemented fpr TicketMergeRequest!")
 
 
 class SatisfactionRatingRequest(BaseZendeskRequest):
     """ Handle rating a ticket.  """
-
     def post(self, ticket_id, satisfaction_rating):
         payload = self.build_payload(satisfaction_rating)
-        url = self.api._build_url(EndpointFactory('satisfaction_ratings').create(id=ticket_id))
+        url = self.api._build_url(
+            EndpointFactory('satisfaction_ratings').create(id=ticket_id))
         return self.api._post(url, payload)
 
     def put(self, api_objects, *args, **kwargs):
-        raise NotImplementedError("PUT is not implemented for SatisfactionRequest!")
+        raise NotImplementedError(
+            "PUT is not implemented for SatisfactionRequest!")
 
     def delete(self, api_objects, *args, **kwargs):
-        raise NotImplementedError("DELETE is not implemented fpr SatisfactionRequest!")
+        raise NotImplementedError(
+            "DELETE is not implemented fpr SatisfactionRequest!")
 
 
 class OrganizationFieldReorderRequest(RequestHandler):
-
     def put(self, api_objects, *args, **kwargs):
         payload = {'organization_field_ids': api_objects}
         url = self.api._build_url(self.api.endpoint.reorder())
@@ -312,17 +326,19 @@ class OrganizationFieldReorderRequest(RequestHandler):
 
 
 class TicketFieldOptionRequest(BaseZendeskRequest):
-
     def post(self, ticket_field, custom_field_option):
         cfo_id = getattr(custom_field_option, 'id', None)
         if cfo_id is not None:
-            url = self.api._build_url(self.api.endpoint.update(id=ticket_field))
+            url = self.api._build_url(
+                self.api.endpoint.update(id=ticket_field))
         else:
             url = self.api._build_url(self.api.endpoint(id=ticket_field))
-        return self.api._post(url, payload=self.build_payload(custom_field_option))
+        return self.api._post(url,
+                              payload=self.build_payload(custom_field_option))
 
     def delete(self, ticket_field, custom_field_option):
-        url = self.api._build_url(self.api.endpoint.delete(ticket_field, custom_field_option))
+        url = self.api._build_url(
+            self.api.endpoint.delete(ticket_field, custom_field_option))
         return self.api._delete(url)
 
 
@@ -340,7 +356,8 @@ class VariantRequest(BaseZendeskRequest):
         if isinstance(variant, Iterable):
             url = self.api._build_url(self.api.endpoint.update_many(id=item))
         else:
-            url = self.api._build_url(self.api.endpoint.update(item, variant.id))
+            url = self.api._build_url(
+                self.api.endpoint.update(item, variant.id))
 
         payload = self.build_payload(variant)
         return self.api._put(url, payload=payload)
@@ -356,18 +373,19 @@ class ChatApiRequest(RequestHandler):
     """
     Generic Chat API request. Most CRUD operations on Chat API endpoints are handled by this class.
     """
-
     def put(self, chat_object):
         identifier = self.get_object_identifier(chat_object)
         value = getattr(chat_object, identifier)
-        setattr(chat_object, identifier, None)  # The API freaks out when a identifier is in the JSON
+        setattr(chat_object, identifier,
+                None)  # The API freaks out when a identifier is in the JSON
         payload = self.flatten_chat_object(self.api._serialize(chat_object))
         url = self.api._build_url(self.api.endpoint(**{identifier: value}))
         return self.api._put(url, payload=payload)
 
     def post(self, chat_object):
         payload = self.api._serialize(chat_object)
-        return self.api._post(self.api._build_url(self.api.endpoint()), payload=payload)
+        return self.api._post(self.api._build_url(self.api.endpoint()),
+                              payload=payload)
 
     def delete(self, chat_object, *args, **kwargs):
         identifier = self.get_object_identifier(chat_object)
@@ -394,14 +412,15 @@ class ChatApiRequest(RequestHandler):
 
 class AccountRequest(RequestHandler):
     """ Handle creating and updating Accounts.  """
-
     def put(self, account):
         payload = self.build_payload(account)
-        return self.api._put(self.api._build_url(self.api.endpoint()), payload=payload)
+        return self.api._put(self.api._build_url(self.api.endpoint()),
+                             payload=payload)
 
     def post(self, account):
         payload = self.build_payload(account)
-        return self.api._post(self.api._build_url(self.api.endpoint()), payload=payload)
+        return self.api._post(self.api._build_url(self.api.endpoint()),
+                              payload=payload)
 
     def delete(self, chat_object, *args, **kwargs):
         raise NotImplementedError("Cannot delete accounts!")
@@ -412,7 +431,6 @@ class AccountRequest(RequestHandler):
 
 class PersonRequest(RequestHandler):
     """ Handle CRUD operations on Chat API objects representing people. """
-
     def put(self, chat_object):
         agent_id = chat_object.id
         chat_object.id = None  # The API freaks out if id is included.
@@ -422,7 +440,8 @@ class PersonRequest(RequestHandler):
 
     def post(self, account):
         payload = self.api._serialize(account)
-        return self.api._post(self.api._build_url(self.api.endpoint()), payload=payload)
+        return self.api._post(self.api._build_url(self.api.endpoint()),
+                              payload=payload)
 
     def delete(self, chat_object):
         url = self.api._build_url(self.api.endpoint(id=chat_object.id))
@@ -497,7 +516,10 @@ class AccessPolicyRequest(BaseZendeskRequest):
         raise NotImplementedError("POST not supported for access policies!")
 
     def build_payload(self, help_centre_object):
-        return {get_object_type(help_centre_object): self.api._serialize(help_centre_object)}
+        return {
+            get_object_type(help_centre_object):
+            self.api._serialize(help_centre_object)
+        }
 
 
 class TranslationRequest(HelpCentreRequest):
@@ -506,8 +528,10 @@ class TranslationRequest(HelpCentreRequest):
 
     def put(self, endpoint, help_centre_object_id, translation):
         if translation.locale is None:
-            raise ZenpyException("Locale can not be None when updating translation!")
-        url = self.api._build_url(endpoint(help_centre_object_id, translation.locale))
+            raise ZenpyException(
+                "Locale can not be None when updating translation!")
+        url = self.api._build_url(
+            endpoint(help_centre_object_id, translation.locale))
         payload = self.build_payload(translation)
         return self.api._put(url, payload=payload)
 
@@ -527,7 +551,13 @@ class HelpdeskAttachmentRequest(BaseZendeskRequest):
     def put(self, api_objects, *args, **kwargs):
         raise NotImplementedError("You cannot update HelpCentre attachments!")
 
-    def post(self, endpoint, attachments, article=None, inline=False, file_name=None, content_type=None):
+    def post(self,
+             endpoint,
+             attachments,
+             article=None,
+             inline=False,
+             file_name=None,
+             content_type=None):
         if article:
             url = self.api._build_url(endpoint(id=article))
         else:
@@ -537,31 +567,33 @@ class HelpdeskAttachmentRequest(BaseZendeskRequest):
             self.check_type(attachments)
             if isinstance(attachments, Iterable):
                 if len(attachments) > 20:
-                    raise TooManyValuesException('Maximum 20 attachments objects allowed')
+                    raise TooManyValuesException(
+                        'Maximum 20 attachments objects allowed')
                 ids = [attachment.id for attachment in attachments]
             else:
                 ids = attachments.id
             content_type = "application/json"
-            return self.api._post(url, payload=self.build_payload(ids), content_type=content_type)
+            return self.api._post(url,
+                                  payload=self.build_payload(ids),
+                                  content_type=content_type)
         else:
             if hasattr(attachments, 'read'):
-                file = (file_name if file_name else attachments.name, attachments, content_type)
-                return self.api._post(url,
-                                      payload={},
-                                      files=dict(
-                                          inline=(None, 'true' if inline else 'false'),
-                                          file=file
-                                      )
-                                      )
+                file = (file_name if file_name else attachments.name,
+                        attachments, content_type)
+                return self.api._post(
+                    url,
+                    payload={},
+                    files=dict(inline=(None, 'true' if inline else 'false'),
+                               file=file))
             elif os.path.isfile(attachments):
                 with open(attachments, 'rb') as fp:
-                    file = (file_name if file_name else fp.name, fp, content_type)
-                    return self.api._post(url,
-                                          payload={},
-                                          files=dict(
-                                              inline=(None, 'true' if inline else 'false'),
-                                              file=file
-                                          )
-                                          )
+                    file = (file_name if file_name else fp.name, fp,
+                            content_type)
+                    return self.api._post(
+                        url,
+                        payload={},
+                        files=dict(inline=(None,
+                                           'true' if inline else 'false'),
+                                   file=file))
 
         raise ValueError("Attachment is not a file-like object or valid path!")

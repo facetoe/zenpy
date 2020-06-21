@@ -18,7 +18,9 @@ class ZenpyCache(object):
     on the fly and change the maxsize setting.
     """
 
-    AVAILABLE_CACHES = [c for c in dir(cachetools) if c.endswith('Cache') and c != 'Cache']
+    AVAILABLE_CACHES = [
+        c for c in dir(cachetools) if c.endswith('Cache') and c != 'Cache'
+    ]
 
     def __init__(self, cache_impl, maxsize, **kwargs):
         self.cache = self._get_cache_impl(cache_impl, maxsize, **kwargs)
@@ -79,7 +81,8 @@ class ZenpyCache(object):
     def _get_cache_impl(self, cache_impl, maxsize, **kwargs):
         if cache_impl not in self.AVAILABLE_CACHES:
             raise ZenpyCacheException(
-                "No such cache: %s, available caches: %s" % (cache_impl, str(self.AVAILABLE_CACHES)))
+                "No such cache: %s, available caches: %s" %
+                (cache_impl, str(self.AVAILABLE_CACHES)))
         return getattr(cachetools, cache_impl)(maxsize, **kwargs)
 
     def __iter__(self):
@@ -90,7 +93,8 @@ class ZenpyCache(object):
 
     def __setitem__(self, key, value):
         if not issubclass(type(value), BaseObject):
-            raise ZenpyCacheException("{} is not a subclass of BaseObject!".format(type(value)))
+            raise ZenpyCacheException(
+                "{} is not a subclass of BaseObject!".format(type(value)))
         self.cache[key] = value
 
     def __delitem__(self, key):
@@ -107,7 +111,6 @@ class ZenpyCacheManager:
     """
     Interface to the various caches.
     """
-
     def __init__(self, disabled=False):
         self.disabled = disabled
         self.mapping = {
@@ -118,7 +121,9 @@ class ZenpyCacheManager:
             'ticket': ZenpyCache('TTLCache', maxsize=10000, ttl=30),
             'request': ZenpyCache('LRUCache', maxsize=10000),
             'ticket_field': ZenpyCache('LRUCache', maxsize=10000),
-            'sharing_agreement': ZenpyCache('TTLCache', maxsize=10000, ttl=6000),
+            'sharing_agreement': ZenpyCache('TTLCache',
+                                            maxsize=10000,
+                                            ttl=6000),
             'identity': ZenpyCache('LRUCache', maxsize=10000)
         }
 
@@ -129,7 +134,8 @@ class ZenpyCacheManager:
             return
         attr_name = self._cache_key_attribute(object_type)
         cache_key = getattr(zenpy_object, attr_name)
-        log.debug("Caching: [{}({}={})]".format(zenpy_object.__class__.__name__, attr_name, cache_key))
+        log.debug("Caching: [{}({}={})]".format(
+            zenpy_object.__class__.__name__, attr_name, cache_key))
         self.mapping[object_type][cache_key] = zenpy_object
 
     def delete(self, to_delete):
@@ -142,7 +148,8 @@ class ZenpyCacheManager:
             if object_cache:
                 removed_object = object_cache.pop(zenpy_object.id, None)
                 if removed_object:
-                    log.debug("Cache RM: [%s %s]" % (object_type.capitalize(), zenpy_object.id))
+                    log.debug("Cache RM: [%s %s]" %
+                              (object_type.capitalize(), zenpy_object.id))
 
     def get(self, object_type, cache_key):
         """ Query the cache for a Zenpy object """
@@ -150,10 +157,12 @@ class ZenpyCacheManager:
             return None
         cache = self.mapping[object_type]
         if cache_key in cache:
-            log.debug("Cache HIT: [%s %s]" % (object_type.capitalize(), cache_key))
+            log.debug("Cache HIT: [%s %s]" %
+                      (object_type.capitalize(), cache_key))
             return cache[cache_key]
         else:
-            log.debug('Cache MISS: [%s %s]' % (object_type.capitalize(), cache_key))
+            log.debug('Cache MISS: [%s %s]' %
+                      (object_type.capitalize(), cache_key))
 
     def query_cache_by_object(self, zenpy_object):
         """ Convenience method for testing. Given an object, return the cached version """
@@ -165,14 +174,16 @@ class ZenpyCacheManager:
         """ Purge the named cache of all values. If no cache exists for object_type, nothing is done """
         if object_type in self.mapping:
             cache = self.mapping[object_type]
-            log.debug("Purging [{}] cache of {} values.".format(object_type, len(cache)))
+            log.debug("Purging [{}] cache of {} values.".format(
+                object_type, len(cache)))
             cache.purge()
 
     def in_cache(self, zenpy_object):
         """ Determine whether or not this object is in the cache """
         object_type = get_object_type(zenpy_object)
         cache_key_attr = self._cache_key_attribute(object_type)
-        return self.get(object_type, getattr(zenpy_object, cache_key_attr)) is not None
+        return self.get(object_type, getattr(zenpy_object,
+                                             cache_key_attr)) is not None
 
     def should_cache(self, zenpy_object):
         """ Determine whether or not this object should be cached (ie, a cache exists for it's object_type) """

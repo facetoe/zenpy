@@ -25,16 +25,19 @@ class TestProperties(ZenpyApiTestCase):
     def check_properties_are_implemented(self, object_module):
         for cls in iter_classes(object_module):
             obj = cls(api=self.mock_api)
-            for attr in (a for a in dir(obj) if a.endswith('id')):
+            for attr in (a for a in dir(obj) if a.endswith("id")):
                 setattr(obj, attr, 1)
             try:
                 call_properties(obj)
             except AttributeError as e:
                 object_name = "{}.{}".format(cls.__module__, cls.__name__)
                 missing_method_name = str(e).split()[-1]
-                self.fail("{} contains a property that calls a non existent method: {}.\n"
-                          "This method needs to be implemented in the zenpy.lib.api.Api class."
-                          .format(object_name, missing_method_name))
+                self.fail(
+                    "{} contains a property that calls a non existent method: {}.\n"
+                    "This method needs to be implemented in the zenpy.lib.api.Api class.".format(
+                        object_name, missing_method_name
+                    )
+                )
 
 
 def iter_classes(mod):

@@ -9,7 +9,7 @@ clean:
 	$(RM) ../zenpy* test-*.xml
 
 reformat:
-	yapf --parallel --recursive --in-place tests/ zenpy/
+	black $(PYTHON_SOURCE_DIRS)
 
 unittest:
 	nosetests -v --stop
