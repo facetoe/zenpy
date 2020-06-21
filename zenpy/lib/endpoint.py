@@ -162,7 +162,7 @@ class IncrementalEndpoint(BaseEndpoint):
     :param include: list of items to sideload
     """
 
-    def __call__(self, start_time=None, include=None):
+    def __call__(self, start_time=None, include=None, per_page=None):
         if start_time is None:
             raise ZenpyException("Incremental Endpoint requires a start_time parameter!")
 
@@ -172,12 +172,15 @@ class IncrementalEndpoint(BaseEndpoint):
             unix_time = start_time
 
         params = dict(start_time=str(unix_time))
+        if per_page:
+            params["per_page"] = per_page
         if include is not None:
             if is_iterable_but_not_string(include):
                 params.update(dict(include=",".join(include)))
             else:
                 params.update(dict(include=include))
         return Url(self.endpoint, params=params)
+
 
 class ChatIncrementalEndpoint(BaseEndpoint):
     """
