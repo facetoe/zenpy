@@ -509,7 +509,7 @@ class CRUDApi(Api):
 
         :param api_objects: object or objects to create
         """
-        return CRUDRequest(self).post(api_objects)
+        return CRUDRequest(self).post(api_objects, **kwargs)
 
     def update(self, api_objects, **kwargs):
         """
