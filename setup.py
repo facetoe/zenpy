@@ -4,7 +4,7 @@ import setuptools
 setup(
     name='zenpy',
     packages=setuptools.find_packages(),
-    version='2.0.20',
+    version='2.0.21',
     description='Python wrapper for the Zendesk API',
     license='GPLv3',
     author='Face Toe',
