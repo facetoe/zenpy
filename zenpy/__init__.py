@@ -204,8 +204,12 @@ class Zenpy(object):
             else:
                 raise ZenpyException("Invalid arguments to _init_session()!")
 
-        headers = {"User-Agent": "Zenpy/{}".format(__version__)}
-        session.headers.update(headers)
+        # If a session with a custom user agent has been passed, don't clobber it
+        if "User-Agent" in session.headers:
+            user_agent = session.headers.get("User-Agent")
+            if user_agent == requests.utils.default_user_agent():
+                user_agent = "Zenpy/{}".format(__version__)
+            session.headers.update({"User-Agent": user_agent})
         return session
 
     def get_cache_names(self):
