@@ -254,6 +254,7 @@ class TalkObjectMapping(ZendeskObjectMapping):
     to prevent namespace collisions between APIs.
     """
     class_mapping = {
+        'call': Call,
         'account_overview': AccountOverview,
         'agents_activity': AgentsActivity,
         'agents_overview': AgentsOverview,

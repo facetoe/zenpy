@@ -650,6 +650,9 @@ class EndpointFactory(object):
         pass
 
     talk = Dummy()
+    talk.calls = Dummy()
+    talk.calls.incremental = IncrementalEndpoint(
+        'channels/voice/stats/incremental/calls.json')
     talk.current_queue_activity = PrimaryEndpoint(
         'channels/voice/stats/current_queue_activity')
     talk.agents_activity = PrimaryEndpoint(
