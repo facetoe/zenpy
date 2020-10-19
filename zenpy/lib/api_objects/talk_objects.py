@@ -249,6 +249,7 @@ class Call(BaseObject):
                  overflowed=None,
                  overflowed_to=None,
                  phone_number=None,
+                 phone_number_id=None,
                  quality_issues=None,
                  recording_control_interactions=None,
                  recording_time=None,
@@ -292,6 +293,7 @@ class Call(BaseObject):
         self.overflowed = overflowed
         self.overflowed_to = overflowed_to
         self.phone_number = phone_number
+        self.phone_number_id = phone_number_id
         self.quality_issues = quality_issues
         self.recording_control_interactions = recording_control_interactions
         self.recording_time = recording_time
@@ -359,6 +361,17 @@ class Call(BaseObject):
         if customer:
             self.customer_id = customer.id
             self._customer = customer
+
+    @property
+    def phone_number(self):
+
+        if self.api and self.phone_number_id:
+            return self.api._get_phone_number(self.phone_number_id)
+
+    @phone_number.setter
+    def phone_number(self, phone_number):
+        if phone_number:
+            self._phone_number = phone_number
 
     @property
     def ticket(self):
