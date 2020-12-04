@@ -139,3 +139,13 @@ def json_encode(obj, serialize):
         return list(obj)
     elif is_iterable_but_not_string(obj):
         return list(obj)
+
+
+def all_are_none(*args) -> bool:
+    """ Check if all args are none. """
+    return all(arg is None for arg in args)
+
+
+def all_are_not_none(*args) -> bool:
+    """ Check if all args are not none. """
+    return all(arg is not None for arg in args)
