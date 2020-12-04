@@ -21,7 +21,7 @@ from zenpy.lib.exception import *
 from zenpy.lib.mapping import ZendeskObjectMapping, ChatObjectMapping, HelpCentreObjectMapping, TalkObjectMapping
 from zenpy.lib.request import *
 from zenpy.lib.response import *
-from zenpy.lib.util import as_plural, extract_id, is_iterable_but_not_string, json_encode_for_zendesk
+from zenpy.lib.util import as_plural, extract_id, is_iterable_but_not_string, json_encode_for_zendesk, all_are_none, all_are_not_none
 
 try:
     from collections.abc import Iterable
@@ -1300,7 +1300,7 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         """
         Retrieve TicketAudits. If ticket is passed, return the tickets for a specific audit.
 
-        If ticket_id is None, a TicketAuditGenerator is returned to handle pagination. The way this generator
+        If ticket_id is None, a TicketCursorGenerator is returned to handle pagination. The way this generator
         works is a different to the other Zenpy generators as it is cursor based, allowing you to change the
         direction that you are consuming objects. This is done with the reversed() python method.
 
@@ -1399,6 +1399,69 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         """
 
         return self._get(self._build_url(self.endpoint.skips(id=ticket)))
+
+    def incremental(self,
+                    start_time=None,
+                    paginate_by_time=True,
+                    cursor=None,
+                    include=None,
+                    per_page=None):
+        """
+        Incrementally retrieve Tickets.
+
+        If paginate_by_time is True, a ZendeskResultGenerator is returned to handle
+        time based pagination. This is defaulted to True for backwards compatibility
+        but is not recommended by Zendesk.
+
+        If paginate_by_time is False, a TicketCursorGenerator is returned to handle
+        cursor based pagination. This is recommended by Zendesk.
+
+        The TicketCursorGenerator allows you to change the direction that you are consuming objects.
+        This is done with the reversed() python method.
+
+        For example:
+
+        .. code-block:: python
+
+            for ticket in reversed(zenpy_client.tickets.incremental(cursor='xxx')):
+                print(ticket)
+
+        See the `Zendesk docs <https://developer.zendesk.com/rest_api/docs/support/incremental_export#cursor-based-incremental-exports>`__ for
+        information on additional parameters.
+
+        :param start_time: the time of the oldest object you are interested in, applies to both time/cursor based pagination.
+        :param paginate_by_time: True to use time based pagination, False to use cursor based pagination.
+        :param cursor: cursor value of the page you are interested in, can't be set with start_time.
+        :param include: list of objects to sideload. `Side-loading API Docs
+            <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
+        :param per_page: number of results per page, up to max 1000
+        """
+        if (all_are_none(start_time, cursor)
+                or all_are_not_none(start_time, cursor)):
+            raise ValueError(
+                'You must set either start_time or cursor but not both')
+
+        if start_time and paginate_by_time is True:
+            return super(TicketApi, self).incremental(start_time=start_time,
+                                                      include=include,
+                                                      per_page=per_page)
+
+        elif start_time and paginate_by_time is False:
+            return self._query_zendesk(self.endpoint.incremental.cursor_start,
+                                       self.object_type,
+                                       start_time=start_time,
+                                       include=include,
+                                       per_page=per_page)
+
+        elif cursor and paginate_by_time is False:
+            return self._query_zendesk(self.endpoint.incremental.cursor,
+                                       self.object_type,
+                                       cursor=cursor,
+                                       include=include,
+                                       per_page=per_page)
+        else:
+            raise ValueError(
+                "Can't set cursor param and paginate_by_time=True")
 
 
 class SkipApi(CRUDApi):
