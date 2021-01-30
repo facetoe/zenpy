@@ -197,6 +197,9 @@ class ZendeskResultGenerator(BaseResultGenerator):
             if (datetime.fromtimestamp(int(end_time)) +
                     timedelta(minutes=5)) > datetime.now():
                 raise StopIteration
+        # No more pages to request
+        if self._response_json.get("end_of_stream") is True:
+            raise StopIteration
         return super(ZendeskResultGenerator,
                      self).get_next_page(page_num, page_size)
 
