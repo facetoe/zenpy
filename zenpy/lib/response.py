@@ -2,7 +2,7 @@ from abc import abstractmethod
 
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.generator import SearchResultGenerator, ZendeskResultGenerator, ChatResultGenerator, ViewResultGenerator, \
-    TicketAuditGenerator, ChatIncrementalResultGenerator, JiraLinkGenerator
+    TicketCursorGenerator, ChatIncrementalResultGenerator, JiraLinkGenerator
 from zenpy.lib.util import as_singular, as_plural, get_endpoint_path
 from six.moves.urllib.parse import urlparse
 
@@ -90,10 +90,20 @@ class GenericZendeskResponseHandler(ResponseHandler):
         """
         response_json = response.json()
 
-        # Special case for ticket audits.
+        # Special case for incremental cursor based ticket audits export.
         if get_endpoint_path(self.api,
                              response).startswith('/ticket_audits.json'):
-            return TicketAuditGenerator(self, response_json)
+            return TicketCursorGenerator(self,
+                                         response_json,
+                                         object_type="audit")
+
+        # Special case for incremental cursor based tickets export.
+        if get_endpoint_path(
+                self.api,
+                response).startswith('/incremental/tickets/cursor.json'):
+            return TicketCursorGenerator(self,
+                                         response_json,
+                                         object_type="ticket")
 
         # Special case for Jira links.
         if get_endpoint_path(self.api,

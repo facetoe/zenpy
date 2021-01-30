@@ -226,16 +226,16 @@ class SearchResultGenerator(BaseResultGenerator):
             raise StopIteration()
 
 
-class TicketAuditGenerator(ZendeskResultGenerator):
-    def __init__(self, response_handler, response_json):
-        super(TicketAuditGenerator, self).__init__(response_handler,
-                                                   response_json,
-                                                   response_objects=None,
-                                                   object_type='audit')
+class TicketCursorGenerator(ZendeskResultGenerator):
+    """
+    Generator for cursor based incremental export endpoints for ticket and ticket_audit objects.
+    """
+    def __init__(self, response_handler, response_json, object_type):
+        super(TicketCursorGenerator, self).__init__(response_handler,
+                                                    response_json,
+                                                    response_objects=None,
+                                                    object_type=object_type)
         self.next_page_attr = 'after_url'
-
-    def get_next_page(self, page_num=None, page_size=None):
-        return super(TicketAuditGenerator, self).get_next_page()
 
     def __reversed__(self):
         # Flip the direction we grab pages.

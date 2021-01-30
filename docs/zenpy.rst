@@ -315,9 +315,9 @@ code will retrieve all tickets created or modified in the last day:
 .. code:: python
 
     yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
-    result_generator = zenpy_client.tickets.incremental(start_time=yesterday)
-    for ticket in result_generator:
-        print ticket.id
+    result_generator = zenpy_client.users.incremental(start_time=yesterday)
+    for user in result_generator:
+        print user.id
 
 The last ``end_time`` value can be retrieved from the generator:
 
@@ -382,6 +382,25 @@ This is supported in :class:`Zenpy` via the reversed() Python method:
     for audit in reversed(zenpy_client.tickets.audits(cursor='fDE1MTc2MjkwNTQuMHx8')):
         print(audit)
 
+Zendesk also uses cursor based pagination for incremental Ticket exports and this is
+recommended over time based pagination for Ticket exports (Zendesk `documentation
+<https://developer.zendesk.com/rest_api/docs/support/incremental_export#cursor-based-incremental-exports>`__).
+
+.. code:: python
+    # pass in a start_time for your initial cursor request
+    yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
+    result_generator = zenpy_client.tickets.incremental(start_time=yesterday, paginate_by_time=False)
+    for ticket in result_generator:
+        print ticket.id
+
+The last ``after_cursor`` value can be retrieved from the generator:
+
+.. code:: python
+
+    print result_generator.after_cursor
+
+Passing this value to a new call as ``zenpy_client.tickets.incremental(cursor=after_cursor, paginate_by_time=False)``
+will return items created or modified since that point in time.
 
 Rate Limiting
 -------------
