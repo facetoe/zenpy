@@ -144,6 +144,11 @@ class Property(TemplateObject):
                 self._{{object.attribute.object_name}} = {{object.attribute.object_name}}
     """
 
+    SETTER_TEMPLATE_OBJECT_DEFAULT = """
+            if {{object.attribute.object_name}}:
+                self._{{object.attribute.object_name}} = {{object.attribute.object_name}}
+    """
+
     SETTER_TEMPLATE_DEFAULT = """
             if {{object.attribute.object_name}}:
                 self.{{object.attribute.attr_name}} = {{object.attribute.object_name}}
@@ -166,6 +171,8 @@ class Property(TemplateObject):
     def get_prop_setter_body(self, attribute):
         if attribute.attr_assignment:
             template = self.SETTER_TEMPLATE_ASSIGN
+        elif attribute.object_name in ('phone_number'):
+            template = self.SETTER_TEMPLATE_OBJECT_DEFAULT
         else:
             template = self.SETTER_TEMPLATE_DEFAULT
         return Template(template).render(object=self, trim_blocks=True)
@@ -206,14 +213,14 @@ class Attribute(object):
         return object_type
 
     def get_attr_name(self, attr_type, attr_name):
-        should_modify = attr_name.endswith('timestamp') and attr_type != "timestamp"
+        should_modify = attr_name.endswith('timestamp') and attr_type != 'timestamp'
         if should_modify:
             return "_%s" % attr_name
         else:
             return attr_name
 
     def get_attr_assignment(self, object_name, object_type, key):
-        if object_type != key and object_type != 'date' and key.endswith('_id'):
+        if object_type not in (key, 'date') and object_name not in ('phone_number') and key.endswith('_id'):
             return '%s.id' % object_name
         elif key.endswith('_ids'):
             return '[o.id for o in %(object_name)s]' % locals()

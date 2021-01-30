@@ -12,7 +12,7 @@ from zenpy.lib.api_objects import (User, Macro, Identity, View, Organization,
 from zenpy.lib.api_objects.help_centre_objects import (
     Section, Article, Comment, ArticleAttachment, Label, Category, Translation,
     Topic, Post, Subscription)
-from zenpy.lib.api_objects.talk_objects import (CurrentQueueActivity,
+from zenpy.lib.api_objects.talk_objects import (Call, CurrentQueueActivity,
                                                 PhoneNumbers, ShowAvailability,
                                                 AgentsOverview,
                                                 AccountOverview,
@@ -2408,6 +2408,9 @@ class TalkApi(TalkApiBase):
                                       endpoint=EndpointFactory('talk'),
                                       object_type='talk')
 
+        self.calls = CallApi(config,
+                              self.endpoint.calls,
+                              object_type='call')
         self.current_queue_activity = StatsApi(
             config,
             self.endpoint.current_queue_activity,
@@ -2431,6 +2434,12 @@ class TalkApi(TalkApiBase):
     def __call__(self, *args, **kwargs):
         raise NotImplementedError("Cannot directly call the TalkApi!")
 
+
+class CallApi(TalkApiBase, IncrementalApi):
+    def __init__(self, config, endpoint, object_type):
+        super(CallApi, self).__init__(config,
+                                       object_type=object_type,
+                                       endpoint=endpoint)
 
 class StatsApi(TalkApiBase):
     def __init__(self, config, endpoint, object_type):
