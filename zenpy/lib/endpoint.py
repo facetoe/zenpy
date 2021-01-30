@@ -286,10 +286,10 @@ class SearchEndpoint(BaseEndpoint):
         modifiers = list()
         params = dict()
         for key, value in kwargs.items():
-            if isinstance(value, date):
-                kwargs[key] = value.strftime(self.ZENDESK_DATE_FORMAT)
-            elif isinstance(key, datetime):
+            if isinstance(value, datetime):
                 kwargs[key] = value.strftime(self.ISO_8601_FORMAT)
+            elif isinstance(value, date):
+                kwargs[key] = value.strftime(self.ZENDESK_DATE_FORMAT)
             elif is_iterable_but_not_string(value) and key == 'ids':
                 kwargs[key] = ", ".join(map(str, value))
             if key.endswith('_between'):
