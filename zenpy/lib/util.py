@@ -141,11 +141,11 @@ def json_encode(obj, serialize):
         return list(obj)
 
 
-def all_are_none(*args) -> bool:
+def all_are_none(*args):
     """ Check if all args are none. """
     return all(arg is None for arg in args)
 
 
-def all_are_not_none(*args) -> bool:
+def all_are_not_none(*args):
     """ Check if all args are not none. """
     return all(arg is not None for arg in args)
