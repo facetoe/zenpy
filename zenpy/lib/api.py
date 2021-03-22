@@ -102,12 +102,12 @@ class BaseApi(object):
                                   timeout=self.timeout)
         return self._process_response(response)
 
-    def _get(self, url, raw_response=False, **kwargs):
+    def _get(self, url, **kwargs):
         response = self._call_api(self.session.get,
                                   url,
                                   timeout=self.timeout,
                                   **kwargs)
-        if raw_response:
+        if kwargs.get('raw_response'):
             return response
         else:
             return self._process_response(response)
@@ -123,7 +123,12 @@ class BaseApi(object):
         :param kwargs: Any additional kwargs to pass on to requests.
         """
         log.debug("{}: {} - {}".format(http_method.__name__.upper(), url,
+
                                        kwargs))
+
+        if 'raw_response' in kwargs:
+            kwargs.pop('raw_response', None)
+
         if self.ratelimit is not None:
             # This path indicates we're taking a proactive approach to not hit the rate limit
             response = self._ratelimit(http_method=http_method,
@@ -240,8 +245,7 @@ class BaseApi(object):
         return json.loads(
             json.dumps(zenpy_object, default=json_encode_for_zendesk))
 
-    def _query_zendesk(self, endpoint, object_type, raw_response, *endpoint_args,
-                       **endpoint_kwargs):
+    def _query_zendesk(self, endpoint, object_type, *endpoint_args, **endpoint_kwargs):
         """
         Query Zendesk for items. If an id or list of ids are passed, attempt to locate these items
          in the relevant cache. If they cannot be found, or no ids are passed, execute a call to Zendesk
@@ -262,7 +266,7 @@ class BaseApi(object):
                 return item
             else:
                 return self._get(url=self._build_url(
-                    endpoint(*endpoint_args, **endpoint_kwargs)), raw_response=raw_response)
+                    endpoint(*endpoint_args, **endpoint_kwargs)))
         elif 'ids' in endpoint_kwargs:
             cached_objects = []
             # Check to see if we have all objects in the cache.
@@ -273,7 +277,7 @@ class BaseApi(object):
                 if not obj:
                     return self._get(
                         self._build_url(endpoint=endpoint(
-                            *endpoint_args, **endpoint_kwargs)), raw_response=raw_response)
+                            *endpoint_args, **endpoint_kwargs)))
                 cached_objects.append(obj)
             return ZendeskResultGenerator(self, {},
                                           response_objects=cached_objects,
@@ -281,7 +285,7 @@ class BaseApi(object):
         else:
             return self._get(
                 self._build_url(
-                    endpoint=endpoint(*endpoint_args, **endpoint_kwargs)), raw_response=raw_response)
+                    endpoint=endpoint(*endpoint_args, **endpoint_kwargs)))
 
     def _check_response(self, response):
         """
@@ -346,9 +350,8 @@ class Api(BaseApi):
         super(Api, self).__init__(**config)
         self._object_mapping = ZendeskObjectMapping(self)
 
-    def __call__(self, raw_response=False, *args, **kwargs):
-        return self._query_zendesk(self.endpoint, self.object_type, raw_response, *args,
-                                   **kwargs)
+    def __call__(self, *args, **kwargs):
+        return self._query_zendesk(self.endpoint, self.object_type, *args, **kwargs)
 
     def _get_user(self, user_id):
         if int(user_id) < 0:
