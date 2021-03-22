@@ -99,7 +99,9 @@ class ZendeskObjectMapping(object):
         'link': Link,
         'skip': Skip,
         'schedule': Schedule,
-        'custom_role': CustomAgentRole
+        'custom_role': CustomAgentRole,
+        'attribute': RoutingAttribute,
+        'attribute_value': RoutingAttributeValue
     }
 
     skip_attrs = []

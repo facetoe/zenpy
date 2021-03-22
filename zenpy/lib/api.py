@@ -61,6 +61,7 @@ class BaseApi(object):
             CombinationResponseHandler,
             ViewResponseHandler,
             SlaPolicyResponseHandler,
+            RoutingAttributesResponseHandler,
             RequestCommentResponseHandler,
             GenericZendeskResponseHandler,
             HTTPOKResponseHandler,
@@ -239,7 +240,7 @@ class BaseApi(object):
         return json.loads(
             json.dumps(zenpy_object, default=json_encode_for_zendesk))
 
-    def _query_zendesk(self, endpoint, object_type, *endpoint_args,
+    def _query_zendesk(self, endpoint, object_type, raw_response, *endpoint_args,
                        **endpoint_kwargs):
         """
         Query Zendesk for items. If an id or list of ids are passed, attempt to locate these items
@@ -261,7 +262,7 @@ class BaseApi(object):
                 return item
             else:
                 return self._get(url=self._build_url(
-                    endpoint(*endpoint_args, **endpoint_kwargs)))
+                    endpoint(*endpoint_args, **endpoint_kwargs)), raw_response=raw_response)
         elif 'ids' in endpoint_kwargs:
             cached_objects = []
             # Check to see if we have all objects in the cache.
@@ -272,7 +273,7 @@ class BaseApi(object):
                 if not obj:
                     return self._get(
                         self._build_url(endpoint=endpoint(
-                            *endpoint_args, **endpoint_kwargs)))
+                            *endpoint_args, **endpoint_kwargs)), raw_response=raw_response)
                 cached_objects.append(obj)
             return ZendeskResultGenerator(self, {},
                                           response_objects=cached_objects,
@@ -280,7 +281,7 @@ class BaseApi(object):
         else:
             return self._get(
                 self._build_url(
-                    endpoint=endpoint(*endpoint_args, **endpoint_kwargs)))
+                    endpoint=endpoint(*endpoint_args, **endpoint_kwargs)), raw_response=raw_response)
 
     def _check_response(self, response):
         """
@@ -345,8 +346,8 @@ class Api(BaseApi):
         super(Api, self).__init__(**config)
         self._object_mapping = ZendeskObjectMapping(self)
 
-    def __call__(self, *args, **kwargs):
-        return self._query_zendesk(self.endpoint, self.object_type, *args,
+    def __call__(self, raw_response=False, *args, **kwargs):
+        return self._query_zendesk(self.endpoint, self.object_type, raw_response, *args,
                                    **kwargs)
 
     def _get_user(self, user_id):
@@ -427,6 +428,11 @@ class Api(BaseApi):
         return self._query_zendesk(EndpointFactory('views'),
                                    'view',
                                    id=view_id)
+
+    def _get_routing_attribute(self, attribute_id):
+        return self._query_zendesk(EndpointFactory('attributes'),
+                                   'attribute',
+                                   id=attribute_id)
 
     def _get_topic(self, forum_topic_id):
         return self._query_zendesk(EndpointFactory('help_centre').topics,
@@ -1829,6 +1835,23 @@ class GroupMembershipApi(CRUDApi):
         return self._put(self._build_url(
             self.endpoint.make_default(user, group_membership)),
                          payload={})
+        
+        
+class RoutingAttributesApi(CRUDApi):
+    def __init__(self, config):
+        super(RoutingAttributesApi, self).__init__(config, object_type='attribute')
+
+    def values(self, attribute_id):
+        """
+        Return all attribute values for attribute.
+        """
+        return self._get(self._build_url(self.endpoint.values(id=attribute_id)))
+    
+    def value(self, attribute_id, value_id):
+        """
+        Return specified attribute value for attribute.
+        """
+        return self._get(self._build_url(self.endpoint.value(id=attribute_id)))
 
 
 class JiraLinkApi(CRUDApi):

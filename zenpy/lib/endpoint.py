@@ -649,6 +649,9 @@ class EndpointFactory(object):
     views.export = SecondaryEndpoint('views/%(id)s/export.json')
     views.search = ViewSearchEndpoint('views/search.json')
     recipient_addresses = PrimaryEndpoint('recipient_addresses')
+    attributes = PrimaryEndpoint('routing/attributes')
+    attributes.values = SecondaryEndpoint('routing/attributes/%(id)s/values')
+    attributes.value = MultipleIDEndpoint('routing/attributes/{0}/values/{1}.json')
 
     class Dummy(object):
         pass
