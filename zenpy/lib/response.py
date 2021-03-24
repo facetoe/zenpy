@@ -20,6 +20,7 @@ class ResponseHandler(object):
     def __init__(self, api, object_mapping=None):
         self.api = api
         self.object_mapping = object_mapping or api._object_mapping
+        print('rh init')
 
     @staticmethod
     @abstractmethod
@@ -64,6 +65,7 @@ class GenericZendeskResponseHandler(ResponseHandler):
 
         # Locate and store the single objects.
         for zenpy_object_name in self.object_mapping.class_mapping:
+            #print('# ' + zenpy_object_name)
             if zenpy_object_name in response_json:
                 zenpy_object = self.object_mapping.object_from_json(
                     zenpy_object_name, response_json[zenpy_object_name])
@@ -323,16 +325,20 @@ class SlaPolicyResponseHandler(GenericZendeskResponseHandler):
             "Could not handle response: {}".format(response_json))
 
 
-class RoutingAttributesResponseHandler(GenericZendeskResponseHandler):
+class RoutingResponseHandler(GenericZendeskResponseHandler):
     @staticmethod
     def applies_to(api, response):
         endpoint_path = get_endpoint_path(api, response)
         return endpoint_path.startswith('/routing')
 
     def deserialize(self, response_json):
-        deserialized_response = super(RoutingAttributesResponseHandler, self).deserialize(response_json)
+        print('\033[96m' + 'rarh deserialize' + str(response_json) + '\033[0m')
+        deserialized_response = super(RoutingResponseHandler, self).deserialize(response_json)
+
+        print('\033[96m' + 'rarh deserialized' + str(deserialized_response) + '\033[0m')
 
         if 'attributes' in deserialized_response:
+            print('\033[96m' + 'rarh deserialize return ' + str(deserialized_response['attributes']) + '\033[0m')
             return deserialized_response['attributes']
         elif 'attribute' in deserialized_response:
             return deserialized_response['attribute']
@@ -342,6 +348,7 @@ class RoutingAttributesResponseHandler(GenericZendeskResponseHandler):
             return deserialized_response['attribute_value']
 
     def build(self, response):
+        print('\033[96m' + 'rarh build' + '\033[0m')
         return self.deserialize(response.json())
 
 

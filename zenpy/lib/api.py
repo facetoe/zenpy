@@ -61,7 +61,7 @@ class BaseApi(object):
             CombinationResponseHandler,
             ViewResponseHandler,
             SlaPolicyResponseHandler,
-            RoutingAttributesResponseHandler,
+            RoutingResponseHandler,
             RequestCommentResponseHandler,
             GenericZendeskResponseHandler,
             HTTPOKResponseHandler,
@@ -107,10 +107,7 @@ class BaseApi(object):
                                   url,
                                   timeout=self.timeout,
                                   **kwargs)
-        if kwargs.get('raw_response'):
-            return response
-        else:
-            return self._process_response(response)
+        return self._process_response(response)
 
     def _call_api(self, http_method, url, **kwargs):
         """
@@ -152,6 +149,9 @@ class BaseApi(object):
                               retry_after_seconds)
                     sleep(1)
                 response = http_method(url, **kwargs)
+
+        #if '.post' in str(http_method):
+        #    import epdb; epdb.st()
 
         self._check_response(response)
         self._update_callsafety(response)
@@ -259,6 +259,9 @@ class BaseApi(object):
         :return: either a ResultGenerator or a Zenpy object.
         """
 
+        #if 'value' in str(object_type):
+        #    import epdb; epdb.st()
+
         _id = endpoint_kwargs.get('id', None)
         if _id:
             item = self.cache.get(object_type, _id)
@@ -283,6 +286,10 @@ class BaseApi(object):
                                           response_objects=cached_objects,
                                           object_type=object_type)
         else:
+
+            if 'value' in str(object_type):
+                import epdb; epdb.st()
+
             return self._get(
                 self._build_url(
                     endpoint=endpoint(*endpoint_args, **endpoint_kwargs)))
@@ -1839,23 +1846,61 @@ class GroupMembershipApi(CRUDApi):
             self.endpoint.make_default(user, group_membership)),
                          payload={})
 
+'''
+class AvailabilitiesApi(TalkApiBase):
+    def __init__(self, config, endpoint, object_type):
+        super(AvailabilitiesApi, self).__init__(config,
+                                                object_type=object_type,
+                                                endpoint=endpoint)
+'''
 
-class RoutingAttributesApi(CRUDApi):
+class RoutingAttributeValueApi(CRUDApi):
+
+    # defines the top level key for REST payloads
+    object_type = 'attribute_value'
+
+    # values are children of attributes, so an attribute must be passed
+    # to the constructor ...
+    def __init__(self, config, attribute=None):
+        print(f'# ATTRIBUTE {attribute}')
+        super(RoutingAttributeValueApi, self).__init__(config, object_type=self.object_type)
+
+
+class RoutingAttributeApi(CRUDApi):
+
+    # defines the top level key for REST payloads
+    object_type = 'attribute'
+
     def __init__(self, config):
-        super(RoutingAttributesApi, self).__init__(config, object_type='attribute')
+        super(RoutingAttributeApi, self).__init__(config, object_type=self.object_type)
+        self.values = RoutingAttributeValueApi(config)
 
-    def values(self, attribute_id):
-        """
-        Return all attribute values for attribute.
-        """
-        return self._get(self._build_url(self.endpoint.values(id=attribute_id)))
 
-    def value(self, attribute_id, value_id):
-        """
-        Return specified attribute value for attribute.
-        """
-        return self._get(self._build_url(self.endpoint.value(id=attribute_id)))
+class RoutingApi(CRUDApi):
+    def __init__(self, config):
+        super(RoutingApi, self).__init__(config, object_type='routing')
+        self.attributes = RoutingAttributeApi(config)
 
+
+    '''
+    def attributes(self):
+        # https://tannerjc2.zendesk.com/api/v2/routing/attributes.json
+        url = self._build_url(self.endpoint.attributes())
+        print('\033[96m' + 'get url ' + url + '\033[0m')
+        #import epdb; epdb.st()
+        res = self._get(url)
+        #import epdb; epdb.st()
+        return res
+    '''
+
+    '''
+    def values(self, attribute=None):
+        url = self._build_url(self.endpoint.attributes())
+        url = url.replace('.json', '/' + attribute.id + '/values')
+        res = self._get(url)
+        #import epdb; epdb.st()
+        return res
+    '''
 
 class JiraLinkApi(CRUDApi):
     def __init__(self, config):
