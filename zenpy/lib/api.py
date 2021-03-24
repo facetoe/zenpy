@@ -1838,8 +1838,8 @@ class GroupMembershipApi(CRUDApi):
         return self._put(self._build_url(
             self.endpoint.make_default(user, group_membership)),
                          payload={})
-        
-        
+
+
 class RoutingAttributesApi(CRUDApi):
     def __init__(self, config):
         super(RoutingAttributesApi, self).__init__(config, object_type='attribute')
@@ -1849,7 +1849,7 @@ class RoutingAttributesApi(CRUDApi):
         Return all attribute values for attribute.
         """
         return self._get(self._build_url(self.endpoint.values(id=attribute_id)))
-    
+
     def value(self, attribute_id, value_id):
         """
         Return specified attribute value for attribute.
