@@ -650,28 +650,14 @@ class EndpointFactory(object):
     views.search = ViewSearchEndpoint('views/search.json')
     recipient_addresses = PrimaryEndpoint('recipient_addresses')
 
-
     class Dummy(object):
         pass
 
     routings = Dummy()
-    routings.attributes = PrimaryEndpoint('routing/attributes')
-    attribute = PrimaryEndpoint('routing/attributes')
     attributes = PrimaryEndpoint('routing/attributes')
-    routing_attribute = PrimaryEndpoint('routing/attributes')
     routing_attributes = PrimaryEndpoint('routing/attributes')
-    routings.attributes.values = MultipleIDEndpoint('routing/attributes/{0}/values/{1}.json')
-    #values = MultipleIDEndpoint('routing/attributes/{0}/values/{1}.json')
     values = SecondaryEndpoint('routing/attributes/%(id)s/values.json')
     attribute_values = SecondaryEndpoint('routing/attributes/%(id)s/values.json')
-
-    '''
-    #routings = PrimaryEndpoint('routing')
-    routing_attribute = PrimaryEndpoint('routing/attributes')
-    routing_attributes = PrimaryEndpoint('routing/attributes')
-    routing_values = SecondaryEndpoint('routing/attributes/%(id)s/values')
-    routing_value = MultipleIDEndpoint('routing/attributes/{0}/values/{1}.json')
-    '''
 
     talk = Dummy()
     talk.calls = Dummy()
