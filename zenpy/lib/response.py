@@ -328,10 +328,10 @@ class RoutingAttributesResponseHandler(GenericZendeskResponseHandler):
     def applies_to(api, response):
         endpoint_path = get_endpoint_path(api, response)
         return endpoint_path.startswith('/routing')
-    
+
     def deserialize(self, response_json):
         deserialized_response = super(RoutingAttributesResponseHandler, self).deserialize(response_json)
-        
+
         if 'attributes' in deserialized_response:
             return deserialized_response['attributes']
         elif 'attribute' in deserialized_response:
@@ -340,11 +340,10 @@ class RoutingAttributesResponseHandler(GenericZendeskResponseHandler):
             return deserialized_response['attribute_values']
         elif 'attribute_value' in deserialized_response:
             return deserialized_response['attribute_value']
-        
-    
+
     def build(self, response):
         return self.deserialize(response.json())
-        
+
 
 class RequestCommentResponseHandler(GenericZendeskResponseHandler):
     @staticmethod
