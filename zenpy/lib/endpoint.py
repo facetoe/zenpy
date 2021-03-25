@@ -659,6 +659,8 @@ class EndpointFactory(object):
     values = SecondaryEndpoint('routing/attributes/%(id)s/values.json')
     attribute_values = SecondaryEndpoint('routing/attributes/%(id)s/values.json')
 
+    agents = PrimaryEndpoint('routing/agents')
+
     talk = Dummy()
     talk.calls = Dummy()
     talk.calls.incremental = IncrementalEndpoint(

@@ -1876,10 +1876,20 @@ class RoutingAttributeApi(CRUDApi):
         self.values = RoutingAttributeValueApi(config)
 
 
+class RoutingAgentApi(CRUDApi):
+
+    # defines the top level key for REST payloads
+    object_type = 'agent'
+
+    def __init__(self, config):
+        super(RoutingAgentApi, self).__init__(config, object_type=self.object_type)
+
+
 class RoutingApi(CRUDApi):
     def __init__(self, config):
         super(RoutingApi, self).__init__(config, object_type='routing')
         self.attributes = RoutingAttributeApi(config)
+        self.agents = RoutingAgentApi(config)
 
 
     '''
