@@ -1876,45 +1876,15 @@ class RoutingAgentInstanceValuesApi(CRUDApi):
     def __init__(self, config):
         super(RoutingAgentInstanceValuesApi, self).__init__(config, object_type=self.object_type)
 
-
-    '''
-    class CRUDRequest(BaseZendeskRequest):
-        """
-        Generic CRUD request. Most CRUD operations are handled by this class.
-        """
-        def post(self, api_objects, *args, **kwargs):
-            self.check_type(api_objects)
-
-            create_or_update = kwargs.pop('create_or_update', False)
-            create = kwargs.pop('create', False)
-            if isinstance(api_objects, Iterable) and create_or_update:
-                kwargs['create_or_update_many'] = True
-                endpoint = self.api.endpoint.create_or_update_many
-            elif isinstance(api_objects, Iterable):
-                kwargs['create_many'] = True
-                endpoint = self.api.endpoint
-            elif create_or_update:
-                endpoint = self.api.endpoint.create_or_update
-            elif create:
-                endpoint = self.api.endpoint.create
-            else:
-                endpoint = self.api.endpoint
-
-            payload = self.build_payload(api_objects)
-            url = self.api._build_url(endpoint(*args, **kwargs))
-            return self.api._post(url, payload)
-    '''
-
-    #return CRUDRequest(self).post(article, create=True, id=section)
-
     def create(self, attribute_value_ids, id=None):
+        # bypass default crudrequest post so we can have
+        # direct control over payload creation ...
         cr = CRUDRequest(self)
         endpoint = cr.api.endpoint
         url = cr.api._build_url(endpoint(id=id))
         payload = {
             'attribute_value_ids': [x.id for x in attribute_value_ids]
         }
-        #import epdb; epdb.st()
         return cr.api._post(url, payload)
 
 
