@@ -103,7 +103,7 @@ class ZendeskObjectMapping(object):
         'attribute': RoutingAttribute,
         'attribute_value': RoutingAttributeValue,
         'value': RoutingAttributeValue,
-        'instance_value': RoutingAgentInstanceValue
+        'instance_value': RoutingAttributeValue
     }
 
     skip_attrs = []
