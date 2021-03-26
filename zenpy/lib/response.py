@@ -332,13 +332,9 @@ class RoutingResponseHandler(GenericZendeskResponseHandler):
         return endpoint_path.startswith('/routing')
 
     def deserialize(self, response_json):
-        print('\033[96m' + 'rarh deserialize' + str(response_json) + '\033[0m')
         deserialized_response = super(RoutingResponseHandler, self).deserialize(response_json)
 
-        print('\033[96m' + 'rarh deserialized' + str(deserialized_response) + '\033[0m')
-
         if 'attributes' in deserialized_response:
-            print('\033[96m' + 'rarh deserialize return ' + str(deserialized_response['attributes']) + '\033[0m')
             return deserialized_response['attributes']
         elif 'attribute' in deserialized_response:
             return deserialized_response['attribute']
@@ -348,7 +344,6 @@ class RoutingResponseHandler(GenericZendeskResponseHandler):
             return deserialized_response['attribute_value']
 
     def build(self, response):
-        print('\033[96m' + 'rarh build' + '\033[0m')
         return self.deserialize(response.json())
 
 
