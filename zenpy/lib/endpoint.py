@@ -660,6 +660,7 @@ class EndpointFactory(object):
     attribute_values = SecondaryEndpoint('routing/attributes/%(id)s/values.json')
 
     agents = PrimaryEndpoint('routing/agents')
+    attribute_value_ids = SecondaryEndpoint('routing/agents/%(id)s/instance_values.json')
 
     talk = Dummy()
     talk.calls = Dummy()

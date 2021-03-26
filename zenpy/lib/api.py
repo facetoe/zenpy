@@ -287,8 +287,8 @@ class BaseApi(object):
                                           object_type=object_type)
         else:
 
-            if 'value' in str(object_type):
-                import epdb; epdb.st()
+            #if 'value' in str(object_type):
+            #    import epdb; epdb.st()
 
             return self._get(
                 self._build_url(
@@ -1846,13 +1846,6 @@ class GroupMembershipApi(CRUDApi):
             self.endpoint.make_default(user, group_membership)),
                          payload={})
 
-'''
-class AvailabilitiesApi(TalkApiBase):
-    def __init__(self, config, endpoint, object_type):
-        super(AvailabilitiesApi, self).__init__(config,
-                                                object_type=object_type,
-                                                endpoint=endpoint)
-'''
 
 class RoutingAttributeValueApi(CRUDApi):
 
@@ -1876,6 +1869,55 @@ class RoutingAttributeApi(CRUDApi):
         self.values = RoutingAttributeValueApi(config)
 
 
+class RoutingAgentInstanceValuesApi(CRUDApi):
+    # defines the top level key for REST payloads
+    object_type = 'attribute_value_ids'
+
+    def __init__(self, config):
+        super(RoutingAgentInstanceValuesApi, self).__init__(config, object_type=self.object_type)
+
+
+    '''
+    class CRUDRequest(BaseZendeskRequest):
+        """
+        Generic CRUD request. Most CRUD operations are handled by this class.
+        """
+        def post(self, api_objects, *args, **kwargs):
+            self.check_type(api_objects)
+
+            create_or_update = kwargs.pop('create_or_update', False)
+            create = kwargs.pop('create', False)
+            if isinstance(api_objects, Iterable) and create_or_update:
+                kwargs['create_or_update_many'] = True
+                endpoint = self.api.endpoint.create_or_update_many
+            elif isinstance(api_objects, Iterable):
+                kwargs['create_many'] = True
+                endpoint = self.api.endpoint
+            elif create_or_update:
+                endpoint = self.api.endpoint.create_or_update
+            elif create:
+                endpoint = self.api.endpoint.create
+            else:
+                endpoint = self.api.endpoint
+
+            payload = self.build_payload(api_objects)
+            url = self.api._build_url(endpoint(*args, **kwargs))
+            return self.api._post(url, payload)
+    '''
+
+    #return CRUDRequest(self).post(article, create=True, id=section)
+
+    def create(self, attribute_value_ids, id=None):
+        cr = CRUDRequest(self)
+        endpoint = cr.api.endpoint
+        url = cr.api._build_url(endpoint(id=id))
+        payload = {
+            'attribute_value_ids': [x.id for x in attribute_value_ids]
+        }
+        #import epdb; epdb.st()
+        return cr.api._post(url, payload)
+
+
 class RoutingAgentApi(CRUDApi):
 
     # defines the top level key for REST payloads
@@ -1883,6 +1925,7 @@ class RoutingAgentApi(CRUDApi):
 
     def __init__(self, config):
         super(RoutingAgentApi, self).__init__(config, object_type=self.object_type)
+        self.instance_values = RoutingAgentInstanceValuesApi(config)
 
 
 class RoutingApi(CRUDApi):
@@ -1891,26 +1934,6 @@ class RoutingApi(CRUDApi):
         self.attributes = RoutingAttributeApi(config)
         self.agents = RoutingAgentApi(config)
 
-
-    '''
-    def attributes(self):
-        # https://tannerjc2.zendesk.com/api/v2/routing/attributes.json
-        url = self._build_url(self.endpoint.attributes())
-        print('\033[96m' + 'get url ' + url + '\033[0m')
-        #import epdb; epdb.st()
-        res = self._get(url)
-        #import epdb; epdb.st()
-        return res
-    '''
-
-    '''
-    def values(self, attribute=None):
-        url = self._build_url(self.endpoint.attributes())
-        url = url.replace('.json', '/' + attribute.id + '/values')
-        res = self._get(url)
-        #import epdb; epdb.st()
-        return res
-    '''
 
 class JiraLinkApi(CRUDApi):
     def __init__(self, config):
