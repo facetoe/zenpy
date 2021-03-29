@@ -20,7 +20,6 @@ class ResponseHandler(object):
     def __init__(self, api, object_mapping=None):
         self.api = api
         self.object_mapping = object_mapping or api._object_mapping
-        print('rh init')
 
     @staticmethod
     @abstractmethod
