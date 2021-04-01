@@ -1859,6 +1859,18 @@ class RoutingAttributeValueApi(CRUDApi):
         super(RoutingAttributeValueApi, self).__init__(config, object_type=self.object_type)
 
 
+class RoutingAttributeDefinitionApi(CRUDApi):
+
+    # defines the top level key for REST payloads
+    object_type = 'definition'
+
+    # values are children of attributes, so an attribute must be passed
+    # to the constructor ...
+    def __init__(self, config, attribute=None):
+        print(f'# ATTRIBUTE {attribute}')
+        super(RoutingAttributeDefinitionApi, self).__init__(config, object_type=self.object_type)
+
+
 class RoutingAttributeApi(CRUDApi):
 
     # defines the top level key for REST payloads
@@ -1867,6 +1879,7 @@ class RoutingAttributeApi(CRUDApi):
     def __init__(self, config):
         super(RoutingAttributeApi, self).__init__(config, object_type=self.object_type)
         self.values = RoutingAttributeValueApi(config)
+        self.definitions = RoutingAttributeDefinitionApi(config)
 
 
 class RoutingAgentInstanceValuesApi(CRUDApi):

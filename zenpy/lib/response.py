@@ -341,6 +341,10 @@ class RoutingResponseHandler(GenericZendeskResponseHandler):
             return deserialized_response['attribute_values']
         elif 'attribute_value' in deserialized_response:
             return deserialized_response['attribute_value']
+        elif 'definitions' in deserialized_response:
+            # definitions -> conditions_any
+            # definitions -> conditions_all
+            return deserialized_response['definitions']
 
     def build(self, response):
         return self.deserialize(response.json())
