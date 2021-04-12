@@ -1855,7 +1855,6 @@ class RoutingAttributeValueApi(CRUDApi):
     # values are children of attributes, so an attribute must be passed
     # to the constructor ...
     def __init__(self, config, attribute=None):
-        print(f'# ATTRIBUTE {attribute}')
         super(RoutingAttributeValueApi, self).__init__(config, object_type=self.object_type)
 
 
