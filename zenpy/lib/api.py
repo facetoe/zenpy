@@ -102,12 +102,15 @@ class BaseApi(object):
                                   timeout=self.timeout)
         return self._process_response(response)
 
-    def _get(self, url, **kwargs):
+    def _get(self, url, raw_response=False, **kwargs):
         response = self._call_api(self.session.get,
                                   url,
                                   timeout=self.timeout,
                                   **kwargs)
-        return self._process_response(response)
+        if raw_response:
+            return response
+        else:
+            return self._process_response(response)
 
     def _call_api(self, http_method, url, **kwargs):
         """
