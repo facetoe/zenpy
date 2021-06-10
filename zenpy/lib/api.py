@@ -1543,6 +1543,12 @@ class TicketFieldApi(CRUDApi):
     def __init__(self, config):
         super(TicketFieldApi, self).__init__(config, 'ticket_field')
         self.options = TicketCustomFieldOptionApi(config)
+    
+    def all(self):
+        """
+        Retrieve all ticket fields.
+        """
+        return self._query_zendesk(self.endpoint.all, 'ticket_field', id=None)
 
 
 class VariantApi(Api):

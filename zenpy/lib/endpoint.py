@@ -564,6 +564,7 @@ class EndpointFactory(object):
     tags = PrimaryEndpoint('tags')
     targets = PrimaryEndpoint('targets')
     ticket_fields = PrimaryEndpoint('ticket_fields')
+    ticket_fields.all = SecondaryEndpoint('ticket_fields.json')
     ticket_field_options = SecondaryEndpoint(
         'ticket_fields/%(id)s/options.json')
     ticket_field_options.show = MultipleIDEndpoint(
