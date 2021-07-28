@@ -2,7 +2,7 @@
 
 # Zenpy
 
-Zenpy is a Python wrapper for the Zendesk, Chat and HelpCentre APIs. The goal of the project is to make it easy to write clean, fast, Pythonic code when interacting with Zendesk progmatically. The wrapper tries to keep API calls to a minimum. Wherever it makes sense objects are cached, and attributes of objects that would trigger an API call are evaluated lazily. 
+Zenpy is a Python wrapper for the Zendesk, Chat and HelpCentre APIs. The goal of the project is to make it easy to write clean, fast, Pythonic code when interacting with Zendesk progmatically. The wrapper tries to keep API calls to a minimum. Wherever it makes sense objects are cached, and attributes of objects that would trigger an API call are evaluated lazily.
 
 Zenpy supports both Python2 and Python3.
 
@@ -19,6 +19,12 @@ Please report bugs!
     * [Updating a custom field on a ticket](#updating-a-custom-field-on-a-ticket)
     * [Applying a Macro to a ticket](#applying-a-macro-to-a-ticket)
     * [Adding a photo to a user](#adding-a-photo-to-a-user)
+    * [List all categories from help center](#List-all-categories-from-help-center)
+    * [List all help center articles](#List-all-help-center-articles)
+    * [List all help center articles in a section](#List-all-help-center-articles-in-a-section)
+    * [Create new categorie in help center](#Create-new-categorie-in-help-center)
+    * [Create new section in help center](#Create-new-section-in-help-center)
+    * [Create new article in help center](#Create-new-article-in-help-center)
 * [Documentation](#documentation)
 * [Contributions](#contributions)
 
@@ -139,10 +145,10 @@ zenpy_client.tickets.update(ticket)
 
 ```python
 # Execute the show_macro_effect() method which returns what the macro *would* do.
-# The method accepts either Zenpy objects or ids. 
+# The method accepts either Zenpy objects or ids.
 macro_result = zenpy_client.tickets.show_macro_effect(ticket_id_or_object, macro_id_or_object)
 
-# Update the ticket to actually change the ticket. 
+# Update the ticket to actually change the ticket.
 zenpy_client.tickets.update(macro_result.ticket)
 ```
 
@@ -154,10 +160,90 @@ user.remote_photo_url = 'http://domain/example_photo.jpg'
 zenpy_client.users.update(user)
 ```
 
+##### List all categories from help center
+
+```python
+categories = zenpy_client.help_center.categories()
+for category in categories:
+    pass
+
+```
+
+##### List all help center articles
+
+```python
+articles = zenpy_client.help_center.articles(section=section)
+for article in articles:
+    pass
+```
+
+##### List all help center articles in a section
+
+```python
+section = zenpy_client.help_center.categories.sections(category_id=category.id)
+articles = zenpy_client.help_center.sections.articles(section=section)
+for article in articles:
+    pass
+```
+
+##### Create new categorie in help center
+
+```python
+from zenpy import Zenpy
+from zenpy.lib.api_objects.help_centre_objects import Category
+new_category = zenpy_client.help_center.categories.create(
+            Category(
+                name="Category name",
+                description="Category description",
+                locale="en-us",
+                created_at=datetime.now(),
+                updated_at=datetime.now()
+            )
+        )
+print(new_category.to_dict(serialize=True))
+```
+
+##### Create new section in help center
+
+```python
+from zenpy import Zenpy
+from zenpy.lib.api_objects.help_centre_objects import Section
+new_section = zenpy_client.help_center.sections.create(
+            Section(
+                name="Section name",
+                description="Section description",
+                category_id=new_category.id,
+                locale="en-us",
+                created_at=datetime.now(),
+                updated_at=datetime.now()
+            )
+        )
+print(new_section.to_dict(serialize=True))
+```
+
+##### Create new article in help center
+
+```python
+from zenpy import Zenpy
+from zenpy.lib.api_objects.help_centre_objects import Article
+new_article = zenpy_client.help_center.articles.create(
+                    section=new_section.id,
+                    article=Article(
+                        name="Article Name",
+                        body="<p>Article html content body</p>",
+                        locale="en-us",
+                        title="Article title",
+                        section_id=new_section.id,
+                        created_at=datetime.now(),
+                        updated_at=datetime.now()
+                    ),
+                )
+print(new_article.to_dict(serialize=True))
+```
+
 ## Documentation
 
 Check out the [documentation](http://docs.facetoe.com.au/) for more info.
 
 ### Contributions
 Contributions are very welcome. I've written an explanation of the core ideas of the wrapper in the [Contributors Guide](https://github.com/facetoe/zenpy/wiki/Contributors-Guide).
- 
