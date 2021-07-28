@@ -61,6 +61,7 @@ class BaseApi(object):
             CombinationResponseHandler,
             ViewResponseHandler,
             SlaPolicyResponseHandler,
+            RoutingResponseHandler,
             RequestCommentResponseHandler,
             GenericZendeskResponseHandler,
             HTTPOKResponseHandler,
@@ -122,7 +123,12 @@ class BaseApi(object):
         :param kwargs: Any additional kwargs to pass on to requests.
         """
         log.debug("{}: {} - {}".format(http_method.__name__.upper(), url,
+
                                        kwargs))
+
+        if 'raw_response' in kwargs:
+            kwargs.pop('raw_response', None)
+
         if self.ratelimit is not None:
             # This path indicates we're taking a proactive approach to not hit the rate limit
             response = self._ratelimit(http_method=http_method,
@@ -146,6 +152,9 @@ class BaseApi(object):
                               retry_after_seconds)
                     sleep(1)
                 response = http_method(url, **kwargs)
+
+        #if '.post' in str(http_method):
+        #    import epdb; epdb.st()
 
         self._check_response(response)
         self._update_callsafety(response)
@@ -239,8 +248,7 @@ class BaseApi(object):
         return json.loads(
             json.dumps(zenpy_object, default=json_encode_for_zendesk))
 
-    def _query_zendesk(self, endpoint, object_type, *endpoint_args,
-                       **endpoint_kwargs):
+    def _query_zendesk(self, endpoint, object_type, *endpoint_args, **endpoint_kwargs):
         """
         Query Zendesk for items. If an id or list of ids are passed, attempt to locate these items
          in the relevant cache. If they cannot be found, or no ids are passed, execute a call to Zendesk
@@ -253,6 +261,9 @@ class BaseApi(object):
 
         :return: either a ResultGenerator or a Zenpy object.
         """
+
+        #if 'value' in str(object_type):
+        #    import epdb; epdb.st()
 
         _id = endpoint_kwargs.get('id', None)
         if _id:
@@ -278,6 +289,10 @@ class BaseApi(object):
                                           response_objects=cached_objects,
                                           object_type=object_type)
         else:
+
+            #if 'value' in str(object_type):
+            #    import epdb; epdb.st()
+
             return self._get(
                 self._build_url(
                     endpoint=endpoint(*endpoint_args, **endpoint_kwargs)))
@@ -346,8 +361,7 @@ class Api(BaseApi):
         self._object_mapping = ZendeskObjectMapping(self)
 
     def __call__(self, *args, **kwargs):
-        return self._query_zendesk(self.endpoint, self.object_type, *args,
-                                   **kwargs)
+        return self._query_zendesk(self.endpoint, self.object_type, *args, **kwargs)
 
     def _get_user(self, user_id):
         if int(user_id) < 0:
@@ -427,6 +441,11 @@ class Api(BaseApi):
         return self._query_zendesk(EndpointFactory('views'),
                                    'view',
                                    id=view_id)
+
+    def _get_routing_attribute(self, attribute_id):
+        return self._query_zendesk(EndpointFactory('attributes'),
+                                   'attribute',
+                                   id=attribute_id)
 
     def _get_topic(self, forum_topic_id):
         return self._query_zendesk(EndpointFactory('help_centre').topics,
@@ -1829,6 +1848,76 @@ class GroupMembershipApi(CRUDApi):
         return self._put(self._build_url(
             self.endpoint.make_default(user, group_membership)),
                          payload={})
+
+
+class RoutingAttributeValueApi(CRUDApi):
+
+    # defines the top level key for REST payloads
+    object_type = 'attribute_value'
+
+    # values are children of attributes, so an attribute must be passed
+    # to the constructor ...
+    def __init__(self, config, attribute=None):
+        super(RoutingAttributeValueApi, self).__init__(config, object_type=self.object_type)
+
+
+class RoutingAttributeDefinitionApi(CRUDApi):
+
+    # defines the top level key for REST payloads
+    object_type = 'definition'
+
+    # values are children of attributes, so an attribute must be passed
+    # to the constructor ...
+    def __init__(self, config, attribute=None):
+        print(f'# ATTRIBUTE {attribute}')
+        super(RoutingAttributeDefinitionApi, self).__init__(config, object_type=self.object_type)
+
+
+class RoutingAttributeApi(CRUDApi):
+
+    # defines the top level key for REST payloads
+    object_type = 'attribute'
+
+    def __init__(self, config):
+        super(RoutingAttributeApi, self).__init__(config, object_type=self.object_type)
+        self.values = RoutingAttributeValueApi(config)
+        self.definitions = RoutingAttributeDefinitionApi(config)
+
+
+class RoutingAgentInstanceValuesApi(CRUDApi):
+    # defines the top level key for REST payloads
+    object_type = 'attribute_value_ids'
+
+    def __init__(self, config):
+        super(RoutingAgentInstanceValuesApi, self).__init__(config, object_type=self.object_type)
+
+    def create(self, attribute_value_ids, id=None):
+        # bypass default crudrequest post so we can have
+        # direct control over payload creation ...
+        cr = CRUDRequest(self)
+        endpoint = cr.api.endpoint
+        url = cr.api._build_url(endpoint(id=id))
+        payload = {
+            'attribute_value_ids': [x.id for x in attribute_value_ids]
+        }
+        return cr.api._post(url, payload)
+
+
+class RoutingAgentApi(CRUDApi):
+
+    # defines the top level key for REST payloads
+    object_type = 'agent'
+
+    def __init__(self, config):
+        super(RoutingAgentApi, self).__init__(config, object_type=self.object_type)
+        self.instance_values = RoutingAgentInstanceValuesApi(config)
+
+
+class RoutingApi(CRUDApi):
+    def __init__(self, config):
+        super(RoutingApi, self).__init__(config, object_type='routing')
+        self.attributes = RoutingAttributeApi(config)
+        self.agents = RoutingAgentApi(config)
 
 
 class JiraLinkApi(CRUDApi):

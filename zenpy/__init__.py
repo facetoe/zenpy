@@ -39,6 +39,7 @@ from zenpy.lib.api import (
     CustomAgentRolesApi,
     SearchApi,
     UserFieldsApi,
+    RoutingApi
 )
 
 from zenpy.lib.cache import ZenpyCache, ZenpyCacheManager
@@ -162,6 +163,7 @@ class Zenpy(object):
         self.custom_agent_roles = CustomAgentRolesApi(
             config, object_type="custom_agent_role"
         )
+        self.routing = RoutingApi(config)
 
     @staticmethod
     def http_adapter_kwargs():

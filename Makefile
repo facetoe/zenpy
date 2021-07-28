@@ -13,3 +13,5 @@ unittest:
 	nosetests -v --stop
 
 
+gen_classes:
+	cd tools && ./gen_classes.py --spec-path ../specification --doc-json doc_dict.json -o ../zenpy/lib/

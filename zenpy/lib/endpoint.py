@@ -653,6 +653,19 @@ class EndpointFactory(object):
     class Dummy(object):
         pass
 
+    routings = Dummy()
+    attributes = PrimaryEndpoint('routing/attributes')
+    routing_attributes = PrimaryEndpoint('routing/attributes')
+    values = SecondaryEndpoint('routing/attributes/%(id)s/values.json')
+    attribute_values = SecondaryEndpoint('routing/attributes/%(id)s/values.json')
+
+    # https://{subdomain}.zendesk.com/api/v2/routing/attributes/definitions.json
+    definitions = PrimaryEndpoint('routing/attributes/definitions.json')
+    attribute_definitions = PrimaryEndpoint('routing/attributes/definitions.json')
+
+    agents = PrimaryEndpoint('routing/agents')
+    attribute_value_ids = SecondaryEndpoint('routing/agents/%(id)s/instance_values.json')
+
     talk = Dummy()
     talk.calls = Dummy()
     talk.calls.incremental = IncrementalEndpoint(

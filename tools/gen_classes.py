@@ -433,14 +433,15 @@ def process_specification_directory(glob_pattern, outfile_name, namespace, write
 
         out_file.write("\n\n\n".join((header, formatted_code)))
 
-process_specification_directory('zendesk/*.json', 'api_objects/__init__.py',
-                                namespace='core')
-process_specification_directory('chat/*.json', 'api_objects/chat_objects.py',
-                                namespace='chat',
-                                write_baseclass=False)
-process_specification_directory('help_centre/*.json', 'api_objects/help_centre_objects.py',
-                                namespace='help_center',
-                                write_baseclass=False)
-process_specification_directory('talk/*.json', 'api_objects/talk_objects.py',
-                                namespace='core',
-                                write_baseclass=False)
+if __name__ == '__main__':
+    process_specification_directory('zendesk/*.json', 'api_objects/__init__.py',
+                                    namespace='core')
+    process_specification_directory('chat/*.json', 'api_objects/chat_objects.py',
+                                    namespace='chat',
+                                    write_baseclass=False)
+    process_specification_directory('help_centre/*.json', 'api_objects/help_centre_objects.py',
+                                    namespace='help_center',
+                                    write_baseclass=False)
+    process_specification_directory('talk/*.json', 'api_objects/talk_objects.py',
+                                    namespace='core',
+                                    write_baseclass=False)

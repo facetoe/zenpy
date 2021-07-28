@@ -64,6 +64,7 @@ class GenericZendeskResponseHandler(ResponseHandler):
 
         # Locate and store the single objects.
         for zenpy_object_name in self.object_mapping.class_mapping:
+            #print('# ' + zenpy_object_name)
             if zenpy_object_name in response_json:
                 zenpy_object = self.object_mapping.object_from_json(
                     zenpy_object_name, response_json[zenpy_object_name])
@@ -321,6 +322,32 @@ class SlaPolicyResponseHandler(GenericZendeskResponseHandler):
             return response_objects['definitions']
         raise ZenpyException(
             "Could not handle response: {}".format(response_json))
+
+
+class RoutingResponseHandler(GenericZendeskResponseHandler):
+    @staticmethod
+    def applies_to(api, response):
+        endpoint_path = get_endpoint_path(api, response)
+        return endpoint_path.startswith('/routing')
+
+    def deserialize(self, response_json):
+        deserialized_response = super(RoutingResponseHandler, self).deserialize(response_json)
+
+        if 'attributes' in deserialized_response:
+            return deserialized_response['attributes']
+        elif 'attribute' in deserialized_response:
+            return deserialized_response['attribute']
+        elif 'attribute_values' in deserialized_response:
+            return deserialized_response['attribute_values']
+        elif 'attribute_value' in deserialized_response:
+            return deserialized_response['attribute_value']
+        elif 'definitions' in deserialized_response:
+            # definitions -> conditions_any
+            # definitions -> conditions_all
+            return deserialized_response['definitions']
+
+    def build(self, response):
+        return self.deserialize(response.json())
 
 
 class RequestCommentResponseHandler(GenericZendeskResponseHandler):
