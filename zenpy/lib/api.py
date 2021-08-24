@@ -16,7 +16,7 @@ from zenpy.lib.api_objects.talk_objects import (Call, CurrentQueueActivity,
                                                 PhoneNumbers, ShowAvailability,
                                                 AgentsOverview,
                                                 AccountOverview,
-                                                AgentsActivity)
+                                                AgentsActivity, Leg)
 from zenpy.lib.exception import *
 from zenpy.lib.mapping import ZendeskObjectMapping, ChatObjectMapping, HelpCentreObjectMapping, TalkObjectMapping
 from zenpy.lib.request import *
@@ -209,6 +209,7 @@ class BaseApi(object):
             if handler.applies_to(self, response):
                 log.debug("{} matched: {}".format(handler.__name__,
                                                   pretty_response))
+                print(object_mapping)
                 r = handler(self, object_mapping).build(response)
                 self._clean_dirty_objects()
                 return r
@@ -2493,6 +2494,9 @@ class TalkApi(TalkApiBase):
         self.agents_overview = StatsApi(config,
                                         self.endpoint.agents_overview,
                                         object_type='agents_overview')
+        self.legs = LegApi(config,
+                                        self.endpoint.legs,
+                                        object_type='leg')
 
     def __call__(self, *args, **kwargs):
         raise NotImplementedError("Cannot directly call the TalkApi!")
@@ -2501,6 +2505,12 @@ class TalkApi(TalkApiBase):
 class CallApi(TalkApiBase, IncrementalApi):
     def __init__(self, config, endpoint, object_type):
         super(CallApi, self).__init__(config,
+                                       object_type=object_type,
+                                       endpoint=endpoint)
+
+class LegApi(TalkApiBase, IncrementalApi):
+    def __init__(self, config, endpoint, object_type):
+        super(LegApi, self).__init__(config,
                                        object_type=object_type,
                                        endpoint=endpoint)
 
