@@ -209,7 +209,6 @@ class BaseApi(object):
             if handler.applies_to(self, response):
                 log.debug("{} matched: {}".format(handler.__name__,
                                                   pretty_response))
-                print(object_mapping)
                 r = handler(self, object_mapping).build(response)
                 self._clean_dirty_objects()
                 return r
