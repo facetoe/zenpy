@@ -310,7 +310,7 @@ the API for changes since a point in time.
 
 Incremental endpoints accept either a datetime object or a unix
 timestamp as the ``start_time`` parameter. For example, the following
-code will retrieve all tickets created or modified in the last day:
+code will retrieve all users created or modified in the last day:
 
 .. code:: python
 
