@@ -668,6 +668,9 @@ class EndpointFactory(object):
     talk.agents_overview = PrimaryEndpoint(
         'channels/voice/stats/agents_overview')
     talk.phone_numbers = PrimaryEndpoint('channels/voice/phone_numbers.json')
+    talk.legs = Dummy()
+    talk.legs.incremental = IncrementalEndpoint(
+        'channels/voice/stats/incremental/legs.json')
 
     help_centre = Dummy()
     help_centre.articles = PrimaryEndpoint('help_center/articles')
