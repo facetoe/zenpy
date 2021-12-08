@@ -1836,11 +1836,19 @@ class JiraLinkApi(CRUDApi):
         super(JiraLinkApi, self).__init__(config, object_type='link')
         self.api_prefix = "api"
 
+    def delete(self, link):
+        url = self._build_url(self.endpoint(id=link.id), delete=True)
+        deleted_user = self._delete(url)
+        self.cache.delete(deleted_user)
+        return deleted_user
+
     def update(self, api_objects, **kwargs):
         raise ZenpyException("Cannot update Jira Links!")
 
-    def _build_url(self, endpoint):
-        if not endpoint.path == 'services/jira/links.json':
+    def _build_url(self, endpoint, delete=False):
+        if delete:
+            return super(JiraLinkApi, self)._build_url(endpoint).replace(".json", "")
+        elif not endpoint.path == 'services/jira/links.json':
             return super(JiraLinkApi, self)._build_url(endpoint, 'api/v2')
         else:
             return super(JiraLinkApi, self)._build_url(endpoint)
