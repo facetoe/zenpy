@@ -1,5 +1,6 @@
 # coding=utf-8
 
+from io import BytesIO
 import json
 import logging
 from time import sleep, time
@@ -1027,28 +1028,33 @@ class AttachmentApi(Api):
                                         target_name=target_name,
                                         content_type=content_type)
 
-    def download(self, attachment_id, destination):
+    def download(self, attachment_id, destination=None):
         """
         Download an attachment from Zendesk.
 
         :param attachment_id: id of the attachment to download
         :param destination: destination path. If a directory, the file will be placed in the directory with
                             the filename from the Attachment object.
-        :return: the path the file was written to
+                            If None, write to a BytesIO object.
+        :return: the path the file was written to or the BytesIO object
         """
         attachment = self(id=attachment_id)
+        if not destination:
+            return self._write_to_stream(attachment.content_url, BytesIO())
+
         if os.path.isdir(destination):
             destination = os.path.join(destination, attachment.file_name)
-        return self._download_file(attachment.content_url, destination)
 
-    def _download_file(self, source_url, destination_path):
+        with open(destination, 'wb') as f:
+            self._write_to_stream(attachment.content_url, f)
+        return destination
+
+    def _write_to_stream(self, source_url, stream):
         r = self.session.get(source_url, stream=True)
-        with open(destination_path, 'wb') as f:
-            # chunk_size of None will read data as it arrives in whatever size the chunks are received.
-            for chunk in r.iter_content(chunk_size=None):
-                if chunk:
-                    f.write(chunk)
-        return destination_path
+        for chunk in r.iter_content(chunk_size=None):
+            if chunk:
+                stream.write(chunk)
+        return stream
 
 
 class EndUserApi(CRUDApi):
