@@ -92,7 +92,7 @@ class PrimaryEndpoint(BaseEndpoint):
                 path = self.endpoint
             elif key == 'recover_ids':
                 path += '/recover_many.json'
-                parameters[key] = ",".join(map(str, value))
+                parameters['ids'] = ",".join(map(str, value))
             elif key == 'update_many':
                 path += '/update_many.json'
             elif key == 'count_many':
