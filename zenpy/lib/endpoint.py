@@ -677,6 +677,8 @@ class EndpointFactory(object):
         'channels/voice/agents/{}/users/{}/display.json')
     talk_pe.display_ticket = MultipleIDEndpoint(
         'channels/voice/agents/{}/tickets/{}/display.json')
+    talk_pe.create_ticket = PrimaryEndpoint(
+        'channels/voice/tickets.json')
 
     help_centre = Dummy()
     help_centre.articles = PrimaryEndpoint('help_center/articles')

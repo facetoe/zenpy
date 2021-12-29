@@ -2572,11 +2572,29 @@ class TalkPEApi(Api):
         """
         Show a ticket to a specified agent
 
-        :param agent: An agent to whom the profile is shown
-        :param ticket: A ticket to show his profile
+        :param agent: An agent to whom the ticket is shown
+        :param ticket: A ticket to show
         """
         url = self._build_url(self.endpoint.display_ticket(agent, ticket))
         return self._post(url, payload='');
+
+    @extract_id(User)
+    def create_ticket(self, agent, ticket):
+        """
+        Create a new voicemail tiсket and show it to a specified agent
+        Note: the ticket must have a "via_id" parameter set.
+        Details: https://developer.zendesk.com/api-reference/voice/talk-partner-edition-api/reference/#creating-tickets
+
+        :param agent: An agent to whom the new ticket is shown
+        :param ticket: A ticket to show
+        """
+
+        url = self._build_url(self.endpoint.create_ticket())
+        payload = {
+                    "display_to_agent" : agent if agent else "",
+                    "ticket": ticket
+                   }
+        return self._post(url, payload=payload);
 
 
 class CustomAgentRolesApi(CRUDApi):
