@@ -2567,7 +2567,7 @@ class TalkPEApi(Api):
         url = self._build_url(self.endpoint.display_user(agent, user))
         return self._post(url, payload='');
 
-    @extract_id(User)
+    @extract_id(User, Ticket)
     def display_ticket(self, agent, ticket):
         """
         Show a ticket to a specified agent
