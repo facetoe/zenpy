@@ -2547,6 +2547,37 @@ class PhoneNumbersApi(TalkApiBase):
                                               object_type=object_type,
                                               endpoint=endpoint)
 
+class TalkPEApi(Api):
+    def __init__(self, config):
+        super(TalkPEApi, self).__init__(config,
+                                      endpoint=EndpointFactory('talk_pe'),
+                                      object_type='talk_pe')
+
+    def __call__(self, *args, **kwargs):
+        raise ZenpyException("You cannot call this endpoint directly!")
+
+    @extract_id(User)
+    def display_user(self, agent, user):
+        """
+        Show a user's profile page to a specified agent
+
+        :param agent: An agent to whom the profile is shown
+        :param ticket: A user to show his profile
+        """
+        url = self._build_url(self.endpoint.display_user(agent, user))
+        return self._post(url, payload='');
+
+    @extract_id(User)
+    def display_ticket(self, agent, ticket):
+        """
+        Show a ticket to a specified agent
+
+        :param agent: An agent to whom the profile is shown
+        :param ticket: A ticket to show his profile
+        """
+        url = self._build_url(self.endpoint.display_ticket(agent, ticket))
+        return self._post(url, payload='');
+
 
 class CustomAgentRolesApi(CRUDApi):
     pass

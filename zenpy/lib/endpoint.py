@@ -672,6 +672,12 @@ class EndpointFactory(object):
     talk.legs.incremental = IncrementalEndpoint(
         'channels/voice/stats/incremental/legs.json')
 
+    talk_pe = Dummy()
+    talk_pe.display_user = MultipleIDEndpoint(
+        'channels/voice/agents/{}/users/{}/display.json')
+    talk_pe.display_ticket = MultipleIDEndpoint(
+        'channels/voice/agents/{}/tickets/{}/display.json')
+
     help_centre = Dummy()
     help_centre.articles = PrimaryEndpoint('help_center/articles')
     help_centre.articles.create = SecondaryEndpoint(
