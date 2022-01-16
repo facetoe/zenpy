@@ -256,14 +256,6 @@ class SearchExportResultGenerator(BaseResultGenerator):
         self._response_json = self.get_next_page()
         self.values.extend(self.process_page())
 
-    def next(self):
-        """ Overrides base object method to work without page numbers and sizes"""
-        if self.values is None:
-            self.values = self.process_page()
-        else:
-            self.handle_pagination()
-        return self
-
 
 class TicketCursorGenerator(ZendeskResultGenerator):
     """
