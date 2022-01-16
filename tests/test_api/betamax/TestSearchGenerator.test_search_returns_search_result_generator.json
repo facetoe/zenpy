@@ -15,7 +15,7 @@
           "User-Agent": "Zenpy/1.2"
         },
         "method": "GET",
-        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/search.json?query=type:ticket"
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/search.json?query=type:ticket&filter[type]=ticket"
       },
       "response": {
         "body": {
@@ -50,7 +50,7 @@
           "code": 200,
           "message": "OK"
         },
-        "url": "https://d3v-zenpydev.zendesk.com/api/v2/search.json?query=type:ticket"
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/search.json?query=type:ticket&filter[type]=ticket"
       }
     }
   ],

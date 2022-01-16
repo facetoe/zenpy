@@ -312,6 +312,7 @@ class SearchEndpoint(BaseEndpoint):
             elif key == 'type':
                 if value in ('ticket', 'organization', 'user', 'group'):
                     params['filter[type]'] = value
+                    renamed_kwargs.update({key + ':': '%s' % value})
                 else:
                     raise ZenpyException(
                         "This endpoint supports only 'ticket', 'group', 'user' or 'organization' type filter")
