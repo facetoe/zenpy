@@ -57,6 +57,7 @@ class BaseApi(object):
             CountResponseHandler,
             DeleteResponseHandler,
             TagResponseHandler,
+            SearchExportResponseHandler,
             SearchResponseHandler,
             JobStatusesResponseHandler,
             CombinationResponseHandler,
@@ -2617,6 +2618,18 @@ class SearchApi(Api):
         Returns results count only
         """
         return self._query_zendesk(self.endpoint.count, 'search_count', *args,
+                                   **kwargs)
+
+
+class SearchExportApi(Api):
+    def __init__(self, config):
+        super(SearchExportApi, self).__init__(config,
+                                        object_type='results',
+                                        endpoint=EndpointFactory('search_export'))
+        self._object_mapping = ZendeskObjectMapping(self)
+
+    def __call__(self, *args, **kwargs):
+        return self._query_zendesk(self.endpoint, self.object_type, *args,
                                    **kwargs)
 
 

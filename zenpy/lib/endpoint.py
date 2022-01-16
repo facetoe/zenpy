@@ -309,6 +309,12 @@ class SearchEndpoint(BaseEndpoint):
                     [modifiers.append("-%s" % v) for v in value]
                 else:
                     modifiers.append("-%s" % value)
+            elif key == 'type':
+                if value in ('ticket', 'organization', 'user', 'group'):
+                    params['filter[type]'] = value
+                else:
+                    raise ZenpyException(
+                        "This endpoint supports only 'ticket', 'group', 'user' or 'organization' type filter")
             elif is_iterable_but_not_string(value):
                 modifiers.append(self.format_or(key, value))
             else:
@@ -554,6 +560,7 @@ class EndpointFactory(object):
     schedules = PrimaryEndpoint('business_hours/schedules')
     search = SearchEndpoint('search.json')
     search.count = SearchEndpoint('search/count.json')
+    search_export = SearchEndpoint('search/export.json')
     sharing_agreements = PrimaryEndpoint('sharing_agreements')
     sla_policies = PrimaryEndpoint('slas/policies')
     sla_policies.definitions = PrimaryEndpoint('slas/policies/definitions')

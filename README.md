@@ -64,6 +64,23 @@ zenpy_client.search(type='ticket', status_less_than='closed', assignee='foo@mail
 zenpy_client.search(type='ticket', status='open')
 ```
 
+##### Exporting all tickets matching the query
+
+By default, Search API has a limit of 1000 results in total.
+Search Export API allows exporting unlimited number of results, so if you'd like to export all results, 
+use this method instead:
+
+```python
+for ticket in zenpy_client.search_export(type='ticket', status='open'):
+    print(ticket)
+```
+
+Read more about these limitations:
+
+[Search results limits](https://developer.zendesk.com/api-reference/ticketing/ticket-management/search/#results-limit)
+
+[Search Export API release notes](https://support.zendesk.com/hc/en-us/articles/4408825120538-Support-API-Announcing-the-Export-Search-Results-endpoint-)
+
 ##### Creating a ticket with a different requester
 
 ```python
