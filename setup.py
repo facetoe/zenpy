@@ -7,6 +7,7 @@ setup(
     version='2.0.24',
     description='Python wrapper for the Zendesk API',
     license='GPLv3',
+    license_files = ('LICENSE'),
     author='Face Toe',
     author_email='facetoe@facetoe.com.au',
     url='https://github.com/facetoe/zenpy',
