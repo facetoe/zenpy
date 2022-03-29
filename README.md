@@ -186,7 +186,7 @@ for article in articles:
     pass
 ```
 
-##### Create new categorie in help center
+##### Create new category in help center
 
 ```python
 from zenpy import Zenpy
