@@ -196,7 +196,7 @@ class Zenpy(object):
                     "password, token or oauth_token are required! {}".format(locals())
                 )
             elif password and token:
-                raise ZenpyException("password and token " "are mutually exclusive!")
+                raise ZenpyException("Password and token are mutually exclusive!")
             if password:
                 session.auth = (email, password)
             elif token:
