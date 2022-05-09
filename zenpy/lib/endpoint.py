@@ -509,6 +509,7 @@ class EndpointFactory(object):
     group_memberships.make_default = MultipleIDEndpoint(
         'users/{}/group_memberships/{}/make_default.json')
     groups = PrimaryEndpoint('groups')
+    groups.assignable = PrimaryEndpoint('groups/assignable')
     groups.memberships = SecondaryEndpoint('groups/%(id)s/memberships.json')
     groups.memberships_assignable = SecondaryEndpoint(
         'groups/%(id)s/memberships/assignable.json')
