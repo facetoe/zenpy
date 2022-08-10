@@ -63,6 +63,7 @@ class BaseApi(object):
             ViewResponseHandler,
             SlaPolicyResponseHandler,
             RequestCommentResponseHandler,
+            ZISIntegrationResponseHandler,
             GenericZendeskResponseHandler,
             HTTPOKResponseHandler,
         )
@@ -2623,3 +2624,42 @@ class SearchApi(Api):
 class UserFieldsApi(CRUDApi):
     def __init__(self, config):
         super(UserFieldsApi, self).__init__(config, object_type='user_field')
+
+
+class ZISApi(Api):
+    def __init__(self, config):
+        super(ZISApi, self).__init__(config,
+                                      endpoint=EndpointFactory('zis'),
+                                      object_type='zis')
+
+    def __call__(self, *args, **kwargs):
+        raise ZenpyException("You cannot call this endpoint directly!")
+
+    def create_integration(self, name, description):
+        """
+        Create a new ZIS integration
+
+        :param name: A name for a new integration
+        :param description: Description of the integration
+        """
+        url = self._build_url(endpoint=self.endpoint.create_integration(name), api_prefix="/api/services")
+        return self._post(url, payload=dict(description=description));
+
+    def upload_bundle(self, integration, bundle):
+        """
+        Uploads or updates a bundle
+
+        :param integration: A name an integration integration to store the bundle
+        :param bundle: JSON string with the bundle
+        """
+        url = self._build_url(endpoint=self.endpoint.upload_bundle(integration), api_prefix="/api/services")
+        return self._post(url, payload=bundle)
+
+    def install(self, integration, job_spec):
+        """
+        Install a JobSpec form an uploaded bundle to handle events
+
+        :param job_spec: A JobSpec name
+        """
+        url = self._build_url(endpoint=self.endpoint.install(integration, job_spec), api_prefix="/api/services")
+        return self._post(url, payload=None)
