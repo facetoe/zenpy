@@ -36,6 +36,7 @@ from zenpy.lib.api import (
     JiraLinkApi,
     SkipApi,
     TalkApi,
+    TalkPEApi,
     CustomAgentRolesApi,
     SearchApi,
     UserFieldsApi,
@@ -159,6 +160,7 @@ class Zenpy(object):
         self.dynamic_content = DynamicContentApi(config)
         self.targets = TargetApi(config, object_type="target")
         self.talk = TalkApi(config)
+        self.talk_pe = TalkPEApi(config)
         self.custom_agent_roles = CustomAgentRolesApi(
             config, object_type="custom_agent_role"
         )
@@ -194,7 +196,7 @@ class Zenpy(object):
                     "password, token or oauth_token are required! {}".format(locals())
                 )
             elif password and token:
-                raise ZenpyException("password and token " "are mutually exclusive!")
+                raise ZenpyException("Password and token are mutually exclusive!")
             if password:
                 session.auth = (email, password)
             elif token:
