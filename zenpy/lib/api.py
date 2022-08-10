@@ -2637,7 +2637,7 @@ class ZISApi(Api):
 
     def create_integration(self, name, description):
         """
-        Create a new ZIS integration
+        Creates a new ZIS integration
 
         :param name: A name for a new integration
         :param description: Description of the integration
@@ -2649,7 +2649,7 @@ class ZISApi(Api):
         """
         Uploads or updates a bundle
 
-        :param integration: A name an integration integration to store the bundle
+        :param integration: A name of an integration to store the bundle
         :param bundle: JSON string with the bundle
         """
         url = self._build_url(endpoint=self.endpoint.upload_bundle(integration), api_prefix="/api/services")
@@ -2657,8 +2657,9 @@ class ZISApi(Api):
 
     def install(self, integration, job_spec):
         """
-        Install a JobSpec form an uploaded bundle to handle events
+        Installs a JobSpec from an uploaded bundle to handle events
 
+        :param integration: A name of an integration containing the JobSpec
         :param job_spec: A JobSpec name
         """
         url = self._build_url(endpoint=self.endpoint.install(integration, job_spec), api_prefix="/api/services")
