@@ -836,10 +836,11 @@ class EndpointFactory(object):
     help_centre.permission_groups = PrimaryEndpoint('guide/permission_groups')
 
     zis = Dummy()
-    zis.create_integration = SecondaryEndpoint('zis/registry/%(id)s')
-    zis.upload_bundle = SecondaryEndpoint('zis/registry/%(id)s/bundles')
-    zis.install = MultipleIDEndpoint(
-        'zis/registry/job_specs/install?job_spec_name=zis:{}:job_spec:{}')
+    zis.registry = Dummy()
+    zis.registry.create_integration = SecondaryEndpoint('%(id)s')
+    zis.registry.upload_bundle = SecondaryEndpoint('%(id)s/bundles')
+    zis.registry.install = MultipleIDEndpoint(
+        'job_specs/install?job_spec_name=zis:{}:job_spec:{}')
 
     def __new__(cls, endpoint_name):
         return getattr(cls, endpoint_name)
