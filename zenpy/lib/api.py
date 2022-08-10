@@ -2664,3 +2664,13 @@ class ZISApi(Api):
         """
         url = self._build_url(endpoint=self.endpoint.install(integration, job_spec), api_prefix="/api/services")
         return self._post(url, payload=None)
+
+    def uninstall(self, integration, job_spec):
+        """
+        Uninstalls a JobSpec
+
+        :param integration: A name of an integration containing the JobSpec
+        :param job_spec: A JobSpec name
+        """
+        url = self._build_url(endpoint=self.endpoint.install(integration, job_spec), api_prefix="/api/services")
+        return self._delete(url, payload=None)
