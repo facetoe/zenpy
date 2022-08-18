@@ -1701,6 +1701,12 @@ class GroupApi(CRUDApi):
             self._build_url(
                 self.endpoint.memberships(id=group, include=include)))
 
+    def assignable(self):
+        """
+        Return Groups that are assignable.
+        """
+        return self._get(self._build_url(self.endpoint.assignable()))
+
     @extract_id(Group)
     def memberships_assignable(self, group, include=None):
         """
