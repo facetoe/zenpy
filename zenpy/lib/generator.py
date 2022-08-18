@@ -244,7 +244,7 @@ class SearchExportResultGenerator(BaseResultGenerator):
         meta = self._response_json.get('meta')
         if meta and meta.get('has_more'):
             url = self._response_json.get('links').get('next')
-            log.debug(f'There are more results via url={url}, retrieving')
+            log.debug('There are more results via url={}, retrieving'.format(url))
             response = self.response_handler.api._get(url, raw_response=True)
             return response.json()
         else:
