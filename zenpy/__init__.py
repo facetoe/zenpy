@@ -39,6 +39,7 @@ from zenpy.lib.api import (
     TalkPEApi,
     CustomAgentRolesApi,
     SearchApi,
+    SearchExportApi,
     UserFieldsApi,
 )
 
@@ -129,6 +130,7 @@ class Zenpy(object):
             config, object_type="suspended_ticket"
         )
         self.search = SearchApi(config)
+        self.search_export = SearchExportApi(config)
         self.topics = Api(config, object_type="topic")
         self.attachments = AttachmentApi(config)
         self.brands = BrandApi(config, object_type="brand")

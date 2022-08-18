@@ -226,6 +226,37 @@ class SearchResultGenerator(BaseResultGenerator):
             raise StopIteration()
 
 
+class SearchExportResultGenerator(BaseResultGenerator):
+    """
+    Generator for Search Export endpoint results
+    """
+    def process_page(self):
+        search_results = list()
+        for object_json in self._response_json['results']:
+            object_type = object_json.pop('result_type')
+            search_results.append(
+                self.response_handler.api._object_mapping.object_from_json(
+                    object_type, object_json))
+        return search_results
+
+    def get_next_page(self):
+        """ Retrieve the next page of results. """
+        meta = self._response_json.get('meta')
+        if meta and meta.get('has_more'):
+            url = self._response_json.get('links').get('next')
+            log.debug(f'There are more results via url={url}, retrieving')
+            response = self.response_handler.api._get(url, raw_response=True)
+            return response.json()
+        else:
+            log.debug('No more results available, stopping iteration')
+            raise StopIteration()
+
+    def handle_pagination(self):
+        """ Handle retrieving and processing the next page of results. """
+        self._response_json = self.get_next_page()
+        self.values.extend(self.process_page())
+
+
 class TicketCursorGenerator(ZendeskResultGenerator):
     """
     Generator for cursor based incremental export endpoints for ticket and ticket_audit objects.
