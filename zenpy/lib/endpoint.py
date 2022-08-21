@@ -844,5 +844,12 @@ class EndpointFactory(object):
     # Note the use of "guide" instead of "help_center" in the API endpoint
     help_centre.permission_groups = PrimaryEndpoint('guide/permission_groups')
 
+    zis = Dummy()
+    zis.registry = Dummy()
+    zis.registry.create_integration = SecondaryEndpoint('%(id)s')
+    zis.registry.upload_bundle = SecondaryEndpoint('%(id)s/bundles')
+    zis.registry.install = MultipleIDEndpoint(
+        'job_specs/install?job_spec_name=zis:{}:job_spec:{}')
+
     def __new__(cls, endpoint_name):
         return getattr(cls, endpoint_name)

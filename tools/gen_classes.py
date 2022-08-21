@@ -444,3 +444,6 @@ process_specification_directory('help_centre/*.json', 'api_objects/help_centre_o
 process_specification_directory('talk/*.json', 'api_objects/talk_objects.py',
                                 namespace='core',
                                 write_baseclass=False)
+process_specification_directory('zis/*.json', 'api_objects/zis_objects.py',
+                                namespace='zis',
+                                write_baseclass=False)
