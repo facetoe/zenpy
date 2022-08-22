@@ -2,7 +2,7 @@ from abc import abstractmethod
 
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.generator import SearchResultGenerator, ZendeskResultGenerator, ChatResultGenerator, ViewResultGenerator, \
-    TicketCursorGenerator, ChatIncrementalResultGenerator, JiraLinkGenerator
+    TicketCursorGenerator, ChatIncrementalResultGenerator, JiraLinkGenerator, SearchExportResultGenerator
 from zenpy.lib.util import as_singular, as_plural, get_endpoint_path
 from six.moves.urllib.parse import urlparse
 
@@ -212,13 +212,28 @@ class SearchResponseHandler(GenericZendeskResponseHandler):
     """ Handles Zendesk search results. """
     @staticmethod
     def applies_to(api, response):
+        result = urlparse(response.request.url)
         try:
-            return 'results' in response.json()
-        except ValueError:
+            return result.path.endswith('search.json') and 'results' in response.json()
+        except KeyError:
             return False
 
     def build(self, response):
         return SearchResultGenerator(self, response.json())
+
+
+class SearchExportResponseHandler(GenericZendeskResponseHandler):
+    """ Handles Zendesk search export results. """
+    @staticmethod
+    def applies_to(api, response):
+        result = urlparse(response.request.url)
+        try:
+            return result.path.endswith('export.json') and 'results' in response.json()
+        except KeyError:
+            return False
+
+    def build(self, response):
+        return SearchExportResultGenerator(self, response.json())
 
 
 class CountResponseHandler(GenericZendeskResponseHandler):
@@ -483,6 +498,23 @@ class GoalResponseHandler(ChatApiResponseHandler):
     @staticmethod
     def applies_to(api, response):
         return get_endpoint_path(api, response).startswith('/goals')
+
+
+class ZISIntegrationResponseHandler(ResponseHandler):
+    """ ZIS calls response handler. """
+    @staticmethod
+    def applies_to(api, response):
+        result = urlparse(response.request.url)
+        return result.path.startswith('/api/services/zis/registry/')
+
+    def deserialize(self, response_json):
+        return self.object_mapping.object_from_json('integration', response_json)
+
+    def build(self, response):
+        if response.text:
+            return self.deserialize(response.json())
+        else:
+            return None
 
 
 class MissingTranslationHandler(ResponseHandler):

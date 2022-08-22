@@ -309,6 +309,13 @@ class SearchEndpoint(BaseEndpoint):
                     [modifiers.append("-%s" % v) for v in value]
                 else:
                     modifiers.append("-%s" % value)
+            elif key == 'type':
+                if value in ('ticket', 'organization', 'user', 'group'):
+                    params['filter[type]'] = value
+                    renamed_kwargs.update({key + ':': '%s' % value})
+                else:
+                    raise ZenpyException(
+                        "This endpoint supports only 'ticket', 'group', 'user' or 'organization' type filter")
             elif is_iterable_but_not_string(value):
                 modifiers.append(self.format_or(key, value))
             else:
@@ -509,6 +516,7 @@ class EndpointFactory(object):
     group_memberships.make_default = MultipleIDEndpoint(
         'users/{}/group_memberships/{}/make_default.json')
     groups = PrimaryEndpoint('groups')
+    groups.assignable = PrimaryEndpoint('groups/assignable')
     groups.memberships = SecondaryEndpoint('groups/%(id)s/memberships.json')
     groups.memberships_assignable = SecondaryEndpoint(
         'groups/%(id)s/memberships/assignable.json')
@@ -554,6 +562,7 @@ class EndpointFactory(object):
     schedules = PrimaryEndpoint('business_hours/schedules')
     search = SearchEndpoint('search.json')
     search.count = SearchEndpoint('search/count.json')
+    search_export = SearchEndpoint('search/export.json')
     sharing_agreements = PrimaryEndpoint('sharing_agreements')
     sla_policies = PrimaryEndpoint('slas/policies')
     sla_policies.definitions = PrimaryEndpoint('slas/policies/definitions')
@@ -834,6 +843,13 @@ class EndpointFactory(object):
 
     # Note the use of "guide" instead of "help_center" in the API endpoint
     help_centre.permission_groups = PrimaryEndpoint('guide/permission_groups')
+
+    zis = Dummy()
+    zis.registry = Dummy()
+    zis.registry.create_integration = SecondaryEndpoint('%(id)s')
+    zis.registry.upload_bundle = SecondaryEndpoint('%(id)s/bundles')
+    zis.registry.install = MultipleIDEndpoint(
+        'job_specs/install?job_spec_name=zis:{}:job_spec:{}')
 
     def __new__(cls, endpoint_name):
         return getattr(cls, endpoint_name)

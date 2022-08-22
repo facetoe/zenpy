@@ -6,6 +6,7 @@ from zenpy.lib.api_objects.chat_objects import *
 from zenpy.lib.api_objects.help_centre_objects import Article, Category, Section, Label, Translation, Topic, Post, \
     Subscription, Vote, AccessPolicy, UserSegment, ManagementPermissionGroup
 from zenpy.lib.api_objects.talk_objects import *
+from zenpy.lib.api_objects.zis_objects import *
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.proxy import ProxyDict, ProxyList
 from zenpy.lib.util import as_singular, get_object_type
@@ -99,7 +100,8 @@ class ZendeskObjectMapping(object):
         'link': Link,
         'skip': Skip,
         'schedule': Schedule,
-        'custom_role': CustomAgentRole
+        'custom_role': CustomAgentRole,
+        'integration': Integration
     }
 
     skip_attrs = []

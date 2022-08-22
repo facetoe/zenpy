@@ -57,12 +57,14 @@ class BaseApi(object):
             CountResponseHandler,
             DeleteResponseHandler,
             TagResponseHandler,
+            SearchExportResponseHandler,
             SearchResponseHandler,
             JobStatusesResponseHandler,
             CombinationResponseHandler,
             ViewResponseHandler,
             SlaPolicyResponseHandler,
             RequestCommentResponseHandler,
+            ZISIntegrationResponseHandler,
             GenericZendeskResponseHandler,
             HTTPOKResponseHandler,
         )
@@ -1700,6 +1702,12 @@ class GroupApi(CRUDApi):
             self._build_url(
                 self.endpoint.memberships(id=group, include=include)))
 
+    def assignable(self):
+        """
+        Return Groups that are assignable.
+        """
+        return self._get(self._build_url(self.endpoint.assignable()))
+
     @extract_id(Group)
     def memberships_assignable(self, group, include=None):
         """
@@ -2620,6 +2628,82 @@ class SearchApi(Api):
                                    **kwargs)
 
 
+class SearchExportApi(Api):
+    def __init__(self, config):
+        super(SearchExportApi, self).__init__(config,
+                                        object_type='results',
+                                        endpoint=EndpointFactory('search_export'))
+        self._object_mapping = ZendeskObjectMapping(self)
+
+    def __call__(self, *args, **kwargs):
+        return self._query_zendesk(self.endpoint, self.object_type, *args,
+                                   **kwargs)
+
+
 class UserFieldsApi(CRUDApi):
     def __init__(self, config):
         super(UserFieldsApi, self).__init__(config, object_type='user_field')
+
+
+class ZISApi(Api):
+    def __init__(self, config):
+        super(ZISApi, self).__init__(config,
+                                      endpoint=EndpointFactory('zis'),
+                                      object_type='')
+
+        self.registry = ZISRegistryApi(config,
+                                        endpoint=self.endpoint.registry,
+                                        object_type='integration')
+
+    def __call__(self, *args, **kwargs):
+        raise ZenpyException("You cannot call this endpoint directly!")
+
+
+class ZISRegistryApi(Api):
+    def __init__(self, config, endpoint, object_type):
+        super(ZISRegistryApi, self).__init__(config, endpoint=endpoint, object_type=object_type)
+
+        self.api_prefix = "/api/services/zis/registry"
+
+    def __call__(self, *args, **kwargs):
+        raise ZenpyException("You cannot call this endpoint directly!")
+
+    def create_integration(self, integration, description):
+        """
+        Creates a new ZIS integration
+
+        :param integration: A name for a new integration
+        :param description: Description of the integration
+        """
+        url = self._build_url(endpoint=self.endpoint.create_integration(integration))
+        return self._post(url, payload=dict(description=description));
+
+    def upload_bundle(self, integration, bundle):
+        """
+        Uploads or updates a bundle
+
+        :param integration: A name of an integration to store the bundle
+        :param bundle: JSON string with the bundle
+        """
+        url = self._build_url(endpoint=self.endpoint.upload_bundle(integration))
+        return self._post(url, payload=bundle)
+
+    def install(self, integration, job_spec):
+        """
+        Installs a JobSpec from an uploaded bundle to handle events
+
+        :param integration: A name of an integration containing the JobSpec
+        :param job_spec: A JobSpec name
+        """
+        url = self._build_url(endpoint=self.endpoint.install(integration, job_spec))
+        return self._post(url, payload=None)
+
+    def uninstall(self, integration, job_spec):
+        """
+        Uninstalls a JobSpec
+
+        :param integration: A name of an integration containing the JobSpec
+        :param job_spec: A JobSpec name
+        """
+        url = self._build_url(endpoint=self.endpoint.install(integration, job_spec))
+        return self._delete(url, payload=None)

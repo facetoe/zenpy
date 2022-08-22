@@ -39,7 +39,9 @@ from zenpy.lib.api import (
     TalkPEApi,
     CustomAgentRolesApi,
     SearchApi,
+    SearchExportApi,
     UserFieldsApi,
+    ZISApi,
 )
 
 from zenpy.lib.cache import ZenpyCache, ZenpyCacheManager
@@ -129,6 +131,7 @@ class Zenpy(object):
             config, object_type="suspended_ticket"
         )
         self.search = SearchApi(config)
+        self.search_export = SearchExportApi(config)
         self.topics = Api(config, object_type="topic")
         self.attachments = AttachmentApi(config)
         self.brands = BrandApi(config, object_type="brand")
@@ -164,6 +167,7 @@ class Zenpy(object):
         self.custom_agent_roles = CustomAgentRolesApi(
             config, object_type="custom_agent_role"
         )
+        self.zis = ZISApi(config)
 
     @staticmethod
     def http_adapter_kwargs():
