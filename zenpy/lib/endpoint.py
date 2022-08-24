@@ -470,6 +470,17 @@ class ViewSearchEndpoint(BaseEndpoint):
         return Url(self.endpoint, params=kwargs)
 
 
+class WebhookEndpoint(BaseEndpoint):
+    def __call__(self, **kwargs):
+        path = self.endpoint
+        for key, value in kwargs.items():
+            if key == 'id':
+                path += "/{}".format(value)
+            elif key == 'clone_webhook_id':
+                path += "?clone_webhook_id={}".format(value)
+        return Url(path)
+
+
 class EndpointFactory(object):
     """
     Provide access to the various endpoints.
@@ -850,6 +861,11 @@ class EndpointFactory(object):
     zis.registry.upload_bundle = SecondaryEndpoint('%(id)s/bundles')
     zis.registry.install = MultipleIDEndpoint(
         'job_specs/install?job_spec_name=zis:{}:job_spec:{}')
+
+    webhooks = WebhookEndpoint('webhooks')
+    webhooks.invocations = SecondaryEndpoint('webhooks/%(id)s/invocations')
+    webhooks.invocation_attempts = MultipleIDEndpoint(
+        'webhooks/{}/invocations/{}/attempts')
 
     def __new__(cls, endpoint_name):
         return getattr(cls, endpoint_name)

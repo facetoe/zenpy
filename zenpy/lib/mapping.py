@@ -101,7 +101,10 @@ class ZendeskObjectMapping(object):
         'skip': Skip,
         'schedule': Schedule,
         'custom_role': CustomAgentRole,
-        'integration': Integration
+        'integration': Integration,
+        'webhook': Webhook,
+        'invocation': Invocation,
+        'invocation_attempt': InvocationAttempt,
     }
 
     skip_attrs = []

@@ -21,6 +21,9 @@ from zenpy.lib.api_objects import (
     OrganizationField,
     Upload,
     UserField,
+    Webhook,
+    Invocation,
+    InvocationAttempt
 )
 
 
@@ -151,3 +154,106 @@ class UserFieldsCreateUpdateDelete(
     )
     ignore_update_kwargs = ["key"]  # Can't update key after creation.
     api_name = "user_fields"
+
+
+class TestWebhooksCreateUpdateDelete(SingleCreateApiTestCase):
+    __test__ = True
+    ZenpyType = Webhook
+    object_kwargs = dict(
+        authentication={
+                    "add_position": "header",
+                    "data": {
+                        "password": "hello_123",
+                        "username": "john_smith"
+                    },
+                    "type": "basic_auth"
+                },
+        endpoint="https://example.com/status/200",
+        http_method="GET",
+        name="Example Webhook",
+        description="Description",
+        request_format="json",
+        status="active",
+        subscriptions=["conditional_ticket_events"],
+    )
+    ignore_update_kwargs = ["http_method", "request_format", "status"]
+    api_name = "webhooks"
+
+    def test_create_and_update_webhook(self):
+        cassette_name = "{}-update-single".format(self.generate_cassette_name())
+        with self.recorder.use_cassette(
+            cassette_name=cassette_name, serialize_with="prettyjson"
+        ):
+            zenpy_object = self.create_single_zenpy_object()
+            zenpy_object = self.unpack_object(zenpy_object)
+            zenpy_object, new_kwargs = self.modify_object(zenpy_object)
+
+            response = self.update_method(zenpy_object)
+            self.assertEqual(response.status_code, 204)
+
+    def test_list_webhooks(self):
+        cassette_name = "{}-list".format(self.generate_cassette_name())
+        with self.recorder.use_cassette(
+            cassette_name=cassette_name, serialize_with="prettyjson"
+        ):
+            new_webhook = self.create_single_zenpy_object()
+            try:
+                found = False
+                for object in self.get_api_method("list")():
+                    if object.id == new_webhook.id:
+                        self.assertIsInstance(object, self.ZenpyType)
+                        found = True
+                        break
+                self.assertEqual(found, True)
+            finally:
+                self.get_api_method("delete")(new_webhook)
+
+    def test_show_webhook(self):
+        cassette_name = "{}-show".format(self.generate_cassette_name())
+        with self.recorder.use_cassette(
+            cassette_name=cassette_name, serialize_with="prettyjson"
+        ):
+            new_webhook = self.create_single_zenpy_object()
+            try:
+                requested_webhook = self.zenpy_client.webhooks(id=new_webhook.id)
+                self.assertIsInstance(requested_webhook, self.ZenpyType)
+                self.assertEqual(new_webhook.id, requested_webhook.id)
+            finally:
+                self.get_api_method("delete")(new_webhook)
+
+    def test_clone_webhook(self):
+        cassette_name = "{}-clone".format(self.generate_cassette_name())
+        with self.recorder.use_cassette(
+            cassette_name=cassette_name, serialize_with="prettyjson"
+        ):
+            first_webhook = self.create_single_zenpy_object()
+            try:
+                second_webhook = self.get_api_method("clone")(first_webhook)
+                self.assertIsInstance(second_webhook, self.ZenpyType)
+                self.assertNotEqual(first_webhook.id, second_webhook.id)
+                self.get_api_method("delete")(second_webhook)
+            finally:
+                self.get_api_method("delete")(first_webhook)
+
+    def test_invocations(self):
+        cassette_name = "{}-invocations".format(self.generate_cassette_name())
+        with self.recorder.use_cassette(
+            cassette_name=cassette_name, serialize_with="prettyjson"
+        ):
+            webhook = self.zenpy_client.webhooks(id='01FVJ1J73MG04AJRDPD2AKKXH7')
+            count = 0
+            for invocation in self.zenpy_client.webhooks.invocations(webhook):
+                count += 1
+                self.assertIsInstance(invocation, Invocation)
+
+    def test_invocation_attempts(self):
+        cassette_name = "{}-invocation-attemps".format(self.generate_cassette_name())
+        with self.recorder.use_cassette(
+            cassette_name=cassette_name, serialize_with="prettyjson"
+        ):
+            webhook = self.zenpy_client.webhooks(id='01FVJ1J73MG04AJRDPD2AKKXH7')
+            invocation = self.zenpy_client.webhooks.invocations(webhook).next()
+            count = 0
+            for attempt in self.zenpy_client.webhooks.invocation_attempts(webhook.id, invocation.id):
+                count += 1
+                self.assertIsInstance(attempt, InvocationAttempt)

@@ -1,0 +1,25 @@
+{
+  "id":"XXXYYYZZZ",
+  "name":"Webhook name",
+  "description": "Description",
+  "status":"active",
+  "endpoint":"https://url.cloud/api/v1/tickets",
+  "external_source": {},
+  "signing_secret": {},
+  "subscriptions":[
+    "conditional_ticket_events"
+  ],
+  "created_at":"2022-04-27T03:54:55Z",
+  "created_by":"-1",
+  "updated_at":"2022-04-27T03:54:55Z",
+  "updated_by":"-1",
+  "http_method":"POST",
+  "request_format":"json",
+  "authentication":{
+    "type":"basic_auth",
+    "data":{
+       "username":"username_here"
+    },
+    "add_position":"header"
+  }
+}

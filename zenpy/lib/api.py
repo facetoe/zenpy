@@ -9,7 +9,7 @@ from zenpy.lib.api_objects import (User, Macro, Identity, View, Organization,
                                    Group, GroupMembership, OrganizationField,
                                    TicketField, Comment as TicketComment,
                                    CustomFieldOption, Item, Variant, Ticket,
-                                   BaseObject)
+                                   Webhook, BaseObject)
 from zenpy.lib.api_objects.help_centre_objects import (
     Section, Article, Comment, ArticleAttachment, Label, Category, Translation,
     Topic, Post, Subscription)
@@ -22,7 +22,8 @@ from zenpy.lib.exception import *
 from zenpy.lib.mapping import ZendeskObjectMapping, ChatObjectMapping, HelpCentreObjectMapping, TalkObjectMapping
 from zenpy.lib.request import *
 from zenpy.lib.response import *
-from zenpy.lib.util import as_plural, extract_id, is_iterable_but_not_string, json_encode_for_zendesk, all_are_none, all_are_not_none
+from zenpy.lib.util import as_plural, extract_id, is_iterable_but_not_string, json_encode_for_zendesk, all_are_none, \
+    all_are_not_none, json_encode_for_printing
 
 try:
     from collections.abc import Iterable
@@ -39,6 +40,7 @@ class BaseApi(object):
     Base class for API. Responsible for submitting requests to Zendesk, controlling
     rate limiting and deserializing responses.
     """
+
     def __init__(self, subdomain, session, timeout, ratelimit,
                  ratelimit_budget, ratelimit_request_interval, cache, domain):
         self.domain = domain
@@ -65,6 +67,8 @@ class BaseApi(object):
             SlaPolicyResponseHandler,
             RequestCommentResponseHandler,
             ZISIntegrationResponseHandler,
+            WebhookInvocationsResponseHandler,
+            WebhookInvocationAttemptsResponseHandler,
             GenericZendeskResponseHandler,
             HTTPOKResponseHandler,
         )
@@ -163,6 +167,7 @@ class BaseApi(object):
 
     def _ratelimit(self, http_method, url, **kwargs):
         """ Ensure we do not hit the rate limit. """
+
         def time_since_last_call():
             if self.callsafety['lastcalltime'] is not None:
                 return int(time() - self.callsafety['lastcalltime'])
@@ -342,6 +347,7 @@ class Api(BaseApi):
     This class also contains many methods for retrieving specific objects or collections of objects.
     These methods are called by the classes found in zenpy.lib.api_objects.
     """
+
     def __init__(self, config, object_type, endpoint=None):
         self.object_type = object_type
         self.endpoint = endpoint or EndpointFactory(as_plural(object_type))
@@ -505,6 +511,7 @@ class CRUDApi(Api):
     """
     CRUDApi supports create/update/delete operations
     """
+
     def create(self, api_objects, **kwargs):
         """
         Create (POST) one or more API objects. Before being submitted to Zendesk the object or objects
@@ -538,6 +545,7 @@ class CRUDExternalApi(CRUDApi):
     """
     The CRUDExternalApi exposes some extra methods for operating on external ids.
     """
+
     def update_by_external_id(self, api_objects):
         """
         Update (PUT) one or more API objects by external_id.
@@ -564,6 +572,7 @@ class SuspendedTicketApi(Api):
     """
     The SuspendedTicketApi adds some SuspendedTicket specific functionality
     """
+
     def recover(self, tickets):
         """
         Recover (PUT) one or more SuspendedTickets.
@@ -585,6 +594,7 @@ class TaggableApi(Api):
     """
     TaggableApi supports getting, setting, adding and deleting tags.
     """
+
     def add_tags(self, id, tags):
         """
         Add (PUT) one or more tags.
@@ -624,6 +634,7 @@ class RateableApi(Api):
     """
     Supports rating with a SatisfactionRating
     """
+
     def rate(self, id, rating):
         """
         Add (POST) a satisfaction rating.
@@ -638,6 +649,7 @@ class IncrementalApi(Api):
     """
     IncrementalApi supports the incremental endpoint.
     """
+
     def incremental(self, start_time, include=None, per_page=None):
         """
         Retrieve bulk data from the incremental API.
@@ -646,13 +658,15 @@ class IncrementalApi(Api):
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param start_time: The time of the oldest object you are interested in.
         """
-        return self._query_zendesk(self.endpoint.incremental, self.object_type, start_time=start_time, include=include, per_page=per_page)
+        return self._query_zendesk(self.endpoint.incremental, self.object_type, start_time=start_time, include=include,
+                                   per_page=per_page)
 
 
 class ChatIncrementalApi(Api):
     """
     ChatIncrementalApi supports the chat incremental endpoint.
     """
+
     def incremental(self, start_time, **kwargs):
         """
         Retrieve bulk data from the chat incremental API.
@@ -801,6 +815,7 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
     """
     The UserApi adds some User specific functionality
     """
+
     def __init__(self, config):
         super(UserApi, self).__init__(config, object_type='user')
         self.identities = UserIdentityApi(config)
@@ -1063,6 +1078,7 @@ class EndUserApi(CRUDApi):
     """
     EndUsers can only update.
     """
+
     def __init__(self, config):
         super(EndUserApi, self).__init__(config,
                                          object_type='user',
@@ -1147,6 +1163,7 @@ class OrganizationMembershipApi(CRUDApi):
     """
     The OrganizationMembershipApi allows the creation and deletion of Organization Memberships
     """
+
     def __init__(self, config):
         super(OrganizationMembershipApi,
               self).__init__(config, object_type='organization_membership')
@@ -1207,6 +1224,7 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
     """
     The TicketApi adds some Ticket specific functionality
     """
+
     def __init__(self, config):
         super(TicketApi, self).__init__(config, object_type='ticket')
 
@@ -1301,7 +1319,8 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param start_time: time to retrieve events from.
         """
-        return self._query_zendesk(self.endpoint.events, 'ticket_event', start_time=start_time, include=include, per_page=per_page)
+        return self._query_zendesk(self.endpoint.events, 'ticket_event', start_time=start_time, include=include,
+                                   per_page=per_page)
 
     @extract_id(Ticket)
     def audits(self, ticket=None, include=None, **kwargs):
@@ -1842,7 +1861,7 @@ class GroupMembershipApi(CRUDApi):
         """
         return self._put(self._build_url(
             self.endpoint.make_default(user, group_membership)),
-                         payload={})
+            payload={})
 
 
 class JiraLinkApi(CRUDApi):
@@ -1898,6 +1917,7 @@ class ChatApiBase(Api):
     Implements most generic ChatApi functionality. Most if the actual work is delegated to
     Request and Response handlers.
     """
+
     def __init__(self, config, endpoint, request_handler=None):
         super(ChatApiBase, self).__init__(config,
                                           object_type='chat',
@@ -1970,7 +1990,7 @@ class HelpCentreApiBase(Api):
                                                 endpoint=endpoint)
 
         self._response_handlers = (
-            MissingTranslationHandler, ) + self._response_handlers
+                                      MissingTranslationHandler,) + self._response_handlers
 
         self._object_mapping = HelpCentreObjectMapping(self)
         self.locale = ''
@@ -2494,8 +2514,8 @@ class TalkApi(TalkApiBase):
                                       object_type='talk')
 
         self.calls = CallApi(config,
-                              self.endpoint.calls,
-                              object_type='call')
+                             self.endpoint.calls,
+                             object_type='call')
         self.current_queue_activity = StatsApi(
             config,
             self.endpoint.current_queue_activity,
@@ -2516,8 +2536,8 @@ class TalkApi(TalkApiBase):
                                         self.endpoint.agents_overview,
                                         object_type='agents_overview')
         self.legs = LegApi(config,
-                                        self.endpoint.legs,
-                                        object_type='leg')
+                           self.endpoint.legs,
+                           object_type='leg')
 
     def __call__(self, *args, **kwargs):
         raise NotImplementedError("Cannot directly call the TalkApi!")
@@ -2526,14 +2546,16 @@ class TalkApi(TalkApiBase):
 class CallApi(TalkApiBase, IncrementalApi):
     def __init__(self, config, endpoint, object_type):
         super(CallApi, self).__init__(config,
-                                       object_type=object_type,
-                                       endpoint=endpoint)
+                                      object_type=object_type,
+                                      endpoint=endpoint)
+
 
 class LegApi(TalkApiBase, IncrementalApi):
     def __init__(self, config, endpoint, object_type):
         super(LegApi, self).__init__(config,
-                                       object_type=object_type,
-                                       endpoint=endpoint)
+                                     object_type=object_type,
+                                     endpoint=endpoint)
+
 
 class StatsApi(TalkApiBase):
     def __init__(self, config, endpoint, object_type):
@@ -2555,11 +2577,12 @@ class PhoneNumbersApi(TalkApiBase):
                                               object_type=object_type,
                                               endpoint=endpoint)
 
+
 class TalkPEApi(Api):
     def __init__(self, config):
         super(TalkPEApi, self).__init__(config,
-                                      endpoint=EndpointFactory('talk_pe'),
-                                      object_type='talk_pe')
+                                        endpoint=EndpointFactory('talk_pe'),
+                                        object_type='talk_pe')
 
     def __call__(self, *args, **kwargs):
         raise ZenpyException("You cannot call this endpoint directly!")
@@ -2599,9 +2622,9 @@ class TalkPEApi(Api):
 
         url = self._build_url(self.endpoint.create_ticket())
         payload = {
-                    "display_to_agent" : agent if agent else "",
-                    "ticket": ticket
-                   }
+            "display_to_agent": agent if agent else "",
+            "ticket": ticket
+        }
         return self._post(url, payload=payload);
 
 
@@ -2631,8 +2654,8 @@ class SearchApi(Api):
 class SearchExportApi(Api):
     def __init__(self, config):
         super(SearchExportApi, self).__init__(config,
-                                        object_type='results',
-                                        endpoint=EndpointFactory('search_export'))
+                                              object_type='results',
+                                              endpoint=EndpointFactory('search_export'))
         self._object_mapping = ZendeskObjectMapping(self)
 
     def __call__(self, *args, **kwargs):
@@ -2648,12 +2671,12 @@ class UserFieldsApi(CRUDApi):
 class ZISApi(Api):
     def __init__(self, config):
         super(ZISApi, self).__init__(config,
-                                      endpoint=EndpointFactory('zis'),
-                                      object_type='')
+                                     endpoint=EndpointFactory('zis'),
+                                     object_type='')
 
         self.registry = ZISRegistryApi(config,
-                                        endpoint=self.endpoint.registry,
-                                        object_type='integration')
+                                       endpoint=self.endpoint.registry,
+                                       object_type='integration')
 
     def __call__(self, *args, **kwargs):
         raise ZenpyException("You cannot call this endpoint directly!")
@@ -2707,3 +2730,77 @@ class ZISRegistryApi(Api):
         """
         url = self._build_url(endpoint=self.endpoint.install(integration, job_spec))
         return self._delete(url, payload=None)
+
+
+class WebhooksApi(CRUDApi):
+    def __init__(self, config):
+        super(WebhooksApi, self).__init__(config, object_type='webhook')
+
+    def update(self, webhook, **kwargs):
+        """
+        Update (PUT) a webhook.
+        A specific method is used because we need a serialization of the full object, not only changed fields
+
+        :param webhook: webhook to update
+        """
+        # payload = json.loads(json.dumps(webhook, default=json_encode_for_printing))
+        # for key in ['id', 'created_at', 'created_by', 'updated_at', 'updated_by']:
+        #     del payload[key]
+        payload = {
+            "webhook": dict(
+                name="New name",
+                request_format="json",
+                http_method="GET",
+                endpoint="https://example.com/status/200",
+                status="active",
+            )
+        }
+        url = self._build_url(endpoint=self.endpoint(id=webhook.id))
+        return self._put(url, payload=payload)
+        # new_object = Webhook(id=webhook.id)
+        # new_object._dirty_attributes = []
+        # return new_object
+        # return CRUDRequest(self).put(api_objects)
+
+    def list(self):
+        """
+        List webhooks
+        """
+        url = self._build_url(endpoint=self.endpoint())
+        return self._get(url)
+
+    def clone(self, clone_webhook):
+        """
+        Clone a webhook
+
+        :param clone_webhook: a webhook to clone
+        """
+        if isinstance(clone_webhook, Webhook):
+            clone_webhook_id = clone_webhook.id
+        else:
+            clone_webhook_id = int(clone_webhook)
+        url = self._build_url(endpoint=self.endpoint(clone_webhook_id=clone_webhook_id))
+        return self._post(url, payload=None)
+
+    def invocations(self, webhook):
+        """
+        Get a webhook invocations
+
+        :param webhook: a webhook to get invocations
+        """
+        if isinstance(webhook, Webhook):
+            webhook_id = webhook.id
+        else:
+            webhook_id = int(webhook)
+        url = self._build_url(endpoint=self.endpoint.invocations(id=webhook_id))
+        return self._get(url)
+
+    def invocation_attempts(self, webhook, invocation):
+        """
+        Get a webhhok invocation attemps
+
+        :param webhook: a webhook to inspect
+        :param invocation: an invocation to get attempts
+        """
+        url = self._build_url(endpoint=self.endpoint.invocation_attempts(webhook, invocation))
+        return self._get(url)

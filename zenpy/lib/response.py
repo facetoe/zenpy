@@ -2,7 +2,8 @@ from abc import abstractmethod
 
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.generator import SearchResultGenerator, ZendeskResultGenerator, ChatResultGenerator, ViewResultGenerator, \
-    TicketCursorGenerator, ChatIncrementalResultGenerator, JiraLinkGenerator, SearchExportResultGenerator
+    TicketCursorGenerator, ChatIncrementalResultGenerator, JiraLinkGenerator, SearchExportResultGenerator, \
+    WebhookInvocationsResultGenerator
 from zenpy.lib.util import as_singular, as_plural, get_endpoint_path
 from six.moves.urllib.parse import urlparse
 
@@ -234,6 +235,41 @@ class SearchExportResponseHandler(GenericZendeskResponseHandler):
 
     def build(self, response):
         return SearchExportResultGenerator(self, response.json())
+
+
+class WebhookInvocationsResponseHandler(GenericZendeskResponseHandler):
+    """ Handles webhook invocations results. """
+    @staticmethod
+    def applies_to(api, response):
+        result = urlparse(response.request.url)
+        return result.path.endswith('invocations')
+
+    def build(self, response):
+        return WebhookInvocationsResultGenerator(self, response.json())
+
+
+class WebhookInvocationAttemptsResponseHandler(GenericZendeskResponseHandler):
+    """ Handles webhook invocation attempts results. """
+    @staticmethod
+    def applies_to(api, response):
+        result = urlparse(response.request.url)
+        try:
+            return result.path.endswith('attempts') and 'attempts' in response.json()
+        except KeyError:
+            return False
+
+    def deserialize(self, response_json):
+        key = 'attempts'
+        response_objects = []
+        for object_json in response_json[key]:
+            zenpy_object = self.object_mapping.object_from_json(
+                'invocation_attempt', object_json)
+            response_objects.append(zenpy_object)
+        return response_objects
+
+    def build(self, response):
+        response_json = response.json()
+        return self.deserialize(response_json)
 
 
 class CountResponseHandler(GenericZendeskResponseHandler):
