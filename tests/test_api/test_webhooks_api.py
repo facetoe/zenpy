@@ -51,6 +51,22 @@ class TestWebhooks(SingleCreateApiTestCase):
             response = self.zenpy_client.webhooks.update(webhook.id, new_webhook)
             self.assertEqual(response.status_code, 204)
 
+    def test_patch_webhook(self):
+        cassette_name = "{}-patch-single".format(self.generate_cassette_name())
+        with self.recorder.use_cassette(
+            cassette_name=cassette_name, serialize_with="prettyjson"
+        ):
+            webhook = self.create_single_zenpy_object()
+            try:
+                new_name = 'A new name'
+                webhook.name = new_name
+                response = self.zenpy_client.webhooks.patch(webhook)
+                self.assertEqual(response.status_code, 204)
+                new_webhook = self.zenpy_client.webhooks(id=webhook.id)
+                self.assertEqual(new_webhook.name, new_name)
+            finally:
+                self.zenpy_client.webhooks.delete(webhook)
+
     def create_and_check_webhook(self, webhook, test_label, delete_object=True):
         cassette_name = "{}-{}".format(self.generate_cassette_name(), test_label)
         with self.recorder.use_cassette(

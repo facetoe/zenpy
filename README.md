@@ -364,7 +364,13 @@ new_webhook = Webhook(
                   },
 )
 response = zenpy_client.webhooks.update(webhook.id, new_webhook)
+```
 
+###### Partially updating (patching) a webhook
+```python
+webhook = zenpy_client.webhooks(id=WEBHOOK_ID)
+webhook.name = 'A new name'
+response = zenpy_client.webhooks.update(webhook)
 ```
 
 ###### Cloning a webhook
@@ -382,10 +388,10 @@ new_webhook = zenpy_client.webhooks.clone(WEBHOOK_ID)
 ```python
 
 secret = zenpy_client.webhooks.show_secret(webhook)
-print(secret['secret'])
+print(secret.secret)
 
 secret = zenpy_client.webhooks.reset_secret(webhook)
-print(secret['secret'])
+print(secret.secret)
 ```
 
 ###### Testing webhooks

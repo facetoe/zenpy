@@ -102,6 +102,13 @@ class BaseApi(object):
                                   timeout=self.timeout)
         return self._process_response(response)
 
+    def _patch(self, url, payload):
+        response = self._call_api(self.session.patch,
+                                  url,
+                                  json=self._serialize(payload),
+                                  timeout=self.timeout)
+        return self._process_response(response)
+
     def _delete(self, url, payload=None):
         response = self._call_api(self.session.delete,
                                   url,
@@ -2755,6 +2762,23 @@ class WebhooksApi(CRUDApi):
         )
         url = self._build_url(endpoint=self.endpoint(id=webhook_id))
         return self._put(url, payload=payload)
+
+    def patch(self, webhook):
+        """
+        Partially Update (PATCH) a webhook.
+
+        :param webhook: A webhook to patch
+        """
+
+        payload = dict(
+            webhook=json.loads(
+                            json.dumps(
+                                webhook, default=json_encode_for_zendesk
+                            )
+            )
+        )
+        url = self._build_url(endpoint=self.endpoint(id=webhook.id))
+        return self._patch(url, payload=payload)
 
     def list(self, **kwargs):
         """
