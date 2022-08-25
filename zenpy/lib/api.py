@@ -2737,63 +2737,53 @@ class WebhooksApi(CRUDApi):
     def __init__(self, config):
         super(WebhooksApi, self).__init__(config, object_type='webhook')
 
-    def update(self, webhook, **kwargs):
+    def update(self, webhook_id, new_webhook):
         """
         Update (PUT) a webhook.
         A specific method is used because we need a serialization of the full object, not only changed fields
 
-        :param webhook: webhook to update
+        :param webhook_id: A webhook id to update
+        :param new_webhook: A new webhook object
         """
-        # payload = json.loads(json.dumps(webhook, default=json_encode_for_printing))
-        # for key in ['id', 'created_at', 'created_by', 'updated_at', 'updated_by']:
-        #     del payload[key]
-        payload = {
-            "webhook": dict(
-                name="New name",
-                request_format="json",
-                http_method="GET",
-                endpoint="https://example.com/status/200",
-                status="active",
+
+        payload = dict(
+            webhook=json.loads(
+                            json.dumps(
+                                new_webhook, default=json_encode_for_printing
+                            )
             )
-        }
-        url = self._build_url(endpoint=self.endpoint(id=webhook.id))
+        )
+        url = self._build_url(endpoint=self.endpoint(id=webhook_id))
         return self._put(url, payload=payload)
-        # new_object = Webhook(id=webhook.id)
-        # new_object._dirty_attributes = []
-        # return new_object
-        # return CRUDRequest(self).put(api_objects)
 
     def list(self, **kwargs):
         """
         List webhooks
         """
+
         url = self._build_url(endpoint=self.endpoint(**kwargs))
         return self._get(url)
 
-    def clone(self, clone_webhook):
+    @extract_id(Webhook)
+    def clone(self, webhook):
         """
         Clone a webhook
 
-        :param clone_webhook: a webhook to clone
+        :param webhook: a webhook to clone
         """
-        if isinstance(clone_webhook, Webhook):
-            clone_webhook_id = clone_webhook.id
-        else:
-            clone_webhook_id = int(clone_webhook)
-        url = self._build_url(endpoint=self.endpoint(clone_webhook_id=clone_webhook_id))
+
+        url = self._build_url(endpoint=self.endpoint(clone_webhook_id=webhook))
         return self._post(url, payload=None)
 
+    @extract_id(Webhook)
     def invocations(self, webhook):
         """
         Get a webhook invocations
 
         :param webhook: a webhook to get invocations
         """
-        if isinstance(webhook, Webhook):
-            webhook_id = webhook.id
-        else:
-            webhook_id = int(webhook)
-        url = self._build_url(endpoint=self.endpoint.invocations(id=webhook_id))
+
+        url = self._build_url(endpoint=self.endpoint.invocations(id=webhook))
         return self._get(url)
 
     def invocation_attempts(self, webhook, invocation):
@@ -2803,5 +2793,43 @@ class WebhooksApi(CRUDApi):
         :param webhook: a webhook to inspect
         :param invocation: an invocation to get attempts
         """
+
         url = self._build_url(endpoint=self.endpoint.invocation_attempts(webhook, invocation))
         return self._get(url)
+
+    @extract_id(Webhook)
+    def test(self, webhook=None, request={}):
+        """
+        Test an existing or a new webhook
+
+        :param webhook: An optional existing webhook id
+        :param request: An optional webhook data
+        """
+
+        params = dict(test_webhook_id=webhook) if webhook else {}
+        payload = dict(request=request)
+
+        url = self._build_url(endpoint=self.endpoint.test(**params))
+        return self._post(url, payload=payload)
+
+    @extract_id(Webhook)
+    def show_secret(self, webhook):
+        """
+        Shows a webhook secret
+
+        :param webhook: A webhook to show secret
+        """
+
+        url = self._build_url(endpoint=self.endpoint.secret(webhook))
+        return self._get(url)
+
+    @extract_id(Webhook)
+    def reset_secret(self, webhook):
+        """
+        Shows a webhook secret
+
+        :param webhook: A webhook to show secret
+        """
+
+        url = self._build_url(endpoint=self.endpoint.secret(webhook))
+        return self._post(url, payload=None)

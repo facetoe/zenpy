@@ -482,6 +482,9 @@ class WebhookEndpoint(BaseEndpoint):
             elif key == 'clone_webhook_id':
                 params = {'clone_webhook_id': value}
                 break
+            elif key == 'test_webhook_id':
+                params = {'webhook_id': value}
+                break
             elif key == 'filter':
                 params['filter[name_contains]'] = value
             elif key == 'page_after':
@@ -884,6 +887,8 @@ class EndpointFactory(object):
     webhooks.invocations = SecondaryEndpoint('webhooks/%(id)s/invocations')
     webhooks.invocation_attempts = MultipleIDEndpoint(
         'webhooks/{}/invocations/{}/attempts')
+    webhooks.test = WebhookEndpoint('webhooks/test')
+    webhooks.secret = SecondaryEndpoint('webhooks/%(id)s/signing_secret')
 
     def __new__(cls, endpoint_name):
         return getattr(cls, endpoint_name)

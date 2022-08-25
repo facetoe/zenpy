@@ -105,6 +105,7 @@ class ZendeskObjectMapping(object):
         'webhook': Webhook,
         'invocation': Invocation,
         'invocation_attempt': InvocationAttempt,
+        'signing_secret': WebhookSecret,
     }
 
     skip_attrs = []
