@@ -276,6 +276,19 @@ class WebhookInvocationsResultGenerator(CursorResultsGenerator):
         return search_results
 
 
+class WebhooksResultGenerator(CursorResultsGenerator):
+    """
+    Generator for Webhooks list
+    """
+    def process_page(self):
+        search_results = list()
+        for object_json in self._response_json['webhooks']:
+            search_results.append(
+                self.response_handler.api._object_mapping.object_from_json(
+                    'webhook', object_json))
+        return search_results
+
+
 class TicketCursorGenerator(ZendeskResultGenerator):
     """
     Generator for cursor based incremental export endpoints for ticket and ticket_audit objects.

@@ -170,7 +170,7 @@ class TestWebhooksCreateUpdateDelete(SingleCreateApiTestCase):
                 },
         endpoint="https://example.com/status/200",
         http_method="GET",
-        name="Example Webhook",
+        name="Example Webhook X1234",
         description="Description",
         request_format="json",
         status="active",
@@ -204,7 +204,12 @@ class TestWebhooksCreateUpdateDelete(SingleCreateApiTestCase):
                         self.assertIsInstance(object, self.ZenpyType)
                         found = True
                         break
-                self.assertEqual(found, True)
+                self.assertTrue(found)
+
+                count = 0
+                for object in self.get_api_method("list")(filter='X1234'):
+                    count += 1
+                self.assertTrue(count == 1)
             finally:
                 self.get_api_method("delete")(new_webhook)
 
@@ -240,7 +245,7 @@ class TestWebhooksCreateUpdateDelete(SingleCreateApiTestCase):
         with self.recorder.use_cassette(
             cassette_name=cassette_name, serialize_with="prettyjson"
         ):
-            webhook = self.zenpy_client.webhooks(id='01FVJ1J73MG04AJRDPD2AKKXH7')
+            webhook = self.zenpy_client.webhooks(id='01FVJ1J73MG04AJRDPD2AKKXH7')  # !!!!!
             count = 0
             for invocation in self.zenpy_client.webhooks.invocations(webhook):
                 count += 1
@@ -251,9 +256,10 @@ class TestWebhooksCreateUpdateDelete(SingleCreateApiTestCase):
         with self.recorder.use_cassette(
             cassette_name=cassette_name, serialize_with="prettyjson"
         ):
-            webhook = self.zenpy_client.webhooks(id='01FVJ1J73MG04AJRDPD2AKKXH7')
+            webhook = self.zenpy_client.webhooks(id='01FVJ1J73MG04AJRDPD2AKKXH7')  # !!!!!
             invocation = self.zenpy_client.webhooks.invocations(webhook).next()
             count = 0
             for attempt in self.zenpy_client.webhooks.invocation_attempts(webhook.id, invocation.id):
                 count += 1
                 self.assertIsInstance(attempt, InvocationAttempt)
+

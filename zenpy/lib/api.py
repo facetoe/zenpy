@@ -69,6 +69,7 @@ class BaseApi(object):
             ZISIntegrationResponseHandler,
             WebhookInvocationsResponseHandler,
             WebhookInvocationAttemptsResponseHandler,
+            WebhooksResponseHandler,
             GenericZendeskResponseHandler,
             HTTPOKResponseHandler,
         )
@@ -2762,11 +2763,11 @@ class WebhooksApi(CRUDApi):
         # return new_object
         # return CRUDRequest(self).put(api_objects)
 
-    def list(self):
+    def list(self, **kwargs):
         """
         List webhooks
         """
-        url = self._build_url(endpoint=self.endpoint())
+        url = self._build_url(endpoint=self.endpoint(**kwargs))
         return self._get(url)
 
     def clone(self, clone_webhook):

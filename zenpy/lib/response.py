@@ -3,7 +3,7 @@ from abc import abstractmethod
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.generator import SearchResultGenerator, ZendeskResultGenerator, ChatResultGenerator, ViewResultGenerator, \
     TicketCursorGenerator, ChatIncrementalResultGenerator, JiraLinkGenerator, SearchExportResultGenerator, \
-    WebhookInvocationsResultGenerator
+    WebhookInvocationsResultGenerator, WebhooksResultGenerator
 from zenpy.lib.util import as_singular, as_plural, get_endpoint_path
 from six.moves.urllib.parse import urlparse
 
@@ -235,6 +235,20 @@ class SearchExportResponseHandler(GenericZendeskResponseHandler):
 
     def build(self, response):
         return SearchExportResultGenerator(self, response.json())
+
+
+class WebhooksResponseHandler(GenericZendeskResponseHandler):
+    """ Handles webhook invocations results. """
+    @staticmethod
+    def applies_to(api, response):
+        result = urlparse(response.request.url)
+        try:
+            return result.path.endswith('webhooks') and 'webhooks' in response.json()
+        except KeyError:
+            return False
+
+    def build(self, response):
+        return WebhooksResultGenerator(self, response.json())
 
 
 class WebhookInvocationsResponseHandler(GenericZendeskResponseHandler):

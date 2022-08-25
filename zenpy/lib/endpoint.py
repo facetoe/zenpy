@@ -473,12 +473,30 @@ class ViewSearchEndpoint(BaseEndpoint):
 class WebhookEndpoint(BaseEndpoint):
     def __call__(self, **kwargs):
         path = self.endpoint
+        params = {}
         for key, value in kwargs.items():
             if key == 'id':
                 path += "/{}".format(value)
+                params = {}
+                break
             elif key == 'clone_webhook_id':
-                path += "?clone_webhook_id={}".format(value)
-        return Url(path)
+                params = {'clone_webhook_id': value}
+                break
+            elif key == 'filter':
+                params['filter[name_contains]'] = value
+            elif key == 'page_after':
+                params['page[after]={}'] = value
+            elif key == 'page_before':
+                params['page[before]={}'] = value
+            elif key == 'page_size':
+                params['page[size]={}'] = value
+            elif key == 'sort':
+                if value in ['name', 'status']:
+                    params['sort={}'] = value
+                else:
+                    raise ZenpyException("sort must be one of (name, status)")
+
+        return Url(path, params)
 
 
 class EndpointFactory(object):
