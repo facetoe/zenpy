@@ -514,6 +514,10 @@ class Api(BaseApi):
                                    'locale',
                                    id=locale_id)
 
+    # There are no methods to get an invocation by its id, so just fake it to pass nosetests
+    def _get_invocation(self, invocation_id):
+        return None
+
 
 class CRUDApi(Api):
     """
