@@ -488,14 +488,14 @@ class WebhookEndpoint(BaseEndpoint):
             elif key == 'filter':
                 params['filter[name_contains]'] = value
             elif key == 'page_after':
-                params['page[after]={}'] = value
+                params['page[after]'] = value
             elif key == 'page_before':
-                params['page[before]={}'] = value
+                params['page[before]'] = value
             elif key == 'page_size':
-                params['page[size]={}'] = value
+                params['page[size]'] = value
             elif key == 'sort':
                 if value in ['name', 'status']:
-                    params['sort={}'] = value
+                    params['sort'] = value
                 else:
                     raise ZenpyException("sort must be one of (name, status)")
 
