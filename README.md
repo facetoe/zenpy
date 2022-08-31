@@ -370,7 +370,7 @@ response = zenpy_client.webhooks.update(webhook.id, new_webhook)
 ```python
 webhook = zenpy_client.webhooks(id=WEBHOOK_ID)
 webhook.name = 'A new name'
-response = zenpy_client.webhooks.update(webhook)
+response = zenpy_client.webhooks.patch(webhook)
 ```
 
 ###### Cloning a webhook
