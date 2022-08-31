@@ -42,6 +42,7 @@ from zenpy.lib.api import (
     SearchExportApi,
     UserFieldsApi,
     ZISApi,
+    WebhooksApi,
 )
 
 from zenpy.lib.cache import ZenpyCache, ZenpyCacheManager
@@ -168,6 +169,7 @@ class Zenpy(object):
             config, object_type="custom_agent_role"
         )
         self.zis = ZISApi(config)
+        self.webhooks = WebhooksApi(config)
 
     @staticmethod
     def http_adapter_kwargs():
