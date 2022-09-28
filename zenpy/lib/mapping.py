@@ -226,7 +226,8 @@ class ChatObjectMapping(ZendeskObjectMapping):
         'search_result': SearchResult,
         'ip_address': IpAddress,
         'department': Department,
-        'goal': Goal
+        'goal': Goal,
+        'agent_timeline': AgentTimeline
     }
 
 

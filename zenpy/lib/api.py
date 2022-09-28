@@ -1940,7 +1940,8 @@ class ChatApiBase(Api):
         self._object_mapping = ChatObjectMapping(self)
         self._response_handlers = (DeleteResponseHandler,
                                    ChatSearchResponseHandler,
-                                   ChatResponseHandler, AccountResponseHandler,
+                                   ChatResponseHandler, AgentTimelineResponseHandler,
+                                   AccountResponseHandler,
                                    AgentResponseHandler,
                                    VisitorResponseHandler,
                                    ShortcutResponseHandler,
@@ -1980,6 +1981,7 @@ class ChatApi(ChatApiBase, ChatIncrementalApi):
                                     endpoint.account,
                                     request_handler=AccountRequest)
         self.agents = AgentApi(config, endpoint.agents)
+        self.agent_timeline = ChatApiBase(config, endpoint.agent_timeline)
         self.visitors = ChatApiBase(config,
                                     endpoint.visitors,
                                     request_handler=VisitorRequest)

@@ -439,7 +439,32 @@ class ChatResponseHandler(ResponseHandler):
         else:
             return self.object_mapping.object_from_json('chat', response_json)
 
+class AgentTimelineResponseHandler(ResponseHandler):
+    """ Handles AgentTimeline responses. """
+    @staticmethod
+    def applies_to(api, response):
+        path = get_endpoint_path(api, response)
+        return path.startswith('/agent_timeline') or path.startswith(
+            '/incremental/agent_timeline')
 
+    def deserialize(self, response_json):
+        agent_timeline = list()
+        if 'agent_timeline' in response_json:
+            agent_timeline = response_json['agent_timeline']
+        else:
+            raise ZenpyException(
+                "Unexpected response: {}".format(response_json))
+        return [self.object_mapping.object_from_json('agent_timeline', at) for at in agent_timeline]
+
+    def build(self, response):
+        response_json = response.json()
+        if 'agent_timeline' in response_json:
+            if 'next_page' in response_json:
+                return ChatIncrementalResultGenerator(self, response_json)
+            else:
+                raise ZenpyException("Unexpected response: {}".format(response_json))
+        else:
+            return self.object_mapping.object_from_json('agent_timeline', response_json)
 class AccountResponseHandler(ResponseHandler):
     """ Handles Chat API Account responses. """
     @staticmethod

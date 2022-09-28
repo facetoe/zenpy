@@ -4181,6 +4181,33 @@
         "description": "The skills for the agent"
       }
     },
+    "agent_timeline": {
+      "agent_id": {
+        "type": "integer",
+        "read-only": "yes",
+        "description": "The ID of the agent"
+      },
+      "start_time": {
+        "type": "date",
+        "read-only": "yes",
+        "comment": "The date and time in microseconds when the timespan started"
+      },
+      "duration": {
+        "type": "number",
+        "read-only": "yes",
+        "description": "Duration of the timespan in seconds"
+      },
+      "status": {
+        "type": "string",
+        "read-only": "yes",
+        "description": "Non-offline statuses of the agent during the timespan (i.e 'online', 'away', or 'invisible')"
+      },
+      "engagement_count": {
+        "type": "integer",
+        "read-only": "yes",
+        "description": "Count of concurrent chats (engagements) that the agent was involved in"
+      }
+    },
     "visitors": {
       "id": {
         "type": "integer",

@@ -525,6 +525,8 @@ class EndpointFactory(object):
     chats.search = ChatSearchEndpoint('chats/search')
     chats.stream = ChatSearchEndpoint('stream/chats')
     chats.incremental = ChatIncrementalEndpoint('incremental/chats')
+    chats.agent_timeline = ChatIncrementalEndpoint('incremental/agent_timeline')
+
     custom_agent_roles = PrimaryEndpoint('custom_roles')
     dynamic_contents = PrimaryEndpoint('dynamic_content/items')
     dynamic_contents.variants = SecondaryEndpoint(
