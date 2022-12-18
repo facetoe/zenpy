@@ -43,6 +43,7 @@ from zenpy.lib.api import (
     UserFieldsApi,
     ZISApi,
     WebhooksApi,
+    LocalesApi
 )
 
 from zenpy.lib.cache import ZenpyCache, ZenpyCacheManager
@@ -171,6 +172,7 @@ class Zenpy(object):
         )
         self.zis = ZISApi(config)
         self.webhooks = WebhooksApi(config)
+        self.locales = LocalesApi(config)
 
     @staticmethod
     def http_adapter_kwargs():
