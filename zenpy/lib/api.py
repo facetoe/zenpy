@@ -2861,3 +2861,31 @@ class WebhooksApi(CRUDApi):
 
         url = self._build_url(endpoint=self.endpoint.secret(webhook))
         return self._post(url, payload=None)
+
+class LocalesApi(Api):
+    def __init__(self, config):
+        super(LocalesApi, self).__init__(config, object_type='locale')
+
+    def agent(self):
+        """
+        Lists the translation locales that have been localized for agents on a specific account.
+
+        :return: list of Locale objects
+        """
+        return self._query_zendesk(self.endpoint.agent, 'locale')
+
+    def public(self):
+        """
+        Lists the translation locales that are available to all accounts.
+
+        :return: list of Locale objects
+        """
+        return self._query_zendesk(self.endpoint.public, 'locale')
+
+    def current(self):
+        """
+        This works like Show Locale, but instead of taking a locale id as an argument, it renders the locale of the user performing the request.
+
+        :return: Locale
+        """
+        return self._query_zendesk(self.endpoint.current, 'locale')
