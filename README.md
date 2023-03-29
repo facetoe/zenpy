@@ -37,6 +37,7 @@ Please report bugs!
 
 ```python
 from zenpy import Zenpy
+from zenpy.lib.api_objects import Ticket
 # Create a Zenpy instance
 zenpy_client = Zenpy(**credentials)
 
