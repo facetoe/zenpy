@@ -30,8 +30,10 @@ class BaseResultGenerator(Iterable):
     def __init__(self, response_handler, response_json):
         self.response_handler = response_handler
         self._response_json = response_json
+        self.count = response_json.get("count")
         self.values = None
         self.position = 0
+        self._iteration = 0
         self.update_attrs()
         self._has_sliced = False
         self.next_page_attr = 'next_page'
@@ -47,7 +49,10 @@ class BaseResultGenerator(Iterable):
             self.handle_pagination()
         if len(self.values) < 1:
             raise StopIteration()
+        if self.count is not None and self._iteration > self.count:
+            raise StopIteration()
         zenpy_object = self.values[self.position]
+        self._iteration += 1
         self.position += 1
         return zenpy_object
 
