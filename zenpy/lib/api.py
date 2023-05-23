@@ -2229,10 +2229,10 @@ class AccessPolicyApi(Api):
 class SectionApi(HelpCentreApiBase, CRUDApi, TranslationApi, SubscriptionApi,
                  AccessPolicyApi):
     @extract_id(Section)
-    def articles(self, section):
+    def articles(self, section, locale='en-us'):
         return self._query_zendesk(self.endpoint.articles,
                                    'article',
-                                   id=section)
+                                   id=section, locale=locale)
 
     def create(self, section):
         return CRUDRequest(self).post(section,
