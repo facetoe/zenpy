@@ -226,18 +226,10 @@ class SearchResultGenerator(BaseResultGenerator):
             raise StopIteration()
 
 
-class SearchExportResultGenerator(BaseResultGenerator):
+class CursorResultsGenerator(BaseResultGenerator):
     """
-    Generator for Search Export endpoint results
+    Generator for iterable endpoint results with cursor
     """
-    def process_page(self):
-        search_results = list()
-        for object_json in self._response_json['results']:
-            object_type = object_json.pop('result_type')
-            search_results.append(
-                self.response_handler.api._object_mapping.object_from_json(
-                    object_type, object_json))
-        return search_results
 
     def get_next_page(self):
         """ Retrieve the next page of results. """
@@ -255,6 +247,46 @@ class SearchExportResultGenerator(BaseResultGenerator):
         """ Handle retrieving and processing the next page of results. """
         self._response_json = self.get_next_page()
         self.values.extend(self.process_page())
+
+
+class SearchExportResultGenerator(CursorResultsGenerator):
+    """
+    Generator for Search Export endpoint results
+    """
+    def process_page(self):
+        search_results = list()
+        for object_json in self._response_json['results']:
+            object_type = object_json.pop('result_type')
+            search_results.append(
+                self.response_handler.api._object_mapping.object_from_json(
+                    object_type, object_json))
+        return search_results
+
+
+class WebhookInvocationsResultGenerator(CursorResultsGenerator):
+    """
+    Generator for Webhook Invocations endpoint
+    """
+    def process_page(self):
+        search_results = list()
+        for object_json in self._response_json['invocations']:
+            search_results.append(
+                self.response_handler.api._object_mapping.object_from_json(
+                    'invocation', object_json))
+        return search_results
+
+
+class WebhooksResultGenerator(CursorResultsGenerator):
+    """
+    Generator for Webhooks list
+    """
+    def process_page(self):
+        search_results = list()
+        for object_json in self._response_json['webhooks']:
+            search_results.append(
+                self.response_handler.api._object_mapping.object_from_json(
+                    'webhook', object_json))
+        return search_results
 
 
 class TicketCursorGenerator(ZendeskResultGenerator):

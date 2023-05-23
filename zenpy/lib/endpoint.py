@@ -470,6 +470,38 @@ class ViewSearchEndpoint(BaseEndpoint):
         return Url(self.endpoint, params=kwargs)
 
 
+class WebhookEndpoint(BaseEndpoint):
+    def __call__(self, **kwargs):
+        path = self.endpoint
+        params = {}
+        for key, value in kwargs.items():
+            if key == 'id':
+                path += "/{}".format(value)
+                params = {}
+                break
+            elif key == 'clone_webhook_id':
+                params = {'clone_webhook_id': value}
+                break
+            elif key == 'test_webhook_id':
+                params = {'webhook_id': value}
+                break
+            elif key == 'filter':
+                params['filter[name_contains]'] = value
+            elif key == 'page_after':
+                params['page[after]'] = value
+            elif key == 'page_before':
+                params['page[before]'] = value
+            elif key == 'page_size':
+                params['page[size]'] = value
+            elif key == 'sort':
+                if value in ['name', 'status']:
+                    params['sort'] = value
+                else:
+                    raise ZenpyException("sort must be one of (name, status)")
+
+        return Url(path, params)
+
+
 class EndpointFactory(object):
     """
     Provide access to the various endpoints.
@@ -523,6 +555,9 @@ class EndpointFactory(object):
     groups.users = SecondaryEndpoint('groups/%(id)s/users.json')
     job_statuses = PrimaryEndpoint('job_statuses')
     locales = PrimaryEndpoint('locales')
+    locales.agent = PrimaryEndpoint('locales/agent')
+    locales.public = PrimaryEndpoint('locales/public')
+    locales.current = PrimaryEndpoint('locales/current')
     links = PrimaryEndpoint('services/jira/links')
     macros = MacroEndpoint('macros')
     macros.apply = SecondaryEndpoint('macros/%(id)s/apply.json')
@@ -850,6 +885,13 @@ class EndpointFactory(object):
     zis.registry.upload_bundle = SecondaryEndpoint('%(id)s/bundles')
     zis.registry.install = MultipleIDEndpoint(
         'job_specs/install?job_spec_name=zis:{}:job_spec:{}')
+
+    webhooks = WebhookEndpoint('webhooks')
+    webhooks.invocations = SecondaryEndpoint('webhooks/%(id)s/invocations')
+    webhooks.invocation_attempts = MultipleIDEndpoint(
+        'webhooks/{}/invocations/{}/attempts')
+    webhooks.test = WebhookEndpoint('webhooks/test')
+    webhooks.secret = SecondaryEndpoint('webhooks/%(id)s/signing_secret')
 
     def __new__(cls, endpoint_name):
         return getattr(cls, endpoint_name)

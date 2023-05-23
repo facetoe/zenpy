@@ -42,6 +42,8 @@ from zenpy.lib.api import (
     SearchExportApi,
     UserFieldsApi,
     ZISApi,
+    WebhooksApi,
+    LocalesApi
 )
 
 from zenpy.lib.cache import ZenpyCache, ZenpyCacheManager
@@ -69,6 +71,7 @@ class Zenpy(object):
         oauth_token=None,
         password=None,
         session=None,
+        anonymous=False,
         timeout=None,
         ratelimit_budget=None,
         proactive_ratelimit=None,
@@ -98,7 +101,7 @@ class Zenpy(object):
         :param disable_cache: disable caching of objects
         """
 
-        session = self._init_session(email, token, oauth_token, password, session)
+        session = self._init_session(email, token, oauth_token, password, session, anonymous)
 
         timeout = timeout or self.DEFAULT_TIMEOUT
 
@@ -168,6 +171,8 @@ class Zenpy(object):
             config, object_type="custom_agent_role"
         )
         self.zis = ZISApi(config)
+        self.webhooks = WebhooksApi(config)
+        self.locales = LocalesApi(config)
 
     @staticmethod
     def http_adapter_kwargs():
@@ -187,13 +192,13 @@ class Zenpy(object):
             )
         )
 
-    def _init_session(self, email, token, oath_token, password, session):
+    def _init_session(self, email, token, oath_token, password, session, anonymous):
         if not session:
             session = requests.Session()
             # Workaround for possible race condition - https://github.com/kennethreitz/requests/issues/3661
             session.mount("https://", HTTPAdapter(**self.http_adapter_kwargs()))
 
-        if not hasattr(session, "authorized") or not session.authorized:
+        if (not hasattr(session, "authorized") or not session.authorized) and not anonymous:
             # session is not an OAuth session that has been authorized, so authorize the session.
             if not password and not token and not oath_token:
                 raise ZenpyException(
