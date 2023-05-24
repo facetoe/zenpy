@@ -11,58 +11,53 @@ version: 2
 jobs:
   python2.7:
     docker:
-      - image: circleci/python:2.7.16-stretch
+      - image: cimg/python:2.7
     working_director: ~/repo
     steps:
       - run:
           name: install virtualenv
-          command: sudo pip2 install virtualenv
+          command: pip install virtualenv
       - checkout
       - run:
           name: install zenpy
           command: |
-            python2 -m virtualenv venv
+            python -m virtualenv venv
             . venv/bin/activate
-            pip2 install -r requirements.dev
+            pip install -r requirements.dev
             make unittest
   python3.5:
     docker:
-      - image: circleci/python:3.5.7-stretch
+      - image: cimg/python:3.5
     working_director: ~/repo
     steps:
-      - run:
-          name: install virtualenv
-          command: sudo pip3 install virtualenv
       - checkout
       - <<: *run_tests
   python3.6:
     docker:
-      - image: circleci/python:3.6.8-stretch
+      - image: cimg/python:3.6
     working_director: ~/repo
     steps:
-      - run:
-          name: install virtualenv
-          command: sudo pip3 install virtualenv
       - checkout
       - <<: *run_tests
   python3.7:
     docker:
-      - image: circleci/python:3.7.3-stretch
+      - image: cimg/python:3.7
     working_director: ~/repo
     steps:
-      - run:
-          name: install virtualenv
-          command: sudo pip3 install virtualenv
       - checkout
       - <<: *run_tests
   python3.8:
     docker:
-      - image: circleci/python:3.8.0a3-stretch
+      - image: cimg/python:3.8
     working_director: ~/repo
     steps:
-      - run:
-          name: install virtualenv
-          command: sudo pip3 install virtualenv
+      - checkout
+      - <<: *run_tests
+  python3.9:
+    docker:
+      - image: cimg/python:3.9
+    working_director: ~/repo
+    steps:
       - checkout
       - <<: *run_tests
 
@@ -75,3 +70,4 @@ workflows:
       - python3.6
       - python3.7
       - python3.8
+      - python3.9
