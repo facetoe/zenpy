@@ -25,7 +25,7 @@ Please report bugs!
     * [List all categories from help center](#List-all-categories-from-help-center)
     * [List all help center articles](#List-all-help-center-articles)
     * [List all help center articles in a section](#List-all-help-center-articles-in-a-section)
-    * [Create new categorie in help center](#Create-new-category-in-help-center)
+    * [Create new category in help center](#Create-new-category-in-help-center)
     * [Create new section in help center](#Create-new-section-in-help-center)
     * [Create new article in help center](#Create-new-article-in-help-center)
   * Other
