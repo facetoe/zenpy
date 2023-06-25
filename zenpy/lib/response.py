@@ -3,7 +3,7 @@ from abc import abstractmethod
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.generator import SearchResultGenerator, ZendeskResultGenerator, ChatResultGenerator, ViewResultGenerator, \
     TicketCursorGenerator, ChatIncrementalResultGenerator, JiraLinkGenerator, SearchExportResultGenerator, \
-    WebhookInvocationsResultGenerator, WebhooksResultGenerator
+    WebhookInvocationsResultGenerator, WebhooksResultGenerator, GenericCursorResultsGenerator
 from zenpy.lib.util import as_singular, as_plural, get_endpoint_path
 from six.moves.urllib.parse import urlparse
 
@@ -116,10 +116,17 @@ class GenericZendeskResponseHandler(ResponseHandler):
         # Collection of objects (eg, users/tickets)
         plural_object_type = as_plural(self.api.object_type)
         if plural_object_type in zenpy_objects:
-            return ZendeskResultGenerator(
-                self,
-                response_json,
-                response_objects=zenpy_objects[plural_object_type])
+            meta = response_json.get('meta')
+            if meta and meta.get('has_more') is not None:
+                return GenericCursorResultsGenerator(
+                    self,
+                    response_json,
+                    response_objects=zenpy_objects[plural_object_type])
+            else:
+                return ZendeskResultGenerator(
+                    self,
+                    response_json,
+                    response_objects=zenpy_objects[plural_object_type])
 
         # Here the response matches the API object_type, seems legit.
         if self.api.object_type in zenpy_objects:
