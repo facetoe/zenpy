@@ -147,6 +147,11 @@ class PrimaryEndpoint(BaseEndpoint):
             elif key.endswith('ids'):
                 # if it looks like a type of unknown id, send it through as such
                 parameters[key] = ",".join(map(str, value))
+            elif key == 'cursor_pagination' and value:
+                if value is True:
+                    parameters['page[size]'] = 100
+                else:
+                    parameters['page[size]'] = value
 
         if path == self.endpoint and not path.endswith('.json'):
             path += '.json'
