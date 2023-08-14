@@ -106,6 +106,15 @@ class GenericZendeskResponseHandler(ResponseHandler):
                                          response_json,
                                          object_type="ticket")
 
+        # Special case for incremental cursor based users export.
+        # No meta field has_more as normal
+        if get_endpoint_path(
+                self.api,
+                response).startswith('/incremental/users/cursor.json'):
+            return TicketCursorGenerator(self,
+                                         response_json,
+                                         object_type="users")
+
         # Special case for Jira links.
         if get_endpoint_path(self.api,
                              response).startswith('/services/jira/links'):
