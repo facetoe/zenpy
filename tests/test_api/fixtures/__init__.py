@@ -62,7 +62,7 @@ class ZenpyApiTestCase(TestCase):
             sleep(request_interval)
             n += 1
             job_status = self.zenpy_client.job_status(id=job_status.id)
-            if job_status.progress == job_status.total:
+            if job_status.status in ['completed', 'failed']:
                 return job_status
             elif n > max_attempts:
                 raise Exception("Too many attempts to retrieve job status!")
@@ -224,12 +224,17 @@ class ModifiableApiTestCase(ZenpyApiTestCase):
             return hashlib.sha1(to_hash.encode()).hexdigest()
 
         new_kwargs = self.object_kwargs.copy()
+        if 'id' in new_kwargs:
+            new_kwargs.pop('id')
         for attr_name in new_kwargs:
             if (
                 isinstance(new_kwargs[attr_name], basestring)
                 and attr_name not in self.ignore_update_kwargs
             ):
-                new_kwargs[attr_name] += hash_of(new_kwargs[attr_name])
+                if '{}' in new_kwargs[attr_name]:
+                    new_kwargs[attr_name] = new_kwargs[attr_name].format(hash_of(new_kwargs[attr_name]))
+                else:
+                    new_kwargs[attr_name] += hash_of(new_kwargs[attr_name])
                 setattr(zenpy_object, attr_name, new_kwargs[attr_name])
                 self.assertTrue(
                     attr_name in zenpy_object._dirty_attributes,
@@ -413,7 +418,8 @@ class MultipleUpdateApiTestCase(ModifiableApiTestCase):
             for zenpy_object in self.api(ids=[r.id for r in job_status.results]):
                 modified_object, new_kwargs = self.modify_object(zenpy_object)
                 updated_objects.append((modified_object, new_kwargs))
-            self.update_method([m[0] for m in updated_objects])
+            result = self.update_method([m[0] for m in updated_objects])
+            self.wait_for_job_status(result)
             for modified_object, new_kwargs in updated_objects:
                 self.verify_object_updated(new_kwargs, modified_object)
 
@@ -457,3 +463,56 @@ class CRUDApiTestCase(
     MultipleDeleteApiTestCase,
 ):
     pass
+
+
+class PaginationTestCase(ModifiableApiTestCase):
+
+    pagination_limit = 100
+    skip_obp = False
+
+    def create_objects(self):
+        """ Implement this method to guarantee a minimum amount of objects """
+        pass
+
+    def destroy_objects(self):
+        """ Implement this method if destroy_many is not applicable """
+        pass
+
+    def count_objects_by_pagination_type(self, cursor_pagination=None):
+        count = 0
+        if cursor_pagination is not None:
+            generator = self.api(cursor_pagination=cursor_pagination)
+        else:
+            generator = self.api()
+
+        for _ in generator:
+            count += 1
+            if self.pagination_limit and count >= self.pagination_limit:
+                break
+
+        return count
+
+    def test_pagination(self):
+        """ Test different types of cursor pagination vs offset pagination """
+
+        cassette_name = "{}".format(self.generate_cassette_name())
+        with self.recorder.use_cassette(
+            cassette_name=cassette_name, serialize_with="prettyjson"
+        ):
+            self.create_objects()
+            try:
+                count_default = self.count_objects_by_pagination_type()
+                count_cbp = self.count_objects_by_pagination_type(cursor_pagination=True)
+                count_cbp1 = self.count_objects_by_pagination_type(cursor_pagination=1)
+
+                # We need at least 2 objects to check pagination
+                self.assertGreater(count_default, 1, "Default pagination returned less than 2 objects")
+                self.assertNotEqual(count_cbp, 0, "CBP returned zero")
+                self.assertEqual(count_cbp, count_cbp1, "CBP<>CBP[1]")
+
+                if not self.skip_obp:
+                    count_obp = self.count_objects_by_pagination_type(cursor_pagination=False)
+                    self.assertNotEqual(count_obp, 0, "OBP returned zero")
+                    self.assertEqual(count_cbp, count_obp, "OBP<>CBP")
+            finally:
+                self.destroy_objects()

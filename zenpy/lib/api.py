@@ -58,12 +58,11 @@ class BaseApi(object):
         self._response_handlers = (
             CountResponseHandler,
             DeleteResponseHandler,
-            TagResponseHandler,
             SearchExportResponseHandler,
             SearchResponseHandler,
             JobStatusesResponseHandler,
             CombinationResponseHandler,
-            ViewResponseHandler,
+            # ViewResponseHandler,
             SlaPolicyResponseHandler,
             RequestCommentResponseHandler,
             ZISIntegrationResponseHandler,
@@ -77,6 +76,27 @@ class BaseApi(object):
         # accepted by Zendesk before cleaning it's dirty attributes, so we store it here until the response
         # is successfully processed, and then call the objects _clean_dirty() method.
         self._dirty_object = None
+
+    def supports_cbp(self):
+        cbp_supported = ['activities',
+                         'automations',
+                         'deleted_tickets',
+                         'group_memberships',
+                         'groups',
+                         'macros',
+                         'organizations',
+                         'recipient_addresses',
+                         'satisfaction_ratings',
+                         'skips',
+                         'suspended_tickets',
+                         'tags',
+                         'ticket_audits',
+                         'ticket_metrics',
+                         'tickets',
+                         'triggers',
+                         'users',
+                         'views']
+        return self.endpoint is not None and getattr(self.endpoint, "endpoint", "") in cbp_supported
 
     def _post(self, url, payload, content_type=None, **kwargs):
         if 'data' in kwargs:
@@ -294,6 +314,8 @@ class BaseApi(object):
                                           response_objects=cached_objects,
                                           object_type=object_type)
         else:
+            if self.supports_cbp() and 'cursor_pagination' not in endpoint_kwargs.keys():
+                endpoint_kwargs['cursor_pagination'] = True
             return self._get(
                 self._build_url(
                     endpoint=endpoint(*endpoint_args, **endpoint_kwargs)))
@@ -1001,7 +1023,7 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
         self.cache.delete(deleted_user)
         return deleted_user
 
-    def deleted(self):
+    def deleted(self, **kwargs):
         """
         List Deleted Users.
 
@@ -1010,7 +1032,7 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
 
         :return:
         """
-        return self._get(self._build_url(self.endpoint.deleted()))
+        return self._get(self._build_url(self.endpoint.deleted(**kwargs)))
 
     @extract_id(User)
     def skips(self, user):
@@ -1312,7 +1334,7 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         self.cache.delete(tickets)
         return deleted_ticket_job_id
 
-    def deleted(self):
+    def deleted(self, **kwargs):
         """
         List Deleted Tickets.
 
@@ -1321,7 +1343,29 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
 
         :return: ResultGenerator with Tickets objects with length 0 of no deleted tickets exist.
         """
-        return self._get(self._build_url(self.endpoint.deleted()))
+        return self._get(self._build_url(self.endpoint.deleted(**kwargs)))
+
+    @extract_id(Ticket)
+    def restore(self, tickets):
+        """
+        Restore soft deleted tickets
+
+        :param tickets: A ticket or a list of tickets to restore
+        """
+        if isinstance(tickets, Iterable):
+            if len(tickets):
+                endpoint_kwargs = dict()
+                if type(tickets[0]) is Ticket:
+                    endpoint_kwargs['restore_ids'] = [t.id for t in tickets]
+                elif type(tickets[0]) is int:
+                    endpoint_kwargs['restore_ids'] = tickets
+                else:
+                    raise ZenpyException("A list of tickets expected")
+                url = self._build_url(endpoint=self.endpoint.deleted(**endpoint_kwargs))
+        else:
+            url = self._build_url(endpoint=self.endpoint.restore(tickets))
+
+        return self._put(url, payload=None)
 
     def events(self, start_time, include=None, per_page=None):
         """
@@ -1786,7 +1830,7 @@ class ViewApi(CRUDApi):
             self._build_url(self.endpoint.execute(id=view, include=include)))
 
     @extract_id(View)
-    def tickets(self, view, include=None):
+    def tickets(self, view, include=None, cursor_pagination=True):
         """
         Return the tickets in a view.
 
@@ -1795,10 +1839,10 @@ class ViewApi(CRUDApi):
         :param view: View or view id
         """
         return self._get(
-            self._build_url(self.endpoint.tickets(id=view, include=include)))
+            self._build_url(self.endpoint.tickets(id=view, include=include, cursor_pagination=cursor_pagination)))
 
     @extract_id(View)
-    def count(self, view, include=None):
+    def count(self, view=None, include=None):
         """
         Return a ViewCount for a view.
 
@@ -1806,6 +1850,9 @@ class ViewApi(CRUDApi):
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param view: View or view id
         """
+        if view is None:
+            return self._get(
+                self._build_url(self.endpoint.primary_count()))
         return self._get(
             self._build_url(self.endpoint.count(id=view, include=include)))
 

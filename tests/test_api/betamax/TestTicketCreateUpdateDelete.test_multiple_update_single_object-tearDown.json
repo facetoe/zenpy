@@ -1,11 +1,11 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2018-04-16T07:19:30",
+      "recorded_at": "2023-08-09T10:46:16",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"ticket\": {\"id\": 6502}}"
+          "string": "{\"ticket\": {\"id\": 21147}}"
         },
         "headers": {
           "Accept": [
@@ -15,23 +15,26 @@
             "gzip, deflate"
           ],
           "Authorization": [
-            "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnBUNXQ2ZEZ4QWltU1hoNEkydjBYeVMwSkNlYVV4eWROQUxFRkV1VWM="
+            "Basic <ZENPY-CREDENTIALS>"
           ],
           "Connection": [
             "keep-alive"
           ],
           "Content-Length": [
-            "24"
+            "25"
           ],
           "Content-Type": [
             "application/json"
           ],
+          "Cookie": [
+            "__cfruid=c457ef48119afb6ed7856cb0dd1e04d9cc3b6c89-1691577611; _zendesk_cookie=BAhJIhl7ImRldmljZV90b2tlbnMiOnt9fQY6BkVU--0bf2100788cb010d0183feca16aaf88ccaf719ca"
+          ],
           "User-Agent": [
-            "Zenpy/1.2"
+            "Zenpy/2.0.10"
           ]
         },
         "method": "DELETE",
-        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/tickets/6502.json"
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/tickets/21147.json"
       },
       "response": {
         "body": {
@@ -39,66 +42,79 @@
           "string": ""
         },
         "headers": {
-          "Cache-Control": [
-            "no-cache"
+          "CF-Cache-Status": [
+            "DYNAMIC"
+          ],
+          "CF-RAY": [
+            "7f3f6a1029481648-WAW"
           ],
           "Connection": [
             "keep-alive"
           ],
           "Date": [
-            "Mon, 16 Apr 2018 07:19:30 GMT"
+            "Wed, 09 Aug 2023 10:46:16 GMT"
+          ],
+          "NEL": [
+            "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Report-To": [
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=iHqQWKB7lhy5BrLwPX3zcCnhZaKRMGG5HjzTjyg8yIyYFJPBHWYOlnj40b3X6GOItEsgtTGquo5OvwHdusxtMgaqSu%2FI3lVoqdJIU7DFHe%2FPBSwqS6YodjBAQINFdFnU%2B67k4TQlvw%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Server": [
-            "nginx"
+            "cloudflare"
           ],
-          "Strict-Transport-Security": [
-            "max-age=31536000;"
+          "X-Zendesk-Zorg": [
+            "yes"
           ],
-          "X-Content-Type-Options": [
-            "nosniff"
+          "cache-control": [
+            "no-cache"
           ],
-          "X-Frame-Options": [
-            "SAMEORIGIN"
-          ],
-          "X-Rack-Cache": [
-            "invalidate, pass"
-          ],
-          "X-Rate-Limit": [
+          "rate-limit": [
             "700"
           ],
-          "X-Rate-Limit-Remaining": [
-            "687"
+          "rate-limit-remaining": [
+            "692"
           ],
-          "X-Request-Id": [
-            "061f8a4c-fd1c-44d3-c4d7-0a27526fa680"
+          "rate-limit-reset": [
+            "44"
           ],
-          "X-Runtime": [
-            "0.235492"
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
           ],
-          "X-UA-Compatible": [
-            "IE=Edge,chrome=1"
+          "x-frame-options": [
+            "SAMEORIGIN"
           ],
-          "X-Zendesk-API-Version": [
+          "x-rate-limit": [
+            "700"
+          ],
+          "x-rate-limit-remaining": [
+            "692"
+          ],
+          "x-request-id": [
+            "7f3f6a1029481648-WAW",
+            "7f3f6a1029481648-WAW"
+          ],
+          "x-runtime": [
+            "0.201742"
+          ],
+          "x-zendesk-api-version": [
             "v2"
           ],
-          "X-Zendesk-API-Warn": [
-            "Removed restricted keys [\"ticket.id\", \"ticket\"] from parameters according to whitelist"
+          "x-zendesk-api-warn": [
+            "{:allowed_parameters=>{:controller=>\"tickets\", :action=>\"destroy\", :unpermitted_keys=>[\"ticket.id\", \"ticket\"], :invalid_values=>[]}}"
           ],
-          "X-Zendesk-Application-Version": [
-            "v926.24"
+          "x-zendesk-application-version": [
+            "v17926"
           ],
-          "X-Zendesk-Origin-Server": [
-            "app7.pod13.usw2.zdsys.com"
-          ],
-          "X-Zendesk-Request-Id": [
-            "c8a7353cf7d7232cf924"
+          "x-zendesk-origin-server": [
+            "classic-app-server-56c6d98d7f-zlb5g"
           ]
         },
         "status": {
           "code": 204,
           "message": "No Content"
         },
-        "url": "https://d3v-zenpydev.zendesk.com/api/v2/tickets/6502.json"
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/tickets/21147.json"
       }
     }
   ],

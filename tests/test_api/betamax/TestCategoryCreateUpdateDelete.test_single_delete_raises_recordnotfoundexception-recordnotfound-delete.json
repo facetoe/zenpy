@@ -1,20 +1,34 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2018-03-30T07:36:49",
+      "recorded_at": "2023-08-09T10:39:57",
       "request": {
         "body": {
           "encoding": "utf-8",
           "string": "{\"category\": {\"id\": 9223372036854775807}}"
         },
         "headers": {
-          "Accept": "*/*",
-          "Accept-Encoding": "gzip, deflate",
-          "Authorization": "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnBUNXQ2ZEZ4QWltU1hoNEkydjBYeVMwSkNlYVV4eWROQUxFRkV1VWM=",
-          "Connection": "keep-alive",
-          "Content-Length": "41",
-          "Content-Type": "application/json",
-          "User-Agent": "Zenpy/1.2"
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic <ZENPY-CREDENTIALS>"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "41"
+          ],
+          "Content-Type": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "Zenpy/2.0.10"
+          ]
         },
         "method": "DELETE",
         "uri": "https://d3v-zenpydev.zendesk.com/api/v2/help_center/categories/9223372036854775807.json"
@@ -26,23 +40,75 @@
           "string": ""
         },
         "headers": {
-          "Cache-Control": "no-cache",
-          "Connection": "keep-alive",
-          "Content-Encoding": "gzip",
-          "Content-Type": "application/json; charset=utf-8",
-          "Date": "Fri, 30 Mar 2018 07:36:49 GMT",
-          "Server": "nginx",
-          "Status": "404 Not Found",
-          "Strict-Transport-Security": "max-age=31536000;",
-          "Transfer-Encoding": "chunked",
-          "X-Frame-Options": "SAMEORIGIN",
-          "X-Request-Id": "fc4bd1aa-5825-459e-c5cf-0213056d79e2",
-          "X-Runtime": "0.352161",
-          "X-UA-Compatible": "IE=edge",
-          "X-XSS-Protection": "1; mode=block",
-          "X-Zendesk-API-Version": "v2",
-          "X-Zendesk-Origin-Server": "hcapp25.pod13.usw2.zdsys.com",
-          "X-Zendesk-User-Id": ""
+          "CF-Cache-Status": [
+            "DYNAMIC"
+          ],
+          "CF-RAY": [
+            "7f3f60d2ec6635c0-WAW"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Encoding": [
+            "gzip"
+          ],
+          "Content-Type": [
+            "application/json; charset=utf-8"
+          ],
+          "Date": [
+            "Wed, 09 Aug 2023 10:39:58 GMT"
+          ],
+          "NEL": [
+            "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Report-To": [
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=nlnGSuUzSyB1hqW17MgfiU4NsfD25GzOCsjeW9hHWSV78ol4xvLCCKuw30zrG%2FgUKIKEqHfOaGMf6nRWTTx%2FgIc8Cva5LI6L8vOwOTCL9YBIBviUcgV82DXvkkrm5isig3JLSZS4ew%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Server": [
+            "cloudflare"
+          ],
+          "Set-Cookie": [
+            "__cfruid=6e26b33ca22d607e550d9acf58a90b42b31a21c5-1691577598; path=/; domain=.d3v-ontec.zendesk.com; HttpOnly; Secure; SameSite=None"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "cache-control": [
+            "no-cache"
+          ],
+          "strict-transport-security": [
+            "max-age=31536000;"
+          ],
+          "x-frame-options": [
+            "SAMEORIGIN"
+          ],
+          "x-rate-limit": [
+            "700"
+          ],
+          "x-rate-limit-remaining": [
+            "699"
+          ],
+          "x-request-id": [
+            "7f3f60d2ec6635c0-WAW"
+          ],
+          "x-runtime": [
+            "0.083542"
+          ],
+          "x-ua-compatible": [
+            "IE=edge"
+          ],
+          "x-xss-protection": [
+            "1; mode=block"
+          ],
+          "x-zendesk-api-version": [
+            "v2"
+          ],
+          "x-zendesk-origin-server": [
+            "help-center-unicorn-68b9d598d8-z5cnj"
+          ],
+          "x-zendesk-processed-host-header": [
+            "d3v-ontec.zendesk.com"
+          ]
         },
         "status": {
           "code": 404,
@@ -52,5 +118,5 @@
       }
     }
   ],
-  "recorded_with": "betamax/0.8.0"
+  "recorded_with": "betamax/0.8.1"
 }

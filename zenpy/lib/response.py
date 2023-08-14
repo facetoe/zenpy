@@ -82,6 +82,10 @@ class GenericZendeskResponseHandler(ResponseHandler):
                         response_objects[key].append(zenpy_object)
         return response_objects
 
+    def _isCBP(self, response_json):
+        meta = response_json.get('meta')
+        return (meta is not None) and (meta.get('has_more') is not None)
+
     def build(self, response):
         """
         Deserialize the returned objects and return either a single Zenpy object, or a ResultGenerator in
@@ -92,7 +96,7 @@ class GenericZendeskResponseHandler(ResponseHandler):
         response_json = response.json()
 
         # Special case for incremental cursor based ticket audits export.
-        if get_endpoint_path(self.api,
+        if   (self._isCBP(response_json) is False)  and get_endpoint_path(self.api,
                              response).startswith('/ticket_audits.json'):
             return TicketCursorGenerator(self,
                                          response_json,
@@ -141,17 +145,32 @@ class GenericZendeskResponseHandler(ResponseHandler):
         if self.api.object_type in zenpy_objects:
             return zenpy_objects[self.api.object_type]
 
-        # Could be anything, if we know of this object then return it.
-        for zenpy_object_name in self.object_mapping.class_mapping:
-            if zenpy_object_name in zenpy_objects:
-                return zenpy_objects[zenpy_object_name]
-
         # Maybe a collection of known objects?
         for zenpy_object_name in self.object_mapping.class_mapping:
             plural_zenpy_object_name = as_plural(zenpy_object_name)
             if plural_zenpy_object_name in zenpy_objects:
-                return ZendeskResultGenerator(
-                    self, response_json, object_type=plural_zenpy_object_name)
+                meta = response_json.get('meta')
+                if meta and meta.get('has_more') is not None:
+                    return GenericCursorResultsGenerator(
+                        self,
+                        response_json,
+                        object_type=zenpy_object_name
+                    )
+                else:
+                    return ZendeskResultGenerator(
+                        self,
+                        response_json,
+                        object_type=plural_zenpy_object_name
+                    )
+
+        # Moved this block here because views.count has a 'count' parameter \
+        # But OBP has the same with different meanings \
+        # Therefore, we need collections with OBP to be preferred.
+
+        # Could be anything, if we know of this object then return it.
+        for zenpy_object_name in self.object_mapping.class_mapping:
+            if zenpy_object_name in zenpy_objects:
+                return zenpy_objects[zenpy_object_name]
 
         # Bummer, bail out.
         raise ZenpyException("Unknown Response: " + str(response_json))
@@ -313,8 +332,13 @@ class CountResponseHandler(GenericZendeskResponseHandler):
             return False
 
     def build(self, response):
-        return response.json()['count']
-
+        return self.deserialize(response.json())
+    def deserialize(self, response_json):
+        if isinstance(response_json, dict):
+            return self.object_mapping.object_from_json(
+                'count', response_json['count'])
+        else:
+            return response_json['count']
 
 class CombinationResponseHandler(GenericZendeskResponseHandler):
     """ Handles a few special cases where the return type is made up of two objects. """
@@ -360,20 +384,6 @@ class JobStatusesResponseHandler(GenericZendeskResponseHandler):
                 'job_status', object_json)
             response_objects['job_statuses'].append(zenpy_object)
         return response_objects
-
-
-class TagResponseHandler(ResponseHandler):
-    """ Tags aint complicated, just return them. """
-    @staticmethod
-    def applies_to(api, response):
-        result = urlparse(response.request.url)
-        return result.path.endswith('tags.json')
-
-    def deserialize(self, response_json):
-        return response_json['tags']
-
-    def build(self, response):
-        return self.deserialize(response.json())
 
 
 class SlaPolicyResponseHandler(GenericZendeskResponseHandler):
