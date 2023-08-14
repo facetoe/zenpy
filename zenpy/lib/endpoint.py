@@ -385,7 +385,8 @@ class SatisfactionRatingEndpoint(BaseEndpoint):
                  score=None,
                  sort_order=None,
                  start_time=None,
-                 end_time=None):
+                 end_time=None,
+                 cursor_pagination=100):
         if sort_order and sort_order not in ('asc', 'desc'):
             raise ZenpyException("sort_order must be one of (asc, desc)")
         params = dict()
@@ -397,6 +398,9 @@ class SatisfactionRatingEndpoint(BaseEndpoint):
             params['start_time'] = to_unix_ts(start_time)
         if end_time:
             params['end_time'] = to_unix_ts(end_time)
+        if cursor_pagination:
+            params['page[size]'] = cursor_pagination
+
         return Url(self.endpoint, params=params)
 
 
