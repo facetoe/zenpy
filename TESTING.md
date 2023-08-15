@@ -16,7 +16,7 @@ Pytest supports Python 2.7 until version 4.6.
 
 You don't need any other things for using recordings.
 ~~~
-# cd /dir/zenpycbp
+# cd /dir/zenpy
 # make unittest
 or
 # make pytest
