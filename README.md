@@ -8,6 +8,8 @@ Zenpy supports both Python2 and Python3.
 
 Please report bugs!
 
+:warning: Beginning on August 15, 2023, Zendesk limits [offset-based pagination](https://developer.zendesk.com/documentation/api-basics/pagination/paginating-through-lists-using-offset-pagination/) (OBP) to 100 pages (10,000 results) and recommends using [cursor-based pagination](https://developer.zendesk.com/documentation/api-basics/pagination/paginating-through-lists-using-cursor-pagination/) (CBP) for most API endpoints. Please refer to a [corresponding block](#Pagination) below and [this issue](https://github.com/facetoe/zenpy/issues/543) to get more information. 
+
 * [Quickstart](#quickstart)
 * [Examples](#examples)
   * Ticketing
@@ -30,6 +32,7 @@ Please report bugs!
     * [Create new article in help center](#Create-new-article-in-help-center)
   * Other
     * [Working with webhooks](#Working-with-webhooks)
+    * [Pagination](#Pagination)
 * [Documentation](#documentation)
 * [Contributions](#contributions)
 
@@ -417,6 +420,22 @@ response = zenpy_client.webhooks.test(
                         http_method="GET",
                     )
                 )
+```
+##### Pagination
+
+Please refer to the [official documentation](https://developer.zendesk.com/api-reference/introduction/pagination/) to get details. Also check this article: [Which endpoints are supported?](https://support.zendesk.com/hc/en-us/articles/4408846180634#h_01FF626TG8VD0W4JP9DBBSXESK)
+
+```python
+# An old style offset pagination, not recommended. Since August 15, 2023, is limited to 100 pages.
+fields = zenpy_client.ticket_fields()
+# Or
+fields = zenpy_client.ticket_fields(cursor_pagination=False)
+
+# A new cursor offset pagination
+fields = zenpy_client.ticket_fields(cursor_pagination=True) # is equal to 100 results per page
+# Or
+fields = zenpy_client.ticket_fields(cursor_pagination=50) # 50 results per page
+
 ```
 
 ## Documentation

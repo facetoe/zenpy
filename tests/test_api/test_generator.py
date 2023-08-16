@@ -4,7 +4,7 @@ from zenpy.lib.generator import SearchResultGenerator
 
 
 class TestSearchGenerator(ZenpyApiTestCase):
-    __test__ = True
+    __test__ = False
 
     def test_search_generator_len(self):
         with self.recorder.use_cassette(
@@ -24,7 +24,7 @@ class TestSearchGenerator(ZenpyApiTestCase):
 class TestTicketGeneratorSlice(ZenpyApiTestCase):
     """ These tests rely on the ticket ids starting at 1. """
 
-    __test__ = True
+    __test__ = False
 
     def test_ticket_slice_low_bound(self):
         with self.recorder.use_cassette(

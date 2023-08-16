@@ -21,6 +21,7 @@ class ZendeskObjectMapping(object):
     Handle converting Zendesk Support JSON objects to Python ones.
     """
     class_mapping = {
+        'count': Count,
         'ticket': Ticket,
         'deleted_ticket': Ticket,
         'user': User,

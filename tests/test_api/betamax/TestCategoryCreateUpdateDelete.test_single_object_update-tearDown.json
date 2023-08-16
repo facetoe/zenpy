@@ -1,23 +1,40 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2018-03-30T07:36:52",
+      "recorded_at": "2023-08-09T10:39:59",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"category\": {\"id\": 360000253431}}"
+          "string": "{\"category\": {\"id\": 12977263150354}}"
         },
         "headers": {
-          "Accept": "*/*",
-          "Accept-Encoding": "gzip, deflate",
-          "Authorization": "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnBUNXQ2ZEZ4QWltU1hoNEkydjBYeVMwSkNlYVV4eWROQUxFRkV1VWM=",
-          "Connection": "keep-alive",
-          "Content-Length": "34",
-          "Content-Type": "application/json",
-          "User-Agent": "Zenpy/1.2"
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic <ZENPY-CREDENTIALS>"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "36"
+          ],
+          "Content-Type": [
+            "application/json"
+          ],
+          "Cookie": [
+            "__cfruid=6e26b33ca22d607e550d9acf58a90b42b31a21c5-1691577598"
+          ],
+          "User-Agent": [
+            "Zenpy/2.0.10"
+          ]
         },
         "method": "DELETE",
-        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/help_center/categories/360000253431.json"
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/help_center/categories/12977263150354.json"
       },
       "response": {
         "body": {
@@ -25,29 +42,74 @@
           "string": ""
         },
         "headers": {
-          "Cache-Control": "no-cache",
-          "Connection": "keep-alive",
-          "Date": "Fri, 30 Mar 2018 07:36:52 GMT",
-          "Server": "nginx",
-          "Status": "204 No Content",
-          "Strict-Transport-Security": "max-age=31536000;",
-          "X-Content-Type-Options": "nosniff",
-          "X-Frame-Options": "SAMEORIGIN",
-          "X-Request-Id": "be19a3bb-7974-43e2-c33c-0213056d79e2",
-          "X-Runtime": "0.083664",
-          "X-UA-Compatible": "IE=edge",
-          "X-XSS-Protection": "1; mode=block",
-          "X-Zendesk-API-Version": "v2",
-          "X-Zendesk-Origin-Server": "hcapp2.pod13.usw2.zdsys.com",
-          "X-Zendesk-User-Id": ""
+          "CF-Cache-Status": [
+            "DYNAMIC"
+          ],
+          "CF-RAY": [
+            "7f3f60dfee5735c0-WAW"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Date": [
+            "Wed, 09 Aug 2023 10:40:00 GMT"
+          ],
+          "NEL": [
+            "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Protocol": [
+            "HTTP/1.1 always"
+          ],
+          "Report-To": [
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=oefe6sfdPV%2FVC0hhRiiKNn1X4p3jAIQ2Do%2FpE75Mbm0KLeQELBX8nhWtN5p2SkcDNK1lZopdNxYs6c3ZgKNzGt6eqpPqBjSOmBt1%2BfQDPLs1xgW3h%2FjQfZuI8w9%2FN2sUFSAekwP%2FBA%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Server": [
+            "cloudflare"
+          ],
+          "cache-control": [
+            "no-cache"
+          ],
+          "strict-transport-security": [
+            "max-age=31536000;"
+          ],
+          "x-frame-options": [
+            "SAMEORIGIN"
+          ],
+          "x-rate-limit": [
+            "700"
+          ],
+          "x-rate-limit-remaining": [
+            "699"
+          ],
+          "x-request-id": [
+            "7f3f60dfee5735c0-WAW"
+          ],
+          "x-runtime": [
+            "0.074364"
+          ],
+          "x-ua-compatible": [
+            "IE=edge"
+          ],
+          "x-xss-protection": [
+            "1; mode=block"
+          ],
+          "x-zendesk-api-version": [
+            "v2"
+          ],
+          "x-zendesk-origin-server": [
+            "help-center-unicorn-68b9d598d8-hppxl"
+          ],
+          "x-zendesk-processed-host-header": [
+            "d3v-ontec.zendesk.com"
+          ]
         },
         "status": {
           "code": 204,
           "message": "No Content"
         },
-        "url": "https://d3v-zenpydev.zendesk.com/api/v2/help_center/categories/360000253431.json"
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/help_center/categories/12977263150354.json"
       }
     }
   ],
-  "recorded_with": "betamax/0.8.0"
+  "recorded_with": "betamax/0.8.1"
 }

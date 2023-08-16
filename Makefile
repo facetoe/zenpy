@@ -10,6 +10,7 @@ reformat:
 	black $(PYTHON_SOURCE_DIRS)
 
 unittest:
-	nosetests -v --stop
+	nosetests -v --stop --exe
 
-
+pytest:
+	PYTHONPATH=. pytest

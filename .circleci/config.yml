@@ -5,7 +5,7 @@ run_tests: &run_tests
           python -m venv venv
           . venv/bin/activate
           pip install -r requirements.dev
-          make unittest
+          make pytest
 
 version: 2
 jobs:
@@ -24,7 +24,7 @@ jobs:
             python -m virtualenv venv
             . venv/bin/activate
             pip install -r requirements.dev
-            make unittest
+            make pytest
   python3.5:
     docker:
       - image: cimg/python:3.5

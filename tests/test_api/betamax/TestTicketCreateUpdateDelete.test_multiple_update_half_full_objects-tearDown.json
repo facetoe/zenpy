@@ -1,11 +1,11 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2018-04-16T07:19:23",
+      "recorded_at": "2023-08-09T10:45:59",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"tickets\": [{\"id\": 6452}, {\"id\": 6453}, {\"id\": 6454}, {\"id\": 6455}, {\"id\": 6456}, {\"id\": 6457}, {\"id\": 6458}, {\"id\": 6459}, {\"id\": 6460}, {\"id\": 6461}, {\"id\": 6462}, {\"id\": 6463}, {\"id\": 6464}, {\"id\": 6465}, {\"id\": 6466}, {\"id\": 6467}, {\"id\": 6468}, {\"id\": 6469}, {\"id\": 6470}, {\"id\": 6471}, {\"id\": 6472}, {\"id\": 6473}, {\"id\": 6474}, {\"id\": 6475}, {\"id\": 6476}, {\"id\": 6477}, {\"id\": 6478}, {\"id\": 6479}, {\"id\": 6480}, {\"id\": 6481}, {\"id\": 6482}, {\"id\": 6483}, {\"id\": 6484}, {\"id\": 6485}, {\"id\": 6486}, {\"id\": 6487}, {\"id\": 6488}, {\"id\": 6489}, {\"id\": 6490}, {\"id\": 6491}, {\"id\": 6492}, {\"id\": 6493}, {\"id\": 6494}, {\"id\": 6495}, {\"id\": 6496}, {\"id\": 6497}, {\"id\": 6498}, {\"id\": 6499}, {\"id\": 6500}, {\"id\": 6501}]}"
+          "string": "{\"tickets\": [{\"id\": 21097}, {\"id\": 21098}, {\"id\": 21099}, {\"id\": 21100}, {\"id\": 21101}, {\"id\": 21102}, {\"id\": 21103}, {\"id\": 21104}, {\"id\": 21105}, {\"id\": 21106}, {\"id\": 21107}, {\"id\": 21108}, {\"id\": 21109}, {\"id\": 21110}, {\"id\": 21111}, {\"id\": 21112}, {\"id\": 21113}, {\"id\": 21114}, {\"id\": 21115}, {\"id\": 21116}, {\"id\": 21117}, {\"id\": 21118}, {\"id\": 21119}, {\"id\": 21120}, {\"id\": 21121}, {\"id\": 21122}, {\"id\": 21123}, {\"id\": 21124}, {\"id\": 21125}, {\"id\": 21126}, {\"id\": 21127}, {\"id\": 21128}, {\"id\": 21129}, {\"id\": 21130}, {\"id\": 21131}, {\"id\": 21132}, {\"id\": 21133}, {\"id\": 21134}, {\"id\": 21135}, {\"id\": 21136}, {\"id\": 21137}, {\"id\": 21138}, {\"id\": 21139}, {\"id\": 21140}, {\"id\": 21141}, {\"id\": 21142}, {\"id\": 21143}, {\"id\": 21144}, {\"id\": 21145}, {\"id\": 21146}]}"
         },
         "headers": {
           "Accept": [
@@ -15,33 +15,39 @@
             "gzip, deflate"
           ],
           "Authorization": [
-            "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOnBUNXQ2ZEZ4QWltU1hoNEkydjBYeVMwSkNlYVV4eWROQUxFRkV1VWM="
+            "Basic <ZENPY-CREDENTIALS>"
           ],
           "Connection": [
             "keep-alive"
           ],
           "Content-Length": [
-            "713"
+            "763"
           ],
           "Content-Type": [
             "application/json"
           ],
+          "Cookie": [
+            "__cfruid=c457ef48119afb6ed7856cb0dd1e04d9cc3b6c89-1691577611; _zendesk_cookie=BAhJIhl7ImRldmljZV90b2tlbnMiOnt9fQY6BkVU--0bf2100788cb010d0183feca16aaf88ccaf719ca"
+          ],
           "User-Agent": [
-            "Zenpy/1.2"
+            "Zenpy/2.0.10"
           ]
         },
         "method": "DELETE",
-        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/tickets/destroy_many.json?ids=6452,6453,6454,6455,6456,6457,6458,6459,6460,6461,6462,6463,6464,6465,6466,6467,6468,6469,6470,6471,6472,6473,6474,6475,6476,6477,6478,6479,6480,6481,6482,6483,6484,6485,6486,6487,6488,6489,6490,6491,6492,6493,6494,6495,6496,6497,6498,6499,6500,6501"
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/tickets/destroy_many.json?ids=21097,21098,21099,21100,21101,21102,21103,21104,21105,21106,21107,21108,21109,21110,21111,21112,21113,21114,21115,21116,21117,21118,21119,21120,21121,21122,21123,21124,21125,21126,21127,21128,21129,21130,21131,21132,21133,21134,21135,21136,21137,21138,21139,21140,21141,21142,21143,21144,21145,21146"
       },
       "response": {
         "body": {
-          "base64_string": "H4sIAAAAAAAAA4WOyw6CQAxF/6VrZJBHePyMGWhFcGBGOkOihH+3iRKX7m5zT3ruBqNtL+y1DwzNBgNCA7quEJMiS5M6764VUpl3FZ0pKdpSY64hgrAYAW/eO26Uwmw9vWh2T6Q1loDE97izk9JuUGuqfg5i9e97PLKdReGt1yKZgzERuMX2C7Fs/NzHYngECoSCT9Lqng5A4GD8l9/3N/BC2kboAAAA",
-          "encoding": "UTF-8",
+          "base64_string": "H4sIAAAAAAAAA43OPRKCMBCG4btsDYSADD8HsXWWZEUwJEg2FDLc3RQyttb7zL7fDpPrb56Rg4duh1FDB9cypfaidd7UWjUFakRFvVRY57Jtqv4uJSQQVhPtg3nxnRC63FJnmVT2JqvJPzPlZoHLKLZC/BrkxR/fs8k7GxPsGGOkyhNYVjes5ONIG4xJ4JwMr0CBdMRzvOJAJ4g4GP764/gAzHHZDekAAAA=",
+          "encoding": "utf-8",
           "string": ""
         },
         "headers": {
-          "Cache-Control": [
-            "max-age=0, private, must-revalidate"
+          "CF-Cache-Status": [
+            "DYNAMIC"
+          ],
+          "CF-RAY": [
+            "7f3f69a7d9581648-WAW"
           ],
           "Connection": [
             "keep-alive"
@@ -50,68 +56,78 @@
             "gzip"
           ],
           "Content-Type": [
-            "application/json; charset=UTF-8"
+            "application/json; charset=utf-8"
           ],
           "Date": [
-            "Mon, 16 Apr 2018 07:19:23 GMT"
+            "Wed, 09 Aug 2023 10:45:59 GMT"
           ],
-          "ETag": [
-            "W/\"946a38f6685d1212eb3aadae55124a26\""
+          "NEL": [
+            "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Report-To": [
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=9ee4PmrkdG5woixGeMZtskbr1NGmRtCLj8EIeDxAsK7IgILpDLOaBBeWMYfByAe48VEEl%2Bz5ZlfGoJG68vg2TL1VBdYnwH9yStxTrfx8umh%2FxGE5Nn7Y%2BE3MudQSNUFYJZdhOVHj2Q%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Server": [
-            "nginx"
-          ],
-          "Strict-Transport-Security": [
-            "max-age=31536000;"
+            "cloudflare"
           ],
           "Transfer-Encoding": [
             "chunked"
           ],
-          "X-Content-Type-Options": [
-            "nosniff"
+          "X-Zendesk-Zorg": [
+            "yes"
           ],
-          "X-Frame-Options": [
-            "SAMEORIGIN"
+          "cache-control": [
+            "max-age=0, private, must-revalidate"
           ],
-          "X-Rack-Cache": [
-            "invalidate, pass"
+          "etag": [
+            "W/\"f5adbb6616ed79098aaed36247b183ad\""
           ],
-          "X-Rate-Limit": [
+          "rate-limit": [
             "700"
           ],
-          "X-Rate-Limit-Remaining": [
-            "692"
+          "rate-limit-remaining": [
+            "583"
           ],
-          "X-Request-Id": [
-            "a9d480cc-9c0a-4b99-cb20-0a27526fa680"
+          "rate-limit-reset": [
+            "1"
           ],
-          "X-Runtime": [
-            "0.143392"
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
           ],
-          "X-UA-Compatible": [
-            "IE=Edge,chrome=1"
+          "x-frame-options": [
+            "SAMEORIGIN"
           ],
-          "X-Zendesk-API-Version": [
+          "x-rate-limit": [
+            "700"
+          ],
+          "x-rate-limit-remaining": [
+            "583"
+          ],
+          "x-request-id": [
+            "7f3f69a7d9581648-WAW",
+            "7f3f69a7d9581648-WAW"
+          ],
+          "x-runtime": [
+            "0.099438"
+          ],
+          "x-zendesk-api-version": [
             "v2"
           ],
-          "X-Zendesk-API-Warn": [
-            "Removed restricted keys [\"tickets\"] from parameters according to whitelist"
+          "x-zendesk-api-warn": [
+            "{:allowed_parameters=>{:controller=>\"tickets\", :action=>\"destroy_many\", :unpermitted_keys=>[\"tickets\"], :invalid_values=>[]}}"
           ],
-          "X-Zendesk-Application-Version": [
-            "v926.24"
+          "x-zendesk-application-version": [
+            "v17926"
           ],
-          "X-Zendesk-Origin-Server": [
-            "app34.pod13.usw2.zdsys.com"
-          ],
-          "X-Zendesk-Request-Id": [
-            "5b7c0bdb70d5611d5208"
+          "x-zendesk-origin-server": [
+            "classic-app-server-56c6d98d7f-tktjq"
           ]
         },
         "status": {
           "code": 200,
           "message": "OK"
         },
-        "url": "https://d3v-zenpydev.zendesk.com/api/v2/tickets/destroy_many.json?ids=6452,6453,6454,6455,6456,6457,6458,6459,6460,6461,6462,6463,6464,6465,6466,6467,6468,6469,6470,6471,6472,6473,6474,6475,6476,6477,6478,6479,6480,6481,6482,6483,6484,6485,6486,6487,6488,6489,6490,6491,6492,6493,6494,6495,6496,6497,6498,6499,6500,6501"
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/tickets/destroy_many.json?ids=21097,21098,21099,21100,21101,21102,21103,21104,21105,21106,21107,21108,21109,21110,21111,21112,21113,21114,21115,21116,21117,21118,21119,21120,21121,21122,21123,21124,21125,21126,21127,21128,21129,21130,21131,21132,21133,21134,21135,21136,21137,21138,21139,21140,21141,21142,21143,21144,21145,21146"
       }
     }
   ],

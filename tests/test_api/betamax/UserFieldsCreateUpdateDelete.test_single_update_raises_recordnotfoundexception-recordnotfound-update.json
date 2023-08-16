@@ -1,7 +1,7 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2020-02-01T23:51:26",
+      "recorded_at": "2023-08-09T10:48:45",
       "request": {
         "body": {
           "encoding": "utf-8",
@@ -15,7 +15,7 @@
             "gzip, deflate"
           ],
           "Authorization": [
-            "Basic c2luayt6ZW5kZXNrQGZhY2V0b2UuY29tLmF1L3Rva2VuOm5PczB2ZVBvQUFQM0Zpb2NMZFRaNllxdlN6bnhyUkFpbEtmcTRLYk4="
+            "Basic <ZENPY-CREDENTIALS>"
           ],
           "Connection": [
             "keep-alive"
@@ -27,7 +27,7 @@
             "application/json"
           ],
           "Cookie": [
-            "__cfduid=da7b2a0718aaf8e7188b250c74c0eb3391580601080; __cfruid=d86bdd1575b2a88a07f40f80c9bcfca8c2d9f4c8-1580601080"
+            "__cfruid=bea96b85882d621625ed74872317bdad86c319e3-1691578123; _zendesk_cookie=BAhJIhl7ImRldmljZV90b2tlbnMiOnt9fQY6BkVU--0bf2100788cb010d0183feca16aaf88ccaf719ca"
           ],
           "User-Agent": [
             "Zenpy/2.0.10"
@@ -39,7 +39,7 @@
       "response": {
         "body": {
           "base64_string": "H4sIAAAAAAAAA6tWSi0qyi9SslIKSk3OL0rxyy9xyy/NS1HSUUpJLU4uyiwoyczPA0oDJRTSwDK1AHKmUTI0AAAA",
-          "encoding": "UTF-8",
+          "encoding": "utf-8",
           "string": ""
         },
         "headers": {
@@ -47,10 +47,7 @@
             "DYNAMIC"
           ],
           "CF-RAY": [
-            "55e7d553a81ad6a9-SYD"
-          ],
-          "Cache-Control": [
-            "no-cache"
+            "7f3f6db69a1ffc77-WAW"
           ],
           "Connection": [
             "keep-alive"
@@ -59,49 +56,68 @@
             "gzip"
           ],
           "Content-Type": [
-            "application/json; charset=UTF-8"
+            "application/json; charset=utf-8"
           ],
           "Date": [
-            "Sat, 01 Feb 2020 23:51:26 GMT"
+            "Wed, 09 Aug 2023 10:48:45 GMT"
           ],
-          "Expect-CT": [
-            "max-age=604800, report-uri=\"https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct\""
+          "NEL": [
+            "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Report-To": [
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=mnKC2qE2%2Fg8LVlJ7zjxiHRx5q7toLRscbsaOBkPYmIMRM2%2FoHZ6yRxeadXxxXfcVvW6HPBcb%2BWSjDTUxFKlvDSBflObdRtziNbO%2FHDmynlthkiKYFoqjL4L%2FJnSCMp84n2aiKeq4Cg%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Server": [
             "cloudflare"
           ],
-          "Strict-Transport-Security": [
-            "max-age=31536000;"
-          ],
           "Transfer-Encoding": [
             "chunked"
           ],
-          "X-Frame-Options": [
-            "SAMEORIGIN"
+          "X-Zendesk-Zorg": [
+            "yes"
           ],
-          "X-Rate-Limit": [
+          "cache-control": [
+            "no-cache"
+          ],
+          "rate-limit": [
             "700"
           ],
-          "X-Rate-Limit-Remaining": [
-            "691"
+          "rate-limit-remaining": [
+            "667"
           ],
-          "X-Request-Id": [
-            "55e7d553a81ad6a9-SEA"
+          "rate-limit-reset": [
+            "15"
           ],
-          "X-Runtime": [
-            "0.156066"
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
           ],
-          "X-Zendesk-API-Version": [
+          "x-frame-options": [
+            "SAMEORIGIN"
+          ],
+          "x-rate-limit": [
+            "700"
+          ],
+          "x-rate-limit-remaining": [
+            "667"
+          ],
+          "x-request-id": [
+            "7f3f6db69a1ffc77-WAW",
+            "7f3f6db69a1ffc77-WAW"
+          ],
+          "x-runtime": [
+            "0.092227"
+          ],
+          "x-zendesk-api-version": [
             "v2"
           ],
-          "X-Zendesk-API-Warn": [
-            "Removed restricted keys [\"user_field.id\"] from parameters according to whitelist"
+          "x-zendesk-api-warn": [
+            "{:allowed_parameters=>{:controller=>\"user_fields\", :action=>\"update\", :unpermitted_keys=>[\"user_field.id\"], :invalid_values=>[]}}"
           ],
-          "X-Zendesk-Application-Version": [
-            "v4185.6"
+          "x-zendesk-application-version": [
+            "v17926"
           ],
-          "X-Zendesk-Origin-Server": [
-            "classic-app-server-9cfdc9847-mnnm6"
+          "x-zendesk-origin-server": [
+            "classic-app-server-56c6d98d7f-nhm2l"
           ]
         },
         "status": {
