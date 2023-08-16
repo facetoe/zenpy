@@ -1,11 +1,11 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2023-08-09T10:46:30",
+      "recorded_at": "2023-08-16T14:54:27",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"ticket_field\": {\"id\": 12977384018194}}"
+          "string": "{\"ticket_field\": {\"id\": 13120651140754}}"
         },
         "headers": {
           "Accept": [
@@ -27,14 +27,14 @@
             "application/json"
           ],
           "Cookie": [
-            "__cfruid=55d9f96aa6f264fd893899240e5027be167514de-1691577989; _zendesk_cookie=BAhJIhl7ImRldmljZV90b2tlbnMiOnt9fQY6BkVU--0bf2100788cb010d0183feca16aaf88ccaf719ca"
+            "__cfruid=228a5eabd75181b2fb669e8625a6370217a8ced1-1692197667; _zendesk_cookie=BAhJIhl7ImRldmljZV90b2tlbnMiOnt9fQY6BkVU--0bf2100788cb010d0183feca16aaf88ccaf719ca"
           ],
           "User-Agent": [
-            "Zenpy/2.0.10"
+            "Zenpy/2.0.27"
           ]
         },
         "method": "DELETE",
-        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/ticket_fields/12977384018194.json"
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/ticket_fields/13120651140754.json"
       },
       "response": {
         "body": {
@@ -46,19 +46,19 @@
             "DYNAMIC"
           ],
           "CF-RAY": [
-            "7f3f6a6759af34e5-WAW"
+            "7f7a834219fac424-LED"
           ],
           "Connection": [
             "keep-alive"
           ],
           "Date": [
-            "Wed, 09 Aug 2023 10:46:30 GMT"
+            "Wed, 16 Aug 2023 14:54:28 GMT"
           ],
           "NEL": [
             "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Report-To": [
-            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=0x6kjQg0kolmuYKs0GrO8131HxxGrNtQJam3GV10obBtve7fEOnCG5TqdqSitl1AXFfTjtwUxoqIj1k6ALTfFZe3EuhM1fzyRQczeugQUaUKCNMTaunVsjhUM5MPCj54mn3R5nYYvA%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=r1jRqQS50dGOHavSUdu2wgfU%2FEv478CtQ4QFcWaxaWheI8DDn8ZlbLbIrnKnxY27Yms2yO2916Qq3EMzQ7Wj%2F2ZGQHl4WQbCPfcdS67aG4i8plLSo%2FX21idNH3p1Ry87zcZ5rSku6A%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Server": [
             "cloudflare"
@@ -73,10 +73,10 @@
             "700"
           ],
           "rate-limit-remaining": [
-            "664"
+            "662"
           ],
           "rate-limit-reset": [
-            "30"
+            "32"
           ],
           "strict-transport-security": [
             "max-age=31536000; includeSubDomains"
@@ -88,14 +88,14 @@
             "700"
           ],
           "x-rate-limit-remaining": [
-            "664"
+            "662"
           ],
           "x-request-id": [
-            "7f3f6a6759af34e5-WAW",
-            "7f3f6a6759af34e5-WAW"
+            "7f7a834219fac424-LED",
+            "7f7a834219fac424-LED"
           ],
           "x-runtime": [
-            "0.208509"
+            "0.122991"
           ],
           "x-zendesk-api-version": [
             "v2"
@@ -104,17 +104,17 @@
             "{:allowed_parameters=>{:controller=>\"ticket_fields\", :action=>\"destroy\", :unpermitted_keys=>[\"ticket_field.id\", \"ticket_field\"], :invalid_values=>[]}}"
           ],
           "x-zendesk-application-version": [
-            "v17926"
+            "v17988"
           ],
           "x-zendesk-origin-server": [
-            "classic-app-server-56c6d98d7f-6g29b"
+            "classic-app-server-8589bd8f84-s4wcr"
           ]
         },
         "status": {
           "code": 204,
           "message": "No Content"
         },
-        "url": "https://d3v-zenpydev.zendesk.com/api/v2/ticket_fields/12977384018194.json"
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/ticket_fields/13120651140754.json"
       }
     }
   ],

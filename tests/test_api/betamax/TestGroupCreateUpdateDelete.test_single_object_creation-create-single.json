@@ -1,7 +1,7 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2023-08-09T10:49:42",
+      "recorded_at": "2023-08-16T14:55:51",
       "request": {
         "body": {
           "encoding": "utf-8",
@@ -27,10 +27,10 @@
             "application/json"
           ],
           "Cookie": [
-            "__cfruid=d5c332e96bfbd15d2e77c7ec49cbc5cc01b61b7c-1691578175; _zendesk_cookie=BAhJIhl7ImRldmljZV90b2tlbnMiOnt9fQY6BkVU--0bf2100788cb010d0183feca16aaf88ccaf719ca"
+            "__cfruid=a2c11570fbc594c664448789466585b1734a7d68-1692197746; _zendesk_cookie=BAhJIhl7ImRldmljZV90b2tlbnMiOnt9fQY6BkVU--0bf2100788cb010d0183feca16aaf88ccaf719ca"
           ],
           "User-Agent": [
-            "Zenpy/2.0.10"
+            "Zenpy/2.0.27"
           ]
         },
         "method": "POST",
@@ -39,14 +39,14 @@
       "response": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"group\":{\"url\":\"https://d3v-zenpydev.zendesk.com/api/v2/groups/12977454526354.json\",\"id\":12977454526354,\"is_public\":true,\"name\":\"testGroupNone\",\"description\":\"\",\"default\":false,\"deleted\":false,\"created_at\":\"2023-08-09T10:49:43Z\",\"updated_at\":\"2023-08-09T10:49:43Z\"}}"
+          "string": "{\"group\":{\"url\":\"https://d3v-zenpydev.zendesk.com/api/v2/groups/13120657497618.json\",\"id\":13120657497618,\"is_public\":true,\"name\":\"testGroupNone\",\"description\":\"\",\"default\":false,\"deleted\":false,\"created_at\":\"2023-08-16T14:55:52Z\",\"updated_at\":\"2023-08-16T14:55:52Z\"}}"
         },
         "headers": {
           "CF-Cache-Status": [
             "DYNAMIC"
           ],
           "CF-RAY": [
-            "7f3f6f1bea7f34c1-WAW"
+            "7f7a854eca0309ac-ARN"
           ],
           "Connection": [
             "keep-alive"
@@ -58,13 +58,13 @@
             "application/json; charset=utf-8"
           ],
           "Date": [
-            "Wed, 09 Aug 2023 10:49:43 GMT"
+            "Wed, 16 Aug 2023 14:55:52 GMT"
           ],
           "NEL": [
             "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Report-To": [
-            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=hYSjEcbcc4iVnZnmr4Y1%2BG9tv33EeUpIIXVevYS0xDySvsSH6uwn8GYYCd%2FsdhNwclqlXiZEwT3OhG0tTbFB%2FAml%2B4Z4aS2fUV7VdgWEgFaLjFiEJYwRyC6gX1xrGSLq07QC%2F9VCiQ%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=rulHY%2BoO7XWbJDfzhnnAXOUNXezaKGNe3qX1M1PVpguKjI%2FTKMglEibt8j6dVSycAIcuKiUx9x74mRHpRJ50gqjL193VM9sshtDagexm2J6ubMcb6RjihL4s0YQpkv%2Fm3f%2BVI7j3cw%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Server": [
             "cloudflare"
@@ -76,19 +76,19 @@
             "max-age=0, private, must-revalidate"
           ],
           "etag": [
-            "W/\"b920a66edd4c30c83d126010bd78dfc4\""
+            "W/\"a5174c1e99bbd943e362e815f390eb34\""
           ],
           "location": [
-            "https://d3v-zenpydev.zendesk.com/api/v2/groups/12977454526354.json"
+            "https://d3v-zenpydev.zendesk.com/api/v2/groups/13120657497618.json"
           ],
           "rate-limit": [
             "700"
           ],
           "rate-limit-remaining": [
-            "619"
+            "586"
           ],
           "rate-limit-reset": [
-            "17"
+            "8"
           ],
           "strict-transport-security": [
             "max-age=31536000; includeSubDomains"
@@ -100,14 +100,14 @@
             "700"
           ],
           "x-rate-limit-remaining": [
-            "619"
+            "586"
           ],
           "x-request-id": [
-            "7f3f6f1bea7f34c1-WAW",
-            "7f3f6f1bea7f34c1-WAW"
+            "7f7a854eca0309ac-ARN",
+            "7f7a854eca0309ac-ARN"
           ],
           "x-runtime": [
-            "0.219190"
+            "0.200712"
           ],
           "x-zendesk-api-version": [
             "v2"
@@ -116,10 +116,10 @@
             "{:allowed_parameters=>{:controller=>\"groups\", :action=>\"create\", :unpermitted_keys=>[\"group.id\"], :invalid_values=>[]}}"
           ],
           "x-zendesk-application-version": [
-            "v17926"
+            "v17988"
           ],
           "x-zendesk-origin-server": [
-            "classic-app-server-56c6d98d7f-dkdg2"
+            "classic-app-server-8589bd8f84-z6t8g"
           ]
         },
         "status": {

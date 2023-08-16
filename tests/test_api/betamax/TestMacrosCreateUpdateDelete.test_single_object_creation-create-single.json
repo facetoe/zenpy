@@ -1,7 +1,7 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2023-08-09T10:50:07",
+      "recorded_at": "2023-08-16T14:55:06",
       "request": {
         "body": {
           "encoding": "utf-8",
@@ -27,10 +27,10 @@
             "application/json"
           ],
           "Cookie": [
-            "__cfruid=78b2cd985a8f641f65855297f2b3c1adbff491b2-1691578190; _zendesk_cookie=BAhJIhl7ImRldmljZV90b2tlbnMiOnt9fQY6BkVU--0bf2100788cb010d0183feca16aaf88ccaf719ca"
+            "__cfruid=e399538a1259a45303e811ac6f2b61e248926189-1692197689; _zendesk_cookie=BAhJIhl7ImRldmljZV90b2tlbnMiOnt9fQY6BkVU--0bf2100788cb010d0183feca16aaf88ccaf719ca"
           ],
           "User-Agent": [
-            "Zenpy/2.0.10"
+            "Zenpy/2.0.27"
           ]
         },
         "method": "POST",
@@ -39,14 +39,14 @@
       "response": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"macro\":{\"url\":\"https://d3v-zenpydev.zendesk.com/api/v2/macros/12977433658898.json\",\"id\":12977433658898,\"title\":\"TestMacro\",\"active\":true,\"updated_at\":\"2023-08-09T10:50:08Z\",\"created_at\":\"2023-08-09T10:50:08Z\",\"default\":false,\"position\":55,\"description\":null,\"actions\":[{\"field\":\"status\",\"value\":\"solved\"}],\"restriction\":null,\"raw_title\":\"TestMacro\"}}"
+          "string": "{\"macro\":{\"url\":\"https://d3v-zenpydev.zendesk.com/api/v2/macros/13120627302418.json\",\"id\":13120627302418,\"title\":\"TestMacro\",\"active\":true,\"updated_at\":\"2023-08-16T14:55:06Z\",\"created_at\":\"2023-08-16T14:55:06Z\",\"default\":false,\"position\":55,\"description\":null,\"actions\":[{\"field\":\"status\",\"value\":\"solved\"}],\"restriction\":null,\"raw_title\":\"TestMacro\"}}"
         },
         "headers": {
           "CF-Cache-Status": [
             "DYNAMIC"
           ],
           "CF-RAY": [
-            "7f3f6fb90e2b354e-WAW"
+            "7f7a843088762d68-ARN"
           ],
           "Connection": [
             "keep-alive"
@@ -58,13 +58,13 @@
             "application/json; charset=utf-8"
           ],
           "Date": [
-            "Wed, 09 Aug 2023 10:50:08 GMT"
+            "Wed, 16 Aug 2023 14:55:06 GMT"
           ],
           "NEL": [
             "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Report-To": [
-            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=4JIIiGqdzfDb2OjaChoDHBPUQX%2BKH84ltrO39RRFIU2fGBAqC1SNfs5SPccjt1z6P%2Fomi%2FGlvE16nCfIIJ1VxU17AlmN%2BvXzRqCXFW0qnFqBsBAsMakN42RnWKzqWN%2Fh40bWVWgtyw%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=VqATAfwYnRobs6zMIHtk%2Fx3MGuFUV88IdBEFLufnVcHV3hxVMVsgG59O87HMqApncfWD5vgvLCQACp%2FR57DolUf87mYQwdv9Sj2YjinssPh48C6Al3oThyVkxVEVvCFWl0tGq9fNQA%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Server": [
             "cloudflare"
@@ -76,19 +76,19 @@
             "max-age=0, private, must-revalidate"
           ],
           "etag": [
-            "W/\"70047e4e2c6b16881b23dff7d2d756eb\""
+            "W/\"2d43ea6220cf1fd72d68d82a251e0690\""
           ],
           "location": [
-            "https://d3v-zenpydev.zendesk.com/api/v2/macros/12977433658898.json"
+            "https://d3v-zenpydev.zendesk.com/api/v2/macros/13120627302418.json"
           ],
           "rate-limit": [
             "700"
           ],
           "rate-limit-remaining": [
-            "670"
+            "675"
           ],
           "rate-limit-reset": [
-            "52"
+            "54"
           ],
           "strict-transport-security": [
             "max-age=31536000; includeSubDomains"
@@ -100,14 +100,14 @@
             "700"
           ],
           "x-rate-limit-remaining": [
-            "670"
+            "675"
           ],
           "x-request-id": [
-            "7f3f6fb90e2b354e-WAW",
-            "7f3f6fb90e2b354e-WAW"
+            "7f7a843088762d68-ARN",
+            "7f7a843088762d68-ARN"
           ],
           "x-runtime": [
-            "0.109694"
+            "0.101205"
           ],
           "x-zendesk-api-version": [
             "v2"
@@ -116,10 +116,10 @@
             "{:allowed_parameters=>{:controller=>\"macros\", :action=>\"create\", :unpermitted_keys=>[\"macro.id\"], :invalid_values=>[]}}"
           ],
           "x-zendesk-application-version": [
-            "v17926"
+            "v17988"
           ],
           "x-zendesk-origin-server": [
-            "classic-app-server-56c6d98d7f-68hm4"
+            "classic-app-server-8589bd8f84-z6t8g"
           ]
         },
         "status": {
