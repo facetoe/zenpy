@@ -118,7 +118,7 @@ class ZenpyCacheManager:
             'organization': ZenpyCache('LRUCache', maxsize=10000),
             'group': ZenpyCache('LRUCache', maxsize=10000),
             'brand': ZenpyCache('LRUCache', maxsize=10000),
-            'ticket': ZenpyCache('TTLCache', maxsize=10000, ttl=300),
+            'ticket': ZenpyCache('TTLCache', maxsize=10000, ttl=30),
             'request': ZenpyCache('LRUCache', maxsize=10000),
             'ticket_field': ZenpyCache('LRUCache', maxsize=10000),
             'sharing_agreement': ZenpyCache('TTLCache',
