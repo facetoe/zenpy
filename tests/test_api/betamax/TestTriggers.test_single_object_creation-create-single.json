@@ -1,0 +1,134 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2023-08-16T14:58:02",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"trigger\": {\"actions\": [{\"field\": \"status\", \"value\": \"open\"}], \"id\": null, \"title\": \"testTriggerNone\", \"all\": [{\"field\": \"status\", \"operator\": \"less_than\", \"value\": \"solved\"}, {\"field\": \"update_type\", \"operator\": \"is\", \"value\": \"Create\"}]}}"
+        },
+        "headers": {
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic <ZENPY-CREDENTIALS>"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "241"
+          ],
+          "Content-Type": [
+            "application/json"
+          ],
+          "Cookie": [
+            "__cfruid=de577e857419b52a3f9f8ed6a46b912222911e48-1692197872; _zendesk_cookie=BAhJIhl7ImRldmljZV90b2tlbnMiOnt9fQY6BkVU--0bf2100788cb010d0183feca16aaf88ccaf719ca"
+          ],
+          "User-Agent": [
+            "Zenpy/2.0.27"
+          ]
+        },
+        "method": "POST",
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/triggers.json"
+      },
+      "response": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"trigger\":{\"url\":\"https://d3v-zenpydev.zendesk.com/api/v2/triggers/13120693916562.json\",\"id\":13120693916562,\"title\":\"testTriggerNone\",\"active\":true,\"updated_at\":\"2023-08-16T14:58:03Z\",\"created_at\":\"2023-08-16T14:58:03Z\",\"default\":false,\"actions\":[{\"field\":\"status\",\"value\":\"open\"}],\"conditions\":{\"all\":[{\"field\":\"status\",\"operator\":\"less_than\",\"value\":\"solved\"},{\"field\":\"update_type\",\"operator\":\"is\",\"value\":\"Create\"}],\"any\":[]},\"description\":null,\"position\":19,\"raw_title\":\"testTriggerNone\",\"category_id\":\"5089772875922\"}}"
+        },
+        "headers": {
+          "CF-Cache-Status": [
+            "DYNAMIC"
+          ],
+          "CF-RAY": [
+            "7f7a88801be02d77-ARN"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "522"
+          ],
+          "Content-Type": [
+            "application/json; charset=utf-8"
+          ],
+          "Date": [
+            "Wed, 16 Aug 2023 14:58:03 GMT"
+          ],
+          "NEL": [
+            "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Report-To": [
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=DHqn8hAW889BFcivayOToWiguj%2FYHjSkm24%2Fnter%2BlkfsTDtSki8%2BslQXyqPYNQ3UohMgT6OMMVJZDiJzXfgnj4%2BGoZgHpPsJA%2FTUCY9RKcn5DMUNcUz7CrdlccXu7WREwtNNZpWOw%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Server": [
+            "cloudflare"
+          ],
+          "X-Zendesk-Zorg": [
+            "yes"
+          ],
+          "cache-control": [
+            "max-age=0, private, must-revalidate"
+          ],
+          "etag": [
+            "W/\"868a40e13ea27d7af9d00dfdc9cc198d\""
+          ],
+          "location": [
+            "https://d3v-zenpydev.zendesk.com/api/v2/triggers/13120693916562.json"
+          ],
+          "rate-limit": [
+            "700"
+          ],
+          "rate-limit-remaining": [
+            "688"
+          ],
+          "rate-limit-reset": [
+            "57"
+          ],
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "x-frame-options": [
+            "SAMEORIGIN"
+          ],
+          "x-rate-limit": [
+            "700"
+          ],
+          "x-rate-limit-remaining": [
+            "688"
+          ],
+          "x-request-id": [
+            "7f7a88801be02d77-ARN",
+            "7f7a88801be02d77-ARN"
+          ],
+          "x-runtime": [
+            "0.189752"
+          ],
+          "x-zendesk-api-version": [
+            "v2"
+          ],
+          "x-zendesk-api-warn": [
+            "{:allowed_parameters=>{:controller=>\"triggers\", :action=>\"create\", :unpermitted_keys=>[\"trigger.id\"], :invalid_values=>[]}}"
+          ],
+          "x-zendesk-application-version": [
+            "v17988"
+          ],
+          "x-zendesk-origin-server": [
+            "classic-app-server-8589bd8f84-5p66m"
+          ]
+        },
+        "status": {
+          "code": 201,
+          "message": "Created"
+        },
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/triggers.json"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.8.1"
+}
