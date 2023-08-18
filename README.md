@@ -8,8 +8,6 @@ Zenpy supports both Python2 and Python3.
 
 Please report bugs!
 
-:warning: Beginning on August 15, 2023, Zendesk limits [offset-based pagination](https://developer.zendesk.com/documentation/api-basics/pagination/paginating-through-lists-using-offset-pagination/) (OBP) to 100 pages (10,000 results) and recommends using [cursor-based pagination](https://developer.zendesk.com/documentation/api-basics/pagination/paginating-through-lists-using-cursor-pagination/) (CBP) for most API endpoints. Please refer to a [corresponding block](#Pagination) below and [this issue](https://github.com/facetoe/zenpy/issues/543) to get more information. 
-
 * [Quickstart](#quickstart)
 * [Examples](#examples)
   * Ticketing
