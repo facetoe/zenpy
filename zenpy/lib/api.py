@@ -85,6 +85,7 @@ class BaseApi(object):
                          'groups',
                          'macros',
                          'organizations',
+                         'organization_memberships',
                          'recipient_addresses',
                          'satisfaction_ratings',
                          'skips',
