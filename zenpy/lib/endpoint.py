@@ -77,6 +77,7 @@ class PrimaryEndpoint(BaseEndpoint):
     def __call__(self, **kwargs):
         parameters = {}
         path = self.endpoint
+        cursor_pagination_value_requested = None
         for key, value in kwargs.items():
             if key == 'id':
                 path += "/{}.json".format(value)
@@ -152,12 +153,15 @@ class PrimaryEndpoint(BaseEndpoint):
                 parameters[key] = ",".join(map(str, value))
             elif key == 'cursor_pagination' and value:
                 if value is True:
-                    parameters['page[size]'] = 100
+                    cursor_pagination_value_requested = 100
                 else:
-                    parameters['page[size]'] = value
+                    cursor_pagination_value_requested = value
 
         if path == self.endpoint and not path.endswith('.json'):
             path += '.json'
+            if cursor_pagination_value_requested:
+                parameters['page[size]'] = cursor_pagination_value_requested
+
         return Url(path=path, params=parameters)
 
 
@@ -428,7 +432,7 @@ class MacroEndpoint(BaseEndpoint):
             )
 
         if 'id' in kwargs:
-            if len(kwargs) > 1:
+            if len(kwargs) > 1 and not( len(kwargs) == 2 and kwargs['cursor_pagination'] != None):
                 raise ZenpyException(
                     "When specifying an id it must be the only parameter")
         params = dict()
@@ -462,7 +466,7 @@ class MacroEndpoint(BaseEndpoint):
 
 class ChatEndpoint(BaseEndpoint):
     def __call__(self, **kwargs):
-        if len(kwargs) > 1:
+        if len(kwargs) > 1 and not (len(kwargs) == 2 and kwargs['cursor_pagination'] is not None):
             raise ZenpyException(
                 "Only expect a single keyword to the ChatEndpoint")
         endpoint_path = self.endpoint
@@ -691,6 +695,10 @@ class EndpointFactory(object):
     users.incremental = IncrementalEndpoint('incremental/users.json')
     users.me = PrimaryEndpoint('users/me')
     users.merge = SecondaryEndpoint('users/%(id)s/merge.json')
+    users.votes = SecondaryEndpoint(
+        'help_center/users/%(id)s/votes.json')
+    users.subscriptions = SecondaryEndpoint(
+        'help_center/users/%(id)s/subscriptions.json')
     users.organization_memberships = SecondaryEndpoint(
         'users/%(id)s/organization_memberships.json')
     users.organizations = SecondaryEndpoint('users/%(id)s/organizations.json')
@@ -768,6 +776,10 @@ class EndpointFactory(object):
         'help_center/articles/{}/comments/{}.json')
     help_centre.articles.user_comments = SecondaryEndpoint(
         'help_center/users/%(id)s/comments.json')
+    help_centre.articles.community_comments = SecondaryEndpoint(
+        "community/users/%(id)s/comments.json")
+    help_centre.articles.user_articles = SecondaryEndpoint(
+        'help_center/users/%(id)s/articles.json')
     help_centre.articles.labels = SecondaryEndpoint(
         'help_center/articles/%(id)s/labels.json')
     help_centre.articles.translations = SecondaryEndpoint(
@@ -880,6 +892,8 @@ class EndpointFactory(object):
 
     help_centre.posts.comments = SecondaryEndpoint(
         'community/posts/%(id)s/comments.json')
+    help_centre.posts.user_posts = SecondaryEndpoint(
+        'community/users/%(id)s/posts')
     help_centre.posts.comments.delete = MultipleIDEndpoint(
         'community/posts/{}/comments/{}.json')
     help_centre.posts.comments.update = MultipleIDEndpoint(
@@ -908,6 +922,10 @@ class EndpointFactory(object):
 
     # Note the use of "guide" instead of "help_center" in the API endpoint
     help_centre.permission_groups = PrimaryEndpoint('guide/permission_groups')
+
+    help_centre.users = PrimaryEndpoint('help_center/users')
+    help_centre.users.votes = SecondaryEndpoint(
+        'help_center/users/%(id)s/votes.json')
 
     zis = Dummy()
     zis.registry = Dummy()

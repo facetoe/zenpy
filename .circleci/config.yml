@@ -9,22 +9,6 @@ run_tests: &run_tests
 
 version: 2
 jobs:
-  python2.7:
-    docker:
-      - image: cimg/python:2.7
-    working_director: ~/repo
-    steps:
-      - run:
-          name: install virtualenv
-          command: pip install virtualenv
-      - checkout
-      - run:
-          name: install zenpy
-          command: |
-            python -m virtualenv venv
-            . venv/bin/activate
-            pip install -r requirements.dev
-            make pytest
   python3.5:
     docker:
       - image: cimg/python:3.5
@@ -65,7 +49,6 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - python2.7
       - python3.5
       - python3.6
       - python3.7
