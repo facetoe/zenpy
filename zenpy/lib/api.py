@@ -315,7 +315,7 @@ class BaseApi(object):
                                           response_objects=cached_objects,
                                           object_type=object_type)
         else:
-            if self.supports_cbp() and 'cursor_pagination' not in endpoint_kwargs.keys():
+            if self.supports_cbp() and endpoint.__class__.__name__ != 'IncrementalEndpoint' and 'cursor_pagination' not in endpoint_kwargs.keys():
                 endpoint_kwargs['cursor_pagination'] = True
             return self._get(
                 self._build_url(
