@@ -411,7 +411,7 @@ class SatisfactionRatingEndpoint(BaseEndpoint):
         if end_time:
             params['end_time'] = to_unix_ts(end_time)
         if cursor_pagination:
-            params['page[size]'] = cursor_pagination
+            params['page[size]'] = 100 if cursor_pagination is True else cursor_pagination
 
         return Url(self.endpoint, params=params)
 
