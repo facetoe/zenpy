@@ -38,7 +38,6 @@ class TestActivities(PaginationTestCase):
     api_name = "activities"
     object_kwargs = {}
 
-
 class TestAutomations(SingleCreateApiTestCase, SingleUpdateApiTestCase, SingleDeleteApiTestCase, PaginationTestCase):
     __test__ = True
     ZenpyType = Automation

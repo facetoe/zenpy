@@ -86,19 +86,19 @@ def configure():
     config.default_cassette_options["record_mode"] = "once"
     config.default_cassette_options["match_requests_on"] = ["method", "path_matcher"]
     if credentials:
-        auth_key = "token" if "token" in credentials else "password"
+        auth_key, template = ("token", "{}/token:{}") if "token" in credentials else ("password", "{}:{}")
         config.define_cassette_placeholder(
             "<ZENPY-CREDENTIALS>",
                 base64.b64encode(
-                    "{}/token:{}".format(
+                    template.format(
                         credentials["email"], credentials[auth_key]
                     ).encode("utf-8")
                 ).decode('utf-8'),
         )
         if credentials["subdomain"] != "d3v-zenpydev":
             config.define_cassette_placeholder(
-                "https://d3v-zenpydev.zendesk.com",
-                "https://{}.zendesk.com".format(credentials["subdomain"])
+                "d3v-zenpydev.zendesk.com",
+                "{}.zendesk.com".format(credentials["subdomain"])
             )
 
     session = requests.Session()

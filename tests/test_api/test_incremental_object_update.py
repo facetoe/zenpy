@@ -9,7 +9,7 @@ class TestIncrementalObjectUpdate(ZenpyApiTestCase):
             cassette_name="{}-setup".format(self.generate_cassette_name()),
             serialize_with="prettyjson",
         ):
-            self.ticket = self.zenpy_client.tickets(id=19578)
+            self.ticket = self.zenpy_client.tickets(id=1) # TESTING_CHANGE OK TO KEEP
             self.ticket._clean_dirty()
 
     def test_new_ticket_only_serializes_id(self):
