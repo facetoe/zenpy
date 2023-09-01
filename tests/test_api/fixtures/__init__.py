@@ -506,7 +506,7 @@ class PaginationTestCase(ModifiableApiTestCase):
                 count_cbp1 = self.count_objects_by_pagination_type(cursor_pagination=1)
 
                 # We need at least 2 objects to check pagination
-                self.assertGreater(count_default, 1, "Default pagination returned less than 2 objects")
+                self.assertGreater(count_default, 1, "Default pagination returned less than 2 objects on class " + self.__class__.__name__)
                 self.assertNotEqual(count_cbp, 0, "CBP returned zero")
                 self.assertEqual(count_cbp, count_cbp1, "CBP<>CBP[1]")
 

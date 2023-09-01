@@ -79,6 +79,7 @@ class BaseApi(object):
 
     def supports_cbp(self):
         cbp_supported = ['activities',
+                         'audits',
                          'automations',
                          'deleted_tickets',
                          'group_memberships',
@@ -96,7 +97,14 @@ class BaseApi(object):
                          'tickets',
                          'triggers',
                          'users',
-                         'views']
+                         'views',
+                         'help_center/articles',
+                         'help_center/sections',
+                         'help_center/categories',
+                         'community/posts',
+                         'community/topics',
+                         'help_center/articles/labels',
+                         'help_center/user_segments']
         return self.endpoint is not None and getattr(self.endpoint, "endpoint", "") in cbp_supported
 
     def _post(self, url, payload, content_type=None, **kwargs):
@@ -290,13 +298,14 @@ class BaseApi(object):
 
         :return: either a ResultGenerator or a Zenpy object.
         """
-
         _id = endpoint_kwargs.get('id', None)
         if _id:
             item = self.cache.get(object_type, _id)
             if item:
                 return item
             else:
+                if self.supports_cbp() and endpoint.__class__.__name__ != 'IncrementalEndpoint' and 'cursor_pagination' not in endpoint_kwargs.keys():
+                    endpoint_kwargs['cursor_pagination'] = True
                 return self._get(url=self._build_url(
                     endpoint(*endpoint_args, **endpoint_kwargs)))
         elif 'ids' in endpoint_kwargs:
@@ -869,6 +878,26 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
                                    'group',
                                    id=user,
                                    include=include)
+    @extract_id(User)
+    def votes(self, user):
+        """
+        Retrieve the help centre votes for this user.
+
+        :param user: User object or id
+        """
+        return self._query_zendesk(self.endpoint.votes,
+                                   'vote',
+                                   id=user)
+    @extract_id(User)
+    def subscriptions(self, user):
+        """
+        Retrieve the help centre votes for this user.
+
+        :param user: User object or id
+        """
+        return self._query_zendesk(self.endpoint.subscriptions,
+                                   'subscription',
+                                   id=user)
 
     @extract_id(User)
     def organizations(self, user, include=None):
@@ -1142,7 +1171,7 @@ class OrganizationApi(TaggableApi, IncrementalApi, CRUDExternalApi):
     def users(self, organization, include=None):
         return self._get(
             self._build_url(
-                self.endpoint.users(id=organization, include=include)))
+                self.endpoint.users(id=organization, include=include, cursor_pagination=True)))
 
     @extract_id(Organization)
     def organization_fields(self, organization):
@@ -1275,7 +1304,8 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         return self._query_zendesk(self.endpoint.organizations,
                                    'ticket',
                                    id=organization,
-                                   include=include)
+                                   include=include,
+                                   cursor_pagination=True)
 
     def recent(self, include=None):
         """
@@ -1406,7 +1436,8 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
             return self._query_zendesk(self.endpoint.audits,
                                        'ticket_audit',
                                        id=ticket,
-                                       include=include)
+                                       include=include,
+                                       cursor_pagination=True)
         else:
             return self._query_zendesk(self.endpoint.audits.cursor,
                                        'ticket_audit',
@@ -1763,7 +1794,7 @@ class GroupApi(CRUDApi):
     @extract_id(Group)
     def users(self, group, include=None):
         return self._get(
-            self._build_url(self.endpoint.users(id=group, include=include)))
+            self._build_url(self.endpoint.users(id=group, include=include, cursor_pagination=True)))
 
     @extract_id(Group)
     def memberships(self, group, include=None):
@@ -1776,13 +1807,13 @@ class GroupApi(CRUDApi):
         """
         return self._get(
             self._build_url(
-                self.endpoint.memberships(id=group, include=include)))
+                self.endpoint.memberships(id=group, include=include, cursor_pagination=True)))
 
     def assignable(self):
         """
         Return Groups that are assignable.
         """
-        return self._get(self._build_url(self.endpoint.assignable()))
+        return self._get(self._build_url(self.endpoint.assignable(cursor_pagination=True)))
 
     @extract_id(Group)
     def memberships_assignable(self, group, include=None):
@@ -1796,7 +1827,7 @@ class GroupApi(CRUDApi):
         return self._get(
             self._build_url(
                 self.endpoint.memberships_assignable(id=group,
-                                                     include=include)))
+                                                     include=include, cursor_pagination=True)))
 
 
 class ViewApi(CRUDApi):
@@ -1909,7 +1940,7 @@ class GroupMembershipApi(CRUDApi):
         """
         Return GroupMemberships that are assignable.
         """
-        return self._get(self._build_url(self.endpoint.assignable()))
+        return self._get(self._build_url(self.endpoint.assignable(cursor_pagination=True)))
 
     @extract_id(User, GroupMembership)
     def make_default(self, user, group_membership):
@@ -2121,7 +2152,7 @@ class SubscriptionApi(Api):
 class VoteApi(Api):
     @extract_id(Article, Post, Comment)
     def votes(self, help_centre_object):
-        url = self._build_url(self.endpoint.votes(id=help_centre_object))
+        url = self._build_url(self.endpoint.votes(id=help_centre_object, cursor_pagination=True))
         return self._get(url)
 
     @extract_id(Article, Post, Comment)
@@ -2139,7 +2170,7 @@ class VoteCommentApi(Api):
     @extract_id(Article, Post, Comment)
     def comment_votes(self, help_centre_object, comment):
         url = self._build_url(
-            self.endpoint.comment_votes(help_centre_object, comment))
+            self.endpoint.comment_votes(help_centre_object, comment, cursor_pagination=True))
         return self._get(url)
 
     @extract_id(Article, Post, Comment)
@@ -2211,7 +2242,11 @@ class ArticleApi(HelpCentreApiBase, TranslationApi, SubscriptionApi, VoteApi,
     def search(self, *args, **kwargs):
         url = self._build_url(self.endpoint.search(*args, **kwargs))
         return self._get(url)
-
+    @extract_id(User)
+    def user_articles(self, user):
+        return self._query_zendesk(self.endpoint.user_articles,
+                                   object_type='article',
+                                   id=user)
 
 class CommentApi(HelpCentreApiBase):
     def __call__(self, *args, **kwargs):
@@ -2222,6 +2257,16 @@ class CommentApi(HelpCentreApiBase):
         url = self._build_url(self.endpoint.comment_show(article, comment))
         return self._get(url)
 
+    @extract_id(User)
+    def community_comments(self, user):
+        """
+        Retrieve the help centre votes for this user.
+
+        :param user: User object or id
+        """
+        return self._query_zendesk(self.endpoint.community_comments,
+                                   'comment',
+                                   id=user)
     @extract_id(Article)
     def create(self, article, comment):
         if comment.locale is None:
@@ -2440,7 +2485,7 @@ class TopicApi(HelpCentreApiBase, CRUDApi, SubscriptionApi):
 class PostCommentApi(HelpCentreApiBase, VoteCommentApi):
     @extract_id(Post)
     def __call__(self, post):
-        return super(PostCommentApi, self).__call__(id=post)
+        return super(PostCommentApi, self).__call__(id=post, cursor_pagination=True)
 
     @extract_id(Post)
     def create(self, post, comment):
@@ -2461,7 +2506,11 @@ class PostApi(HelpCentreApiBase, CRUDApi, SubscriptionApi, VoteApi):
     def __init__(self, config, endpoint, object_type):
         super(PostApi, self).__init__(config, endpoint, object_type)
         self.comments = PostCommentApi(config, endpoint.comments, 'post')
-
+    @extract_id(User)
+    def user_posts(self, user):
+        return self._query_zendesk(self.endpoint.user_posts,
+                                   object_type='post',
+                                   id=user)
 
 class UserSegmentApi(HelpCentreApiBase, CRUDApi):
     def applicable(self):
@@ -2522,7 +2571,7 @@ class HelpCentreApi(HelpCentreApiBase):
             config,
             self.endpoint.permission_groups,
             object_type='permission_group')
-
+        self.users = UserApi(config)
     def __call__(self, *args, **kwargs):
         raise NotImplementedError("Cannot directly call the HelpCentreApi!")
 

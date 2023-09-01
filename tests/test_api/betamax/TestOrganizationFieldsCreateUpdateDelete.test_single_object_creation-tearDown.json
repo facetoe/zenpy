@@ -1,11 +1,11 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2023-08-16T14:54:24",
+      "recorded_at": "2023-08-31T18:44:59",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"organization_field\": {\"id\": 13120635616274}}"
+          "string": "{\"organization_field\": {\"id\": 6097490266650}}"
         },
         "headers": {
           "Accept": [
@@ -21,20 +21,20 @@
             "keep-alive"
           ],
           "Content-Length": [
-            "46"
+            "45"
           ],
           "Content-Type": [
             "application/json"
           ],
           "Cookie": [
-            "__cfruid=a77a858bffb5e23568812c3dcf3fbb21dda2315b-1692197664; _zendesk_cookie=BAhJIhl7ImRldmljZV90b2tlbnMiOnt9fQY6BkVU--0bf2100788cb010d0183feca16aaf88ccaf719ca"
+            "_zendesk_cookie=BAhJIhl7ImRldmljZV90b2tlbnMiOnt9fQY6BkVU--0bf2100788cb010d0183feca16aaf88ccaf719ca"
           ],
           "User-Agent": [
-            "Zenpy/2.0.27"
+            "Zenpy/2.0.34"
           ]
         },
         "method": "DELETE",
-        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/organization_fields/13120635616274.json"
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/organization_fields/6097490266650.json"
       },
       "response": {
         "body": {
@@ -46,19 +46,19 @@
             "DYNAMIC"
           ],
           "CF-RAY": [
-            "7f7a832ed89484e0-LED"
+            "7ff76d8fd91ac3af-SEA"
           ],
           "Connection": [
             "keep-alive"
           ],
           "Date": [
-            "Wed, 16 Aug 2023 14:54:25 GMT"
+            "Thu, 31 Aug 2023 18:44:59 GMT"
           ],
           "NEL": [
             "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Report-To": [
-            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=qgb57gYSP8jpstlCSH14lFSShqDvJTnFgm%2BhkU3M4CLm5SmcG%2Fc2NUuq%2BjS9LZbAlc1ILAoWTAvO1L3KqD%2Bv85Sl3HksQ5s%2FxFRXEZaTmSNaYMF7U3J02Xk9AexzU1OhxZEUwI6yYQ%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=WneMSBfes5trGELtgAx9eGZK7Z3bnHiE7lZu0ryFMySOZlwa0BhOwIOdgI%2BiHehfi4QnuQMefv0Hlq70MQOnL6ajzAi%2B8LQExjNlNuicq0O5NeFNZr%2Fi2cWv92ec8pAQ4uwQVC%2FiI4Y%2BDNifSek%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Server": [
             "cloudflare"
@@ -73,10 +73,10 @@
             "700"
           ],
           "rate-limit-remaining": [
-            "671"
+            "656"
           ],
           "rate-limit-reset": [
-            "35"
+            "1"
           ],
           "strict-transport-security": [
             "max-age=31536000; includeSubDomains"
@@ -88,14 +88,14 @@
             "700"
           ],
           "x-rate-limit-remaining": [
-            "671"
+            "656"
           ],
           "x-request-id": [
-            "7f7a832ed89484e0-LED",
-            "7f7a832ed89484e0-LED"
+            "7ff76d8fd91ac3af-SEA",
+            "7ff76d8fd91ac3af-SEA"
           ],
           "x-runtime": [
-            "0.144513"
+            "0.145674"
           ],
           "x-zendesk-api-version": [
             "v2"
@@ -104,17 +104,17 @@
             "{:allowed_parameters=>{:controller=>\"organization_fields\", :action=>\"destroy\", :unpermitted_keys=>[\"organization_field.id\", \"organization_field\"], :invalid_values=>[]}}"
           ],
           "x-zendesk-application-version": [
-            "v17988"
+            "v18239"
           ],
           "x-zendesk-origin-server": [
-            "classic-app-server-8589bd8f84-jbnkv"
+            "classic-app-server-566774b49d-8j4sq"
           ]
         },
         "status": {
           "code": 204,
           "message": "No Content"
         },
-        "url": "https://d3v-zenpydev.zendesk.com/api/v2/organization_fields/13120635616274.json"
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/organization_fields/6097490266650.json"
       }
     }
   ],

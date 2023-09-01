@@ -1,7 +1,7 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2023-08-16T15:01:16",
+      "recorded_at": "2023-08-31T19:06:03",
       "request": {
         "body": {
           "encoding": "utf-8",
@@ -26,11 +26,8 @@
           "Content-Type": [
             "application/json"
           ],
-          "Cookie": [
-            "__cfruid=2f11c7a4c054d61ebc21f3cd8d4d72b68225025c-1692197946"
-          ],
           "User-Agent": [
-            "Zenpy/2.0.27"
+            "Zenpy/2.0.34"
           ]
         },
         "method": "POST",
@@ -39,38 +36,38 @@
       "response": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"webhook\":{\"id\":\"01H7ZDV0CJTYH9D7ST3PZX717C\",\"name\":\"Example Webhook X1234\",\"description\":\"Description\",\"status\":\"active\",\"subscriptions\":[\"conditional_ticket_events\"],\"created_at\":\"2023-08-16T15:01:16.818196548Z\",\"created_by\":\"1568991111\",\"endpoint\":\"https://example.com\",\"http_method\":\"GET\",\"request_format\":\"json\",\"authentication\":{\"type\":\"basic_auth\",\"data\":{\"username\":\"john_smith\"},\"add_position\":\"header\"}}}\n"
+          "string": "{\"webhook\":{\"id\":\"01H96FSZX4RNVEJK809JT47ZGE\",\"name\":\"Example Webhook X1234\",\"description\":\"Description\",\"status\":\"active\",\"subscriptions\":[\"conditional_ticket_events\"],\"created_at\":\"2023-08-31T19:06:03.556837041Z\",\"created_by\":\"6090622867866\",\"endpoint\":\"https://example.com\",\"http_method\":\"GET\",\"request_format\":\"json\",\"authentication\":{\"type\":\"basic_auth\",\"data\":{\"username\":\"john_smith\"},\"add_position\":\"header\"}}}\n"
         },
         "headers": {
           "CF-Cache-Status": [
             "DYNAMIC"
           ],
           "CF-RAY": [
-            "7f7a8d3b9acfc3c5-LED"
+            "7ff78c6beed627da-SEA"
           ],
           "Connection": [
             "keep-alive"
           ],
           "Content-Length": [
-            "416"
+            "419"
           ],
           "Content-Type": [
             "application/json"
           ],
           "Date": [
-            "Wed, 16 Aug 2023 15:01:16 GMT"
+            "Thu, 31 Aug 2023 19:06:03 GMT"
           ],
           "NEL": [
             "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Report-To": [
-            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=oEeqwA%2FDV83azvqht%2BMac8nobZJ3Ovyi8jueMpn5RHw3l5dV3T%2Fa%2BZxMWLMe8fYJ1nv417aVVkCwmKHo%2BlLjPg8Ilf4sEr2Iinfvxbgm9mLeKiquW9pPKOxUsvKgxY7TToQJDDEDWQ%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=yBnJMcMmlaDedBGkq%2FEOrLMe6r0NNa%2BK5iII%2BVm1CDnAaI9WraHCn1J0dYCGhG5S6pjHf35wEWctLuwCcfFt%2BcAuJH1DcxbMaEy7zijh98MtoxdukNw51k84s%2Fbuf1SBuafBajk%2BsSHouT5E%2Bkk%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Server": [
             "cloudflare"
           ],
           "X-Request-ID": [
-            "7f7a8d3b9acfc3c5-LED"
+            "7ff78c6beed627da-SEA"
           ],
           "X-Zendesk-Zorg": [
             "yes"
@@ -93,7 +90,7 @@
       }
     },
     {
-      "recorded_at": "2023-08-16T15:01:17",
+      "recorded_at": "2023-08-31T19:06:03",
       "request": {
         "body": {
           "encoding": "utf-8",
@@ -118,11 +115,8 @@
           "Content-Type": [
             "application/json"
           ],
-          "Cookie": [
-            "__cfruid=2f11c7a4c054d61ebc21f3cd8d4d72b68225025c-1692197946"
-          ],
           "User-Agent": [
-            "Zenpy/2.0.27"
+            "Zenpy/2.0.34"
           ]
         },
         "method": "POST",
@@ -130,7 +124,7 @@
       },
       "response": {
         "body": {
-          "base64_string": "H4sIAAAAAAAAA3VVbW/bNhD+vl/BcV9aTLRkJ7Ed1TGWtelaYFmLxd26zcPASGeJsERqJCVbC/Lfd5TklM48CQJf7u65u4d31APVYColDdD4gebAU9CGxn880C20NKaveZIDe62k1aqgAW14UaMqLfme8QyuptH5PIroY3Aw+JEby25VKjYCUs9gldcBGc/Ih8SSSTS+JNEsHs/jyZT8cLvy7H/huvXMrpMEKstuZIKQMvMUP7MuNk/33Xsf6DP7HWQKZss+arVv2ceC243SpWcAycQzcEmCtGzVVj6qhb0Nc1sWr0iSc23AXn1avWVzz/IOdAPaB5aNaj2FN9z6kL9CilxMyXWdIReTMzK+iKNxjOwcczEk/zOXGRjP/r61uPb0Mh99fDnz07qxPPOka3o2Pp9dTKaX57Nvs39Etaa+8r4S+shXFyuG+D+x/hlQY7mtzV94QKg/iaKAVrwtFE/RevF1qhKLhBLH4HItF08jlhqOBJ+FFbaA5c2el1UB5I0quZCLsN9dy0GpBMufTmBNa7th8zUl4QGkk+fWVgz+rkWDKocDdf5RM+mXKDhxpKfhJC8B9RsBu0ppewSyE6nNr1JoRAKsWwRESGEFL5hJeAFXYx/P2BZzc6EcAkiMWdNBfK/Sljz0827Nk22mVS1TlqhC6Zh8s4nwnbz6olNynQkZk8jbq3jq2uR4c4Mxsw0vRdHGhPEKSWamNRbKgPQjq0VAvi+E3N7y5K7beotGAVljbWcKyKf3a+pWHyqQ5I5L0y/fQdGAFQknP0ENbu9pJyDXGqlAD6jNDGix8ULqZ4/9kIrGz73jMibTKKr2J9K9gJLw2qpTWU+g9LZPkZji6wdyrzTeeEzzVNQGaRtdHEOoPTM5T9UOwas9OcNvhp+b6+yev4iC7h1Fk5eD2ZAUjx2dAY6NMMJC6qd4COdsfj6f++G4wmApJEpzKxRmK5WEY+DvSkgFJy/cDTxQNXNUvfQdPKPUPU/l8pw99wxAzySDx2FYhF0NL90cGzgcOhinrnpdT6PXQ7nn4//0M24Nwmq5yoUhaScgOMN7mdQGiFsVRW2sS78BAj2EcQK8SOoSW8+MyG+qxnTazsQiUg97gJOkQL4RodaAidlc1ZZUWqCPROFxC9lxS3DNzRbrpnNfgS6FMSgYLcLqS6QLvFQ0bLBp3d1i4jDc7XYjwSUfKZ2FvVMTDpFiQ98q7RJxv5rOz2iEgHzZgy7CnqNFeOCsu4dwQh8fv/oXjVWgxY0HAAA=",
+          "base64_string": "H4sIAAAAAAAAA31VW2/bNhR+36/gtJcWEy35El8UxVjWpmuBZS0Qd9jFw8BIxxIRiVRJSrYW+L/vULJT2jNmQSDP/TufDulnT4GupNDgRc9eDiwFpb3oz2fvCVov8t5IYUAYumor8HyvYUWNnp6BnQlyUxbXJMmZ0mBuPq/e0bm394+Rt5kbMJwspouxY77bVRxLOy6rvPZJOCMPUJFROBqT4SIKp1E4Jj/dr5zI3+gfIFLQT/STkruWfiqY2UhVOqkgGbmlDMsc49obDyezq9F0MZl9n/3Dq7XnOP/MtKH3MuUbDuk5uuGMfEwMohsuEGk0nEej6Rm6B1ANKBeLaGTrOLxhSQ7U8qpk4fiVbEdZBjfTcDIPQyfgV6Zax+82SaAy9E4kCFJkJ8R0uR3f9x9caG+ZgfOOxkNyW2eX+P7L97RhptZ/YyH0H4Wh71WsLSRLMTr+NpWJwakgdgyWaxG/rDhEuBL8xYabApZ3O1ZWBZC3smRcxEGvXYuDUwmGvYzR2qvNhs7XHgmWrj03pqLwpeYNuhyn0tZHz6QX0XBhLi+nE6wE9G84bCupzEmSLU9NfpNCwxOgneATLrjhrKA6YQXcDN182rTYm4VyBJBovfYO5keZtuS533cyS54yJWuR0kQWUkXku02Iz+j6q0/JVMZFREJHV7HUfu5T5QYx0w0redFGhLIKSaa61QZKn/QrrblPfiy4eLpnyUOneodBPlnjpGYSyOcPa89KHysQ5IEJ3YvvoWjA8ISRX6AGq3vR+ORWIRVYAb2pBsU3DqR+t++XlDdu7x2XEZmGYbW70O4VlITVRl7qegTl9f+TmOLjAnmUCu8yqljKa420Da5OU8gd1TlL5RaTVzsyxneGr92r7JG9Cv3uGYSj19cnTbHI0unj2nDNDaRui0c44/lkPnfh2MGgKSRSMcMldiukgNPEP5SQckZe2ZvgQNXMUvXaLXBG6cm4nLPncH5m2Z8UjoNuhpf994uDwwnGrZ1ee6ax6nHc8+F/zjOqDsZqucq5JmlnILjDi5nUGoiViqLWxrbfAIE+hbYGvEjqEo+eHpDfZY3ttF2IwUyHMTqkE6RAvjFDrQAbM7msDakUxxqJxM/NRcctQZnpJ5ybrnwFquRao2EQB9VXpDFeKgo2eGjt3aKjINhutwPOBBtIlQV9UR0ckOKBvpfKNmL/a7o6gwEmZMs+aRz0HMXBkbPgcCF6+/03/wI1Sk9HZwcAAA==",
           "encoding": "utf-8",
           "string": ""
         },
@@ -139,7 +133,7 @@
             "DYNAMIC"
           ],
           "CF-RAY": [
-            "7f7a8d3cbbc1c3c5-LED"
+            "7ff78c6cefa327da-SEA"
           ],
           "Connection": [
             "keep-alive"
@@ -151,13 +145,13 @@
             "application/json"
           ],
           "Date": [
-            "Wed, 16 Aug 2023 15:01:17 GMT"
+            "Thu, 31 Aug 2023 19:06:03 GMT"
           ],
           "NEL": [
             "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Report-To": [
-            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=tppYCNfP5p3rjFEiCm554cq2UN%2FXVcCFv6tEw99P7GtCQRDAAPMbBo4aEo47d3t0irdd9K88wxVNndZ50E%2FxejttJcslz3BiX64e6iKjDibsjPw91iY2ErLtAywLrUBgRxa9As56Xw%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=fZJUvzJ8fpfjNQ0RfLfOXVeT0ZeNtk79PTz4EnHbdfrsEFJgeJzucIUFpU0xUMPPI3LmbNEQU3S%2FbzwiioCD%2FcZYLY25NOWVr8yWBbNgET6KnvmGLODTbm5mFUwR28AmMNIgHWvFgAmqts3VbaM%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Server": [
             "cloudflare"
@@ -166,7 +160,7 @@
             "chunked"
           ],
           "X-Request-ID": [
-            "7f7a8d3cbbc1c3c5-LED"
+            "7ff78c6cefa327da-SEA"
           ],
           "X-Zendesk-Zorg": [
             "yes"
@@ -189,11 +183,11 @@
       }
     },
     {
-      "recorded_at": "2023-08-16T15:01:17",
+      "recorded_at": "2023-08-31T19:06:04",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"webhook\": {\"id\": \"01H7ZDV0CJTYH9D7ST3PZX717C\"}}"
+          "string": "{\"webhook\": {\"id\": \"01H96FSZX4RNVEJK809JT47ZGE\"}}"
         },
         "headers": {
           "Accept": [
@@ -214,15 +208,12 @@
           "Content-Type": [
             "application/json"
           ],
-          "Cookie": [
-            "__cfruid=2f11c7a4c054d61ebc21f3cd8d4d72b68225025c-1692197946"
-          ],
           "User-Agent": [
-            "Zenpy/2.0.27"
+            "Zenpy/2.0.34"
           ]
         },
         "method": "DELETE",
-        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/webhooks/01H7ZDV0CJTYH9D7ST3PZX717C"
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/webhooks/01H96FSZX4RNVEJK809JT47ZGE"
       },
       "response": {
         "body": {
@@ -234,7 +225,7 @@
             "DYNAMIC"
           ],
           "CF-RAY": [
-            "7f7a8d404f30c3c5-LED"
+            "7ff78c6e18b327da-SEA"
           ],
           "Connection": [
             "keep-alive"
@@ -243,19 +234,19 @@
             "application/json"
           ],
           "Date": [
-            "Wed, 16 Aug 2023 15:01:17 GMT"
+            "Thu, 31 Aug 2023 19:06:04 GMT"
           ],
           "NEL": [
             "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Report-To": [
-            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=qWB95Bp3%2FOydvEy%2BjkzNSTjbgLRNBFv9axt4v74Z9GgG0waQrJHvlFSqD8bC3ctLdAK58AlqwA%2BiEoakVlizNNfJdAK50PCMismiSmAUqwUeyHOuDPwOmIAJ0Gborv5i8O0lPjLQPQ%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=IbUYCHFtTQMmFSeS8Erb6zXV4T4ttubIC93qEAIFbwyyoBnTTSvA%2Bhn6MtaolZt8wUQjooRqEyHABGDQdJzWG2nKVUoHadEmDrMJOmBeXyIhHUxD7640iToPBkWk3%2FchIQwFW6rKUslTbgDmjTs%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Server": [
             "cloudflare"
           ],
           "X-Request-ID": [
-            "7f7a8d404f30c3c5-LED"
+            "7ff78c6e18b327da-SEA"
           ],
           "X-Zendesk-Zorg": [
             "yes"
@@ -274,7 +265,7 @@
           "code": 204,
           "message": "No Content"
         },
-        "url": "https://d3v-zenpydev.zendesk.com/api/v2/webhooks/01H7ZDV0CJTYH9D7ST3PZX717C"
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/webhooks/01H96FSZX4RNVEJK809JT47ZGE"
       }
     }
   ],

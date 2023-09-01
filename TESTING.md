@@ -38,7 +38,7 @@ or
 To test on a live account you need to carry out the steps below:
 
 1. Put **zenpy-test-credentials.json** to a home directory (~).
-2. Delete all files in **./tests/test_api/betamax/**.
+2. Delete all files in **./tests/test_api/betamax/**. (```scripts/clean_betamax.sh```)
 3. Then start testing as usual.
 4. If a test fails, delete its files in betamax before restarting.
 
@@ -57,7 +57,8 @@ To pass all the tests successfully, please provide some things:
 1. In **./zenpy/cache.py:ZenpyCacheManager.__init__** temporary change ttl for ticket cache to 300. Some tests take too much time and fail on expired cache elements.
 2. In **./zenpy/tests/test_api/test_incremental_object_update.py:TestIncrementalObjectUpdate.setUp** provide an existing ticket id.
 3. In **./zenpy/tests/test_api/test_webhooks_api.py:TestWebhooks.test_invocations** and **.test_invocation_attempts** put a real webhook id with a non-empty list of invocations.
-4. Please do not commit these changes to the main repository.
+5. In the scripts folder, you can remove all betamax outputs with ```clean_betamax.sh```
+7. Look for all TESTING_CHANGE in the source and REVERT ones that say it's NOT OK TO COMMIT.
 
 Notes:
 
