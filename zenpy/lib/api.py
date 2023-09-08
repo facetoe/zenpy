@@ -1464,7 +1464,8 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         """
         return self._query_zendesk(self.endpoint.metrics,
                                    'ticket_metric',
-                                   id=ticket)
+                                   id=ticket,
+                                   cursor_pagination=False)
 
     def metrics_incremental(self, start_time):
         """
