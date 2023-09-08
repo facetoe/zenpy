@@ -180,12 +180,6 @@ class SecondaryEndpoint(BaseEndpoint):
 
 
 class MultipleIDEndpoint(BaseEndpoint):
-    def __call__(self, *args):
-        if not args or len(args) < 2:
-            raise ZenpyException(
-                "This endpoint requires at least two arguments!")
-        return Url(self.endpoint.format(*args))
-
     def __call__(self, *args, **kwargs):
         if not args or len(args) < 2:
             raise ZenpyException(
@@ -200,6 +194,8 @@ class MultipleIDEndpoint(BaseEndpoint):
             else:
                 parameters[key] = value
         return Url(self.endpoint.format(*args), params=parameters)
+
+
 class IncrementalEndpoint(BaseEndpoint):
     """
     An IncrementalEndpoint takes a start_time parameter
