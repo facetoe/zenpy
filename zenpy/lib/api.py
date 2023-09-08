@@ -706,6 +706,70 @@ class IncrementalApi(Api):
                                    per_page=per_page)
 
 
+class IncrementalCursorApi(IncrementalApi):
+    def incremental(self,
+                    start_time=None,
+                    paginate_by_time=False,
+                    cursor=None,
+                    include=None,
+                    per_page=None):
+        """
+        Incrementally retrieve Tickets or Users.
+
+        If paginate_by_time is True, a ZendeskResultGenerator is returned to handle
+        time based pagination. This is defaulted to False. For backwards compatibility
+        and is not recommended by Zendesk, set to True.
+
+        If paginate_by_time is False, a TicketCursorGenerator or a UserCursorGenerator is returned to handle
+        cursor based pagination. This is recommended by Zendesk.
+
+        This allows you to change the direction that you are consuming objects.
+        This is done with the reversed() python method.
+
+        For example:
+
+        .. code-block:: python
+            for ticket in reversed(zenpy_client.tickets.incremental(start_time=0)):
+                print(ticket)
+
+        See the `Zendesk docs <https://developer.zendesk.com/rest_api/docs/support/incremental_export#cursor-based-incremental-exports>`__ for
+        information on additional parameters.
+
+        :param start_time: the time of the oldest object you are interested in, applies to both time/cursor based pagination.
+        :param paginate_by_time: True to use time based pagination, False to use cursor based pagination.
+        :param cursor: cursor value of the page you are interested in, can't be set with start_time.
+        :param include: list of objects to sideload. `Side-loading API Docs
+            <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
+        :param per_page: number of results per page, up to max 1000
+        """
+        if (all_are_none(start_time, cursor)
+                or all_are_not_none(start_time, cursor)):
+            raise ValueError(
+                'You must set either start_time or cursor but not both')
+
+        if start_time is not None and paginate_by_time is True:
+            return super(IncrementalCursorApi, self).incremental(start_time=start_time,
+                                                                 include=include,
+                                                                 per_page=per_page)
+
+        elif start_time is not None and paginate_by_time is False:
+            return self._query_zendesk(self.endpoint.incremental.cursor_start,
+                                       self.object_type,
+                                       start_time=start_time,
+                                       include=include,
+                                       per_page=per_page)
+
+        elif cursor and paginate_by_time is False:
+            return self._query_zendesk(self.endpoint.incremental.cursor,
+                                       self.object_type,
+                                       cursor=cursor,
+                                       include=include,
+                                       per_page=per_page)
+        else:
+            raise ValueError(
+                "Can't set cursor param and paginate_by_time=True")
+
+
 class ChatIncrementalApi(Api):
     """
     ChatIncrementalApi supports the chat incremental endpoint.
@@ -855,7 +919,7 @@ class UserSearchApi(Api):
         return self._get(url, params=params)
 
 
-class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
+class UserApi(IncrementalCursorApi, CRUDExternalApi, TaggableApi):
     """
     The UserApi adds some User specific functionality
     """
@@ -864,6 +928,7 @@ class UserApi(IncrementalApi, CRUDExternalApi, TaggableApi):
         super(UserApi, self).__init__(config, object_type='user')
         self.identities = UserIdentityApi(config)
         self.search = UserSearchApi(config)
+
 
     @extract_id(User)
     def groups(self, user, include=None):
@@ -1284,7 +1349,7 @@ class MacroApi(CRUDApi):
         return self._query_zendesk(self.endpoint.apply, 'result', id=macro)
 
 
-class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
+class TicketApi(RateableApi, TaggableApi, IncrementalCursorApi, CRUDApi):
     """
     The TicketApi adds some Ticket specific functionality
     """
@@ -1515,69 +1580,6 @@ class TicketApi(RateableApi, TaggableApi, IncrementalApi, CRUDApi):
         """
 
         return self._get(self._build_url(self.endpoint.skips(id=ticket)))
-
-    def incremental(self,
-                    start_time=None,
-                    paginate_by_time=True,
-                    cursor=None,
-                    include=None,
-                    per_page=None):
-        """
-        Incrementally retrieve Tickets.
-
-        If paginate_by_time is True, a ZendeskResultGenerator is returned to handle
-        time based pagination. This is defaulted to True for backwards compatibility
-        but is not recommended by Zendesk.
-
-        If paginate_by_time is False, a TicketCursorGenerator is returned to handle
-        cursor based pagination. This is recommended by Zendesk.
-
-        The TicketCursorGenerator allows you to change the direction that you are consuming objects.
-        This is done with the reversed() python method.
-
-        For example:
-
-        .. code-block:: python
-
-            for ticket in reversed(zenpy_client.tickets.incremental(cursor='xxx')):
-                print(ticket)
-
-        See the `Zendesk docs <https://developer.zendesk.com/rest_api/docs/support/incremental_export#cursor-based-incremental-exports>`__ for
-        information on additional parameters.
-
-        :param start_time: the time of the oldest object you are interested in, applies to both time/cursor based pagination.
-        :param paginate_by_time: True to use time based pagination, False to use cursor based pagination.
-        :param cursor: cursor value of the page you are interested in, can't be set with start_time.
-        :param include: list of objects to sideload. `Side-loading API Docs
-            <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
-        :param per_page: number of results per page, up to max 1000
-        """
-        if (all_are_none(start_time, cursor)
-                or all_are_not_none(start_time, cursor)):
-            raise ValueError(
-                'You must set either start_time or cursor but not both')
-
-        if start_time and paginate_by_time is True:
-            return super(TicketApi, self).incremental(start_time=start_time,
-                                                      include=include,
-                                                      per_page=per_page)
-
-        elif start_time and paginate_by_time is False:
-            return self._query_zendesk(self.endpoint.incremental.cursor_start,
-                                       self.object_type,
-                                       start_time=start_time,
-                                       include=include,
-                                       per_page=per_page)
-
-        elif cursor and paginate_by_time is False:
-            return self._query_zendesk(self.endpoint.incremental.cursor,
-                                       self.object_type,
-                                       cursor=cursor,
-                                       include=include,
-                                       per_page=per_page)
-        else:
-            raise ValueError(
-                "Can't set cursor param and paginate_by_time=True")
 
 
 class SkipApi(CRUDApi):

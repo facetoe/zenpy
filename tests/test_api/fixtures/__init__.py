@@ -516,3 +516,53 @@ class PaginationTestCase(ModifiableApiTestCase):
                     self.assertEqual(count_cbp, count_obp, "OBP<>CBP")
             finally:
                 self.destroy_objects()
+
+class IncrementalPaginationTestCase(ModifiableApiTestCase):
+
+    pagination_limit = 100
+    skip_obp = False
+
+    def create_objects(self):
+        """ Implement this method to guarantee a minimum amount of objects """
+        pass
+
+    def destroy_objects(self):
+        """ Implement this method if destroy_many is not applicable """
+        pass
+
+    def count_objects_by_pagination_type(self, time_based=False, per_page=None):
+        count = 0
+        generator = self.api(start_time=0, paginate_by_time=True, per_page=per_page) if time_based is True \
+            else self.api(start_time=0, paginate_by_time=False, per_page=per_page)
+
+        for _ in generator:
+            count += 1
+            if self.pagination_limit and count >= self.pagination_limit:
+                break
+
+        return count
+
+    def test_pagination(self):
+        """ Test different types of cursor pagination vs offset pagination """
+
+        cassette_name = "{}".format(self.generate_cassette_name())
+        with self.recorder.use_cassette(
+                cassette_name=cassette_name, serialize_with="prettyjson"
+        ):
+            self.create_objects()
+            try:
+                count_default = self.count_objects_by_pagination_type(time_based=True)
+                count_default_cursor = self.count_objects_by_pagination_type(time_based=False)
+                count_default_1_pp = self.count_objects_by_pagination_type(time_based=True, per_page=1)
+                count_default_1_cbp = self.count_objects_by_pagination_type(time_based=False, per_page=1)
+
+
+                # We need at least 2 objects to check pagination
+                self.assertGreater(count_default, 1, "Default pagination returned less than 2 objects on class " + self.__class__.__name__)
+                self.assertNotEqual(count_default, 0, "CBP returned zero")
+                self.assertEqual(count_default, count_default_cursor, "count_default_cursor")
+                self.assertEqual(count_default, count_default_1_pp, "count_default_1_pp")
+                self.assertEqual(count_default, count_default_1_cbp, "count_default_1_cbp")
+
+            finally:
+                self.destroy_objects()
