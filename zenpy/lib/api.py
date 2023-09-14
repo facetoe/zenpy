@@ -22,7 +22,7 @@ from zenpy.lib.exception import *
 from zenpy.lib.mapping import ZendeskObjectMapping, ChatObjectMapping, HelpCentreObjectMapping, TalkObjectMapping
 from zenpy.lib.request import *
 from zenpy.lib.response import *
-from zenpy.lib.util import as_plural, extract_id, is_iterable_but_not_string, json_encode_for_zendesk, all_are_none, \
+from zenpy.lib.util import dict_clean, as_plural, extract_id, is_iterable_but_not_string, json_encode_for_zendesk, all_are_none, \
     all_are_not_none, json_encode_for_printing
 
 try:
@@ -282,7 +282,7 @@ class BaseApi(object):
             log.debug("Setting dirty object: {}".format(zenpy_object))
             self._dirty_object = zenpy_object
         return json.loads(
-            json.dumps(zenpy_object, default=json_encode_for_zendesk))
+            json.dumps(zenpy_object, default=json_encode_for_zendesk), object_pairs_hook=dict_clean)
 
     def _query_zendesk(self, endpoint, object_type, *endpoint_args,
                        **endpoint_kwargs):

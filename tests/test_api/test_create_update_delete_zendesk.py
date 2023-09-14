@@ -38,6 +38,11 @@ class TestUserCreateUpdateDelete(CRUDApiTestCase):
     object_kwargs = dict(name="testUser", id="")
     api_name = "users"
 
+class TestUserCreateUpdateDeleteNoID(CRUDApiTestCase):
+    __test__ = True
+    ZenpyType = User
+    object_kwargs = dict(name="testUser")
+    api_name = "users"
 
 class TestRecipientAddressCreateUpdateDelete(
     SingleUpdateApiTestCase, SingleCreateApiTestCase
