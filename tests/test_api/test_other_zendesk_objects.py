@@ -8,6 +8,7 @@ from test_api.fixtures.__init__ import (
     SingleDeleteApiTestCase,
     CRUDApiTestCase,
     PaginationTestCase,
+    IncrementalPaginationTestCase
 )
 
 from zenpy.lib.api_objects import (
@@ -15,7 +16,6 @@ from zenpy.lib.api_objects import (
     Activity,
     Macro,
     Ticket,
-    TicketAudit,
     GroupMembership,
     Group,
     Organization,
@@ -31,6 +31,18 @@ from zenpy.lib.exception import (
     RecordNotFoundException,
 )
 
+
+class TicketsIncrementalTest(IncrementalPaginationTestCase):
+    __test__ = True
+    ZenpyType = Ticket
+    api_name = "tickets.incremental"
+    object_kwargs = {}
+
+class UsersIncrementalTest(IncrementalPaginationTestCase):
+    __test__ = True
+    ZenpyType = User
+    api_name = "users.incremental"
+    object_kwargs = {}
 
 class TestActivities(PaginationTestCase):
     __test__ = True
