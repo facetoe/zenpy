@@ -1,5 +1,4 @@
 from zenpy.lib.api_objects import BaseObject
-import dateutil.parser
 
 
 class Integration(BaseObject):

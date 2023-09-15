@@ -44,7 +44,8 @@ class BaseObject(object):
         """ Recursively set self and all child objects _dirty flag. """
         obj = obj or self
         for key, value in vars(obj).items():
-            if key not in ('api', '_dirty_attributes', '_always_dirty', '_dirty_callback', '_dirty'):
+            if key not in ('api', '_dirty_attributes',
+                           '_always_dirty', '_dirty_callback', '_dirty'):
                 setattr(obj, key, value)
                 if isinstance(value, BaseObject):
                     self._set_dirty(value)

@@ -1,12 +1,133 @@
 import logging
 
 import zenpy
-from zenpy.lib.api_objects import *
-from zenpy.lib.api_objects.chat_objects import *
-from zenpy.lib.api_objects.help_centre_objects import Article, Category, Section, Label, Translation, Topic, Post, \
-    Subscription, Vote, AccessPolicy, UserSegment, ManagementPermissionGroup
-from zenpy.lib.api_objects.talk_objects import *
-from zenpy.lib.api_objects.zis_objects import *
+from zenpy.lib.api_objects import (
+    Activity,
+    AgentMacroReference,
+    Attachment,
+    Audit,
+    Automation,
+    Brand,
+    CcEvent,
+    ChangeEvent,
+    Comment,
+    CommentPrivacyChangeEvent,
+    Conditions,
+    CreateEvent,
+    CustomAgentRole,
+    CustomFieldOption,
+    Definitions,
+    ErrorEvent,
+    Export,
+    ExternalEvent,
+    FacebookCommentEvent,
+    FacebookEvent,
+    Group,
+    GroupMembership,
+    Identity,
+    Invocation,
+    InvocationAttempt,
+    Item,
+    JobStatus,
+    JobStatusResult,
+    Link,
+    Locale,
+    LogmeinTranscriptEvent,
+    Macro,
+    MacroResult,
+    Metadata,
+    NotificationEvent,
+    Organization,
+    OrganizationActivityEvent,
+    OrganizationField,
+    OrganizationMembership,
+    PolicyMetric,
+    PushEvent,
+    Recipient,
+    RecipientAddress,
+    Request,
+    Response,
+    SatisfactionRating,
+    SatisfactionRatingEvent,
+    Schedule,
+    SharingAgreement,
+    Skip,
+    SlaPolicy,
+    Source,
+    Status,
+    SuspendedTicket,
+    System,
+    Tag,
+    Target,
+    Thumbnail,
+    Ticket,
+    TicketAudit,
+    TicketEvent,
+    TicketField,
+    TicketForm,
+    TicketMetric,
+    TicketMetricEvent,
+    TicketMetricItem,
+    TicketSharingEvent,
+    TweetEvent,
+    Upload,
+    User,
+    UserField,
+    UserRelated,
+    Variant,
+    Via,
+    View,
+    ViewCount,
+    ViewRow,
+    VoiceCommentEvent,
+    Webhook,
+    WebhookSecret
+)
+from zenpy.lib.api_objects.chat_objects import (
+    Account,
+    Agent,
+    Ban,
+    Billing,
+    Chat,
+    Count,
+    Department,
+    Goal,
+    IpAddress,
+    OfflineMessage,
+    Plan,
+    ResponseTime,
+    Roles,
+    SearchResult,
+    Session,
+    Shortcut,
+    Visitor,
+    Webpath
+)
+from zenpy.lib.api_objects.help_centre_objects import (
+    Article,
+    Category,
+    Section,
+    Label,
+    Translation,
+    Topic,
+    Post,
+    Subscription,
+    Vote,
+    AccessPolicy,
+    UserSegment,
+    ManagementPermissionGroup
+)
+from zenpy.lib.api_objects.talk_objects import (
+    AccountOverview,
+    AgentsActivity,
+    AgentsOverview,
+    Call,
+    CurrentQueueActivity,
+    Leg,
+    PhoneNumbers,
+    ShowAvailability
+)
+from zenpy.lib.api_objects.zis_objects import Integration
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.proxy import ProxyDict, ProxyList
 from zenpy.lib.util import as_singular, get_object_type
@@ -150,14 +271,18 @@ class ZendeskObjectMapping(object):
 
     def instantiate_object(self, object_type, parent):
         """
-        Instantiate a Zenpy object. If this object has a parent, add a callback to call the parent if it is modified.
-        This is so the parent object is correctly marked as dirty when a child is modified, eg:
+        Instantiate a Zenpy object. If this object has a parent, add a callback
+        to call the parent if it is modified.
+        This is so the parent object is correctly marked as dirty when
+        a child is modified, eg:
 
             view.conditions.all.append(<something>)
 
-        Also, some attributes need to be sent together to Zendesk together if either is modified. For example,
-        Condition objects need to send both "all" and "any", even if only one has changed. If we have such values
-        configured, add them. They will be inspected in the objects to_dict method on serialization.
+        Also, some attributes need to be sent together to Zendesk together
+        if either is modified. For example, Condition objects need to send both
+        "all" and "any", even if only one has changed. If we have such values
+        configured, add them. They will be inspected in the objects to_dict
+        method on serialization.
         """
         ZenpyClass = self.class_for_type(object_type)
         obj = ZenpyClass(api=self.api)

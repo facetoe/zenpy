@@ -38,7 +38,8 @@ class BaseResultGenerator(Iterable):
 
     @abstractmethod
     def process_page(self):
-        """ Subclasses should do whatever processing is necessary and return a list of the results. """
+        """ Subclasses should do whatever processing is
+        necessary and return a list of the results. """
 
     def next(self):
         if self.values is None:
@@ -77,7 +78,8 @@ class BaseResultGenerator(Iterable):
         return response.json()
 
     def process_url(self, page_num, page_size, url):
-        """ When slicing, remove the per_page and page parameters and pass to requests in the params dict """
+        """ When slicing, remove the per_page and page parameters and
+        pass to requests in the params dict """
         params = dict()
         if page_num is not None:
             url = re.sub(r'page=\d+', '', url)
@@ -221,7 +223,8 @@ class SearchResultGenerator(BaseResultGenerator):
                          self).get_next_page(page_num, page_size)
         except SearchResponseLimitExceeded:
             log.error(
-                'This search has resulted in more results than zendesk allows. We got what we could.'
+                'This search has resulted in more results than zendesk allows.'
+                'We got what we could.'
             )
             raise StopIteration()
 
@@ -239,10 +242,12 @@ class CursorResultsGenerator(BaseResultGenerator):
             log.debug('There are more results via url={}, retrieving'.format(url))
             response = self.response_handler.api._get(url, raw_response=True)
             new_json = response.json()
-            if hasattr(self, 'object_type') and len(new_json.get(as_plural(self.object_type))) == 0:
+            if hasattr(self, 'object_type')\
+                    and len(new_json.get(as_plural(self.object_type))) == 0:
                 """ 
-                    Probably a bug: when the total amount is a multiple of the page size,
-                    the very last page comes empty.
+                    Probably a bug: when the total amount is a
+                    multiple of the page size,the very last page
+                    comes empty.
                 """
                 log.debug('Empty page has got, stopping iteration')
                 raise StopIteration()
@@ -318,7 +323,8 @@ class WebhooksResultGenerator(CursorResultsGenerator):
 
 class TicketCursorGenerator(ZendeskResultGenerator):
     """
-    Generator for cursor based incremental export endpoints for ticket and ticket_audit objects.
+    Generator for cursor based incremental export
+    endpoints for ticket and ticket_audit objects.
     """
     def __init__(self, response_handler, response_json, object_type):
         super(TicketCursorGenerator, self).__init__(response_handler,
@@ -329,7 +335,8 @@ class TicketCursorGenerator(ZendeskResultGenerator):
 
     def __reversed__(self):
         # Flip the direction we grab pages.
-        self.next_page_attr = 'before_url' if self.next_page_attr == 'after_url' else 'after_url'
+        self.next_page_attr = 'before_url' \
+            if self.next_page_attr == 'after_url' else 'after_url'
 
         # Special case for when the generator is reversed before consuming any values.
         if self.values is None:
