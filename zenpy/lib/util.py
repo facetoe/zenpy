@@ -5,7 +5,7 @@ import re
 
 import pytz
 
-from datetime import datetime, date
+from datetime import date
 
 from zenpy.lib.proxy import ProxyDict, ProxyList
 
@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 
 
 def to_snake_case(name):
-    """ Given a name in camelCase return in snake_case """
+    """ Given a name in camelCase return in snake_case"""
     s1 = FIRST_CAP_REGEX.sub(r'\1_\2', name)
     return ALL_CAP_REGEX.sub(r'\1_\2', s1).lower()
 
@@ -29,7 +29,8 @@ def to_unix_ts(start_time):
         else:
             log.warning(
                 "Non timezone-aware datetime object passed to IncrementalEndpoint. "
-                "The Zendesk API expects UTC time, if this is not the case results will be incorrect!"
+                "The Zendesk API expects UTC time, if this is not the case results "
+                "will be incorrect!"
             )
         unix_time = calendar.timegm(start_time.timetuple())
     else:
@@ -53,7 +54,7 @@ def is_timezone_aware(datetime_obj):
 
 def is_iterable_but_not_string(obj):
     """
-    Determine whether or not obj is iterable but not a string (eg, a list, set, tuple etc).
+    Determine whether obj is iterable but not a string (eg, a list, set, tuple etc).
     """
     return hasattr(obj, '__iter__') and not isinstance(
         obj, str) and not isinstance(obj, bytes)

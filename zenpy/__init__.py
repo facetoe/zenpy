@@ -101,11 +101,13 @@ class Zenpy(object):
         :param timeout: global timeout on API requests.
         :param ratelimit_budget: maximum time to spend being rate limited
         :param proactive_ratelimit: user specified rate limit.
-        :param proactive_ratelimit_request_interval: seconds to wait when over proactive_ratelimit.
+        :param proactive_ratelimit_request_interval:
+        seconds to wait when over proactive_ratelimit.
         :param disable_cache: disable caching of objects
         """
 
-        session = self._init_session(email, token, oauth_token, password, session, anonymous)
+        session = self._init_session(email, token, oauth_token,
+                                     password, session, anonymous)
 
         timeout = timeout or self.DEFAULT_TIMEOUT
 
@@ -181,12 +183,13 @@ class Zenpy(object):
     @staticmethod
     def http_adapter_kwargs():
         """
-        Provides Zenpy's default HTTPAdapter args for those users providing their own adapter.
+        Provides Zenpy's default HTTPAdapter args
+        for those users providing their own adapter.
         """
 
         return dict(
-            # Transparently retry requests that are safe to retry, with the exception of 429. This is handled
-            # in the Api._call_api() method.
+            # Transparently retry requests that are safe to retry, except 429.
+            # This is handled in the Api._call_api() method.
             max_retries=Retry(
                 total=3,
                 status_forcelist=[
@@ -202,8 +205,10 @@ class Zenpy(object):
             # Workaround for possible race condition - https://github.com/kennethreitz/requests/issues/3661
             session.mount("https://", HTTPAdapter(**self.http_adapter_kwargs()))
 
-        if (not hasattr(session, "authorized") or not session.authorized) and not anonymous:
-            # session is not an OAuth session that has been authorized, so authorize the session.
+        if (not hasattr(session, "authorized") or not session.authorized) and \
+                not anonymous:
+            # session is not an OAuth session that has been authorized
+            # so authorize the session.
             if not password and not token and not oath_token:
                 raise ZenpyException(
                     "password, token or oauth_token are required! {}".format(locals())

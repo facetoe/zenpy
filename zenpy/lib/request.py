@@ -13,8 +13,9 @@ except ImportError:
 
 class RequestHandler(object):
     """
-    Abstraction of a request to either the Zendesk API or the Chat API. Only POST, PUT and
-    DELETE are handled. Subclasses implement the logic needed to correctly serialize the request
+    Abstraction of a request to either the Zendesk API or the Chat API.
+    Only POST, PUT and DELETE are handled. Subclasses implement the logic
+    needed to correctly serialize the request
     to JSON and send off to the relevant API.
     """
     def __init__(self, api):
@@ -365,13 +366,14 @@ class VariantRequest(BaseZendeskRequest):
     def delete(self, item, variant):
         url = self.api._build_url(self.api.endpoint.delete(item, variant))
         deleted = self.api._delete(url)
-        delete_from_cache(deleted)
+        self.api.cache.delete(deleted)
         return deleted
 
 
 class ChatApiRequest(RequestHandler):
     """
-    Generic Chat API request. Most CRUD operations on Chat API endpoints are handled by this class.
+    Generic Chat API request. Most CRUD operations on Chat API
+    endpoints are handled by this class.
     """
     def put(self, chat_object):
         identifier = self.get_object_identifier(chat_object)

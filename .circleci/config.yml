@@ -7,6 +7,15 @@ run_tests: &run_tests
           pip install -r requirements.dev
           make pytest
 
+run_linter: &run_linter
+  - run:
+      name: run linter on zenpy
+      command: |
+        python -m venv venv
+        . venv/bin/activate
+        pip install -r requirements.dev
+        make lint
+
 version: 2
 jobs:
   python3.5:
@@ -58,10 +67,19 @@ jobs:
     steps:
       - checkout
       - <<: *run_tests
+  linter:
+    docker:
+      - image: cimg/python:3.11
+    working_director: ~/repo
+    steps:
+      - checkout
+      - <<: *run_linter
+
 workflows:
   version: 2
   build_and_test:
     jobs:
+      - linter
       - python3.5
       - python3.6
       - python3.7

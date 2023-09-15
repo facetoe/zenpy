@@ -14,3 +14,6 @@ unittest:
 
 pytest:
 	PYTHONPATH=. pytest
+
+lint:
+	ruff check zenpy

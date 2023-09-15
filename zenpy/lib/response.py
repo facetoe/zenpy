@@ -1,22 +1,33 @@
 from abc import abstractmethod
 
 from zenpy.lib.exception import ZenpyException
-from zenpy.lib.generator import SearchResultGenerator, ZendeskResultGenerator, ChatResultGenerator, ViewResultGenerator, \
-    TicketCursorGenerator, ChatIncrementalResultGenerator, JiraLinkGenerator, SearchExportResultGenerator, \
-    WebhookInvocationsResultGenerator, WebhooksResultGenerator, GenericCursorResultsGenerator
+from zenpy.lib.generator import (
+    SearchResultGenerator,
+    ZendeskResultGenerator,
+    ChatResultGenerator,
+    ViewResultGenerator,
+    TicketCursorGenerator,
+    ChatIncrementalResultGenerator,
+    JiraLinkGenerator,
+    SearchExportResultGenerator,
+    WebhookInvocationsResultGenerator,
+    WebhooksResultGenerator,
+    GenericCursorResultsGenerator
+)
 from zenpy.lib.util import as_singular, as_plural, get_endpoint_path
 from six.moves.urllib.parse import urlparse
 
 
 class ResponseHandler(object):
     """
-    A ResponseHandler knows the type of response it can handle, how to deserialize it and
-    also how to build the correct return type for the data received.
+    A ResponseHandler knows the type of response it can handle,
+    how to deserialize it and also how to build the correct return
+    type for the data received.
 
-    Note: it is legal for multiple handlers to know how to process the same response. The
-    handler that is ultimately chosen is determined by the order in the Api._response_handlers tuple.
-    When adding a new handler, it is important to place the most general handlers last, and the most
-    specific first.
+    Note: it is legal for multiple handlers to know how to process the same response.
+    The handler that is ultimately chosen is determined by the order in the
+    Api._response_handlers tuple.  When adding a new handler, it is important
+    to place the most general handlers last, and the most specific first.
     """
     def __init__(self, api, object_mapping=None):
         self.api = api
@@ -25,17 +36,20 @@ class ResponseHandler(object):
     @staticmethod
     @abstractmethod
     def applies_to(api, response):
-        """ Subclasses should return True if they know how to deal with this response. """
+        """ Subclasses should return True if they know how to deal
+        with this response. """
 
     @abstractmethod
     def deserialize(self, response_json):
-        """ Subclasses should implement the necessary logic to deserialize the passed JSON and return the result. """
+        """ Subclasses should implement the necessary logic to deserialize
+        the passed JSON and return the result. """
 
     @abstractmethod
     def build(self, response):
         """
-        Subclasses should deserialize the objects here and return the correct type to the user.
-        Usually this boils down to deciding whether or not we should return a ResultGenerator
+        Subclasses should deserialize the objects here and
+        return the correct type to the user.  Usually this boils down to deciding
+        whether we should return a ResultGenerator
         of a particular type, a list of objects or a single object.
         """
 
@@ -53,7 +67,8 @@ class GenericZendeskResponseHandler(ResponseHandler):
         """
         Locate and deserialize all objects in the returned JSON.
 
-        Return a dict keyed by object_type. If the key is plural, the value will be a list,
+        Return a dict keyed by object_type.
+        If the key is plural, the value will be a list,
         if it is singular, the value will be an object of that type.
         :param response_json:
         """
@@ -88,8 +103,8 @@ class GenericZendeskResponseHandler(ResponseHandler):
 
     def build(self, response):
         """
-        Deserialize the returned objects and return either a single Zenpy object, or a ResultGenerator in
-        the case of multiple results.
+        Deserialize the returned objects and return either a single Zenpy object,
+        or a ResultGenerator in the case of multiple results.
 
         :param response: the requests Response object.
         """

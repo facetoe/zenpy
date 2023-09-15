@@ -25,10 +25,8 @@ else:
     basestring = basestring
 
 try:
-    from urllib import urlencode
     from urlparse import urlunsplit, SplitResult
 except ImportError:
-    from urllib.parse import urlencode
     from urllib.parse import urlunsplit, SplitResult
 
 log = logging.getLogger(__name__)
@@ -201,9 +199,11 @@ class IncrementalEndpoint(BaseEndpoint):
     An IncrementalEndpoint takes a start_time parameter
     for querying the incremental api endpoint.
 
-    Note: The Zendesk API expects UTC time. If a timezone aware datetime object is passed
-    Zenpy will convert it to UTC, however if a naive object or unix timestamp is passed there is nothing
-    Zenpy can do. It is recommended to always pass timezone aware objects to this endpoint.
+    Note: The Zendesk API expects UTC time.
+    If a timezone aware datetime object is passed
+    Zenpy will convert it to UTC, however if a naive object or unix timestamp
+    is passed there is nothing Zenpy can do. It is recommended to always pass
+    timezone aware objects to this endpoint.
 
     :param start_time: unix timestamp or datetime object
     :param include: list of items to sideload
@@ -235,9 +235,10 @@ class ChatIncrementalEndpoint(BaseEndpoint):
     An ChatsIncrementalEndpoint takes parameters
     for querying the chats incremental api endpoint.
 
-    Note: The Zendesk API expects UTC time. If a timezone aware datetime object is passed
-    Zenpy will convert it to UTC, however if a naive object or unix timestamp is passed there is nothing
-    Zenpy can do. It is recommended to always pass timezone aware objects to this endpoint.
+    Note: The Zendesk API expects UTC time. If a timezone aware datetime
+    object is passed Zenpy will convert it to UTC, however if a naive
+    object or unix timestamp is passed there is nothing Zenpy can do.
+    It is recommended to always pass timezone aware objects to this endpoint.
 
     :param start_time: unix timestamp or datetime object
     :param fields: list of chat fields to load without "chats(xxx)". Defaults to "*"
@@ -302,11 +303,13 @@ class SearchEndpoint(BaseEndpoint):
 
     .. code:: python
 
-      zenpy.search("zenpy", created_between=[yesterday, today], type='ticket', minus='negated')
+      zenpy.search("zenpy",
+      created_between=[yesterday, today], type='ticket', minus='negated')
 
     Would generate the following API call:
     ::
-        /api/v2/search.json?query=zenpy+created>2015-08-29 created<2015-08-30+type:ticket+-negated
+        /api/v2/search.json?query=zenpy+created>2015-08-29
+        created<2015-08-30+type:ticket+-negated
 
 
     """
@@ -345,7 +348,8 @@ class SearchEndpoint(BaseEndpoint):
                     renamed_kwargs.update({key + ':': '%s' % value})
                 else:
                     raise ZenpyException(
-                        "This endpoint supports only 'ticket', 'group', 'user' or 'organization' type filter")
+                        "This endpoint supports only 'ticket',"
+                        "'group', 'user' or 'organization' type filter")
             elif is_iterable_but_not_string(value):
                 modifiers.append(self.format_or(key, value))
             else:
@@ -424,7 +428,8 @@ class SatisfactionRatingEndpoint(BaseEndpoint):
         if end_time:
             params['end_time'] = to_unix_ts(end_time)
         if cursor_pagination:
-            params['page[size]'] = 100 if cursor_pagination is True else cursor_pagination
+            params['page[size]'] = 100 if cursor_pagination is True \
+                else cursor_pagination
 
         return Url(self.endpoint, params=params)
 
@@ -441,7 +446,8 @@ class MacroEndpoint(BaseEndpoint):
             )
 
         if 'id' in kwargs:
-            if len(kwargs) > 1 and not( len(kwargs) == 2 and kwargs['cursor_pagination'] != None):
+            if len(kwargs) > 1 and not( len(kwargs) == 2 and
+                                        kwargs['cursor_pagination'] is not None):
                 raise ZenpyException(
                     "When specifying an id it must be the only parameter")
         params = dict()
@@ -475,7 +481,8 @@ class MacroEndpoint(BaseEndpoint):
 
 class ChatEndpoint(BaseEndpoint):
     def __call__(self, **kwargs):
-        if len(kwargs) > 1 and not (len(kwargs) == 2 and kwargs['cursor_pagination'] is not None):
+        if len(kwargs) > 1 and not (len(kwargs) == 2
+                                    and kwargs['cursor_pagination'] is not None):
             raise ZenpyException(
                 "Only expect a single keyword to the ChatEndpoint")
         endpoint_path = self.endpoint
