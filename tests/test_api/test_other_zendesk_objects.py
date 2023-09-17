@@ -26,7 +26,10 @@ from zenpy.lib.api_objects import (
     User,
     View,
 )
-
+from zenpy.lib.api_objects.help_centre_objects import (
+    Category,
+    Topic
+)
 from zenpy.lib.exception import (
     RecordNotFoundException,
 )
@@ -395,3 +398,15 @@ class TestTicketAudits(PaginationTestCase):
     api_name = "tickets.audits"
     pagination_limit = 10
     skip_obp = True
+
+class CategoryTest(PaginationTestCase):
+    __test__ = True
+    ZenpyType = Category
+    api_name = "help_center.categories"
+    object_kwargs = {}
+
+class TopicTest(PaginationTestCase):
+    __test__ = True
+    ZenpyType = Topic
+    api_name = "help_center.topics"
+    object_kwargs = {}

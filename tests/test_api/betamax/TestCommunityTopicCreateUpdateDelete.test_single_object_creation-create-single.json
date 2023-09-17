@@ -1,0 +1,122 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2023-09-17T04:45:23",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"topic\": {\"description\": \"this is a Topic test\", \"id\": \"\", \"name\": \"test\"}}"
+        },
+        "headers": {
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic <ZENPY-CREDENTIALS>"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "76"
+          ],
+          "Content-Type": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "Zenpy/2.0.38"
+          ]
+        },
+        "method": "POST",
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/community/topics.json"
+      },
+      "response": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"topic\":{\"id\":6157873175578,\"url\":\"https://d3v-zenpydev.zendesk.com/api/v2/help_center/community/topics/6157873175578.json\",\"html_url\":\"https://d3v-zenpydev.zendesk.com/hc/en-us/community/topics/6157873175578-test\",\"name\":\"test\",\"description\":\"this is a Topic test\",\"position\":0,\"follower_count\":0,\"community_id\":6130869406490,\"created_at\":\"2023-09-17T04:45:22Z\",\"updated_at\":\"2023-09-17T04:45:22Z\",\"manageable_by\":\"staff\",\"user_segment_id\":null}}"
+        },
+        "headers": {
+          "CF-Cache-Status": [
+            "DYNAMIC"
+          ],
+          "CF-RAY": [
+            "807eb309c9dbc5b4-SEA"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Type": [
+            "application/json; charset=utf-8"
+          ],
+          "Date": [
+            "Sun, 17 Sep 2023 04:45:22 GMT"
+          ],
+          "NEL": [
+            "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Report-To": [
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=F4dJuOs%2BtJp%2BEY45U6L95j9HyaYDEu%2BolptyCJJErYTsG9vgrC8hPB29eB4MZJxUAvMiQ5h9u4iXe%2BVPVBQb8ajm2YqHzZbrKxHQJPYVUwe6m4yMTZZ3pjbRxaWGlRJ1dk82H0WvpP0H64GjCA%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Server": [
+            "cloudflare"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "X-Zendesk-Zorg": [
+            "yes"
+          ],
+          "cache-control": [
+            "max-age=0, private, must-revalidate"
+          ],
+          "etag": [
+            "W/\"a765c5dd2d8189509cd6cd503b0a581f\""
+          ],
+          "strict-transport-security": [
+            "max-age=31536000;"
+          ],
+          "x-frame-options": [
+            "SAMEORIGIN"
+          ],
+          "x-rate-limit": [
+            "700"
+          ],
+          "x-rate-limit-remaining": [
+            "698"
+          ],
+          "x-request-id": [
+            "807eb309c9dbc5b4-SEA",
+            "807eb309c9dbc5b4-SEA"
+          ],
+          "x-runtime": [
+            "0.068236"
+          ],
+          "x-ua-compatible": [
+            "IE=edge"
+          ],
+          "x-xss-protection": [
+            "1; mode=block"
+          ],
+          "x-zendesk-api-version": [
+            "v2"
+          ],
+          "x-zendesk-origin-server": [
+            "help-center-unicorn-758949c487-cwkvf"
+          ],
+          "x-zendesk-processed-host-header": [
+            "d3v-zenpydev.zendesk.com"
+          ]
+        },
+        "status": {
+          "code": 201,
+          "message": "Created"
+        },
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/community/topics.json"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.8.1"
+}
