@@ -35,12 +35,12 @@ class BaseZendeskRequest(RequestHandler):
     """
     Base class for Zendesk requests. Provides a few handy methods.
     """
-    def build_payload(self, api_objects):
+    def build_payload(self, api_objects, omit_blank_id=False):
         if isinstance(api_objects, Iterable):
             payload_key = as_plural(self.api.object_type)
         else:
             payload_key = self.api.object_type
-        return {payload_key: self.api._serialize(api_objects)}
+        return {payload_key: self.api._serialize(api_objects, omit_blank_id)}
 
     def check_type(self, zenpy_objects):
         """ Ensure the passed type matches this API's object_type. """
@@ -62,6 +62,7 @@ class CRUDRequest(BaseZendeskRequest):
     def post(self, api_objects, *args, **kwargs):
         self.check_type(api_objects)
 
+        omit_blank_id = kwargs.pop('omit_blank_id', False)
         create_or_update = kwargs.pop('create_or_update', False)
         create = kwargs.pop('create', False)
         if isinstance(api_objects, Iterable) and create_or_update:
@@ -77,7 +78,7 @@ class CRUDRequest(BaseZendeskRequest):
         else:
             endpoint = self.api.endpoint
 
-        payload = self.build_payload(api_objects)
+        payload = self.build_payload(api_objects, omit_blank_id)
         url = self.api._build_url(endpoint(*args, **kwargs))
         return self.api._post(url, payload)
 

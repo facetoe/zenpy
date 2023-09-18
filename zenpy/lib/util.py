@@ -123,6 +123,15 @@ def dict_clean(items):
         result[key] = value
     return result
 
+def dict_clean_omit_blank_id(items):
+    result = {}
+    for key, value in items:
+        if value is None:
+            value = ''
+        if not(key == 'id' and value == ''):
+            result[key] = value
+    return result
+
 def json_encode_for_zendesk(obj):
     """ Only encode those attributes of Zenpy objects that have been modified. """
     return json_encode(obj, serialize=True)

@@ -44,7 +44,8 @@ from zenpy.lib.response import AccountResponseHandler, AgentResponseHandler, \
     WebhookInvocationsResponseHandler, \
     WebhooksResponseHandler, ZISIntegrationResponseHandler
 
-from zenpy.lib.util import dict_clean, as_plural, extract_id, \
+from zenpy.lib.util import dict_clean, dict_clean_omit_blank_id,\
+    as_plural, extract_id, \
     is_iterable_but_not_string, json_encode_for_zendesk, \
     all_are_none, \
     all_are_not_none, json_encode_for_printing
@@ -306,12 +307,16 @@ class BaseApi(object):
                 o._clean_dirty()
         self._dirty_object = None
 
-    def _serialize(self, zenpy_object):
+    def _serialize(self, zenpy_object, omit_blank_id=False):
         """ Serialize a Zenpy object to JSON """
         # If it's a dict this object has already been serialized.
         if not isinstance(zenpy_object, dict):
             log.debug("Setting dirty object: {}".format(zenpy_object))
             self._dirty_object = zenpy_object
+        if omit_blank_id:
+            return json.loads(
+                json.dumps(zenpy_object, default=json_encode_for_zendesk),
+                object_pairs_hook=dict_clean_omit_blank_id)
         return json.loads(
             json.dumps(zenpy_object, default=json_encode_for_zendesk),
             object_pairs_hook=dict_clean)
@@ -1153,7 +1158,7 @@ class UserApi(IncrementalCursorApi, CRUDExternalApi, TaggableApi):
         :return: the created/updated User or a  JobStatus object if a list was passed
         """
 
-        return CRUDRequest(self).post(users, create_or_update=True)
+        return CRUDRequest(self).post(users, create_or_update=True, omit_blank_id=True)
 
     @extract_id(User)
     def permanently_delete(self, user):
