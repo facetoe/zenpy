@@ -1,11 +1,11 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2023-08-31T18:44:57",
+      "recorded_at": "2023-09-18T23:30:11",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"recipient_address\": {\"email\": \"help@omniwearshop.com\", \"id\": null, \"name\": \"Sales\"}}"
+          "string": "{\"recipient_address\": {\"email\": \"help@omniwearshop.com\", \"name\": \"Sales\"}}"
         },
         "headers": {
           "Accept": [
@@ -21,7 +21,7 @@
             "keep-alive"
           ],
           "Content-Length": [
-            "86"
+            "74"
           ],
           "Content-Type": [
             "application/json"
@@ -30,7 +30,7 @@
             "_zendesk_cookie=BAhJIhl7ImRldmljZV90b2tlbnMiOnt9fQY6BkVU--0bf2100788cb010d0183feca16aaf88ccaf719ca"
           ],
           "User-Agent": [
-            "Zenpy/2.0.34"
+            "Zenpy/2.0.38"
           ]
         },
         "method": "POST",
@@ -39,32 +39,32 @@
       "response": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"recipient_address\":{\"url\":\"https://d3v-zenpydev.zendesk.com/api/v2/recipient_addresses/6097521324058.json\",\"id\":6097521324058,\"brand_id\":6090590390554,\"default\":null,\"name\":\"Sales\",\"email\":\"help@omniwearshop.com\",\"forwarding_status\":\"waiting\",\"spf_status\":\"failed\",\"cname_status\":\"unknown\",\"domain_verification_status\":\"failed\",\"domain_verification_code\":\"b381827ee7ba846a\",\"created_at\":\"2023-08-31T18:44:57Z\",\"updated_at\":\"2023-08-31T18:44:57Z\"}}"
+          "string": "{\"recipient_address\":{\"url\":\"https://d3v-zenpydev.zendesk.com/api/v2/recipient_addresses/6164064399258.json\",\"id\":6164064399258,\"brand_id\":6130830354842,\"default\":null,\"name\":\"Sales\",\"email\":\"help@omniwearshop.com\",\"forwarding_status\":\"waiting\",\"spf_status\":\"failed\",\"cname_status\":\"unknown\",\"domain_verification_status\":\"failed\",\"domain_verification_code\":\"18e8dac725552103\",\"created_at\":\"2023-09-18T23:30:11Z\",\"updated_at\":\"2023-09-18T23:30:11Z\"}}"
         },
         "headers": {
           "CF-Cache-Status": [
             "DYNAMIC"
           ],
           "CF-RAY": [
-            "7ff76d846d2127a2-SEA"
+            "808d6013b81c27ee-SEA"
           ],
           "Connection": [
             "keep-alive"
           ],
           "Content-Length": [
-            "453"
+            "452"
           ],
           "Content-Type": [
             "application/json; charset=utf-8"
           ],
           "Date": [
-            "Thu, 31 Aug 2023 18:44:57 GMT"
+            "Mon, 18 Sep 2023 23:30:11 GMT"
           ],
           "NEL": [
             "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Report-To": [
-            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=8ouUxcXzcSwQLa0tLxmgtP5%2BXNzrPt%2FftsTwMbnZx5n3MU09CAAXPn6%2FxpWUJo231TzG3UqPzdJ2e2Lm1dalhyGt%2Bpidkp0n1JC5tGlfopj5MC5I5trsOpXj59BKL68x7P1Ss6Zt8UhauSFJfKQ%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=4l5iFVFUnM4wrDX8RccbFSkvLuSFI%2BKyOGyjV88IBlpa61BQvaabASE%2FGPiGo%2BnknurtOCUVSqsgc54N46uk6Zdr9yUzr6YiEazM4bfdFjGPU7t8qP4vvS2hLB3nd9VN0e5PFIhc%2Fa6BkwZirA%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Server": [
             "cloudflare"
@@ -76,19 +76,19 @@
             "max-age=0, private, must-revalidate"
           ],
           "etag": [
-            "W/\"9b94d0be35449704ffd5c29780161259\""
+            "W/\"ed45e1f2441edd34bbc6154facf3df40\""
           ],
           "location": [
-            "https://d3v-zenpydev.zendesk.com/api/v2/recipient_addresses/6097521324058.json"
+            "https://d3v-zenpydev.zendesk.com/api/v2/recipient_addresses/6164064399258.json"
           ],
           "rate-limit": [
             "700"
           ],
           "rate-limit-remaining": [
-            "662"
+            "685"
           ],
           "rate-limit-reset": [
-            "3"
+            "49"
           ],
           "strict-transport-security": [
             "max-age=31536000; includeSubDomains"
@@ -100,26 +100,23 @@
             "700"
           ],
           "x-rate-limit-remaining": [
-            "662"
+            "685"
           ],
           "x-request-id": [
-            "7ff76d846d2127a2-SEA",
-            "7ff76d846d2127a2-SEA"
+            "808d6013b81c27ee-SEA",
+            "808d6013b81c27ee-SEA"
           ],
           "x-runtime": [
-            "0.143038"
+            "0.182397"
           ],
           "x-zendesk-api-version": [
             "v2"
           ],
-          "x-zendesk-api-warn": [
-            "{:allowed_parameters=>{:controller=>\"recipient_addresses\", :action=>\"create\", :unpermitted_keys=>[\"recipient_address.id\"], :invalid_values=>[]}}"
-          ],
           "x-zendesk-application-version": [
-            "v18239"
+            "v18385"
           ],
           "x-zendesk-origin-server": [
-            "classic-app-server-566774b49d-8j4sq"
+            "classic-app-server-7bd9f74fd7-z44gq"
           ]
         },
         "status": {
@@ -130,11 +127,11 @@
       }
     },
     {
-      "recorded_at": "2023-08-31T18:44:58",
+      "recorded_at": "2023-09-18T23:30:11",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"recipient_address\": {\"id\": 6097521324058, \"name\": \"Salesd0edfb6e8c55c8742a83f0f192886e0e15fa0347\"}}"
+          "string": "{\"recipient_address\": {\"id\": 6164064399258, \"name\": \"Salesd0edfb6e8c55c8742a83f0f192886e0e15fa0347\"}}"
         },
         "headers": {
           "Accept": [
@@ -159,15 +156,15 @@
             "_zendesk_cookie=BAhJIhl7ImRldmljZV90b2tlbnMiOnt9fQY6BkVU--0bf2100788cb010d0183feca16aaf88ccaf719ca"
           ],
           "User-Agent": [
-            "Zenpy/2.0.34"
+            "Zenpy/2.0.38"
           ]
         },
         "method": "PUT",
-        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/recipient_addresses/6097521324058.json"
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/recipient_addresses/6164064399258.json"
       },
       "response": {
         "body": {
-          "base64_string": "H4sIAAAAAAAAA31Qy26DMBD8F58hGPNyOPUf2lMuaLHXwQ3YyI8gJcq/11SVoqpRL3uYmd2Z2TtxKPSq0YQBpHToPenvJLqZ9GQKYfV9Udwqk4t1qvMxnqdowuGGRqK/HIRdClh1cWXFnzPoi5Yeu4aVFatpww+f3hqSES1J/4vIyOjAyOGHoM2RVmk2dUYkKohzIL2J85wRAwumWO8wo5cUpRpb5KJpBO9qBrxSVJVHxnmLFMtGAa3qLjniAvq7Ds7rm12M3hCcn+y650+8sm4DJ7U5Dz5AiOkDZAMdEpBYv6onrNIllAkVe5YnHs3F2G2vJ21yM8MVnVZaQNDWvFh/pRJW7u3GipecdYjdCLxuYTdzCAHlAOkThFFW5ZTnVflR8r6u+6Y7JU1c5X8afiKPxxcY0UBx7QEAAA==",
+          "base64_string": "H4sIAAAAAAAAA4VQy27DIBD8F85OzMM42Kf+Q3vqxdrA0tDYYAGOpUT59+L2EFWN1OvM7M7jRiJqNzv0eQBjIqZE+htZ4kh6csp5Tn1dX4XffWZ0GccjLNP+it5gOu91mGqYXX3h9Z8vmOqWtQ1tG9F1XKr9ZwqeVMQZ0v8iKnKM4M3wQwiqBBWyUQ2viEELy5hJ75dxrIiHCUuqVxgxGYrGHltUWkqtDg0HJSy1rONKtUiRSQtUNIfiiBO47zY4zi9h8m5FiOkU5i1/4W2IK0Tj/MeQMuSlDEBWcLkAhU2zfcC2fEJTUL1leeCLP/uwbvVMKG5+uGB01mnILvgn589UOpitHVOoDOgDl1JyRsVmFhEymgHKEoRTLna02zH1xkUvaM/Ye9Ess/lHc79/AVcaHgXsAQAA",
           "encoding": "utf-8",
           "string": ""
         },
@@ -176,7 +173,7 @@
             "DYNAMIC"
           ],
           "CF-RAY": [
-            "7ff76d860f1627a2-SEA"
+            "808d601599b227ee-SEA"
           ],
           "Connection": [
             "keep-alive"
@@ -188,13 +185,13 @@
             "application/json; charset=utf-8"
           ],
           "Date": [
-            "Thu, 31 Aug 2023 18:44:58 GMT"
+            "Mon, 18 Sep 2023 23:30:11 GMT"
           ],
           "NEL": [
             "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Report-To": [
-            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=9IUBGGTw0rJinesUisy4M4T7FnXfdwVY9NAL%2BbS9PfOfHxfYXj1WowXIyU1%2FDqik0yRBZmCKCTw%2FuzcbCArz8ZMtx33g9xHFhygtYUl7rEcs2u%2FSWkC3MHj%2BM7MKvBmsZhtONI9RcsmO3rxzlg4%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=eR81hjMclktjESFawieiPKnc7fegxMpuGQY8QDwDe8y5Q8ggmw1YsUFUSSryKkO0aU9D3P3wkaf6as72O3KSkKp%2BoUorQJS06pxE0vC%2Fzx3aJWyicuXliOiGURy2v%2BH3O1rwuZ1wwXkr1s6DOg%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Server": [
             "cloudflare"
@@ -209,16 +206,16 @@
             "max-age=0, private, must-revalidate"
           ],
           "etag": [
-            "W/\"0f7b1380570cdc2932786f8605c2e4cb\""
+            "W/\"7cff369fd7340e7c3e6c2595c5ff744a\""
           ],
           "rate-limit": [
             "700"
           ],
           "rate-limit-remaining": [
-            "661"
+            "684"
           ],
           "rate-limit-reset": [
-            "2"
+            "49"
           ],
           "strict-transport-security": [
             "max-age=31536000; includeSubDomains"
@@ -230,14 +227,14 @@
             "700"
           ],
           "x-rate-limit-remaining": [
-            "661"
+            "684"
           ],
           "x-request-id": [
-            "7ff76d860f1627a2-SEA",
-            "7ff76d860f1627a2-SEA"
+            "808d601599b227ee-SEA",
+            "808d601599b227ee-SEA"
           ],
           "x-runtime": [
-            "0.123267"
+            "0.096009"
           ],
           "x-zendesk-api-version": [
             "v2"
@@ -246,17 +243,17 @@
             "{:allowed_parameters=>{:controller=>\"recipient_addresses\", :action=>\"update\", :unpermitted_keys=>[\"recipient_address.id\"], :invalid_values=>[]}}"
           ],
           "x-zendesk-application-version": [
-            "v18239"
+            "v18385"
           ],
           "x-zendesk-origin-server": [
-            "classic-app-server-566774b49d-6v6m9"
+            "classic-app-server-7bd9f74fd7-knnx2"
           ]
         },
         "status": {
           "code": 200,
           "message": "OK"
         },
-        "url": "https://d3v-zenpydev.zendesk.com/api/v2/recipient_addresses/6097521324058.json"
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/recipient_addresses/6164064399258.json"
       }
     }
   ],

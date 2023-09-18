@@ -1,11 +1,11 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2023-08-31T18:36:29",
+      "recorded_at": "2023-09-18T23:22:17",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"category\": {\"description\": \"this is a test\", \"id\": null, \"name\": \"test\"}}"
+          "string": "{\"category\": {\"description\": \"this is a test\", \"name\": \"test\"}}"
         },
         "headers": {
           "Accept": [
@@ -21,13 +21,13 @@
             "keep-alive"
           ],
           "Content-Length": [
-            "75"
+            "63"
           ],
           "Content-Type": [
             "application/json"
           ],
           "User-Agent": [
-            "Zenpy/2.0.34"
+            "Zenpy/2.0.38"
           ]
         },
         "method": "POST",
@@ -36,14 +36,14 @@
       "response": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"category\":{\"id\":6097497424666,\"url\":\"https://d3v-zenpydev.zendesk.com/api/v2/help_center/en-us/categories/6097497424666.json\",\"html_url\":\"https://d3v-zenpydev.zendesk.com/hc/en-us/categories/6097497424666-test\",\"position\":0,\"created_at\":\"2023-08-31T18:36:29Z\",\"updated_at\":\"2023-08-31T18:36:29Z\",\"name\":\"test\",\"description\":\"this is a test\",\"locale\":\"en-us\",\"source_locale\":\"en-us\",\"outdated\":false}}"
+          "string": "{\"category\":{\"id\":6164054233498,\"url\":\"https://d3v-zenpydev.zendesk.com/api/v2/help_center/en-us/categories/6164054233498.json\",\"html_url\":\"https://d3v-zenpydev.zendesk.com/hc/en-us/categories/6164054233498-test\",\"position\":0,\"created_at\":\"2023-09-18T23:22:17Z\",\"updated_at\":\"2023-09-18T23:22:17Z\",\"name\":\"test\",\"description\":\"this is a test\",\"locale\":\"en-us\",\"source_locale\":\"en-us\",\"outdated\":false}}"
         },
         "headers": {
           "CF-Cache-Status": [
             "DYNAMIC"
           ],
           "CF-RAY": [
-            "7ff761192b08c36f-SEA"
+            "808d54814d28c634-SEA"
           ],
           "Connection": [
             "keep-alive"
@@ -52,7 +52,7 @@
             "application/json; charset=utf-8"
           ],
           "Date": [
-            "Thu, 31 Aug 2023 18:36:29 GMT"
+            "Mon, 18 Sep 2023 23:22:17 GMT"
           ],
           "NEL": [
             "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
@@ -61,7 +61,7 @@
             "HTTP/1.1 always"
           ],
           "Report-To": [
-            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=gDBTmoJ2%2FU24hgnw%2B%2Fk3%2FrNrMkAg8V0IHjgYFX0Ly5pAJGHVBXo6HcYmrZwp%2Bs6OXVExjZk%2BAYsUZdCzKSYiYquTAFM1KumXNGIt5YsQvxkh2OlVWPuGM9ldGhXEAa10HP8RlwKltF65Z0IZOGM%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=OD4JrjpAGAFZVs2%2F6ksr3iut4nHMez4UZDZNN%2BgXx8cYrtsHGRfkjpVjoMOrV6jCJGHZli1zNrr29uD3CgVnTuuzQJJDVeFCY4xn7ID9VLf5BaIjEgTixHHHOyaqRRXPj8M5nOjNxaLsFpNYow%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Server": [
             "cloudflare"
@@ -73,7 +73,7 @@
             "max-age=0, private, must-revalidate"
           ],
           "etag": [
-            "W/\"ad21f543c68ecb79acb735e8812dbc88\""
+            "W/\"0d9ad7bcc87a5d3a5da5f245bcb4bd8b\""
           ],
           "strict-transport-security": [
             "max-age=31536000;"
@@ -88,10 +88,10 @@
             "698"
           ],
           "x-request-id": [
-            "7ff761192b08c36f-SEA"
+            "808d54814d28c634-SEA"
           ],
           "x-runtime": [
-            "0.110529"
+            "0.097418"
           ],
           "x-ua-compatible": [
             "IE=edge"
@@ -103,10 +103,10 @@
             "v2"
           ],
           "x-zendesk-origin-server": [
-            "help-center-unicorn-7875647968-5lv65"
+            "help-center-unicorn-6bcc4cc7b5-xk7bx"
           ],
           "x-zendesk-processed-host-header": [
-            "z3n-cph4-bughunt.zendesk.com"
+            "d3v-zenpydev.zendesk.com"
           ]
         },
         "status": {

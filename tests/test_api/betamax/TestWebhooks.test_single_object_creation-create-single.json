@@ -1,11 +1,11 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2023-08-31T19:21:57",
+      "recorded_at": "2023-09-18T23:38:21",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"webhook\": {\"authentication\": {\"add_position\": \"header\", \"data\": {\"password\": \"hello_123\", \"username\": \"john_smith\"}, \"type\": \"basic_auth\"}, \"description\": \"Description\", \"endpoint\": \"https://example.com\", \"http_method\": \"GET\", \"id\": null, \"name\": \"Example Webhook X1234\", \"request_format\": \"json\", \"status\": \"active\", \"subscriptions\": [\"conditional_ticket_events\"]}}"
+          "string": "{\"webhook\": {\"authentication\": {\"add_position\": \"header\", \"data\": {\"password\": \"hello_123\", \"username\": \"john_smith\"}, \"type\": \"basic_auth\"}, \"description\": \"Description\", \"endpoint\": \"https://example.com\", \"http_method\": \"GET\", \"name\": \"Example Webhook X1234\", \"request_format\": \"json\", \"status\": \"active\", \"subscriptions\": [\"conditional_ticket_events\"]}}"
         },
         "headers": {
           "Accept": [
@@ -21,13 +21,13 @@
             "keep-alive"
           ],
           "Content-Length": [
-            "368"
+            "356"
           ],
           "Content-Type": [
             "application/json"
           ],
           "User-Agent": [
-            "Zenpy/2.0.34"
+            "Zenpy/2.0.38"
           ]
         },
         "method": "POST",
@@ -36,14 +36,14 @@
       "response": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"webhook\":{\"id\":\"01H96GQ3SM9CEDWWW9GQH24Q98\",\"name\":\"Example Webhook X1234\",\"description\":\"Description\",\"status\":\"active\",\"subscriptions\":[\"conditional_ticket_events\"],\"created_at\":\"2023-08-31T19:21:57.812354884Z\",\"created_by\":\"6090622867866\",\"endpoint\":\"https://example.com\",\"http_method\":\"GET\",\"request_format\":\"json\",\"authentication\":{\"type\":\"basic_auth\",\"data\":{\"username\":\"john_smith\"},\"add_position\":\"header\"}}}\n"
+          "string": "{\"webhook\":{\"id\":\"01HANAHGNTEQ5CEGVKAENZKYA5\",\"name\":\"Example Webhook X1234\",\"description\":\"Description\",\"status\":\"active\",\"subscriptions\":[\"conditional_ticket_events\"],\"created_at\":\"2023-09-18T23:38:21.242420291Z\",\"created_by\":\"6130907993114\",\"endpoint\":\"https://example.com\",\"http_method\":\"GET\",\"request_format\":\"json\",\"authentication\":{\"type\":\"basic_auth\",\"data\":{\"username\":\"john_smith\"},\"add_position\":\"header\"}}}\n"
         },
         "headers": {
           "CF-Cache-Status": [
             "DYNAMIC"
           ],
           "CF-RAY": [
-            "7ff7a3b80b8cebb3-SEA"
+            "808d6c0a7b0ac72d-SEA"
           ],
           "Connection": [
             "keep-alive"
@@ -55,19 +55,19 @@
             "application/json"
           ],
           "Date": [
-            "Thu, 31 Aug 2023 19:21:57 GMT"
+            "Mon, 18 Sep 2023 23:38:21 GMT"
           ],
           "NEL": [
             "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Report-To": [
-            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=UCbxlDNgtww6%2BXPqMVFDMUdK5ipfppVzWihhiufDRhntrXoNpHuvdiIXc7dIIYAmAjkd4sU%2FM3mYj0VDloJ%2BXoNEbrk5xUQdfMMaiFScqTI3yX6bKrygJUU7n4YfufMXR0Fi7hvFO%2FITPPmW5Bo%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=UhvFU6DuR09nmUH17WDEu2n6mFwk5l4NqMyDhWho6L2nfDYoYP2iV8PlKGpVQ2xR5%2BMY3LlC243Geh98T%2BsbVE0e7h8nbVTzz6WT%2BbxFxIxBVedw8yVvB%2FRm0Di%2B5Q2IApLVGp18kSrVZ8Lx3Q%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Server": [
             "cloudflare"
           ],
           "X-Request-ID": [
-            "7ff7a3b80b8cebb3-SEA"
+            "808d6c0a7b0ac72d-SEA"
           ],
           "X-Zendesk-Zorg": [
             "yes"
@@ -76,7 +76,7 @@
             "100"
           ],
           "x-rate-limit-remaining": [
-            "5"
+            "62"
           ],
           "x-zendesk-api-version": [
             "v2"

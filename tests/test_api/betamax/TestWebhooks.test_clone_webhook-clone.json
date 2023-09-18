@@ -1,11 +1,11 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2023-08-31T19:03:45",
+      "recorded_at": "2023-09-18T23:38:14",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"webhook\": {\"authentication\": {\"add_position\": \"header\", \"data\": {\"password\": \"hello_123\", \"username\": \"john_smith\"}, \"type\": \"basic_auth\"}, \"description\": \"Description\", \"endpoint\": \"https://example.com\", \"http_method\": \"GET\", \"id\": null, \"name\": \"Example Webhook X1234\", \"request_format\": \"json\", \"status\": \"active\", \"subscriptions\": [\"conditional_ticket_events\"]}}"
+          "string": "{\"webhook\": {\"authentication\": {\"add_position\": \"header\", \"data\": {\"password\": \"hello_123\", \"username\": \"john_smith\"}, \"type\": \"basic_auth\"}, \"description\": \"Description\", \"endpoint\": \"https://example.com\", \"http_method\": \"GET\", \"name\": \"Example Webhook X1234\", \"request_format\": \"json\", \"status\": \"active\", \"subscriptions\": [\"conditional_ticket_events\"]}}"
         },
         "headers": {
           "Accept": [
@@ -21,13 +21,13 @@
             "keep-alive"
           ],
           "Content-Length": [
-            "368"
+            "356"
           ],
           "Content-Type": [
             "application/json"
           ],
           "User-Agent": [
-            "Zenpy/2.0.34"
+            "Zenpy/2.0.38"
           ]
         },
         "method": "POST",
@@ -36,14 +36,14 @@
       "response": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"webhook\":{\"id\":\"01H96FNRNDCEGHDNVBNBHZZHZN\",\"name\":\"Example Webhook X1234\",\"description\":\"Description\",\"status\":\"active\",\"subscriptions\":[\"conditional_ticket_events\"],\"created_at\":\"2023-08-31T19:03:45.069190845Z\",\"created_by\":\"6090622867866\",\"endpoint\":\"https://example.com\",\"http_method\":\"GET\",\"request_format\":\"json\",\"authentication\":{\"type\":\"basic_auth\",\"data\":{\"username\":\"john_smith\"},\"add_position\":\"header\"}}}\n"
+          "string": "{\"webhook\":{\"id\":\"01HANAHAFTBVF1NA2AVFK4W763\",\"name\":\"Example Webhook X1234\",\"description\":\"Description\",\"status\":\"active\",\"subscriptions\":[\"conditional_ticket_events\"],\"created_at\":\"2023-09-18T23:38:14.906338593Z\",\"created_by\":\"6130907993114\",\"endpoint\":\"https://example.com\",\"http_method\":\"GET\",\"request_format\":\"json\",\"authentication\":{\"type\":\"basic_auth\",\"data\":{\"username\":\"john_smith\"},\"add_position\":\"header\"}}}\n"
         },
         "headers": {
           "CF-Cache-Status": [
             "DYNAMIC"
           ],
           "CF-RAY": [
-            "7ff7890a4e4b27da-SEA"
+            "808d6be2ce74c72d-SEA"
           ],
           "Connection": [
             "keep-alive"
@@ -55,19 +55,19 @@
             "application/json"
           ],
           "Date": [
-            "Thu, 31 Aug 2023 19:03:45 GMT"
+            "Mon, 18 Sep 2023 23:38:14 GMT"
           ],
           "NEL": [
             "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Report-To": [
-            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=8nB%2F0YjO8R74F68LayQmnO%2Fyyg%2BD%2BpGU0LRbFUpBmXhWFJRooR2pyOEWam%2F%2F%2B9DwlfyrKRjHrywZ0LqaAnnBNa%2BDrsACaXajqOFwvwy%2Bkn81HLhW2hDZsB5GmnovPVLGhmqnILjPfEfbBJl%2FfMY%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=P%2BrwUItiQJ8lCxlt%2Bk2N4k3LLRD%2FafElX2yIxVg5zkrN%2BL8joGpMCjTwh7%2BAdr%2FdxMoT2j1jrYAuOk7RIbgE9khC9zY0ViHCJ7tKuODZHrWO%2FJPi73Yy9maIoeXuKUQDaFDAP4pT7LR%2BuKOD2w%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Server": [
             "cloudflare"
           ],
           "X-Request-ID": [
-            "7ff7890a4e4b27da-SEA"
+            "808d6be2ce74c72d-SEA"
           ],
           "X-Zendesk-Zorg": [
             "yes"
@@ -90,7 +90,7 @@
       }
     },
     {
-      "recorded_at": "2023-08-31T19:03:45",
+      "recorded_at": "2023-09-18T23:38:15",
       "request": {
         "body": {
           "encoding": "utf-8",
@@ -113,23 +113,23 @@
             "0"
           ],
           "User-Agent": [
-            "Zenpy/2.0.34"
+            "Zenpy/2.0.38"
           ]
         },
         "method": "POST",
-        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/webhooks?clone_webhook_id=01H96FNRNDCEGHDNVBNBHZZHZN"
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/webhooks?clone_webhook_id=01HANAHAFTBVF1NA2AVFK4W763"
       },
       "response": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"webhook\":{\"id\":\"01H96FNRTA3E1P1PDVMDA2TJ2F\",\"name\":\"Example Webhook X1234 (copy)\",\"description\":\"Description\",\"status\":\"active\",\"subscriptions\":[\"conditional_ticket_events\"],\"created_at\":\"2023-08-31T19:03:45.226671389Z\",\"created_by\":\"6090622867866\",\"endpoint\":\"https://example.com\",\"http_method\":\"GET\",\"request_format\":\"json\",\"authentication\":{\"type\":\"basic_auth\",\"data\":{\"username\":\"john_smith\"},\"add_position\":\"header\"}}}\n"
+          "string": "{\"webhook\":{\"id\":\"01HANAHAMCYE132N7AKMGD0SZ7\",\"name\":\"Example Webhook X1234 (copy)\",\"description\":\"Description\",\"status\":\"active\",\"subscriptions\":[\"conditional_ticket_events\"],\"created_at\":\"2023-09-18T23:38:15.052590704Z\",\"created_by\":\"6130907993114\",\"endpoint\":\"https://example.com\",\"http_method\":\"GET\",\"request_format\":\"json\",\"authentication\":{\"type\":\"basic_auth\",\"data\":{\"username\":\"john_smith\"},\"add_position\":\"header\"}}}\n"
         },
         "headers": {
           "CF-Cache-Status": [
             "DYNAMIC"
           ],
           "CF-RAY": [
-            "7ff7890b4f2627da-SEA"
+            "808d6be3bf26c72d-SEA"
           ],
           "Connection": [
             "keep-alive"
@@ -141,19 +141,19 @@
             "application/json"
           ],
           "Date": [
-            "Thu, 31 Aug 2023 19:03:45 GMT"
+            "Mon, 18 Sep 2023 23:38:15 GMT"
           ],
           "NEL": [
             "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Report-To": [
-            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=%2FUVB1WEkpvzs3OqBiL4%2Fyg73obahUzirvi%2BhhY7Zhf7MJcseBV1DAXzJnAdgFp2n%2F3zZfO5iAecBInlXNz%2BjdUiXqtN8lnwQ8YFHKjIvyE9tOiOKwlo9BJs19p7dIJCtea6q80EB%2BsFyEvHhgNk%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=WBdjw3tX7amZstA5GrtROpnlofDXkRcQxjd071MY6232wGubm03dBDXIGMNthF2qHVu3YFcRHqvbGgH1IvvZ0j5SP16EUpnW0GkGnXcNlSLHWeCfPOp89ZcwCOBF9nLLf5uE2S2TxYXoTeho%2Fw%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Server": [
             "cloudflare"
           ],
           "X-Request-ID": [
-            "7ff7890b4f2627da-SEA"
+            "808d6be3bf26c72d-SEA"
           ],
           "X-Zendesk-Zorg": [
             "yes"
@@ -172,15 +172,15 @@
           "code": 201,
           "message": "Created"
         },
-        "url": "https://d3v-zenpydev.zendesk.com/api/v2/webhooks?clone_webhook_id=01H96FNRNDCEGHDNVBNBHZZHZN"
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/webhooks?clone_webhook_id=01HANAHAFTBVF1NA2AVFK4W763"
       }
     },
     {
-      "recorded_at": "2023-08-31T19:03:45",
+      "recorded_at": "2023-09-18T23:38:15",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"webhook\": {\"id\": \"01H96FNRTA3E1P1PDVMDA2TJ2F\"}}"
+          "string": "{\"webhook\": {\"id\": \"01HANAHAMCYE132N7AKMGD0SZ7\"}}"
         },
         "headers": {
           "Accept": [
@@ -202,11 +202,11 @@
             "application/json"
           ],
           "User-Agent": [
-            "Zenpy/2.0.34"
+            "Zenpy/2.0.38"
           ]
         },
         "method": "DELETE",
-        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/webhooks/01H96FNRTA3E1P1PDVMDA2TJ2F"
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/webhooks/01HANAHAMCYE132N7AKMGD0SZ7"
       },
       "response": {
         "body": {
@@ -218,7 +218,7 @@
             "DYNAMIC"
           ],
           "CF-RAY": [
-            "7ff7890c4ffc27da-SEA"
+            "808d6be4afddc72d-SEA"
           ],
           "Connection": [
             "keep-alive"
@@ -227,19 +227,19 @@
             "application/json"
           ],
           "Date": [
-            "Thu, 31 Aug 2023 19:03:45 GMT"
+            "Mon, 18 Sep 2023 23:38:15 GMT"
           ],
           "NEL": [
             "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Report-To": [
-            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=vw6WmuCQjF4t5tynX90DM5hDPu1jznavlgi9Y0sKBBJC6xmJRQC2MjiSGLpp7nJ3o22sAb2Ep6JJoG5XjxW785jbMENG%2BqQsrtALEeThXrW8mUkjCUv8sGOi4a%2BO%2FGC1NEJA20qGL%2FtcUP%2FKKbg%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=G8P46qBT4fYl16l8G%2BbA550z6%2FiTJ%2FhGIoublt2o6%2BKd6NoAd8D9SVUNIdLfbPaGO1bugVufu3kJKH5h%2Bs3g%2Bn%2Bhl2FbDrHKOeTwCYzXPvMpcb88k5T7dN12YeRCvnkN0SV2NrE9HsJ4%2BAF%2Fng%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Server": [
             "cloudflare"
           ],
           "X-Request-ID": [
-            "7ff7890c4ffc27da-SEA"
+            "808d6be4afddc72d-SEA"
           ],
           "X-Zendesk-Zorg": [
             "yes"
@@ -258,15 +258,15 @@
           "code": 204,
           "message": "No Content"
         },
-        "url": "https://d3v-zenpydev.zendesk.com/api/v2/webhooks/01H96FNRTA3E1P1PDVMDA2TJ2F"
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/webhooks/01HANAHAMCYE132N7AKMGD0SZ7"
       }
     },
     {
-      "recorded_at": "2023-08-31T19:03:45",
+      "recorded_at": "2023-09-18T23:38:15",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"webhook\": {\"id\": \"01H96FNRNDCEGHDNVBNBHZZHZN\"}}"
+          "string": "{\"webhook\": {\"id\": \"01HANAHAFTBVF1NA2AVFK4W763\"}}"
         },
         "headers": {
           "Accept": [
@@ -288,11 +288,11 @@
             "application/json"
           ],
           "User-Agent": [
-            "Zenpy/2.0.34"
+            "Zenpy/2.0.38"
           ]
         },
         "method": "DELETE",
-        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/webhooks/01H96FNRNDCEGHDNVBNBHZZHZN"
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/webhooks/01HANAHAFTBVF1NA2AVFK4W763"
       },
       "response": {
         "body": {
@@ -304,7 +304,7 @@
             "DYNAMIC"
           ],
           "CF-RAY": [
-            "7ff7890d28e927da-SEA"
+            "808d6be5887dc72d-SEA"
           ],
           "Connection": [
             "keep-alive"
@@ -313,19 +313,19 @@
             "application/json"
           ],
           "Date": [
-            "Thu, 31 Aug 2023 19:03:45 GMT"
+            "Mon, 18 Sep 2023 23:38:15 GMT"
           ],
           "NEL": [
             "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Report-To": [
-            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=PujDI4PDanMqQfRd2JNIUdFOeluvqz1hHm%2BoioXJy3Lzexqva3IAV1UnuzaGOufnocpPYbQpbd%2FaiPevEy34DqdaT7r1rD5GfcqQP5QCzm2mDS%2FI5jAkUfonbQilMcFxANnWbc57Ogg7APBA2FI%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=dOgE0WCrJuTdSpFId6e6sj5W9D%2BpxPaQYsonIoElELtPCKuy%2B29WVkYirYkBYtIqBiMx%2FsMcqkiZqQ7DBTp3EVLrgoLwfqM8VuuBddYfxTbJbOvA1OVZ4wt3iNIvqyDvLiCBYzR9QybxscKIFw%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Server": [
             "cloudflare"
           ],
           "X-Request-ID": [
-            "7ff7890d28e927da-SEA"
+            "808d6be5887dc72d-SEA"
           ],
           "X-Zendesk-Zorg": [
             "yes"
@@ -344,7 +344,7 @@
           "code": 204,
           "message": "No Content"
         },
-        "url": "https://d3v-zenpydev.zendesk.com/api/v2/webhooks/01H96FNRNDCEGHDNVBNBHZZHZN"
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/webhooks/01HANAHAFTBVF1NA2AVFK4W763"
       }
     }
   ],
