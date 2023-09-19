@@ -33,8 +33,12 @@ from zenpy.lib.api_objects.help_centre_objects import (
 from zenpy.lib.exception import (
     RecordNotFoundException,
 )
-
-
+from zenpy.lib import util
+from datetime import datetime
+from unittest import TestCase
+class DateTimeTest(TestCase):
+    def test_datetime_import(self):
+        util.to_unix_ts(datetime.utcnow())
 class TicketsIncrementalTest(IncrementalPaginationTestCase):
     __test__ = True
     ZenpyType = Ticket
