@@ -5,7 +5,7 @@ import re
 
 import pytz
 
-from datetime import date
+from datetime import datetime, date # noqa ignores F811
 
 from zenpy.lib.proxy import ProxyDict, ProxyList
 
