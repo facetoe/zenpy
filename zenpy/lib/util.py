@@ -118,9 +118,8 @@ def extract_id(*object_types):
 def dict_clean(items):
     result = {}
     for key, value in items:
-        if value is None:
-            value = ''
-        result[key] = value
+        if not(value is None and key == 'id'):
+            result[key] = value
     return result
 
 def json_encode_for_zendesk(obj):

@@ -47,7 +47,7 @@ from zenpy.lib.response import AccountResponseHandler, AgentResponseHandler, \
 from zenpy.lib.util import dict_clean, as_plural, extract_id, \
     is_iterable_but_not_string, json_encode_for_zendesk, \
     all_are_none, \
-    all_are_not_none, json_encode_for_printing
+    all_are_not_none
 
 try:
     from collections.abc import Iterable
@@ -2951,7 +2951,7 @@ class WebhooksApi(CRUDApi):
         payload = dict(
             webhook=json.loads(
                 json.dumps(
-                    new_webhook, default=json_encode_for_printing
+                    new_webhook, default=json_encode_for_zendesk
                 )
             )
         )

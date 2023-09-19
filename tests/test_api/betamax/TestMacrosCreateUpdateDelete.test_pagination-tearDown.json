@@ -1,11 +1,11 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2023-08-31T18:45:20",
+      "recorded_at": "2023-09-18T23:34:33",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"macros\": [{\"id\": 6097502091802}, {\"id\": 6097521440666}, {\"id\": 6097514151578}, {\"id\": 6097506700570}, {\"id\": 6097490379674}]}"
+          "string": "{\"macros\": [{\"id\": 6164073601050}, {\"id\": 6164101543450}, {\"id\": 6164110298138}, {\"id\": 6164094363546}, {\"id\": 6164094364954}]}"
         },
         "headers": {
           "Accept": [
@@ -30,11 +30,11 @@
             "_zendesk_cookie=BAhJIhl7ImRldmljZV90b2tlbnMiOnt9fQY6BkVU--0bf2100788cb010d0183feca16aaf88ccaf719ca"
           ],
           "User-Agent": [
-            "Zenpy/2.0.34"
+            "Zenpy/2.0.38"
           ]
         },
         "method": "DELETE",
-        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/macros/destroy_many.json?ids=6097502091802,6097521440666,6097514151578,6097506700570,6097490379674"
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/macros/destroy_many.json?ids=6164073601050,6164101543450,6164110298138,6164094363546,6164094364954"
       },
       "response": {
         "body": {
@@ -46,19 +46,19 @@
             "DYNAMIC"
           ],
           "CF-RAY": [
-            "7ff76e140e03ec98-SEA"
+            "808d667a2d01c54d-SEA"
           ],
           "Connection": [
             "keep-alive"
           ],
           "Date": [
-            "Thu, 31 Aug 2023 18:45:20 GMT"
+            "Mon, 18 Sep 2023 23:34:33 GMT"
           ],
           "NEL": [
             "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Report-To": [
-            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=7xt4HjXl0T0rq%2FfodEXTgkY7GhXgf3LuZFBVZ71f91Q6O0GRhT3dEpPgrraUJ50%2F8%2BCjZ8Jo5scF90pYhfJzZyM7IDr%2Byr%2FNvbbSbIYaAJXf1%2BSOAn3OnJdcLoIZSu1l9caPJVIOP00h%2BJxz%2FhU%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=%2FB9ycmEhcr%2FMVvt%2BnQkiXILEVkyFBC9BqUecrnHJNbNZmWGkjdoa53B%2F%2FK8vY%2BubIFWLclsrL9L52EzuFpgz%2Feg0Hjw5qEP0Sbwqpdh7h6%2FAPEOT3ryhODu6eTyDQYZUyF2ZjNblQB4dRE4LPQ%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Server": [
             "cloudflare"
@@ -73,10 +73,10 @@
             "700"
           ],
           "rate-limit-remaining": [
-            "628"
+            "570"
           ],
           "rate-limit-reset": [
-            "40"
+            "27"
           ],
           "strict-transport-security": [
             "max-age=31536000; includeSubDomains"
@@ -88,14 +88,14 @@
             "700"
           ],
           "x-rate-limit-remaining": [
-            "628"
+            "570"
           ],
           "x-request-id": [
-            "7ff76e140e03ec98-SEA",
-            "7ff76e140e03ec98-SEA"
+            "808d667a2d01c54d-SEA",
+            "808d667a2d01c54d-SEA"
           ],
           "x-runtime": [
-            "0.162163"
+            "0.124789"
           ],
           "x-zendesk-api-version": [
             "v2"
@@ -104,17 +104,17 @@
             "{:allowed_parameters=>{:controller=>\"macros\", :action=>\"destroy_many\", :unpermitted_keys=>[\"macros\"], :invalid_values=>[]}}"
           ],
           "x-zendesk-application-version": [
-            "v18239"
+            "v18385"
           ],
           "x-zendesk-origin-server": [
-            "classic-app-server-566774b49d-7x4qh"
+            "classic-app-server-7bd9f74fd7-l8wsp"
           ]
         },
         "status": {
           "code": 204,
           "message": "No Content"
         },
-        "url": "https://d3v-zenpydev.zendesk.com/api/v2/macros/destroy_many.json?ids=6097502091802,6097521440666,6097514151578,6097506700570,6097490379674"
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/macros/destroy_many.json?ids=6164073601050,6164101543450,6164110298138,6164094363546,6164094364954"
       }
     }
   ],

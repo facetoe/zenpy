@@ -1,11 +1,11 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2023-08-31T18:45:14",
+      "recorded_at": "2023-09-18T23:56:25",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"automations\": [{\"id\": 6097521391642}, {\"id\": 6097490322074}, {\"id\": 6097476200090}, {\"id\": 6097514099610}, {\"id\": 6097514101914}]}"
+          "string": "{\"automations\": [{\"id\": 6164158968474}, {\"id\": 6164146959386}, {\"id\": 6164130937626}, {\"id\": 6164130938266}, {\"id\": 6164116420890}]}"
         },
         "headers": {
           "Accept": [
@@ -30,11 +30,11 @@
             "_zendesk_cookie=BAhJIhl7ImRldmljZV90b2tlbnMiOnt9fQY6BkVU--0bf2100788cb010d0183feca16aaf88ccaf719ca"
           ],
           "User-Agent": [
-            "Zenpy/2.0.34"
+            "Zenpy/2.0.38"
           ]
         },
         "method": "DELETE",
-        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/automations/destroy_many.json?ids=6097521391642,6097490322074,6097476200090,6097514099610,6097514101914"
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/automations/destroy_many.json?ids=6164158968474,6164146959386,6164130937626,6164130938266,6164116420890"
       },
       "response": {
         "body": {
@@ -46,19 +46,19 @@
             "DYNAMIC"
           ],
           "CF-RAY": [
-            "7ff76debdd4feb4b-SEA"
+            "808d867fae29c658-SEA"
           ],
           "Connection": [
             "keep-alive"
           ],
           "Date": [
-            "Thu, 31 Aug 2023 18:45:14 GMT"
+            "Mon, 18 Sep 2023 23:56:25 GMT"
           ],
           "NEL": [
             "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Report-To": [
-            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=bJyd3wKC3LreOEtBAbcV6ZjbhlBE8i7tvqXhipWvlxLkLhc%2BwF5JIVKM6nvDY%2BEPI34P3F80AIq0kt8JJbuFhZwOHXxE%2FfAO%2F5PNXxUI15ONUBf%2FrIBxCvf0aqkSQuedZeHVQviYIg2JWTeb77g%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=M8uBsiY5uU5W9bfvkT59GGj2Ail3d3C9ynqxL0z60X1ON9WePQUjw14X4SSo4gaPaYjrbZU5Uy%2BOpJU9bBwenBD4FB%2Fdl8BsRs4AdqWdeBmMCqE2UcU5KS%2BE65w69qp5hyeQ8wscLSeA0clybw%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Server": [
             "cloudflare"
@@ -73,10 +73,10 @@
             "700"
           ],
           "rate-limit-remaining": [
-            "654"
+            "684"
           ],
           "rate-limit-reset": [
-            "46"
+            "35"
           ],
           "strict-transport-security": [
             "max-age=31536000; includeSubDomains"
@@ -88,14 +88,14 @@
             "700"
           ],
           "x-rate-limit-remaining": [
-            "654"
+            "684"
           ],
           "x-request-id": [
-            "7ff76debdd4feb4b-SEA",
-            "7ff76debdd4feb4b-SEA"
+            "808d867fae29c658-SEA",
+            "808d867fae29c658-SEA"
           ],
           "x-runtime": [
-            "0.192514"
+            "0.129362"
           ],
           "x-zendesk-api-version": [
             "v2"
@@ -104,17 +104,17 @@
             "{:allowed_parameters=>{:controller=>\"automations\", :action=>\"destroy_many\", :unpermitted_keys=>[\"automations\"], :invalid_values=>[]}}"
           ],
           "x-zendesk-application-version": [
-            "v18239"
+            "v18385"
           ],
           "x-zendesk-origin-server": [
-            "classic-app-server-566774b49d-4nzbs"
+            "classic-app-server-7bd9f74fd7-799h8"
           ]
         },
         "status": {
           "code": 204,
           "message": "No Content"
         },
-        "url": "https://d3v-zenpydev.zendesk.com/api/v2/automations/destroy_many.json?ids=6097521391642,6097490322074,6097476200090,6097514099610,6097514101914"
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/automations/destroy_many.json?ids=6164158968474,6164146959386,6164130937626,6164130938266,6164116420890"
       }
     }
   ],

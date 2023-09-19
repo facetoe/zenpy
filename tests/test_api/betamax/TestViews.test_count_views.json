@@ -1,11 +1,11 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2023-08-31T18:48:21",
+      "recorded_at": "2023-09-18T23:37:39",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"view\": {\"id\": null, \"title\": \"testViewNone\", \"all\": [{\"field\": \"status\", \"operator\": \"less_than\", \"value\": \"solved\"}]}}"
+          "string": "{\"view\": {\"title\": \"testViewNone\", \"all\": [{\"field\": \"status\", \"operator\": \"less_than\", \"value\": \"solved\"}]}}"
         },
         "headers": {
           "Accept": [
@@ -21,13 +21,13 @@
             "keep-alive"
           ],
           "Content-Length": [
-            "121"
+            "109"
           ],
           "Content-Type": [
             "application/json"
           ],
           "User-Agent": [
-            "Zenpy/2.0.34"
+            "Zenpy/2.0.38"
           ]
         },
         "method": "POST",
@@ -36,32 +36,32 @@
       "response": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"view\":{\"url\":\"https://d3v-zenpydev.zendesk.com/api/v2/views/6097492309018.json\",\"id\":6097492309018,\"title\":\"testViewNone\",\"active\":true,\"updated_at\":\"2023-08-31T18:48:21Z\",\"created_at\":\"2023-08-31T18:48:21Z\",\"default\":false,\"position\":10000,\"description\":null,\"execution\":{\"group_by\":null,\"group_order\":\"desc\",\"sort_by\":null,\"sort_order\":\"desc\",\"group\":null,\"sort\":null,\"columns\":[{\"id\":\"subject\",\"title\":\"Subject\",\"filterable\":false,\"sortable\":false},{\"id\":\"requester\",\"title\":\"Requester\",\"filterable\":true,\"sortable\":true},{\"id\":\"created\",\"title\":\"Requested\",\"filterable\":false,\"sortable\":true},{\"id\":\"updated\",\"title\":\"Updated\",\"filterable\":true,\"sortable\":true},{\"id\":\"group\",\"title\":\"Group\",\"filterable\":true,\"sortable\":true},{\"id\":\"assignee\",\"title\":\"Assignee\",\"filterable\":true,\"sortable\":true}],\"fields\":[{\"id\":\"subject\",\"title\":\"Subject\",\"filterable\":false,\"sortable\":false},{\"id\":\"requester\",\"title\":\"Requester\",\"filterable\":true,\"sortable\":true},{\"id\":\"created\",\"title\":\"Requested\",\"filterable\":false,\"sortable\":true},{\"id\":\"updated\",\"title\":\"Updated\",\"filterable\":true,\"sortable\":true},{\"id\":\"group\",\"title\":\"Group\",\"filterable\":true,\"sortable\":true},{\"id\":\"assignee\",\"title\":\"Assignee\",\"filterable\":true,\"sortable\":true}],\"custom_fields\":[]},\"conditions\":{\"all\":[{\"field\":\"status\",\"operator\":\"less_than\",\"value\":\"solved\"}],\"any\":[]},\"restriction\":null,\"raw_title\":\"testViewNone\"}}"
+          "string": "{\"view\":{\"url\":\"https://d3v-zenpydev.zendesk.com/api/v2/views/6164125515034.json\",\"id\":6164125515034,\"title\":\"testViewNone\",\"active\":true,\"updated_at\":\"2023-09-18T23:37:39Z\",\"created_at\":\"2023-09-18T23:37:39Z\",\"default\":false,\"position\":10000,\"description\":null,\"execution\":{\"group_by\":null,\"group_order\":\"desc\",\"sort_by\":null,\"sort_order\":\"desc\",\"group\":null,\"sort\":null,\"columns\":[{\"id\":\"subject\",\"title\":\"Subject\",\"filterable\":false,\"sortable\":false},{\"id\":\"requester\",\"title\":\"Requester\",\"filterable\":true,\"sortable\":true},{\"id\":\"created\",\"title\":\"Requested\",\"filterable\":false,\"sortable\":true},{\"id\":\"updated\",\"title\":\"Updated\",\"filterable\":true,\"sortable\":true},{\"id\":\"group\",\"title\":\"Group\",\"filterable\":true,\"sortable\":true},{\"id\":\"assignee\",\"title\":\"Assignee\",\"filterable\":true,\"sortable\":true}],\"fields\":[{\"id\":\"subject\",\"title\":\"Subject\",\"filterable\":false,\"sortable\":false},{\"id\":\"requester\",\"title\":\"Requester\",\"filterable\":true,\"sortable\":true},{\"id\":\"created\",\"title\":\"Requested\",\"filterable\":false,\"sortable\":true},{\"id\":\"updated\",\"title\":\"Updated\",\"filterable\":true,\"sortable\":true},{\"id\":\"group\",\"title\":\"Group\",\"filterable\":true,\"sortable\":true},{\"id\":\"assignee\",\"title\":\"Assignee\",\"filterable\":true,\"sortable\":true}],\"custom_fields\":[]},\"conditions\":{\"all\":[{\"field\":\"status\",\"operator\":\"less_than\",\"value\":\"solved\"}],\"any\":[]},\"restriction\":null,\"raw_title\":\"testViewNone\"}}"
         },
         "headers": {
           "CF-Cache-Status": [
             "DYNAMIC"
           ],
           "CF-RAY": [
-            "7ff7727ffcc2c38d-SEA"
+            "808d6b057d64ec3c-SEA"
           ],
           "Connection": [
             "keep-alive"
           ],
           "Content-Length": [
-            "1399"
+            "1398"
           ],
           "Content-Type": [
             "application/json; charset=utf-8"
           ],
           "Date": [
-            "Thu, 31 Aug 2023 18:48:21 GMT"
+            "Mon, 18 Sep 2023 23:37:39 GMT"
           ],
           "NEL": [
             "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Report-To": [
-            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=ZW0fWS4BycBhO63TsywRey8Ze0G1%2FuAgJcVd0tIQv5s79gfTqsfSA4VNwNAUPi7IeTeqXZlwI7L%2FDUt3S%2FqIzxXtcsR12cM%2F1qVKzg8a4UFztzq4c2YPwLGikcm4nKgX76RputNgdKfRZLFiNfc%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=6pk8YQv%2BwuCgrJE9ADZJy5H3zwgE7iv8InZsT55CsZSgto9UUUeVPOta5zSRN%2B%2BdhueJLwfoqyszlye%2FIz7Nd2KzsUnsLuZOl2qTH5Y3Lhg1fNXiVohOAk51DdGBSOct5lV28QLljOVNwxixHw%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Server": [
             "cloudflare"
@@ -73,22 +73,22 @@
             "max-age=0, private, must-revalidate"
           ],
           "etag": [
-            "W/\"412aaee87206b7b360489ff10ee998c5\""
+            "W/\"a858b05140154243154b6afceceb4208\""
           ],
           "location": [
-            "https://d3v-zenpydev.zendesk.com/api/v2/views/6097492309018.json"
+            "https://d3v-zenpydev.zendesk.com/api/v2/views/6164125515034.json"
           ],
           "rate-limit": [
             "700"
           ],
           "rate-limit-remaining": [
-            "658"
+            "586"
           ],
           "rate-limit-reset": [
-            "39"
+            "21"
           ],
           "set-cookie": [
-            "_zendesk_cookie=BAhJIhl7ImRldmljZV90b2tlbnMiOnt9fQY6BkVU--0bf2100788cb010d0183feca16aaf88ccaf719ca; path=/; expires=Sat, 31 Aug 2024 18:43:38 GMT; secure; HttpOnly; SameSite=None"
+            "_zendesk_cookie=BAhJIhl7ImRldmljZV90b2tlbnMiOnt9fQY6BkVU--0bf2100788cb010d0183feca16aaf88ccaf719ca; path=/; expires=Wed, 18 Sep 2024 14:25:32 GMT; secure; HttpOnly; SameSite=None"
           ],
           "strict-transport-security": [
             "max-age=31536000; includeSubDomains"
@@ -100,26 +100,23 @@
             "700"
           ],
           "x-rate-limit-remaining": [
-            "658"
+            "586"
           ],
           "x-request-id": [
-            "7ff7727ffcc2c38d-SEA",
-            "7ff7727ffcc2c38d-SEA"
+            "808d6b057d64ec3c-SEA",
+            "808d6b057d64ec3c-SEA"
           ],
           "x-runtime": [
-            "0.118707"
+            "0.093221"
           ],
           "x-zendesk-api-version": [
             "v2"
           ],
-          "x-zendesk-api-warn": [
-            "{:allowed_parameters=>{:controller=>\"views\", :action=>\"create\", :unpermitted_keys=>[\"view.id\"], :invalid_values=>[]}}"
-          ],
           "x-zendesk-application-version": [
-            "v18239"
+            "v18385"
           ],
           "x-zendesk-origin-server": [
-            "classic-app-server-566774b49d-8j4sq"
+            "classic-app-server-7bd9f74fd7-8kkvk"
           ]
         },
         "status": {
@@ -130,7 +127,7 @@
       }
     },
     {
-      "recorded_at": "2023-08-31T18:48:22",
+      "recorded_at": "2023-09-18T23:37:39",
       "request": {
         "body": {
           "encoding": "utf-8",
@@ -153,7 +150,7 @@
             "_zendesk_cookie=BAhJIhl7ImRldmljZV90b2tlbnMiOnt9fQY6BkVU--0bf2100788cb010d0183feca16aaf88ccaf719ca"
           ],
           "User-Agent": [
-            "Zenpy/2.0.34"
+            "Zenpy/2.0.38"
           ]
         },
         "method": "GET",
@@ -161,7 +158,7 @@
       },
       "response": {
         "body": {
-          "base64_string": "H4sIAAAAAAAAA6tWSs4vzStRsqpWKkvMKU1VsrLUUSpKTStKLc5ITYlPBMooGRkYGesaWOgaG4YYWliZWFgZGWkbGFgZGCjV1gIAQJprDEAAAAA=",
+          "base64_string": "H4sIAAAAAAAAA6tWSs4vzStRsqpWKkvMKU1VsrLUUSpKTStKLc5ITYlPBMooGRkYGesaWOoaWoQYGVsZm1sZW2obGFgZGCjV1gIAKj5cfUAAAAA=",
           "encoding": "utf-8",
           "string": ""
         },
@@ -170,7 +167,7 @@
             "DYNAMIC"
           ],
           "CF-RAY": [
-            "7ff772817e30c38d-SEA"
+            "808d6b06ded8ec3c-SEA"
           ],
           "Connection": [
             "keep-alive"
@@ -182,13 +179,13 @@
             "application/json; charset=utf-8"
           ],
           "Date": [
-            "Thu, 31 Aug 2023 18:48:22 GMT"
+            "Mon, 18 Sep 2023 23:37:39 GMT"
           ],
           "NEL": [
             "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Report-To": [
-            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=YIBgMMG5NVf%2FI2mURsb1I3uDVJjphcRIqGZUtPm5XHH6zeEWfT%2BM2RgWqK%2BL1Pq%2BiUYyAEhKbanO4rxC57HYkEiQ2gRFbBHX6asnZfwpsrtrOW8PHwnSUU4898qdxNGgSKItXdUkTFQsywCoawU%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=qz2NkJk5VLVdK6WTOWUw14fvq%2FlwBxkTamlahDBkoVvF1U7IZiwSQbTdWAKQfb%2FeoJX3R3W6%2FVFxIa3kPB3EeOF%2BlePYZDaCL767M0P9InC8XiKrEbFU%2BsZbjXv8%2BUJRUZCixpr5RlLj5Pv1GQ%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
           ],
           "Server": [
             "cloudflare"
@@ -203,16 +200,16 @@
             "max-age=0, private, must-revalidate"
           ],
           "etag": [
-            "W/\"c942f6ab36de83e214f3fb3780005b9d\""
+            "W/\"2a395007d515941665444909a15dd82f\""
           ],
           "rate-limit": [
             "700"
           ],
           "rate-limit-remaining": [
-            "657"
+            "585"
           ],
           "rate-limit-reset": [
-            "38"
+            "21"
           ],
           "strict-transport-security": [
             "max-age=31536000; includeSubDomains"
@@ -224,23 +221,23 @@
             "700"
           ],
           "x-rate-limit-remaining": [
-            "657"
+            "585"
           ],
           "x-request-id": [
-            "7ff772817e30c38d-SEA",
-            "7ff772817e30c38d-SEA"
+            "808d6b06ded8ec3c-SEA",
+            "808d6b06ded8ec3c-SEA"
           ],
           "x-runtime": [
-            "0.067469"
+            "0.078586"
           ],
           "x-zendesk-api-version": [
             "v2"
           ],
           "x-zendesk-application-version": [
-            "v18239"
+            "v18385"
           ],
           "x-zendesk-origin-server": [
-            "classic-app-server-566774b49d-sghl5"
+            "classic-app-server-7bd9f74fd7-58t7s"
           ]
         },
         "status": {
