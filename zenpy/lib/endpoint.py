@@ -709,6 +709,8 @@ class EndpointFactory(object):
     users.deleted = PrimaryEndpoint("deleted_users")
     users.groups = SecondaryEndpoint('users/%(id)s/groups.json')
     users.incremental = IncrementalEndpoint('incremental/users.json')
+    users.incremental.cursor = PrimaryEndpoint(
+        'incremental/users/cursor.json')
     users.incremental.cursor_start = IncrementalEndpoint(
         'incremental/users/cursor.json')
     users.me = PrimaryEndpoint('users/me')
