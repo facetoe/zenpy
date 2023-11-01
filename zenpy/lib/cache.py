@@ -126,7 +126,8 @@ class ZenpyCacheManager:
             'sharing_agreement': ZenpyCache('TTLCache',
                                             maxsize=10000,
                                             ttl=6000),
-            'identity': ZenpyCache('LRUCache', maxsize=10000)
+            'identity': ZenpyCache('LRUCache', maxsize=10000),
+            'custom_status': ZenpyCache('LRUCache', maxsize=1000)
         }
 
     def add(self, zenpy_object):

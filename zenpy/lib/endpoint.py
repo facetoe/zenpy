@@ -574,6 +574,7 @@ class EndpointFactory(object):
     chats.stream = ChatSearchEndpoint('stream/chats')
     chats.incremental = ChatIncrementalEndpoint('incremental/chats')
     custom_agent_roles = PrimaryEndpoint('custom_roles')
+    custom_statuses = PrimaryEndpoint('custom_statuses')
     dynamic_contents = PrimaryEndpoint('dynamic_content/items')
     dynamic_contents.variants = SecondaryEndpoint(
         'dynamic_content/items/%(id)s/variants.json')

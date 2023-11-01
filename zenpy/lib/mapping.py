@@ -16,6 +16,7 @@ from zenpy.lib.api_objects import (
     CreateEvent,
     CustomAgentRole,
     CustomFieldOption,
+    CustomStatus,
     Definitions,
     ErrorEvent,
     Export,
@@ -229,7 +230,8 @@ class ZendeskObjectMapping(object):
         'invocation_attempt': InvocationAttempt,
         'signing_secret': WebhookSecret,
         'subscription' : Subscription,
-        'vote': Vote
+        'vote': Vote,
+        'custom_status': CustomStatus
     }
 
     skip_attrs = []
