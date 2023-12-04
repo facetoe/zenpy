@@ -2995,14 +2995,14 @@ class WebhooksApi(CRUDApi):
         return self._post(url, payload=None)
 
     @extract_id(Webhook)
-    def invocations(self, webhook):
+    def invocations(self, webhook, **kwargs):
         """
         Get a webhook invocations
 
         :param webhook: a webhook to get invocations
         """
 
-        url = self._build_url(endpoint=self.endpoint.invocations(id=webhook))
+        url = self._build_url(endpoint=self.endpoint.invocations(id=webhook, **kwargs))
         return self._get(url)
 
     def invocation_attempts(self, webhook, invocation):
