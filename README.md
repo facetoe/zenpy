@@ -419,6 +419,23 @@ response = zenpy_client.webhooks.test(
                     )
                 )
 ```
+
+###### Getting a webhook invocations
+
+[API documentation](https://developer.zendesk.com/api-reference/webhooks/webhooks-api/webhooks/#list-webhook-invocations)
+
+```python
+wh_filters = {
+    'filter[from_ts]': '2023-12-04T12:00:00Z',
+    'filter[to_ts]': '2023-12-04T16:00:00Z',
+    'filter[status]': 'success',
+}
+
+for invocations in zenpy.webhooks.invocations(webhook_id, **wh_filters):
+    pass
+
+```
+
 ##### Pagination
 
 Please refer to the [official documentation](https://developer.zendesk.com/api-reference/introduction/pagination/) to get details. Also check this article: [Which endpoints are supported?](https://support.zendesk.com/hc/en-us/articles/4408846180634#h_01FF626TG8VD0W4JP9DBBSXESK)
