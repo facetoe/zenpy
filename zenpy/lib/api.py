@@ -1108,7 +1108,7 @@ class UserApi(IncrementalCursorApi, CRUDExternalApi, TaggableApi):
         :param include: list of objects to sideload. `Side-loading API Docs
             <https://developer.zendesk.com/rest_api/docs/core/side_loading#abilities>`__.
         """
-        return self._query_zendesk(self.endpoint.me, 'user', include=include)
+        return self._query_zendesk(self.endpoint.me, 'user', include=include, cursor_pagination=False)
 
     @extract_id(User)
     def merge(self, source_user, dest_user):
