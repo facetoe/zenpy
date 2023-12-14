@@ -414,3 +414,15 @@ class TopicTest(PaginationTestCase):
     ZenpyType = Topic
     api_name = "help_center.topics"
     object_kwargs = {}
+
+class TestUserMe(ZenpyApiTestCase):
+    __test__ = True
+    def test_users_me(self):
+        """ Test restoring tickets """
+        cassette_name = "{}".format(self.generate_cassette_name())
+        with self.recorder.use_cassette(
+                cassette_name=cassette_name, serialize_with="prettyjson"
+        ):
+            me = self.zenpy_client.users.me()
+            self.assertNotEqual(me, None, "me is valid")
+            self.assertNotEqual(me.email, "", "email is valid in me")
