@@ -1180,6 +1180,8 @@ class UserApi(IncrementalCursorApi, CRUDExternalApi, TaggableApi):
 
         :return:
         """
+        if 'cursor_pagination' not in kwargs:
+            kwargs['cursor_pagination'] = True
         return self._get(self._build_url(self.endpoint.deleted(**kwargs)))
 
     @extract_id(User)
