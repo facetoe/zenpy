@@ -107,6 +107,7 @@ class BaseApi(object):
                          'audits',
                          'automations',
                          'deleted_tickets',
+                         'dynamic_content/items',
                          'group_memberships',
                          'groups',
                          'macros',
