@@ -1,0 +1,132 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2023-12-24T07:26:56",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"custom_status\": {\"agent_label\": \"agent label\", \"end_user_label\": \"end user label\", \"id\": 9223372036854775807, \"status_category\": \"open\"}}"
+        },
+        "headers": {
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic <ZENPY-CREDENTIALS>"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "139"
+          ],
+          "Content-Type": [
+            "application/json"
+          ],
+          "Cookie": [
+            "_zendesk_cookie=BAhJIhl7ImRldmljZV90b2tlbnMiOnt9fQY6BkVU--0bf2100788cb010d0183feca16aaf88ccaf719ca; __cfruid=7bf7d9cea890226ed7f09805b008c8d69df3d432-1703402695; _cfuvid=AnbbIlHOL_DNYVIbM7e2.pxuDnwiHIZ38C1OqalKuH4-1703402695309-0-604800000"
+          ],
+          "User-Agent": [
+            "Zenpy/2.0.41"
+          ]
+        },
+        "method": "PUT",
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/custom_statuses/9223372036854775807.json"
+      },
+      "response": {
+        "body": {
+          "base64_string": "H4sIAAAAAAAAA6pWSi0qyi9SslIKSk3OL0rxyy9xyy/NS1HSUUpJLU4uyiwoyczPU7JS8ssvUUgDy9QCAAAA//8DAHKmUTI0AAAA",
+          "encoding": "utf-8",
+          "string": ""
+        },
+        "headers": {
+          "CF-Cache-Status": [
+            "DYNAMIC"
+          ],
+          "CF-RAY": [
+            "83a71e726d3967ac-SJC"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Encoding": [
+            "gzip"
+          ],
+          "Content-Type": [
+            "application/json; charset=utf-8"
+          ],
+          "Date": [
+            "Sun, 24 Dec 2023 07:26:56 GMT"
+          ],
+          "NEL": [
+            "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Report-To": [
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=YSPiW4aHb9FXM7sl6aqrtrtLfJnwzF2QEEIaQ8vNhND3kKNubfPneqs5nl12nHHo%2FOVjbr%2FsYJMOfTCx%2BtylhazN75QJSGrtQLGT%2BzKLDz6sUpaL7xxhZ%2F658tobEy4Y9apj25FN8FWSQmlRvg%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Server": [
+            "cloudflare"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "X-Zendesk-Zorg": [
+            "yes"
+          ],
+          "cache-control": [
+            "no-cache"
+          ],
+          "rate-limit": [
+            "700"
+          ],
+          "rate-limit-remaining": [
+            "696"
+          ],
+          "rate-limit-reset": [
+            "4"
+          ],
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "x-frame-options": [
+            "SAMEORIGIN"
+          ],
+          "x-rate-limit": [
+            "700"
+          ],
+          "x-rate-limit-remaining": [
+            "696"
+          ],
+          "x-request-id": [
+            "83a71e726d3967ac-SJC",
+            "83a71e726d3967ac-SJC"
+          ],
+          "x-runtime": [
+            "0.054341"
+          ],
+          "x-zendesk-api-version": [
+            "v2"
+          ],
+          "x-zendesk-api-warn": [
+            "{:allowed_parameters=>{:controller=>\"custom_statuses\", :action=>\"update\", :unpermitted_keys=>[\"custom_status.id\", \"custom_status.status_category\"], :invalid_values=>[]}}"
+          ],
+          "x-zendesk-application-version": [
+            "v19488"
+          ],
+          "x-zendesk-origin-server": [
+            "classic-app-server-69bcc7ff5-d5gng"
+          ]
+        },
+        "status": {
+          "code": 404,
+          "message": "Not Found"
+        },
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/custom_statuses/9223372036854775807.json"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.8.1"
+}
