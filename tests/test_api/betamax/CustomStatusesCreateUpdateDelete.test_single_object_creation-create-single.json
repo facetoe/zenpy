@@ -1,0 +1,133 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2023-12-24T07:24:55",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"custom_status\": {\"agent_label\": \"agent\", \"end_user_label\": \"end\", \"status_category\": \"open\"}}"
+        },
+        "headers": {
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic <ZENPY-CREDENTIALS>"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "95"
+          ],
+          "Content-Type": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "Zenpy/2.0.41"
+          ]
+        },
+        "method": "POST",
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/custom_statuses.json"
+      },
+      "response": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"custom_status\":{\"url\":\"https://d3v-zenpydev.zendesk.com/api/v2/custom_statuses/22644162812557.json\",\"id\":22644162812557,\"status_category\":\"open\",\"agent_label\":\"agent\",\"raw_agent_label\":\"agent\",\"end_user_label\":\"end\",\"raw_end_user_label\":\"end\",\"description\":null,\"raw_description\":null,\"end_user_description\":null,\"raw_end_user_description\":null,\"active\":true,\"default\":false,\"created_at\":\"2023-12-24T07:24:55Z\",\"updated_at\":\"2023-12-24T07:24:55Z\"}}"
+        },
+        "headers": {
+          "CF-Cache-Status": [
+            "DYNAMIC"
+          ],
+          "CF-RAY": [
+            "83a71b7a2ce91739-SJC"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "487"
+          ],
+          "Content-Type": [
+            "application/json; charset=utf-8"
+          ],
+          "Date": [
+            "Sun, 24 Dec 2023 07:24:55 GMT"
+          ],
+          "NEL": [
+            "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Report-To": [
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=qI0G5OrJmF7akv7%2Fwh2m4gONA0Ip694%2FY1%2BEWqMS%2FixMvvJm72%2FXveyb%2FK5H9L%2FgYzpbG%2BrKeaIoT6PUA8A5K3excSGo3WSJKcYStTVgE1vAz7nDSqs%2FWNL92gwGKaUftSj9zZck3KGLRrK8JA%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Server": [
+            "cloudflare"
+          ],
+          "X-Zendesk-Zorg": [
+            "yes"
+          ],
+          "cache-control": [
+            "max-age=0, private, must-revalidate"
+          ],
+          "etag": [
+            "W/\"8043518af671b2a4c8d79164a8c4dc80\""
+          ],
+          "location": [
+            "https://d3v-zenpydev.zendesk.com/api/v2/custom_statuses/22644162812557.json"
+          ],
+          "rate-limit": [
+            "700"
+          ],
+          "rate-limit-remaining": [
+            "699"
+          ],
+          "rate-limit-reset": [
+            "5"
+          ],
+          "set-cookie": [
+            "_zendesk_cookie=BAhJIhl7ImRldmljZV90b2tlbnMiOnt9fQY6BkVU--0bf2100788cb010d0183feca16aaf88ccaf719ca; path=/; expires=Sun, 22 Dec 2024 07:06:10 GMT; secure; HttpOnly; SameSite=None",
+            "__cfruid=7bf7d9cea890226ed7f09805b008c8d69df3d432-1703402695; path=/; domain=.d3v-zenpydev.zendesk.com; HttpOnly; Secure; SameSite=None",
+            "_cfuvid=AnbbIlHOL_DNYVIbM7e2.pxuDnwiHIZ38C1OqalKuH4-1703402695309-0-604800000; path=/; domain=.d3v-zenpydev.zendesk.com; HttpOnly; Secure; SameSite=None"
+          ],
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "x-frame-options": [
+            "SAMEORIGIN"
+          ],
+          "x-rate-limit": [
+            "700"
+          ],
+          "x-rate-limit-remaining": [
+            "699"
+          ],
+          "x-request-id": [
+            "83a71b7a2ce91739-SJC",
+            "83a71b7a2ce91739-SJC"
+          ],
+          "x-runtime": [
+            "0.165526"
+          ],
+          "x-zendesk-api-version": [
+            "v2"
+          ],
+          "x-zendesk-application-version": [
+            "v19488"
+          ],
+          "x-zendesk-origin-server": [
+            "classic-app-server-69bcc7ff5-vdxfw"
+          ]
+        },
+        "status": {
+          "code": 201,
+          "message": "Created"
+        },
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/custom_statuses.json"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.8.1"
+}
