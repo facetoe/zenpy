@@ -17,11 +17,13 @@ from zenpy.lib.api_objects import (User, Macro, Identity, View, Organization,
 from zenpy.lib.api_objects.help_centre_objects import (
     Section, Article, Comment, ArticleAttachment, Label, Category, Translation,
     Topic, Post, Subscription)
+from zenpy.lib.api_objects.talk_objects import (
+    CallPe, VoiceComment)
 from zenpy.lib.exception import RatelimitBudgetExceeded, APIException, \
     RecordNotFoundException, SearchResponseLimitExceeded
 from zenpy.lib.mapping import ZendeskObjectMapping, \
     ChatObjectMapping, HelpCentreObjectMapping, \
-    TalkObjectMapping
+    TalkObjectMapping, CallPEObjectMapping
 from zenpy.lib.request import AccessPolicyRequest, AccountRequest, AgentRequest, \
     CRUDRequest, ChatApiRequest, HelpCentreRequest, \
     HelpdeskAttachmentRequest, HelpdeskCommentRequest, \
@@ -42,7 +44,8 @@ from zenpy.lib.response import AccountResponseHandler, AgentResponseHandler, \
     SlaPolicyResponseHandler, TriggerResponseHandler, \
     VisitorResponseHandler, WebhookInvocationAttemptsResponseHandler, \
     WebhookInvocationsResponseHandler, \
-    WebhooksResponseHandler, ZISIntegrationResponseHandler
+    WebhooksResponseHandler, ZISIntegrationResponseHandler, \
+    VoiceCommentResponseHandler
 
 from zenpy.lib.util import dict_clean, as_plural, extract_id, \
     is_iterable_but_not_string, json_encode_for_zendesk, \
@@ -93,6 +96,7 @@ class BaseApi(object):
             WebhookInvocationsResponseHandler,
             WebhookInvocationAttemptsResponseHandler,
             WebhooksResponseHandler,
+            VoiceCommentResponseHandler,
             GenericZendeskResponseHandler,
             HTTPOKResponseHandler,
         )
@@ -2830,6 +2834,42 @@ class TalkPEApi(Api):
         }
         return self._post(url, payload=payload)
 
+
+class CallsPEApi(Api):
+    def __init__(self, config):
+        super(CallsPEApi, self).__init__(config,
+                                          object_type='call',
+                                          endpoint=EndpointFactory('calls'))
+
+        self._object_mapping = CallPEObjectMapping(self)
+
+    def __call__(self, *args, **kwargs):
+        if 'id' not in kwargs:
+            raise ZenpyException("Get a call endpoint requires an id")
+        url = self._build_url(self.endpoint(id=kwargs["id"]))
+        return self._get(url)
+
+    def create(self, call, comment=None):
+
+        payload = {"call": self._serialize(call)}
+        if comment:
+            payload["comment"] = self._serialize(comment)
+
+        url = self._build_url(self.endpoint.create())
+        return self._post(url, payload)
+
+    def update(self, call):
+        payload = {"call": self._serialize(call)}
+        url = self._build_url(self.endpoint.update(id=call.id))
+        return self._patch(url, payload)
+
+    @extract_id(CallPe)
+    def comment(self, call, comment):
+
+        payload = self._serialize(comment)
+
+        url = self._build_url(self.endpoint.comment(id=call))
+        return self._post(url, payload)
 
 class CustomAgentRolesApi(CRUDApi):
     pass
