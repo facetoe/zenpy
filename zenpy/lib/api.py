@@ -18,7 +18,7 @@ from zenpy.lib.api_objects.help_centre_objects import (
     Section, Article, Comment, ArticleAttachment, Label, Category, Translation,
     Topic, Post, Subscription)
 from zenpy.lib.api_objects.talk_objects import (
-    CallPe, VoiceComment)
+    CallPe)
 from zenpy.lib.exception import RatelimitBudgetExceeded, APIException, \
     RecordNotFoundException, SearchResponseLimitExceeded
 from zenpy.lib.mapping import ZendeskObjectMapping, \
