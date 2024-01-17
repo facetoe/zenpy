@@ -782,6 +782,11 @@ class EndpointFactory(object):
     talk_pe.create_ticket = PrimaryEndpoint(
         'channels/voice/tickets.json')
 
+    calls = SecondaryEndpoint('calls/%(id)s')
+    calls.create = PrimaryEndpoint('calls')
+    calls.update = SecondaryEndpoint('calls/%(id)s')
+    calls.comment = SecondaryEndpoint('calls/%(id)s/comments.json')
+
     help_centre = Dummy()
     help_centre.articles = PrimaryEndpoint('help_center/articles')
     help_centre.articles.create = SecondaryEndpoint(

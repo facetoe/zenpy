@@ -1,0 +1,247 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2024-01-17T18:31:18",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"call\": {\"app_id\": 1003048, \"call_ended_at\": \"2022-01-27T15:32:40+01\", \"call_started_at\": \"2022-01-27T15:31:40+01\", \"direction\": \"inbound\", \"from_line\": \"+183808333456\", \"from_line_nickname\": \"Sales\", \"to_line\": \"+149488484873\", \"to_line_nickname\": \"Technical Support\"}}"
+        },
+        "headers": {
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic <ZENPY-CREDENTIALS>"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "271"
+          ],
+          "Content-Type": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "Zenpy/2.0.45"
+          ]
+        },
+        "method": "POST",
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/calls.json"
+      },
+      "response": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"call\":{\"id\":16444799095826,\"account_id\":850916,\"ticket_id\":null,\"end_user_id\":null,\"organization_id\":null,\"brand_id\":null,\"app_id\":1003048,\"agent_id\":null,\"from_line\":\"+183808333456\",\"from_line_nickname\":\"Sales\",\"to_line\":\"+149488484873\",\"to_line_nickname\":\"Technical Support\",\"call_started_at\":\"2022-01-27T14:31:40Z\",\"call_ended_at\":\"2022-01-27T14:32:40Z\",\"direction\":\"inbound\",\"duration\":null,\"dnis\":null,\"phone_name\":null,\"call_type\":null,\"end_user_location\":null,\"callback\":null,\"callback_source\":null,\"callback_number\":null,\"wait_time\":null,\"time_to_answer\":null,\"queue_time\":null,\"exceeded_queue_time\":null,\"queue_name\":null,\"ivr_time_spent\":null,\"ivr_hops\":null,\"ivr_action\":null,\"ivr_routed_to\":null,\"ivr_destination_group_name\":null,\"talk_time\":null,\"hold_time\":null,\"consultation_time\":null,\"wrap_up_time\":null,\"completion_status\":null,\"call_abandoned_position\":null,\"customer_requested_voicemail\":null,\"voicemail\":null,\"outside_business_hours\":null,\"overflowed\":null,\"overflowed_to\":null,\"call_disposition\":null,\"recording_url\":null,\"recording_time\":null,\"not_recording_time\":null,\"call_recording_consent_action\":null,\"recording_control_interactions\":null,\"created_at\":\"2024-01-17T18:31:18Z\",\"updated_at\":\"2024-01-17T18:31:18Z\",\"transcript\":null,\"external_id\":null}}"
+        },
+        "headers": {
+          "CF-Cache-Status": [
+            "DYNAMIC"
+          ],
+          "CF-RAY": [
+            "8470aca30c8b5c3e-FRA"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Type": [
+            "application/json; charset=utf-8"
+          ],
+          "Date": [
+            "Wed, 17 Jan 2024 18:31:18 GMT"
+          ],
+          "NEL": [
+            "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Report-To": [
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=IqYGSSYdXopv3puOt%2FQgbimck%2B7bEiGutNrQnp%2FXjVcmnF%2FnAR8RCL8Ue%2B7FLY%2B3AzlqO7VBgDW8dfCFwiREM3iDfiXwrl1wnhbkl1C5LEReZ1gvGoFOGHSq%2BpoIA69cPS9k2mZNTA%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Server": [
+            "cloudflare"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "X-Zendesk-Zorg": [
+            "yes"
+          ],
+          "cache-control": [
+            "max-age=0, private, must-revalidate"
+          ],
+          "content-security-policy-report-only": [
+            "base-uri 'self'; script-src 'self' https: *.zende.sk *.zendesk.com 'unsafe-eval' 'report-sample' *.googletagmanager.com tagmanager.google.com *.zdassets.com static.zdassets.com 'nonce-ELSGWSpM3JQKv7NgqM4U1A=='; img-src 'self' https: *.zende.sk *.zendesk.com data: blob: *.zdusercontent.com *.apps.zdusercontent.com *.google-analytics.com *.googletagmanager.com ssl.gstatic.com *.gstatic.com *.zdassets.com *.g.doubleclick.net; font-src 'self' https: *.zende.sk *.zendesk.com data: fonts.gstatic.com *.typekit.net *.googleusercontent.com cdn.jsdelivr.net; media-src 'self' https: *.zende.sk *.zendesk.com blob: data:; worker-src 'self' https: *.zende.sk *.zendesk.com blob:; connect-src 'self' https: *.zende.sk *.zendesk.com ws: wss: api.segment.io; child-src 'self' https: *.zende.sk *.zendesk.com; object-src 'self' https: *.zende.sk *.zendesk.com; report-uri https://zendesk-eu.my.sentry.io/api/299/security/?sentry_key=283035aa3c1947e2ba44514578764430&sentry_environment=production"
+          ],
+          "etag": [
+            "W/\"80e7d694da9e6a4abc494f016a2eec87\""
+          ],
+          "set-cookie": [
+            "_voice_session=SjljNzNnUkh3R0VTNHQwYXc4Z2FjQUkrdnZRbU5YUEJCODJSOEFwY0YyVlZIdmU4NTM5blRKakFtclNOYWFqR3ZObVNTTlp6TktXdTZPd2w3bDFXb3VzL25TYUNPM3BXcDJtWVNJQVRPdlppTnFoOW1oZ2lYdEFZWm1NQlIxcTM1TG4wNHo0UkFEN2tkMVpIbEVNaVZ3PT0tLTdSYTd2dTRlVE5saUhQbHVBNVU2OFE9PQ%3D%3D--efa43ee74ce8b2efc89ce01c4afe69dacdc567bb; path=/; secure; HttpOnly",
+            "__cfruid=0944e55a485c8c5f24050fecca77e3fa756ae200-1705516278; path=/; domain=.d3v-zenpydev.zendesk.com; HttpOnly; Secure; SameSite=None",
+            "_cfuvid=ntaBUGPVn3_BNpVH.hqGqLPVQ5tge0gJoHDurVlT0vA-1705516278362-0-604800000; path=/; domain=.d3v-zenpydev.zendesk.com; HttpOnly; Secure; SameSite=None"
+          ],
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "x-frame-options": [
+            "SAMEORIGIN"
+          ],
+          "x-rate-limit": [
+            "700"
+          ],
+          "x-rate-limit-remaining": [
+            "700"
+          ],
+          "x-request-id": [
+            "8470aca30c8b5c3e-FRA",
+            "8470aca30c8b5c3e-FRA"
+          ],
+          "x-runtime": [
+            "0.070968"
+          ],
+          "x-xss-protection": [
+            "1; mode=block"
+          ],
+          "x-zendesk-api-version": [
+            "v2"
+          ],
+          "x-zendesk-origin-server": [
+            "voice-app-server-59c955f4bd-l6wh9"
+          ]
+        },
+        "status": {
+          "code": 201,
+          "message": "Created"
+        },
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/calls.json"
+      }
+    },
+    {
+      "recorded_at": "2024-01-17T18:31:18",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"call_fields\": [\"direction\"], \"title\": \"This is a ticket comment 2\"}"
+        },
+        "headers": {
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic <ZENPY-CREDENTIALS>"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "69"
+          ],
+          "Content-Type": [
+            "application/json"
+          ],
+          "Cookie": [
+            "__cfruid=0944e55a485c8c5f24050fecca77e3fa756ae200-1705516278; _cfuvid=ntaBUGPVn3_BNpVH.hqGqLPVQ5tge0gJoHDurVlT0vA-1705516278362-0-604800000; _voice_session=SjljNzNnUkh3R0VTNHQwYXc4Z2FjQUkrdnZRbU5YUEJCODJSOEFwY0YyVlZIdmU4NTM5blRKakFtclNOYWFqR3ZObVNTTlp6TktXdTZPd2w3bDFXb3VzL25TYUNPM3BXcDJtWVNJQVRPdlppTnFoOW1oZ2lYdEFZWm1NQlIxcTM1TG4wNHo0UkFEN2tkMVpIbEVNaVZ3PT0tLTdSYTd2dTRlVE5saUhQbHVBNVU2OFE9PQ%3D%3D--efa43ee74ce8b2efc89ce01c4afe69dacdc567bb"
+          ],
+          "User-Agent": [
+            "Zenpy/2.0.45"
+          ]
+        },
+        "method": "POST",
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/calls/16444799095826/comments.json"
+      },
+      "response": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"id\":16444825011986,\"type\":\"TpeVoiceComment\",\"public\":false,\"data\":{\"app_id\":1003048,\"app_name\":\"3CX calls\",\"author_id\":null,\"call_id\":16444799095826,\"direction\":\"inbound\",\"external_id\":null,\"title\":\"This is a ticket comment 2\",\"via_id\":45,\"recording_url\":\"\"},\"formatted_from\":\"Unknown\",\"formatted_to\":\"Unknown\",\"transcription_visible\":false,\"author_id\":1568991111,\"body\":\"This is a ticket comment 2\\n\\nSummary\\nDirection: inbound\",\"html_body\":\"\\u003cdiv class=\\\"zd-comment\\\" dir=\\\"auto\\\"\\u003e\\u003cp dir=\\\"auto\\\"\\u003eThis is a ticket comment 2\\u003c/p\\u003e\\n\\u003cp dir=\\\"auto\\\"\\u003eSummary\\u003cbr\\u003e\\nDirection: inbound\\u003c/p\\u003e\\u003c/div\\u003e\",\"trusted\":true,\"attachments\":[],\"created_at\":\"2024-01-17T18:31:18Z\",\"audit_id\":16444825011858,\"title\":\"This is a ticket comment 2\"}"
+        },
+        "headers": {
+          "CF-Cache-Status": [
+            "DYNAMIC"
+          ],
+          "CF-RAY": [
+            "8470aca44dd25c3e-FRA"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Type": [
+            "application/json; charset=utf-8"
+          ],
+          "Date": [
+            "Wed, 17 Jan 2024 18:31:19 GMT"
+          ],
+          "NEL": [
+            "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Report-To": [
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=uTPRTFSAo4rfBuu5SsMN9kxtSpFrKB2PcguIwg6Whxfm%2Bgeh2BJpSP0bTZ2A3WxTJxhD%2BCRA9zsTAtcXUwGxWW3N7d1K1Ej9Cpv3JLDf%2F%2B9BB04bEzVGztzv4%2FY%2FcHP3Zo9NESib5w%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Server": [
+            "cloudflare"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "X-Zendesk-Zorg": [
+            "yes"
+          ],
+          "cache-control": [
+            "max-age=0, private, must-revalidate"
+          ],
+          "content-security-policy-report-only": [
+            "base-uri 'self'; script-src 'self' https: *.zende.sk *.zendesk.com 'unsafe-eval' 'report-sample' *.googletagmanager.com tagmanager.google.com *.zdassets.com static.zdassets.com 'nonce-j59zZL7gYcMecVhfM1coRw=='; img-src 'self' https: *.zende.sk *.zendesk.com data: blob: *.zdusercontent.com *.apps.zdusercontent.com *.google-analytics.com *.googletagmanager.com ssl.gstatic.com *.gstatic.com *.zdassets.com *.g.doubleclick.net; font-src 'self' https: *.zende.sk *.zendesk.com data: fonts.gstatic.com *.typekit.net *.googleusercontent.com cdn.jsdelivr.net; media-src 'self' https: *.zende.sk *.zendesk.com blob: data:; worker-src 'self' https: *.zende.sk *.zendesk.com blob:; connect-src 'self' https: *.zende.sk *.zendesk.com ws: wss: api.segment.io; child-src 'self' https: *.zende.sk *.zendesk.com; object-src 'self' https: *.zende.sk *.zendesk.com; report-uri https://zendesk-eu.my.sentry.io/api/299/security/?sentry_key=283035aa3c1947e2ba44514578764430&sentry_environment=production"
+          ],
+          "etag": [
+            "W/\"ce9ca2d1c7a80b059a26ffe06af87044\""
+          ],
+          "set-cookie": [
+            "_voice_session=SEhqN1NQVnF3YmZCRko1aGpML0Jxa0dsWE5iSll5UTcwRTJrOU9uejBOOEtjTTlnaW91QkZXbWdjMkRCR2p1MUJtZmdGQ0l5blp0alYzbzhFZ2RpZStZV24xcnBXK3FCTEw0MzUwclVqZEQwZzV5RHV5SUJ1MFVUZ0lDMTVhR1BpQ0d2Slh5aElNTWVXUVgzc3psek9BPT0tLWhrRjJINkU5SjR6b0o3QTltZldkeVE9PQ%3D%3D--ef9629243828e49fcae4cef453fb10f1d7a04932; path=/; secure; HttpOnly"
+          ],
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "x-frame-options": [
+            "SAMEORIGIN"
+          ],
+          "x-rate-limit": [
+            "700"
+          ],
+          "x-rate-limit-remaining": [
+            "700"
+          ],
+          "x-request-id": [
+            "8470aca44dd25c3e-FRA",
+            "8470aca44dd25c3e-FRA"
+          ],
+          "x-runtime": [
+            "0.533681"
+          ],
+          "x-xss-protection": [
+            "1; mode=block"
+          ],
+          "x-zendesk-api-version": [
+            "v2"
+          ],
+          "x-zendesk-api-warn": [
+            "Removed restricted keys [\"comment\"] from parameters according to whitelist"
+          ],
+          "x-zendesk-origin-server": [
+            "voice-app-server-59c955f4bd-nb99k"
+          ]
+        },
+        "status": {
+          "code": 201,
+          "message": "Created"
+        },
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/calls/16444799095826/comments.json"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.8.1"
+}

@@ -125,7 +125,9 @@ from zenpy.lib.api_objects.talk_objects import (
     CurrentQueueActivity,
     Leg,
     PhoneNumbers,
-    ShowAvailability
+    ShowAvailability,
+    CallPe,
+    VoiceComment
 )
 from zenpy.lib.api_objects.zis_objects import Integration
 from zenpy.lib.exception import ZenpyException
@@ -396,4 +398,15 @@ class TalkObjectMapping(ZendeskObjectMapping):
         'phone_numbers': PhoneNumbers,
         'availability': ShowAvailability,
         'leg': Leg
+    }
+
+
+class CallPEObjectMapping(ZendeskObjectMapping):
+    """
+    Handle converting Talk PE/Calls API objects to Python ones. This class exists
+    to prevent namespace collisions between APIs.
+    """
+    class_mapping = {
+        'call': CallPe,
+        'voice_comment': VoiceComment
     }

@@ -57,8 +57,9 @@ To pass all the tests successfully, please provide some things:
 1. In **./zenpy/cache.py:ZenpyCacheManager.__init__** temporary change ttl for ticket cache to 300. Some tests take too much time and fail on expired cache elements.
 2. In **./zenpy/tests/test_api/test_incremental_object_update.py:TestIncrementalObjectUpdate.setUp** provide an existing ticket id.
 3. In **./zenpy/tests/test_api/test_webhooks_api.py:TestWebhooks.test_invocations** and **.test_invocation_attempts** put a real webhook id with a non-empty list of invocations.
+4. in **./zenpy/tests/test_api/test_calls_pe.py** put a real TEST_APP_ID for TalkPE Calls API. (You can just call "https://{{subdomain}}.zendesk.com/api/v2/apps/installations" and choose an ID you like the most).
 5. In the scripts folder, you can remove all betamax outputs with ```clean_betamax.sh```
-7. Look for all TESTING_CHANGE in the source and REVERT ones that say it's NOT OK TO COMMIT.
+6. Look for all TESTING_CHANGE in the source and REVERT ones that say it's NOT OK TO COMMIT.
 
 Notes:
 

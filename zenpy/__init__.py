@@ -38,6 +38,7 @@ from zenpy.lib.api import (
     SkipApi,
     TalkApi,
     TalkPEApi,
+    CallsPEApi,
     CustomAgentRolesApi,
     SearchApi,
     SearchExportApi,
@@ -173,6 +174,7 @@ class Zenpy(object):
         self.targets = TargetApi(config, object_type="target")
         self.talk = TalkApi(config)
         self.talk_pe = TalkPEApi(config)
+        self.calls = CallsPEApi(config)
         self.custom_agent_roles = CustomAgentRolesApi(
             config, object_type="custom_agent_role"
         )

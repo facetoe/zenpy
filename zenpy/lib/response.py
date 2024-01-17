@@ -618,3 +618,20 @@ class MissingTranslationHandler(ResponseHandler):
 
     def deserialize(self, response_json):
         return response_json['locales']
+
+
+class VoiceCommentResponseHandler(GenericZendeskResponseHandler):
+    @staticmethod
+    def applies_to(api, response):
+        try:
+            response_json = response.json()
+
+            return  get_endpoint_path(api, response).startswith('/calls') \
+                    and 'type' in response_json \
+                    and response_json['type'] == 'TpeVoiceComment'
+
+        except ValueError:
+            return False
+
+    def build(self, response):
+        return response.json()

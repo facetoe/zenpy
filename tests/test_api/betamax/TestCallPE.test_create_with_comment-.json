@@ -1,0 +1,125 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2024-01-17T18:31:20",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"call\": {\"app_id\": 1003048, \"call_ended_at\": \"2022-01-27T15:32:40+01\", \"call_started_at\": \"2022-01-27T15:31:40+01\", \"direction\": \"inbound\", \"from_line\": \"+183808333456\", \"from_line_nickname\": \"Sales\", \"to_line\": \"+149488484873\", \"to_line_nickname\": \"Technical Support\"}, \"comment\": {\"call_fields\": [\"from_line\", \"to_line\", \"call_started_at\"], \"title\": \"This is a ticket comment 2\"}}"
+        },
+        "headers": {
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic <ZENPY-CREDENTIALS>"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "383"
+          ],
+          "Content-Type": [
+            "application/json"
+          ],
+          "Cookie": [
+            "__cfruid=0944e55a485c8c5f24050fecca77e3fa756ae200-1705516278; _cfuvid=ntaBUGPVn3_BNpVH.hqGqLPVQ5tge0gJoHDurVlT0vA-1705516278362-0-604800000; _voice_session=WnNBMWF4anRGUXdIK25jNXZGcThWdmk5YjdSZjhHa0xPdG9HbUNVYnYyNHZ3L0NqVnBqNnhCdGRDcjBqZm45WTJYTVNRK2RCdG9WNDFMNkdKRWNmRmRHdi9DcHplczU5TkNCTXE2TVA0M0d2aGxnb3FJV1N6dDdRYXVtYlkxMkhnOWFFbVdtdi9URCs4QWdtbUdtUHRnPT0tLTdxVEpmNndjUDlrZWlkWWhUL2tBWXc9PQ%3D%3D--73f7ca77c36a680fd68634cc1972d7e81bcdc0b9"
+          ],
+          "User-Agent": [
+            "Zenpy/2.0.45"
+          ]
+        },
+        "method": "POST",
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/calls.json"
+      },
+      "response": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"call\":{\"id\":16444799156882,\"account_id\":850916,\"ticket_id\":43278,\"end_user_id\":null,\"organization_id\":null,\"brand_id\":null,\"app_id\":1003048,\"agent_id\":null,\"from_line\":\"+183808333456\",\"from_line_nickname\":\"Sales\",\"to_line\":\"+149488484873\",\"to_line_nickname\":\"Technical Support\",\"call_started_at\":\"2022-01-27T14:31:40Z\",\"call_ended_at\":\"2022-01-27T14:32:40Z\",\"direction\":\"inbound\",\"duration\":null,\"dnis\":null,\"phone_name\":null,\"call_type\":null,\"end_user_location\":null,\"callback\":null,\"callback_source\":null,\"callback_number\":null,\"wait_time\":null,\"time_to_answer\":null,\"queue_time\":null,\"exceeded_queue_time\":null,\"queue_name\":null,\"ivr_time_spent\":null,\"ivr_hops\":null,\"ivr_action\":null,\"ivr_routed_to\":null,\"ivr_destination_group_name\":null,\"talk_time\":null,\"hold_time\":null,\"consultation_time\":null,\"wrap_up_time\":null,\"completion_status\":null,\"call_abandoned_position\":null,\"customer_requested_voicemail\":null,\"voicemail\":null,\"outside_business_hours\":null,\"overflowed\":null,\"overflowed_to\":null,\"call_disposition\":null,\"recording_url\":null,\"recording_time\":null,\"not_recording_time\":null,\"call_recording_consent_action\":null,\"recording_control_interactions\":null,\"created_at\":\"2024-01-17T18:31:20Z\",\"updated_at\":\"2024-01-17T18:31:20Z\",\"transcript\":null,\"external_id\":null}}"
+        },
+        "headers": {
+          "CF-Cache-Status": [
+            "DYNAMIC"
+          ],
+          "CF-RAY": [
+            "8470acada8125c3e-FRA"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Type": [
+            "application/json; charset=utf-8"
+          ],
+          "Date": [
+            "Wed, 17 Jan 2024 18:31:20 GMT"
+          ],
+          "NEL": [
+            "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Report-To": [
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=62hFpk43lmKw6Fc0iBH8ihVzMUyHeyceERuFgkiPPuSfVLJl8nki5LuMH17t0z3%2BZKhIE2dR%2FCSaa%2FIk9KfMbHQfVMjdxWLDB3oOteKb8TvSmDwBUn0Y%2BTTiS1LARQ0q63OrKP8RMg%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Server": [
+            "cloudflare"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "X-Zendesk-Zorg": [
+            "yes"
+          ],
+          "cache-control": [
+            "max-age=0, private, must-revalidate"
+          ],
+          "content-security-policy-report-only": [
+            "base-uri 'self'; script-src 'self' https: *.zende.sk *.zendesk.com 'unsafe-eval' 'report-sample' *.googletagmanager.com tagmanager.google.com *.zdassets.com static.zdassets.com 'nonce-D99pRzXKwz9sjyKtmFSrmg=='; img-src 'self' https: *.zende.sk *.zendesk.com data: blob: *.zdusercontent.com *.apps.zdusercontent.com *.google-analytics.com *.googletagmanager.com ssl.gstatic.com *.gstatic.com *.zdassets.com *.g.doubleclick.net; font-src 'self' https: *.zende.sk *.zendesk.com data: fonts.gstatic.com *.typekit.net *.googleusercontent.com cdn.jsdelivr.net; media-src 'self' https: *.zende.sk *.zendesk.com blob: data:; worker-src 'self' https: *.zende.sk *.zendesk.com blob:; connect-src 'self' https: *.zende.sk *.zendesk.com ws: wss: api.segment.io; child-src 'self' https: *.zende.sk *.zendesk.com; object-src 'self' https: *.zende.sk *.zendesk.com; report-uri https://zendesk-eu.my.sentry.io/api/299/security/?sentry_key=283035aa3c1947e2ba44514578764430&sentry_environment=production"
+          ],
+          "etag": [
+            "W/\"a05b4720bd8c10d26cd4f409e2fa7815\""
+          ],
+          "set-cookie": [
+            "_voice_session=TnRyT3huYzBOWFpGY2xtZWpaUWhOMkFGMmdUUW44ckFOTFhtZlNSOVoxb3M1WCtJUXZydGFVTzc2K0Q3QnNmOTRYNlIrRTVBN2o0RzlrK1dXWHl6VVVwbUxKZFEzWlZGZ01GcWxHVzVaQmtiZG5wK0xGc0s3L1hjaFhjQXNHRUdHNlZVRzhYZWNPaWIzUlpQWGJQRnBnPT0tLUdUS01mS2E2NkcwM05mci9qbjVhOEE9PQ%3D%3D--043ea541b31631d1f4e2ff1e291626d16e38b917; path=/; secure; HttpOnly"
+          ],
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "x-frame-options": [
+            "SAMEORIGIN"
+          ],
+          "x-rate-limit": [
+            "700"
+          ],
+          "x-rate-limit-remaining": [
+            "700"
+          ],
+          "x-request-id": [
+            "8470acada8125c3e-FRA",
+            "8470acada8125c3e-FRA"
+          ],
+          "x-runtime": [
+            "0.702614"
+          ],
+          "x-xss-protection": [
+            "1; mode=block"
+          ],
+          "x-zendesk-api-version": [
+            "v2"
+          ],
+          "x-zendesk-origin-server": [
+            "voice-app-server-59c955f4bd-cff2w"
+          ]
+        },
+        "status": {
+          "code": 201,
+          "message": "Created"
+        },
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/calls.json"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.8.1"
+}
