@@ -1,0 +1,138 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2024-02-08T17:44:47",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"users\": [{\"id\": 6716728298138, \"name\": \"testUser100\"}, {\"id\": 6716770664346, \"name\": \"testUser101\"}, {\"id\": 6716728300570, \"name\": \"testUser102\"}, {\"id\": 6716728301850, \"name\": \"testUser103\"}, {\"id\": 6716728302106, \"name\": \"testUser104\"}]}"
+        },
+        "headers": {
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic <ZENPY-CREDENTIALS>"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "241"
+          ],
+          "Content-Type": [
+            "application/json"
+          ],
+          "Cookie": [
+            "_zendesk_cookie=BAhJIhl7ImRldmljZV90b2tlbnMiOnt9fQY6BkVU--0bf2100788cb010d0183feca16aaf88ccaf719ca; __cfruid=28ce535ced23100c8cb9e017a3029204dd138b30-1707414285"
+          ],
+          "User-Agent": [
+            "Zenpy/2.0.46"
+          ]
+        },
+        "method": "DELETE",
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/users/destroy_many.json?ids=6716728298138,6716770664346,6716728300570,6716728301850,6716728302106"
+      },
+      "response": {
+        "body": {
+          "base64_string": "H4sIAAAAAAAAA4yPwW7CMBAFfwW9s4kLCU3wsf8A12qDNzTBiV3vGqkg/r1SVdRr7zPSzB1T7N9FSYvA3TF6OBzrdbMfqCU6de3upd5shm23f2180/bUDcRtA/Mj6ldiOLyVcFkdkifl1UE4w6DkAIcP1STO2lu9rCflUTn0VObqxotnuVSnOFtKo71u7V8Hi/1HQTVJXGCgUSnA7QxSjufMInBLCcHgeYXPwoU9DGYWoTM/gcxSgv7yj8c3AAAA//8DAEnAY6QMAQAA",
+          "encoding": "utf-8",
+          "string": ""
+        },
+        "headers": {
+          "CF-Cache-Status": [
+            "DYNAMIC"
+          ],
+          "CF-RAY": [
+            "8525aec29b7ecea0-SJC"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Encoding": [
+            "gzip"
+          ],
+          "Content-Type": [
+            "application/json; charset=utf-8"
+          ],
+          "Date": [
+            "Thu, 08 Feb 2024 17:44:47 GMT"
+          ],
+          "NEL": [
+            "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Report-To": [
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=GEi%2BQuVnQ3c2pfzD5M%2Fqd7R4AsNjhohe%2FyBImD6SS8EiZ%2Br0CUk0vbFtGM4qs1y3bahL7jJ7H5kz6lFhO0Fg70Ax8PjPtMGnsQsKrVOuHCKBWGXGyTYVtVps3qJ9qkPHYcZ4VR3vNxnCY25gcQ%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Server": [
+            "cloudflare"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "X-Zendesk-API-Gateway": [
+            "yes"
+          ],
+          "X-Zendesk-Zorg": [
+            "yes"
+          ],
+          "cache-control": [
+            "max-age=0, private, must-revalidate"
+          ],
+          "etag": [
+            "W/\"8c1b704a856b7cf8d63e33b9d1695c87\""
+          ],
+          "ratelimit-limit": [
+            "700"
+          ],
+          "ratelimit-remaining": [
+            "596"
+          ],
+          "ratelimit-reset": [
+            "13"
+          ],
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "x-frame-options": [
+            "SAMEORIGIN"
+          ],
+          "x-rate-limit": [
+            "700"
+          ],
+          "x-rate-limit-remaining": [
+            "596"
+          ],
+          "x-request-id": [
+            "8525aec29b7ecea0-SJC",
+            "8525aec29b7ecea0-SJC"
+          ],
+          "x-runtime": [
+            "0.074387"
+          ],
+          "x-zendesk-api-version": [
+            "v2"
+          ],
+          "x-zendesk-api-warn": [
+            "{:allowed_parameters=>{:controller=>\"users\", :action=>\"destroy_many\", :unpermitted_keys=>[\"users\"], :invalid_values=>[]}}"
+          ],
+          "x-zendesk-application-version": [
+            "v19942"
+          ],
+          "x-zendesk-origin-server": [
+            "classic-app-server-8464f58555-vrccj"
+          ]
+        },
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/users/destroy_many.json?ids=6716728298138,6716770664346,6716728300570,6716728301850,6716728302106"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.8.1"
+}
