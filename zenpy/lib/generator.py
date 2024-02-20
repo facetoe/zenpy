@@ -183,7 +183,7 @@ class ZendeskResultGenerator(BaseResultGenerator):
         super(ZendeskResultGenerator, self).__init__(response_handler,
                                                      response_json)
         self.object_type = object_type or self.response_handler.api.object_type
-        self.values = response_objects or None
+        self.values = response_objects or self.process_page() or None
 
     def process_page(self):
         response_objects = self.response_handler.deserialize(
@@ -273,7 +273,7 @@ class GenericCursorResultsGenerator(CursorResultsGenerator):
         super(GenericCursorResultsGenerator, self).__init__(response_handler,
                                                      response_json)
         self.object_type = object_type or self.response_handler.api.object_type
-        self.values = response_objects or None
+        self.values = response_objects or self.process_page() or None
 
     def process_page(self):
         response_objects = self.response_handler.deserialize(
