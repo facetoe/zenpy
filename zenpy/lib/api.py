@@ -3127,3 +3127,11 @@ class LocalesApi(Api):
         :return: Locale
         """
         return self._query_zendesk(self.endpoint.current, 'locale')
+
+class CustomStatusesApi(CRUDApi):
+    def __init__(self, config):
+        super(CustomStatusesApi, self).__init__(config,
+                                                object_type='custom_status')
+
+    def delete(self, api_objects, **kwargs):
+        raise ZenpyException("Custom status cannot be deleted")
