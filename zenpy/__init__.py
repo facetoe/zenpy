@@ -60,7 +60,7 @@ if debug_log is not None:
 log = logging.getLogger()
 
 __author__ = "facetoe"
-__version__ = "2.0.47"
+__version__ = "2.0.48"
 
 
 class Zenpy(object):
