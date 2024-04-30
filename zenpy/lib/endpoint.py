@@ -496,7 +496,7 @@ class ChatEndpoint(BaseEndpoint):
                     endpoint_path = '{}/email/{}'.format(self.endpoint, value)
                 elif self.endpoint == 'departments' and key == 'name':
                     endpoint_path = '{}/name/{}'.format(self.endpoint, value)
-                else:
+                elif key != 'cursor_pagination':
                     endpoint_path = "{}/{}".format(self.endpoint, value)
                 break
         return Url(endpoint_path, params=params)
