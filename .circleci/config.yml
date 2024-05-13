@@ -18,13 +18,6 @@ run_linter: &run_linter
 
 version: 2
 jobs:
-  python3.5:
-    docker:
-      - image: cimg/python:3.5
-    working_director: ~/repo
-    steps:
-      - checkout
-      - <<: *run_tests
   python3.6:
     docker:
       - image: cimg/python:3.6
@@ -80,7 +73,6 @@ workflows:
   build_and_test:
     jobs:
       - linter
-      - python3.5
       - python3.6
       - python3.7
       - python3.8

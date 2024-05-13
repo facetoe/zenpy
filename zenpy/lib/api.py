@@ -118,6 +118,7 @@ class BaseApi(object):
                          'organizations',
                          'organization_memberships',
                          'recipient_addresses',
+                         'search/export.json',
                          'satisfaction_ratings',
                          'skips',
                          'suspended_tickets',
