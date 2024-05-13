@@ -46,7 +46,7 @@ class BaseResultGenerator(Iterable):
             self.values = self.process_page()
         if self.position >= len(self.values):
             self.handle_pagination()
-        if len(self.values) < 1:
+        if len(self.values) < 1 or self.position >= len(self.values):
             raise StopIteration()
         zenpy_object = self.values[self.position]
         self.position += 1

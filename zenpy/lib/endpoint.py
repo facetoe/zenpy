@@ -314,12 +314,16 @@ class SearchEndpoint(BaseEndpoint):
 
     """
     def __call__(self, query=None, **kwargs):
-
         renamed_kwargs = dict()
         modifiers = list()
         params = dict()
         for key, value in kwargs.items():
-            if isinstance(value, datetime):
+            if key == 'cursor_pagination':
+                if value is True:
+                    params['page[size]'] = 100
+                elif value is not False:
+                    params['page[size]'] = value
+            elif isinstance(value, datetime):
                 kwargs[key] = value.strftime(self.ISO_8601_FORMAT)
             elif isinstance(value, date):
                 kwargs[key] = value.strftime(self.ZENDESK_DATE_FORMAT)
@@ -353,9 +357,10 @@ class SearchEndpoint(BaseEndpoint):
             elif is_iterable_but_not_string(value):
                 modifiers.append(self.format_or(key, value))
             else:
-                if isinstance(value, str) and value.count(' ') > 0:
-                    value = '"{}"'.format(value)
-                renamed_kwargs.update({key + ':': '%s' % value})
+                if (key != 'cursor_pagination'):
+                    if isinstance(value, str) and value.count(' ') > 0:
+                        value = '"{}"'.format(value)
+                    renamed_kwargs.update({key + ':': '%s' % value})
 
         search_query = [
             '%s%s' % (key, value) for (key, value) in renamed_kwargs.items()
