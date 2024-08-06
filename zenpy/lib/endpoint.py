@@ -392,6 +392,24 @@ class SearchEndpoint(BaseEndpoint):
     def format_or(self, key, values):
         return " ".join(['%s:"%s"' % (key, v) for v in values])
 
+class ContentTagEndpoint(BaseEndpoint):
+    def __call__(self, **kwargs):
+        path = self.endpoint
+        params = {}
+        for key, value in kwargs.items():
+            if key == 'id':
+                path += "/{}".format(value)
+                params = {}
+                break
+            elif key == 'filter':
+                params['filter[name_prefix]'] = value
+            elif key == 'sort':
+                if value in ['name', 'id']:
+                    params['sort'] = value
+                else:
+                    raise ZenpyException("sort must be one of (name, id)")
+
+        return Url(path, params)
 
 class RequestSearchEndpoint(BaseEndpoint):
     def __call__(self, query, **kwargs):
@@ -846,6 +864,7 @@ class EndpointFactory(object):
     help_centre.articles.incremental = IncrementalEndpoint(
         'help_center/incremental/articles.json')
 
+    help_centre.content_tags = ContentTagEndpoint('guide/content_tags')
     help_centre.labels = PrimaryEndpoint('help_center/articles/labels')
     help_centre.labels.create = SecondaryEndpoint(
         'help_center/articles/%(id)s/labels.json')

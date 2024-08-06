@@ -1,0 +1,199 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2024-08-19T23:23:15",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"content_tag\": {\"name\": \"mama_was_a_rolling_stone\"}}"
+        },
+        "headers": {
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic <ZENPY-CREDENTIALS>"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "53"
+          ],
+          "Content-Type": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "Zenpy/2.0.49"
+          ]
+        },
+        "method": "POST",
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/guide/content_tags"
+      },
+      "response": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"content_tag\":{\"id\":\"01J5PF7CDVDXT9MFEDVBY9P7EX\",\"name\":\"mama_was_a_rolling_stone\",\"created_at\":\"2024-08-19T23:23:15.772Z\",\"updated_at\":\"2024-08-19T23:23:15.772Z\"}}"
+        },
+        "headers": {
+          "CF-Cache-Status": [
+            "DYNAMIC"
+          ],
+          "CF-RAY": [
+            "8b5de3ed2c12283a-SEA"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "165"
+          ],
+          "Content-Type": [
+            "application/json; charset=utf-8"
+          ],
+          "Date": [
+            "Mon, 19 Aug 2024 23:23:15 GMT"
+          ],
+          "NEL": [
+            "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Report-To": [
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v4?s=spkRUv5OAO17Qxi9FlVrKzVfgR%2BergDkVmEjDY%2FPtVZq28upyOyo3H%2FBhvuO6SkAUSv2vUXKnZYWyG1dCmNmLurDzsG9UktT3pLZBIgqf7hw%2BCqrwJ1vN4GhG6uKriqQz%2Fw%2BiXlg\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Server": [
+            "cloudflare"
+          ],
+          "X-Request-ID": [
+            "8b5de3ed2c12283a-SEA"
+          ],
+          "X-Zendesk-API-Gateway": [
+            "yes"
+          ],
+          "X-Zendesk-Zorg": [
+            "yes"
+          ],
+          "x-rate-limit": [
+            "700"
+          ],
+          "x-rate-limit-remaining": [
+            "697"
+          ],
+          "x-zendesk-api-version": [
+            "v2"
+          ],
+          "x-zendesk-application-version": [
+            "v464"
+          ]
+        },
+        "status": {
+          "code": 201,
+          "message": "Created"
+        },
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/guide/content_tags"
+      }
+    },
+    {
+      "recorded_at": "2024-08-19T23:23:16",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"content_tag\": {\"id\": \"01J5PF7CDVDXT9MFEDVBY9P7EX\", \"name\": \"mama_was_a_rolling_stone64df1b707b3001c9f9a3cf4379012e5768e40fcd\"}}"
+        },
+        "headers": {
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic <ZENPY-CREDENTIALS>"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "129"
+          ],
+          "Content-Type": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "Zenpy/2.0.49"
+          ]
+        },
+        "method": "PUT",
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/guide/content_tags/01J5PF7CDVDXT9MFEDVBY9P7EX"
+      },
+      "response": {
+        "body": {
+          "base64_string": "H4sIAAAAAAAAA4zKMQ6CMBQA0Lv8Gc1vC9R2VGAwMWEgRF2ab1sICRQDNQ6Eu3sF3/w2sHOIPkQTqQe9weBAA7JrVlfyUrTFvVG3qiza80PVsrxDAoEmDxommsh8aTVklnkch9CbNc7B56nr2EuifAlEZlWnSNguFVIh4z6T+cmn2FkHCdjFU/TOUAQNHHl6wNOBqYYLzYVm+RERn5DA5+3+ePv+AwAA//8DALp4Vq7NAAAA",
+          "encoding": "utf-8",
+          "string": ""
+        },
+        "headers": {
+          "CF-Cache-Status": [
+            "DYNAMIC"
+          ],
+          "CF-RAY": [
+            "8b5de3f03e7f283a-SEA"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Encoding": [
+            "gzip"
+          ],
+          "Content-Type": [
+            "application/json; charset=utf-8"
+          ],
+          "Date": [
+            "Mon, 19 Aug 2024 23:23:15 GMT"
+          ],
+          "NEL": [
+            "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Report-To": [
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v4?s=f0PctoKgnDAj%2Bad0NbnAyGKF9w5GGLlYtu0Ry8p4CzSN%2BRycbe62n2g7PpVgb7u1qnfEZi8%2B4s8XfVZPZ1x9uoTkQL%2FYZKNJOyJiBZNnrRRNchChab29vt%2Bl6145ZSyB68KtS3V5\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Server": [
+            "cloudflare"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "X-Request-ID": [
+            "8b5de3f03e7f283a-SEA"
+          ],
+          "X-Zendesk-API-Gateway": [
+            "yes"
+          ],
+          "X-Zendesk-Zorg": [
+            "yes"
+          ],
+          "x-rate-limit": [
+            "700"
+          ],
+          "x-rate-limit-remaining": [
+            "696"
+          ],
+          "x-zendesk-api-version": [
+            "v2"
+          ],
+          "x-zendesk-application-version": [
+            "v464"
+          ]
+        },
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/guide/content_tags/01J5PF7CDVDXT9MFEDVBY9P7EX"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.8.1"
+}

@@ -1,0 +1,100 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2024-08-20T02:08:37",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"content_tag\": {\"id\": \"09J5PBXP9XEZ39AC3AABC042PY\", \"name\": \"mama_was_a_rolling_stone\"}}"
+        },
+        "headers": {
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic <ZENPY-CREDENTIALS>"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "89"
+          ],
+          "Content-Type": [
+            "application/json"
+          ],
+          "Cookie": [
+            "__cfruid=298f2f1e7d3244267a7952d5328259c26d81e9a4-1724119717"
+          ],
+          "User-Agent": [
+            "Zenpy/2.0.49"
+          ]
+        },
+        "method": "PUT",
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/guide/content_tags/09J5PBXP9XEZ39AC3AABC042PY"
+      },
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": ""
+        },
+        "headers": {
+          "CF-Cache-Status": [
+            "DYNAMIC"
+          ],
+          "CF-RAY": [
+            "8b5ed62a5bb11688-SJC"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "0"
+          ],
+          "Date": [
+            "Tue, 20 Aug 2024 02:08:37 GMT"
+          ],
+          "NEL": [
+            "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Report-To": [
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v4?s=Hl1atletHDzKIY%2BeKk6NijNid9RX60hLl329zmcMKfQL6YoskeqK2YRo%2FeXOIgo8PrQI2CRae%2BuO6TTyZeTYYumXM8g8fYMD0Gz102lFSvSNwxswIcWRtk%2Fld23QrzacZjDV1rsJ\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Server": [
+            "cloudflare"
+          ],
+          "X-Request-ID": [
+            "8b5ed62a5bb11688-SJC"
+          ],
+          "X-Zendesk-API-Gateway": [
+            "yes"
+          ],
+          "X-Zendesk-Zorg": [
+            "yes"
+          ],
+          "x-rate-limit": [
+            "700"
+          ],
+          "x-rate-limit-remaining": [
+            "698"
+          ],
+          "x-zendesk-api-version": [
+            "v2"
+          ],
+          "x-zendesk-application-version": [
+            "v464"
+          ]
+        },
+        "status": {
+          "code": 404,
+          "message": "Not Found"
+        },
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/guide/content_tags/09J5PBXP9XEZ39AC3AABC042PY"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.8.1"
+}

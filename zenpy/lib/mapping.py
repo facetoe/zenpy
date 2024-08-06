@@ -372,12 +372,15 @@ class HelpCentreObjectMapping(ZendeskObjectMapping):
         'category': Category,
         'section': Section,
         'comment': zenpy.lib.api_objects.help_centre_objects.Comment,
+        'content_tag': zenpy.lib.api_objects.help_centre_objects.ContentTag,
         'article_attachment':
         zenpy.lib.api_objects.help_centre_objects.ArticleAttachment,
         'label': Label,
         'translation': Translation,
         'topic': zenpy.lib.api_objects.help_centre_objects.Topic,
         'post': Post,
+        # for some reason zendesk returns content_tag arrays as 'records':
+        'record': zenpy.lib.api_objects.help_centre_objects.ContentTag,
         'subscription': Subscription,
         'vote': Vote,
         'access_policy': AccessPolicy,
