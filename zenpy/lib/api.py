@@ -15,7 +15,7 @@ from zenpy.lib.api_objects import (User, Macro, Identity, View, Organization,
                                    CustomFieldOption, Item, Variant, Ticket,
                                    Webhook, BaseObject)
 from zenpy.lib.api_objects.help_centre_objects import (
-    Section, Article, Comment, ArticleAttachment, Label, Category, Translation,
+    Section, Article, Comment, ContentTag, ArticleAttachment, Label, Category, Translation,
     Topic, Post, Subscription)
 from zenpy.lib.api_objects.talk_objects import (
     CallPe)
@@ -2558,6 +2558,8 @@ class ArticleAttachmentApi(HelpCentreApiBase, SubscriptionApi):
             article=article,
             attachments=attachments)
 
+class ContentTagApi(HelpCentreApiBase, CRUDApi):
+    pass
 
 class LabelApi(HelpCentreApiBase):
     @extract_id(Article)
@@ -2645,6 +2647,9 @@ class HelpCentreApi(HelpCentreApiBase):
         self.comments = CommentApi(config,
                                    self.endpoint.articles,
                                    object_type='comment')
+        self.content_tags = ContentTagApi(config,
+                                   self.endpoint.content_tags,
+                                   object_type='content_tag')
         self.sections = SectionApi(config,
                                    self.endpoint.sections,
                                    object_type='section')
