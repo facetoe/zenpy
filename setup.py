@@ -7,7 +7,7 @@ long_description = (this_directory / "README.md").read_text()
 setup(
     name='zenpy',
     packages=setuptools.find_packages(),
-    version='2.0.49',
+    version='2.0.50',
     description='Python wrapper for the Zendesk API',
     long_description=long_description,
     long_description_content_type='text/markdown',
