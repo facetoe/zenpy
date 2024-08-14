@@ -261,9 +261,9 @@ class UploadRequest(RequestHandler):
     def put(self, api_objects, *args, **kwargs):
         raise NotImplementedError("POST is not implemented fpr UploadRequest!")
 
-    def delete(self, api_objects, *args, **kwargs):
-        raise NotImplementedError(
-            "DELETE is not implemented fpr UploadRequest!")
+    def delete(self, token, *args, **kwargs):
+        url = self.api._build_url(self.api.endpoint.delete(id=token))
+        return self.api._delete(url)
 
 
 class UserMergeRequest(BaseZendeskRequest):

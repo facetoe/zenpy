@@ -1256,6 +1256,28 @@ class AttachmentApi(Api):
             self._write_to_stream(attachment.content_url, f)
         return destination
 
+    def delete(self, token_id):
+        """
+        Delete an attachment from Zendesk.
+
+        :param token_id: id of the attachment to delete
+        :return: the path the file was written to or the BytesIO object
+        """
+        return UploadRequest(self).delete(token_id)
+
+    @extract_id(Ticket, TicketComment)
+    def redact(self, ticket, comment, attachment_id):
+        """
+        Redacts a comment's attacchment
+
+        :param ticket: the ticket that owns the comments
+        :param comment: the comment that owns the attachment
+        :param attachment_id: the attachment ID of the attachment to be deleted/redacted
+        :return: the attachment in JSON with the attachment id with HTTP 200 OK
+        """
+        url = self._build_url(self.endpoint.redact(ticket, comment, attachment_id))
+        return self._put(url, payload={})
+
     def _write_to_stream(self, source_url, stream):
         r = self.session.get(source_url, stream=True)
         for chunk in r.iter_content(chunk_size=None):
