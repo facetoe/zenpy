@@ -1256,6 +1256,19 @@ class AttachmentApi(Api):
             self._write_to_stream(attachment.content_url, f)
         return destination
 
+    def delete(self, attachment_id):
+        """
+        Delete an attachment from Zendesk.
+
+        :param attachment_id: id of the attachment to delete
+        :return: the path the file was written to or the BytesIO object
+        """
+        return UploadRequest(self).delete(attachment_id)
+
+    def redact(self, ticket, comment, attachment_id):
+        url = self._build_url(self.endpoint.redact(ticket, comment, attachment_id))
+        return self._put(url, payload={})
+
     def _write_to_stream(self, source_url, stream):
         r = self.session.get(source_url, stream=True)
         for chunk in r.iter_content(chunk_size=None):
