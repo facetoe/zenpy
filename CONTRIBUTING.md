@@ -34,7 +34,13 @@ The Zendesk API contains many objects. I am way too lazy to write the code for t
 ./gen_classes.py --spec-path ../specification/ --doc-json doc_dict.json -o ../zenpy/lib/
 ```
 
-Creating a new object is as simple as creating a file in the `zenpy/specification` directory and executing the tool. Once that's done, it will also need to be added to the relevant mapping class in `zenpy/lib/mapping.py`.
+Creating a new object involves the following steps:
+- Create the appropriate file in the `zenpy/specification` directory.
+- Execute the `gen_classes` tool.
+- Add the endpoint to the `EndpointFactory` if necessary.
+- Add the relevant mapping class in `zenpy/lib/mapping.py`.
+- Add the relevant API class in `zenpy/lib/api.py`.
+- Add a reference to the API in the root API class (eg: `HelpCentreApi`) in `zenpy/lib/api.py`.
 
 For the objects themselves, the idea is that any attribute of an object that can be presented in a more user friendly manner should be converted before being returned. So for example strings representing time should be presented as `datetime` objects, id's for linked objects should be fetched and deserialized and responses that involve pagination should be exposed as generators.
 

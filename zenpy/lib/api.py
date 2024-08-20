@@ -2558,7 +2558,8 @@ class ArticleAttachmentApi(HelpCentreApiBase, SubscriptionApi):
             article=article,
             attachments=attachments)
 
-
+class ContentTagApi(HelpCentreApiBase, CRUDApi):
+    pass
 class LabelApi(HelpCentreApiBase):
     @extract_id(Article)
     def create(self, article, label):
@@ -2645,6 +2646,9 @@ class HelpCentreApi(HelpCentreApiBase):
         self.comments = CommentApi(config,
                                    self.endpoint.articles,
                                    object_type='comment')
+        self.content_tags = ContentTagApi(config,
+                                   self.endpoint.content_tags,
+                                   object_type='content_tag')
         self.sections = SectionApi(config,
                                    self.endpoint.sections,
                                    object_type='section')
