@@ -639,6 +639,7 @@ class EndpointFactory(object):
     organizations.create_or_update = PrimaryEndpoint(
         'organizations/create_or_update')
     organizations.users = SecondaryEndpoint('organizations/%(id)s/users.json')
+    comment_redacts = SecondaryEndpoint('comment_redactions/%(id)s.json')
     requests = PrimaryEndpoint('requests')
     requests.ccd = PrimaryEndpoint("requests/ccd")
     requests.comments = SecondaryEndpoint('requests/%(id)s/comments.json')

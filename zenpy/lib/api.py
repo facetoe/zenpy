@@ -3136,3 +3136,33 @@ class CustomStatusesApi(CRUDApi):
 
     def delete(self, api_objects, **kwargs):
         raise ZenpyException("Custom status cannot be deleted")
+
+class CommentRedactApi(Api):
+    def __init__(self, config):
+        super(CommentRedactApi, self).__init__(config, object_type='comment_redact')
+
+    @extract_id(Ticket, Comment)
+    def __call__(self, ticket, comment, html_body=None, external_attachment_urls=None, *args, **kwargs):
+        """
+        Redacts comments by permanently removing words, strings,
+        or attachments from a ticket comment.
+
+        :param ticket: Numeric ticket id or :class:`Ticket` object.
+        :param comment: Numeric comment id or :class:`Comment` object.
+        :param html_body: The html_body of the comment containing
+         <redact> tags or redact attributes.
+        :param external_attachment_urls: Array of attachment URLs
+         belonging to the comment to be redacted.
+        :return: The target comment with redacted information.
+        """
+        if external_attachment_urls is None:
+            external_attachment_urls = []
+        return self._put(
+            self._build_url(self.endpoint(id=comment)),
+            payload={
+                'id': comment,
+                'ticket_id': ticket,
+                'text': html_body,
+                'external_attachment_urls': external_attachment_urls,
+            }
+        )

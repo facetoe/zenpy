@@ -79,6 +79,23 @@ class TestTicketFieldCreateUpdateDelete(
     api_name = "ticket_fields"
 
 
+class TestCommentRedaction(ZenpyApiTestCase):
+    __test__ = True
+
+    def test_comment_redact(self):
+        with self.recorder.use_cassette(
+                "{}".format(self.generate_cassette_name()),
+                serialize_with="prettyjson",
+        ):
+            resp = self.zenpy_client.comment_redact(
+                ticket=445, comment=20884722145682,
+                html_body="<div class=\"zd-comment\" dir=\"auto\"><redact>▇▇</redact><br></div>",
+                external_attachment_urls=[],
+            )
+            print(resp)
+            self.assertTrue(False)
+
+
 class TestAttachmentUpload(ZenpyApiTestCase):
     __test__ = True
 

@@ -46,7 +46,8 @@ from zenpy.lib.api import (
     ZISApi,
     WebhooksApi,
     LocalesApi,
-    CustomStatusesApi
+    CustomStatusesApi,
+    CommentRedactApi
 )
 
 from zenpy.lib.cache import ZenpyCache, ZenpyCacheManager
@@ -183,6 +184,7 @@ class Zenpy(object):
         self.webhooks = WebhooksApi(config)
         self.locales = LocalesApi(config)
         self.custom_statuses = CustomStatusesApi(config)
+        self.comment_redact = CommentRedactApi(config)
 
     @staticmethod
     def http_adapter_kwargs():

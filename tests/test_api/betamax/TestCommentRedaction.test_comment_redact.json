@@ -1,0 +1,135 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2024-08-21T13:38:56",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"id\": 20884722145682, \"ticket_id\": 445, \"text\": \"<div class=\\\"zd-comment\\\" dir=\\\"auto\\\"><redact>\\u2587\\u2587</redact><br></div>\", \"external_attachment_urls\": []}"
+        },
+        "headers": {
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic <ZENPY-CREDENTIALS>"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "162"
+          ],
+          "Content-Type": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "Zenpy/2.0.49"
+          ]
+        },
+        "method": "PUT",
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/comment_redactions/20884722145682.json"
+      },
+      "response": {
+        "body": {
+          "base64_string": "H4sIAAAAAAAAA1yPXQqDMACDryJ57pgWf2pRX3aMOaRawYJa0So48dkbeEBPMmTCYK8h+ZIsKHTTlK0BX6AkOLUZcwNKHdfzGSUwc1eC43G5CMRoKt1np9cJmcNCSl07sD1GkGs5g+PYt2PfQFCZps4uMZJqsopaDEOc4i1vV20KS6o+Tk+sTpF8s1HeJ9FdqikBQVcL1Wb/7G7Ma1WAm34sCYQxoqhO4AD+fJ0rpTLZ7xCjfmiHPl3XDwAAAP//AwAQvOba8gAAAA==",
+          "encoding": "utf-8",
+          "string": ""
+        },
+        "headers": {
+          "CF-Cache-Status": [
+            "DYNAMIC"
+          ],
+          "CF-RAY": [
+            "8b6b06b99a7065fd-AMS"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Encoding": [
+            "gzip"
+          ],
+          "Content-Type": [
+            "application/json; charset=utf-8"
+          ],
+          "Date": [
+            "Wed, 21 Aug 2024 13:38:56 GMT"
+          ],
+          "NEL": [
+            "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Report-To": [
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v4?s=e1D5POyhualhStjQ%2B4TGdWRpGD8JW8t6s8Z2ggqjk1llDixVESragMB5GLIA2RlraYtM8eyh81lLPCRzUA2WbnXwFj33ULg8SR0qFn6CDlrImw23cS4YJw3UQuUvJ3AtV%2Fbz2hKuKJSSYUoGFWo2h2c%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Server": [
+            "cloudflare"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "X-Request-ID": [
+            "8b6b06b99a7065fd-AMS"
+          ],
+          "X-Zendesk-API-Gateway": [
+            "yes"
+          ],
+          "X-Zendesk-Zorg": [
+            "yes"
+          ],
+          "cache-control": [
+            "max-age=0, private, must-revalidate"
+          ],
+          "etag": [
+            "W/\"9341e5856003da10e115dd450ba7adea\""
+          ],
+          "ratelimit-limit": [
+            "700"
+          ],
+          "ratelimit-remaining": [
+            "699"
+          ],
+          "ratelimit-reset": [
+            "4"
+          ],
+          "set-cookie": [],
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "x-frame-options": [
+            "SAMEORIGIN"
+          ],
+          "x-rate-limit": [
+            "700"
+          ],
+          "x-rate-limit-remaining": [
+            "699"
+          ],
+          "x-runtime": [
+            "0.342802"
+          ],
+          "x-zendesk-api-version": [
+            "v2"
+          ],
+          "x-zendesk-application-version": [
+            "v21818"
+          ],
+          "x-zendesk-origin-server": [
+            "classic-app-server-956b8c796-gbtgx"
+          ],
+          "zendesk-ratelimit-per-ticket-updates": [
+            "total=30; remaining=28; resets=64"
+          ]
+        },
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/comment_redactions/20884722145682.json"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.9.0"
+}
