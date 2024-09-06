@@ -144,6 +144,30 @@ ticket.comment = Comment(body='This comment has my file attached', uploads=[uplo
 zenpy_client.tickets.update(ticket)
 ```
 
+##### Creating a comment attachment and then redacting it
+
+```python
+# Upload the attachment
+upload_instance = zenpy_client.attachments.upload('/tmp/awesome_file.txt')
+comment = Comment(body='Some comment')
+# Set the comment attachment affinity to this token.
+comment.uploads = upload_instance.token
+
+# Create the ticket, with that comment with that attachment affinity.  Can just as easily be a new comment on existing ticket.
+ticket = Ticket(subject='example ticket', comment=comment)
+ticket_audit = zenpy_client.tickets.create(ticket)
+ticket = ticket_audit.ticket
+
+# Get the last comment we just uploaded on that ticket.
+the_commentresult = zenpy_client.tickets.comments(ticket)
+
+# Redact the comment now that we just associated it with an attachment.
+the_comment = the_commentresult.values[0]  
+attachment =  zenpy_client.attachments.redact(ticket, the_comment, the_comment.attachments[0].id)
+
+# Barring no errors, the attachment is an Attachment object with the same id as was passed in!
+```
+
 ##### Creating a ticket with a custom field set
 
 ```python

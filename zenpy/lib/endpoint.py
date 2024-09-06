@@ -581,6 +581,9 @@ class EndpointFactory(object):
     activities = PrimaryEndpoint('activities')
     attachments = PrimaryEndpoint('attachments')
     attachments.upload = AttachmentEndpoint('uploads.json')
+    attachments.delete = SecondaryEndpoint('uploads/%(id)s.json')
+    attachments.redact = MultipleIDEndpoint(
+        'tickets/{}/comments/{}/attachments/{}/redact.json')
     automations = PrimaryEndpoint('automations')
     brands = PrimaryEndpoint('brands')
     chats = ChatEndpoint('chats')

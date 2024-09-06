@@ -12,6 +12,7 @@ from test_api.fixtures.__init__ import (
 from zenpy.lib.api_objects import (
     Ticket,
     TicketAudit,
+    Comment,
     Group,
     User,
     Organization,
@@ -22,6 +23,7 @@ from zenpy.lib.api_objects import (
     Upload,
     UserField,
     CustomStatus,
+    Attachment
 )
 
 from zenpy.lib.exception import (
@@ -99,6 +101,32 @@ class TestAttachmentUpload(ZenpyApiTestCase):
             serialize_with="prettyjson",
         ):
             return self.zenpy_client.attachments.upload(*args, **kwargs)
+
+    def test_delete_attachment(self):
+        with open(self.file_path, "rb") as f:
+            with self.recorder.use_cassette(
+                    "{}-upload-single".format(self.generate_cassette_name()),
+                    serialize_with="prettyjson",
+            ):
+                upload = self.zenpy_client.attachments.upload(f,target_name="README.md")
+                retval =  self.zenpy_client.attachments.delete(upload.token)
+                self.assertTrue((retval is not None) and (retval.status_code >= 200 and retval.status_code < 300))
+
+    def test_redact_attachment(self):
+        with open(self.file_path, "rb") as f:
+            with self.recorder.use_cassette(
+                    "{}-upload-single".format(self.generate_cassette_name()),
+                    serialize_with="prettyjson",
+            ):
+                upload = self.zenpy_client.attachments.upload(f,target_name="README.md")
+                comment = Comment(body='Some comment')
+                comment.uploads = upload.token
+                ticket = Ticket(subject='example ticket', comment=comment)
+                ticket_audit = self.zenpy_client.tickets.create(ticket)
+                ticket = ticket_audit.ticket
+                the_comment = self.zenpy_client.tickets.comments(ticket).values[0]
+                attachment = self.zenpy_client.attachments.redact(ticket, the_comment, the_comment.attachments[0].id)
+                self.assertTrue((attachment is not None) and (attachment.id == the_comment.attachments[0].id))
 
     def test_upload_with_file_obj(self):
         with open(self.file_path, "rb") as f:
