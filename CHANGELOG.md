@@ -27,3 +27,18 @@
 - Generating classes now congnizant of execution context to facilitate generation
 
 ### Removed
+
+## [2.0.51] - 2024-09-06
+
+### Added
+- Added method to delete an uploaded attachment from its token id
+- Added method to redact a ticket comment attachment
+- Added tests covering those two actions
+
+### Fixed
+- Fixed issue https://github.com/facetoe/zenpy/issues/350
+
+### Changed
+- README.md (New actions)
+
+### Removed
