@@ -25,7 +25,7 @@ from zenpy.lib.mapping import ZendeskObjectMapping, \
     ChatObjectMapping, HelpCentreObjectMapping, \
     TalkObjectMapping, CallPEObjectMapping
 from zenpy.lib.request import AccessPolicyRequest, AccountRequest, AgentRequest, \
-    CRUDRequest, ChatApiRequest, HelpCentreRequest, \
+    CRUDRequest, ArticleCRUDRequest, ChatApiRequest, HelpCentreRequest, \
     HelpdeskAttachmentRequest, HelpdeskCommentRequest, \
     OrganizationFieldReorderRequest, PostCommentRequest, \
     RateRequest, SatisfactionRatingRequest, SubscriptionRequest, \
@@ -2296,7 +2296,7 @@ class VoteCommentApi(Api):
 class ArticleApi(HelpCentreApiBase, TranslationApi, SubscriptionApi, VoteApi,
                  VoteCommentApi, IncrementalApi):
     @extract_id(Section)
-    def create(self, section, article):
+    def create(self, section, article, notify_subscribers=None):
         """
         Create (POST) an Article - See: Zendesk API `Reference
         <https://developer.zendesk.com/rest_api/docs/help_center/articles#create-article>`__.
@@ -2304,7 +2304,7 @@ class ArticleApi(HelpCentreApiBase, TranslationApi, SubscriptionApi, VoteApi,
         :param section: Section ID or object
         :param article: Article to create
         """
-        return CRUDRequest(self).post(article, create=True, id=section)
+        return ArticleCRUDRequest(self).post(article, create=True, id=section, notify_subscribers=notify_subscribers)
 
     def update(self, article):
         """
