@@ -83,6 +83,7 @@ class Zenpy(object):
         proactive_ratelimit=None,
         proactive_ratelimit_request_interval=10,
         disable_cache=False,
+        password_treatment_level="warning"
     ):
         """
         Python Wrapper for the Zendesk API.
@@ -107,6 +108,14 @@ class Zenpy(object):
         seconds to wait when over proactive_ratelimit.
         :param disable_cache: disable caching of objects
         """
+        if password_treatment_level == "warning":
+            if password is not None:
+                log.warning("WARNING **** PASSWORDS WILL BE DISABLED **** https://github.com/facetoe/zenpy/issues/651 https://support.zendesk.com/hc/en-us/articles/7386291855386-Announcing-the-deprecation-of-password-access-for-APIs")
+
+        if password_treatment_level == "error":
+            if password is not None:
+                log.error("ERROR **** PASSWORDS WILL BE DISABLED **** https://github.com/facetoe/zenpy/issues/651 https://support.zendesk.com/hc/en-us/articles/7386291855386-Announcing-the-deprecation-of-password-access-for-APIs")
+                raise ZenpyException("ERROR **** PASSWORDS WILL BE DISABLED **** https://github.com/facetoe/zenpy/issues/651 https://support.zendesk.com/hc/en-us/articles/7386291855386-Announcing-the-deprecation-of-password-access-for-APIs")
 
         session = self._init_session(email, token, oauth_token,
                                      password, session, anonymous)
