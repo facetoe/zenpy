@@ -42,3 +42,16 @@
 - README.md (New actions)
 
 ### Removed
+
+## [2.0.52] - 2024-09-09
+
+### Added
+- Added method to preflight payload
+
+### Fixed
+- Fixed issue https://github.com/facetoe/zenpy/issues/647
+
+### Changed
+- Help centre article creation parameter to squelch notifications to subscribers
+
+### Removed
