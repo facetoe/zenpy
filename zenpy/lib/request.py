@@ -33,6 +33,13 @@ class RequestHandler(object):
 
 class BaseZendeskRequest(RequestHandler):
     """
+    Classes can decorate the payload right before it goes out, and RIGHT before the URL is built.
+    This is because some simple kwargs need placement in the payload body.
+    """
+
+    def preflight_payload(self, payload, **kwargs):
+        return kwargs
+    """
     Base class for Zendesk requests. Provides a few handy methods.
     """
     def build_payload(self, api_objects):
@@ -78,6 +85,7 @@ class CRUDRequest(BaseZendeskRequest):
             endpoint = self.api.endpoint
 
         payload = self.build_payload(api_objects)
+        kwargs = self.preflight_payload(payload, **kwargs)
         url = self.api._build_url(endpoint(*args, **kwargs))
         return self.api._post(url, payload)
 
@@ -117,6 +125,14 @@ class CRUDRequest(BaseZendeskRequest):
         self.api.cache.delete(api_objects)
         return response
 
+
+class ArticleCRUDRequest(CRUDRequest):
+
+    def preflight_payload(self, payload, **kwargs):
+        notify_subscribers = kwargs.pop('notify_subscribers', None)
+        if notify_subscribers is not None:
+            payload['notify_subscribers'] = bool(notify_subscribers)
+        return kwargs
 
 class SuspendedTicketRequest(BaseZendeskRequest):
     """
