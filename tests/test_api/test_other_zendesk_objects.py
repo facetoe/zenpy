@@ -1,5 +1,7 @@
+import logging
 from time import sleep
-
+from zenpy.lib.api import ZenpyException
+from zenpy import Zenpy
 from test_api.fixtures import ZenpyApiTestCase
 
 from test_api.fixtures.__init__ import (
@@ -36,6 +38,7 @@ from zenpy.lib.exception import (
 from zenpy.lib import util
 from datetime import datetime, timezone
 from unittest import TestCase
+from unittest.mock import MagicMock
 
 class DateTimeTest(TestCase):
     def test_datetime_import(self):
@@ -428,3 +431,24 @@ class TestUserMe(ZenpyApiTestCase):
             me = self.zenpy_client.users.me()
             self.assertNotEqual(me, None, "me is valid")
             self.assertNotEqual(me.email, "", "email is valid in me")
+
+class TestPasswordDeprecation(ZenpyApiTestCase):
+    __test__ = True
+    def test_password_failure(self):
+        log = logging.getLogger()
+        log.error = MagicMock(return_value="error issued")
+        with self.assertRaises(ZenpyException):
+            zenpy_client = Zenpy(subdomain="party", email="face@toe", password="Yer", password_treatment_level="error")
+        log.error.assert_called_once_with("ERROR **** PASSWORDS WILL BE DISABLED **** https://github.com/facetoe/zenpy/issues/651 https://support.zendesk.com/hc/en-us/articles/7386291855386-Announcing-the-deprecation-of-password-access-for-APIs")
+    def test_password_passes(self):
+        log = logging.getLogger()
+        log.warning = MagicMock(return_value="warning issued")
+        zenpy_client = Zenpy(subdomain="party", email="face@toe", password="Yer", password_treatment_level="warning")
+        log.warning.assert_called_once_with("WARNING **** PASSWORDS WILL BE DISABLED **** https://github.com/facetoe/zenpy/issues/651 https://support.zendesk.com/hc/en-us/articles/7386291855386-Announcing-the-deprecation-of-password-access-for-APIs")
+
+    def test_password_passes_no_deprecation(self):
+        log = logging.getLogger()
+        log.warning = MagicMock(return_value="warning issued")
+        zenpy_client = Zenpy(subdomain="party", email="face@toe", password="Yer")
+        log.warning.assert_called_once_with("WARNING **** PASSWORDS WILL BE DISABLED **** https://github.com/facetoe/zenpy/issues/651 https://support.zendesk.com/hc/en-us/articles/7386291855386-Announcing-the-deprecation-of-password-access-for-APIs")
+
