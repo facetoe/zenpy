@@ -55,3 +55,16 @@
 - Help centre article creation parameter to squelch notifications to subscribers
 
 ### Removed
+
+## [2.0.53] - 2024-09-12
+
+### Added
+- Added warning when using password, or error based on configuration
+
+### Fixed
+- Fixed issue https://github.com/facetoe/zenpy/issues/651
+
+### Changed
+- ZenPy initializer will emit warning or error based on constructor configuration
+
+### Removed
