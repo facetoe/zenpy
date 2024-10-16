@@ -68,3 +68,16 @@
 - ZenPy initializer will emit warning or error based on constructor configuration
 
 ### Removed
+
+## [2.0.54] - 2024-10-16
+
+### Added
+- 
+
+### Fixed
+- Fixed issue https://github.com/facetoe/zenpy/issues/658
+
+### Changed
+- ZenPy Chat API now going through API v2 and NOT zopim.
+
+### Removed
