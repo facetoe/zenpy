@@ -403,7 +403,8 @@ class BaseApi(object):
 
     def _build_url(self, endpoint, api_prefix=None):
         """ Build complete URL """
-        if not issubclass(type(self), ChatApiBase) and not self.subdomain:
+        # Oct 29, 2024 we will require subdomain to be defined and NOT allow Zopim only requests.
+        if not self.subdomain:
             raise ZenpyException(
                 "subdomain is required when accessing the Zendesk API!")
 
@@ -2116,8 +2117,7 @@ class ChatApiBase(Api):
         super(ChatApiBase, self).__init__(config,
                                           object_type='chat',
                                           endpoint=endpoint)
-        self.domain = 'www.zopim.com'
-        self.subdomain = ''
+        self.api_prefix = "api/v2/chat"
         self._request_handler = request_handler or ChatApiRequest
         self._object_mapping = ChatObjectMapping(self)
         self._response_handlers = (DeleteResponseHandler,
