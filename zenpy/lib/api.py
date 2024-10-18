@@ -2432,10 +2432,17 @@ class AccessPolicyApi(Api):
 class SectionApi(HelpCentreApiBase, CRUDApi, TranslationApi, SubscriptionApi,
                  AccessPolicyApi):
     @extract_id(Section)
-    def articles(self, section, locale='en-us'):
-        return self._query_zendesk(self.endpoint.articles,
-                                   'article',
-                                   id=section, locale=locale)
+    def articles(self, section, locale="en-us", include=None):
+        # Set locale to None to search all locales. Not available for anonymous users
+        if not locale:
+            return self._query_zendesk(self.endpoint.articles,
+                                       "article",
+                                       id=section, include=include)
+        else:
+            return self._query_zendesk(self.endpoint.articles,
+                                       "article",
+                                       id=section, locale=locale,
+                                       include=include)
 
     def create(self, section):
         return CRUDRequest(self).post(section,
