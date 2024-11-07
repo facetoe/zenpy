@@ -1,0 +1,121 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2024-11-08T02:11:00",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"link\": {\"issue_id\": 20858, \"issue_key\": 20858, \"ticket_id\": 20858}}"
+        },
+        "headers": {
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic <ZENPY-CREDENTIALS>"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Length": [
+            "69"
+          ],
+          "Content-Type": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "Zenpy/2.0.54"
+          ]
+        },
+        "method": "POST",
+        "uri": "https://d3v-zenpydev.zendesk.com/api/services/jira/links.json"
+      },
+      "response": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"link\":{\"id\":60477709,\"ticket_id\":\"20858\",\"issue_id\":\"20858\",\"issue_key\":\"20858\",\"url\":\"https://d3v-zenpydev.zendesk.com/api/services/jira/links/60477709\",\"created_at\":\"2024-11-08T02:11:00.000Z\",\"updated_at\":\"2024-11-08T02:11:00.000Z\"}}"
+        },
+        "headers": {
+          "CF-Cache-Status": [
+            "DYNAMIC"
+          ],
+          "CF-RAY": [
+            "8df207a58d8e8e62-PDX"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Type": [
+            "application/json; charset=utf-8"
+          ],
+          "Date": [
+            "Fri, 08 Nov 2024 02:11:00 GMT"
+          ],
+          "NEL": [
+            "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Report-To": [
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v4?s=Nx1FO8pfUJ10%2FYrV1%2Bj5ERBDshPQnK7kjYZEuAWp3%2BDTz6jI3eEhafr7a7s2ZACzaBtoVYYPAJ7%2FOt8XcraO2yx8778WQT9jfK2jbHZSrmOizymOUSJ0g38f0VZAwJClWj%2F6og%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Server": [
+            "cloudflare"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "X-Request-ID": [
+            "8df207a58d8e8e62-PDX"
+          ],
+          "X-Zendesk-Zorg": [
+            "yes"
+          ],
+          "cache-control": [
+            "no-store"
+          ],
+          "content-security-policy": [
+            "script-src 'self' https: 'nonce-oPabgL1uysz2dktSuguX/Q=='"
+          ],
+          "etag": [
+            "W/\"209e7a41578d37593b4fc9dfc1b524dc\""
+          ],
+          "referrer-policy": [
+            "strict-origin-when-cross-origin"
+          ],
+          "status": [
+            "201 Created"
+          ],
+          "strict-transport-security": [
+            "max-age=31556952; includeSubDomains"
+          ],
+          "x-content-type-options": [
+            "nosniff"
+          ],
+          "x-download-options": [
+            "noopen"
+          ],
+          "x-frame-options": [
+            "SAMEORIGIN"
+          ],
+          "x-permitted-cross-domain-policies": [
+            "none"
+          ],
+          "x-runtime": [
+            "0.029250"
+          ],
+          "x-xss-protection": [
+            "1; mode=block"
+          ]
+        },
+        "status": {
+          "code": 201,
+          "message": "Created"
+        },
+        "url": "https://d3v-zenpydev.zendesk.com/api/services/jira/links.json"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.8.1"
+}
