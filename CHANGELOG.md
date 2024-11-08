@@ -81,3 +81,16 @@
 - ZenPy Chat API now going through API v2 and NOT zopim.
 
 ### Removed
+
+## [2.0.55] - 2024-11-08
+
+### Added
+- 
+
+### Fixed
+- Fixed issue https://github.com/facetoe/zenpy/issues/662
+
+### Changed
+- ZenPy JIRA Links API now works on writes and base class supports singular/plural object deserialization.
+
+### Removed
