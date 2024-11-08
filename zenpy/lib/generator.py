@@ -4,7 +4,7 @@ import re
 from abc import abstractmethod
 from datetime import datetime, timedelta
 
-from zenpy.lib.util import as_plural
+from zenpy.lib.util import as_plural, as_singular
 from zenpy.lib.exception import SearchResponseLimitExceeded
 
 try:
@@ -188,7 +188,8 @@ class ZendeskResultGenerator(BaseResultGenerator):
     def process_page(self):
         response_objects = self.response_handler.deserialize(
             self._response_json)
-        return response_objects[as_plural(self.object_type)]
+        return response_objects[as_plural(self.object_type)] if as_plural(self.object_type) in response_objects \
+            else response_objects[as_singular(self.object_type)]
 
     def get_next_page(self, page_num=None, page_size=None):
         end_time = self._response_json.get('end_time', None)

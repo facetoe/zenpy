@@ -27,6 +27,7 @@ from zenpy.lib.api_objects import (
     Trigger,
     User,
     View,
+    Link
 )
 from zenpy.lib.api_objects.help_centre_objects import (
     Category,
@@ -452,3 +453,15 @@ class TestPasswordDeprecation(ZenpyApiTestCase):
         zenpy_client = Zenpy(subdomain="party", email="face@toe", password="Yer")
         log.warning.assert_called_once_with("WARNING **** PASSWORDS WILL BE DISABLED **** https://github.com/facetoe/zenpy/issues/651 https://support.zendesk.com/hc/en-us/articles/7386291855386-Announcing-the-deprecation-of-password-access-for-APIs")
 
+class TestJIRALink(ZenpyApiTestCase):
+    __test__ = True
+
+    def test_create_jira_link(self):
+        cassette_name = "{}".format(self.generate_cassette_name())
+        with self.recorder.use_cassette(
+                cassette_name=cassette_name, serialize_with="prettyjson"
+        ):
+            link = Link(ticket_id=20858, issue_id=20858, issue_key=20858)
+            result = self.zenpy_client.jira_links.create(link)
+            self.assertNotEqual(result, None, "Link is valid")
+            self.assertEqual(result.response.json()['link']['ticket_id'], '20858', "link ticket is same")
