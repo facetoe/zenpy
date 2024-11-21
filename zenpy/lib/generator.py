@@ -224,7 +224,7 @@ class SearchResultGenerator(BaseResultGenerator):
                          self).get_next_page(page_num, page_size)
         except SearchResponseLimitExceeded:
             log.error(
-                'This search has resulted in more results than zendesk allows.'
+                'This search has resulted in more results than Zendesk allows. '
                 'We got what we could.'
             )
             raise StopIteration()
