@@ -94,3 +94,16 @@
 - ZenPy JIRA Links API now works on writes and base class supports singular/plural object deserialization.
 
 ### Removed
+
+## [2.0.56] - 2024-11-20
+
+### Added
+- 
+
+### Fixed
+- Fixed issue https://github.com/facetoe/zenpy/issues/668
+
+### Changed
+- Updates error message and build process and documentation of that build process.
+
+### Removed

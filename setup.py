@@ -7,7 +7,7 @@ long_description = (this_directory / "README.md").read_text()
 setup(
     name='zenpy',
     packages=setuptools.find_packages(),
-    version='2.0.55',
+    version='2.0.56',
     description='Python wrapper for the Zendesk API',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -16,7 +16,7 @@ setup(
     author='Face Toe',
     author_email='facetoe@facetoe.com.au',
     url='https://github.com/facetoe/zenpy',
-    download_url='https://github.com/facetoe/zenpy/releases/tag/2.0.55',
+    download_url='https://github.com/facetoe/zenpy/releases/tag/2.0.56',
     install_requires=[
         'requests>=2.14.2',
         'python-dateutil>=2.7.5',
