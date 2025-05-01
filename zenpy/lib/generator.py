@@ -235,7 +235,7 @@ class CursorResultsGenerator(BaseResultGenerator):
     Generator for iterable endpoint results with cursor
     """
 
-    def get_next_page(self):
+    def get_next_page(self, **kwargs):
         """ Retrieve the next page of results. """
         meta = self._response_json.get('meta')
         if meta and meta.get('has_more'):
@@ -257,11 +257,6 @@ class CursorResultsGenerator(BaseResultGenerator):
         else:
             log.debug('No more results available, stopping iteration')
             raise StopIteration()
-
-    def handle_pagination(self):
-        """ Handle retrieving and processing the next page of results. """
-        self._response_json = self.get_next_page()
-        self.values.extend(self.process_page())
 
 
 class GenericCursorResultsGenerator(CursorResultsGenerator):
