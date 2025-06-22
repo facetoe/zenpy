@@ -479,7 +479,7 @@ fields = zenpy_client.ticket_fields(cursor_pagination=50) # 50 results per page
 
 ## Documentation
 
-Check out the [documentation](http://docs.facetoe.com.au/) for more info.
+Check out the [documentation](https://zenpy.readthedocs.io/en/latest/zenpy.html) for more info.
 
 ### Contributions
 Contributions are very welcome. I've written an explanation of the core ideas of the wrapper in the [Contributors Guide](https://github.com/facetoe/zenpy/wiki/Contributors-Guide).
