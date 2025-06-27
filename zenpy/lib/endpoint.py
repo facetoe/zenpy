@@ -172,6 +172,11 @@ class SecondaryEndpoint(BaseEndpoint):
                     parameters['page[size]'] = 100
                 elif value is not False:
                     parameters['page[size]'] = value
+            elif key == "include":
+                if is_iterable_but_not_string(value):
+                    parameters[key] = ",".join(value)
+                elif value:
+                    parameters[key] = value
             else:
                 parameters[key] = value
         return Url(self.endpoint % dict(id=id), params=parameters)
