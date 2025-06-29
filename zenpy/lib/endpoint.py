@@ -572,6 +572,30 @@ class WebhookEndpoint(BaseEndpoint):
 
         return Url(path, params)
 
+class EngagementEndpoint(BaseEndpoint):
+    def __call__(self, **kwargs):
+        path = self.endpoint
+        params = {}
+        for key, value in kwargs.items():
+            if key == 'agent_id':
+                params['agent_id'] = value
+            elif key == 'channel':
+                params['channel'] = value
+            elif key == 'end_time':
+                params['end_time'] = value
+            elif key == 'filter_by':
+                if value in ['engagement_end_time', 'engagement_start_time']:
+                    params['filter_by'] = value
+                else:
+                    raise ZenpyException("filter_by must be one of (engagement_end_time, engagement_start_time)")
+            elif key == 'page_size':
+                params['page[size]'] = value
+            elif key == 'start_time':
+                params['start_time'] = value
+            elif key == 'ticket_id':
+                params['ticket_id'] = value
+
+        return Url(path, params)
 
 class EndpointFactory(object):
     """
@@ -993,6 +1017,8 @@ class EndpointFactory(object):
         'webhooks/{}/invocations/{}/attempts')
     webhooks.test = WebhookEndpoint('webhooks/test')
     webhooks.secret = SecondaryEndpoint('webhooks/%(id)s/signing_secret')
+
+    engagements = EngagementEndpoint('engagements')
 
     def __new__(cls, endpoint_name):
         return getattr(cls, endpoint_name)

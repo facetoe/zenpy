@@ -37,7 +37,7 @@ from zenpy.lib.response import AccountResponseHandler, AgentResponseHandler, \
     BanResponseHandler, \
     ChatResponseHandler, ChatSearchResponseHandler, \
     CombinationResponseHandler, CountResponseHandler, DeleteResponseHandler, \
-    DepartmentResponseHandler, GenericZendeskResponseHandler, \
+    DepartmentResponseHandler, EngagementResponseHandler, GenericZendeskResponseHandler, \
     GoalResponseHandler, HTTPOKResponseHandler, JobStatusesResponseHandler, \
     MissingTranslationHandler, RequestCommentResponseHandler, \
     SearchExportResponseHandler, SearchResponseHandler, ShortcutResponseHandler, \
@@ -97,6 +97,7 @@ class BaseApi(object):
             WebhookInvocationAttemptsResponseHandler,
             WebhooksResponseHandler,
             VoiceCommentResponseHandler,
+            EngagementResponseHandler,
             GenericZendeskResponseHandler,
             HTTPOKResponseHandler,
         )
@@ -3162,3 +3163,13 @@ class CustomStatusesApi(CRUDApi):
 
     def delete(self, api_objects, **kwargs):
         raise ZenpyException("Custom status cannot be deleted")
+
+class EngagementApi(Api):
+    def __init__(self, config):
+        super(EngagementApi, self).__init__(config,
+                                            object_type='agent_engagement_data',
+                                            endpoint=EndpointFactory('engagements'))
+        self._object_mapping = ZendeskObjectMapping(self)
+
+    def __call__(self, *args, **kwargs):
+        return self._query_zendesk(self.endpoint, self.object_type, *args, **kwargs)        

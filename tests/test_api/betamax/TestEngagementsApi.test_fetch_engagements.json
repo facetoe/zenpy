@@ -1,0 +1,102 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2025-06-28T07:47:28",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": ""
+        },
+        "headers": {
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic <ZENPY-CREDENTIALS>"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "User-Agent": [
+            "Zenpy/2.0.56"
+          ]
+        },
+        "method": "GET",
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/engagements"
+      },
+      "response": {
+        "body": {
+          "base64_string": "H4sIAAAAAAAAA4ySy26DMBBF9/0KxLqRDC4kZEee6qJppXRXVciCCbEKduoxfUX599pOUGmSVmFlzT0z157L9srzfFaC0BmI0hxqeyyYZr439J68rdEN0dF4YRU/mRFKZjQZpGQaj0YTSiZpSsZpOKApoWPiX+87Nc9foO0KDsW94b6WUBrHEY2iKA7IQS+VbDYdPUr6fRrS/uCgK3htADWoDtMn5gtI1M6Qq5XRNa8hQ8ilKNCSYXsDRF4K9yAtsxVXqDMFm+rzpIP8unMNiOaEWS4boU91O4Ofk7XUrMp+Lv7OuD7xig9wJYXx0Jfi+ZoJAZXL5W66XKbz28W8DaATHWqm7FCGUjg4dVuA4k/WOjoyJGHUI3GP3DySZBjEwzA80wSi+K9lcPRTGA/d4N7Ktdw/TBfnGTP5hDgy7r7LZuHllUQoPLOuN1DINDdqG5apmN5LF2zHN2ioM/EbYuc9W9AX8KGzjZ3bKJeGaKrKKWuGWS2VW8yKVQiu6lDkX64cXO2+AQAA//8DAJypaeONAwAA",
+          "encoding": "utf-8",
+          "string": ""
+        },
+        "headers": {
+          "CF-RAY": [
+            "956b9383d9c13dd5-SIN"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Type": [
+            "application/json"
+          ],
+          "Date": [
+            "Sat, 28 Jun 2025 07:47:28 GMT"
+          ],
+          "NEL": [
+            "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Report-To": [
+            "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v4?s=GrcMwH%2BQy2fY9q%2F0wuwKgAxXUs89jONyuX%2Bw6umO5eG2dY1sgcC6AS7Vr90ccTx0nV02mtlsGo9ukp4f1sjmnl22xO79HFw5RvHdDBrTmShBnyUhWfHAy026mkfPDwDtSWfRtz7lenpdBQiGmaiGKMXpSj%2Fg1AasmQLWIlkuyVCVv6DTFV83SGkpBBq0TjKdvA%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+          ],
+          "Server": [
+            "cloudflare"
+          ],
+          "Set-Cookie": [
+            "__cf_bm=EdaiKylUROtqUBR5j4uWgBPVaeqP9CtwjOGezER_Iy8-1751096848-1.0.1.1-oa8T157EJVA15S76JbcVU9bYZeT02vH3aUY5EEA6OUWbmL8iFrliY8apnNC4a.ChOaisXagEIwThNNoQUAn6F7MBnY59bYW7PpQrVIje.So; path=/; expires=Sat, 28-Jun-25 08:17:28 GMT; domain=.d3v-zenpydev.zendesk.com; HttpOnly; Secure; SameSite=None",
+            "_cfuvid=911LK4dITcTjArUEJNCVKnp315z37y9BOk_yx8NWjB4-1751096848541-0.0.1.1-604800000; path=/; domain=.d3v-zenpydev.zendesk.com; HttpOnly; Secure; SameSite=None"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "cf-cache-status": [
+            "DYNAMIC"
+          ],
+          "content-encoding": [
+            "gzip"
+          ],
+          "vary": [
+            "Accept-Encoding"
+          ],
+          "via": [
+            "zorg"
+          ],
+          "x-envoy-decorator-operation": [
+            "/api/v2/engagements"
+          ],
+          "x-envoy-upstream-service-time": [
+            "22"
+          ],
+          "x-request-id": [
+            "956b9383d9c13dd5-ORD"
+          ],
+          "x-zendesk-zorg": [
+            "yes"
+          ],
+          "zendesk-service": [
+            "agent-engagement-api-service"
+          ]
+        },
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/engagements"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.9.0"
+}
