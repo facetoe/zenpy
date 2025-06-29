@@ -37,7 +37,7 @@ from zenpy.lib.response import AccountResponseHandler, AgentResponseHandler, \
     BanResponseHandler, \
     ChatResponseHandler, ChatSearchResponseHandler, \
     CombinationResponseHandler, CountResponseHandler, DeleteResponseHandler, \
-    DepartmentResponseHandler, GenericZendeskResponseHandler, \
+    DepartmentResponseHandler, EngagementResponseHandler, GenericZendeskResponseHandler, \
     GoalResponseHandler, HTTPOKResponseHandler, JobStatusesResponseHandler, \
     MissingTranslationHandler, RequestCommentResponseHandler, \
     SearchExportResponseHandler, SearchResponseHandler, ShortcutResponseHandler, \
@@ -97,6 +97,7 @@ class BaseApi(object):
             WebhookInvocationAttemptsResponseHandler,
             WebhooksResponseHandler,
             VoiceCommentResponseHandler,
+            EngagementResponseHandler,
             GenericZendeskResponseHandler,
             HTTPOKResponseHandler,
         )
@@ -3162,3 +3163,29 @@ class CustomStatusesApi(CRUDApi):
 
     def delete(self, api_objects, **kwargs):
         raise ZenpyException("Custom status cannot be deleted")
+
+class EngagementApi(Api):
+    """
+    API class for handling Engagements.
+    """
+
+    def __init__(self, config):
+        super(EngagementApi, self).__init__(config, object_type="engagement", endpoint=None)
+
+    def fetch_all(self, **kwargs):
+        """
+        Fetch all engagements with optional query parameters.
+
+        :param kwargs: Query parameters for filtering engagements.
+        :return: ZendeskResultGenerator for engagements.
+        """
+        return self._query_zendesk(self.endpoint, self.object_type, **kwargs)
+
+    def fetch_by_id(self, engagement_id):
+        """
+        Fetch a single engagement by ID.
+
+        :param engagement_id: ID of the engagement to fetch.
+        :return: Engagement object.
+        """
+        return self._query_zendesk(self.endpoint, self.object_type, id=engagement_id)

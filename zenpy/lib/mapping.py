@@ -134,6 +134,7 @@ from zenpy.lib.api_objects.zis_objects import Integration
 from zenpy.lib.exception import ZenpyException
 from zenpy.lib.proxy import ProxyDict, ProxyList
 from zenpy.lib.util import as_singular, get_object_type
+from zenpy.lib.api_objects.engagement import Engagement
 
 log = logging.getLogger(__name__)
 
@@ -233,7 +234,9 @@ class ZendeskObjectMapping(object):
         'signing_secret': WebhookSecret,
         'subscription' : Subscription,
         'vote': Vote,
-        'custom_status': CustomStatus
+        'custom_status': CustomStatus,
+        'engagement': Engagement,
+        'agent_engagement_data': [Engagement]
     }
 
     skip_attrs = []

@@ -1,0 +1,86 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2025-06-29T08:13:14",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": ""
+        },
+        "headers": {
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic <ZENPY-CREDENTIALS>"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "User-Agent": [
+            "Zenpy/2.0.56"
+          ]
+        },
+        "method": "GET",
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/engagements/C604EBEFC12F6FFB0B38EEC7F6A8B5EF"
+      },
+      "response": {
+        "body": {
+          "base64_string": "H4sIAAAAAAAAA4ySX0+DMBTF3/cpCM8uaWGUwtuYZTHRmTj/PBICd0gG7aRlizF+d0uZirIle2t6fufce3v7MbEsG3iRFlADV0mZ21Zo2QuCZixi8QI7MYnjCEUuZWzhx2ROI4/F9lXnU2W2hW9PMPMoNdc66yfJJ8TBLg2IS13fqEUj2t1QxTRAgYsCozbw1oJU0BwJSgIfYUIp8olnCLHZaFWVNSQSMsFz2XFuX1nKsuBmECWSTdlIlTSwq95HPBp0WoOU+iSTTLRc/Vc7fzkWlVBplfy2e0hLNaqCUd9XJbjOV5fi2WvKOVRmE3dsvZ4vb1bL/skHq5IqbbrIVApu0LmZHvIzZFfNcA5yvCkiU4QfsRMiJ8TeyAI8P2twQ4/++QA6X7WyL2MMK/ZyCtChRl7f3z6z65M1B+M88S0XB249QC320NPpHhqNX/qQXWIrNXVixZPPLwAAAP//AwCSxcxF/AIAAA==",
+          "encoding": "utf-8",
+          "string": ""
+        },
+        "headers": {
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Type": [
+            "application/json"
+          ],
+          "Date": [
+            "Sun, 29 Jun 2025 08:13:14 GMT"
+          ],
+          "Server": [
+            "openresty"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "content-encoding": [
+            "gzip"
+          ],
+          "vary": [
+            "Accept-Encoding"
+          ],
+          "via": [
+            "zorg"
+          ],
+          "x-envoy-decorator-operation": [
+            "/api/v2/engagements"
+          ],
+          "x-envoy-upstream-service-time": [
+            "7"
+          ],
+          "x-request-id": [
+            "0f852fb92d152766bef837b5250f9d1d"
+          ],
+          "x-zendesk-zorg": [
+            "yes"
+          ],
+          "zendesk-service": [
+            "agent-engagement-api-service"
+          ]
+        },
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/engagements/C604EBEFC12F6FFB0B38EEC7F6A8B5EF"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.9.0"
+}

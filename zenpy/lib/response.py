@@ -12,7 +12,8 @@ from zenpy.lib.generator import (
     SearchExportResultGenerator,
     WebhookInvocationsResultGenerator,
     WebhooksResultGenerator,
-    GenericCursorResultsGenerator
+    GenericCursorResultsGenerator,
+    EngagementResultGenerator
 )
 from zenpy.lib.util import as_singular, as_plural, get_endpoint_path
 from six.moves.urllib.parse import urlparse
@@ -635,3 +636,13 @@ class VoiceCommentResponseHandler(GenericZendeskResponseHandler):
 
     def build(self, response):
         return response.json()
+
+class EngagementResponseHandler(GenericZendeskResponseHandler):
+    """ Handles Engagement API responses. """
+    @staticmethod
+    def applies_to(api, response):
+        return get_endpoint_path(api, response).startswith('/engagements')
+
+    def build(self, response):
+        response_json = response.json()
+        return EngagementResultGenerator(self, response_json)
