@@ -3165,11 +3165,27 @@ class CustomStatusesApi(CRUDApi):
         raise ZenpyException("Custom status cannot be deleted")
 
 class EngagementApi(Api):
-    def __init__(self, config):
-        super(EngagementApi, self).__init__(config,
-                                            object_type='agent_engagement_data',
-                                            endpoint=EndpointFactory('engagements'))
-        self._object_mapping = ZendeskObjectMapping(self)
+    """
+    API class for handling Engagements.
+    """
 
-    def __call__(self, *args, **kwargs):
-        return self._query_zendesk(self.endpoint, self.object_type, *args, **kwargs)        
+    def __init__(self, config):
+        super(EngagementApi, self).__init__(config, object_type="engagement", endpoint=None)
+
+    def fetch_all(self, **kwargs):
+        """
+        Fetch all engagements with optional query parameters.
+
+        :param kwargs: Query parameters for filtering engagements.
+        :return: ZendeskResultGenerator for engagements.
+        """
+        return self._query_zendesk(self.endpoint, self.object_type, **kwargs)
+
+    def fetch_by_id(self, engagement_id):
+        """
+        Fetch a single engagement by ID.
+
+        :param engagement_id: ID of the engagement to fetch.
+        :return: Engagement object.
+        """
+        return self._query_zendesk(self.endpoint, self.object_type, id=engagement_id)

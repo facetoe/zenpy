@@ -429,18 +429,21 @@ class EngagementResultGenerator(BaseResultGenerator):
 
     def process_page(self):
         """ Process the current page of results. """
-        response_objects = self._response_json.get('agent_engagement_data', [])
-        return [self.response_handler.api._object_mapping.object_from_json('engagement', obj) for obj in response_objects]
-
+        if "agent_engagement_data" in self._response_json:
+            response_objects = self._response_json.get("agent_engagement_data", [])
+            return [self.response_handler.api._object_mapping.object_from_json("engagement", obj) for obj in response_objects]
+        elif "engagement_id" in self._response_json:
+            return self.response_handler.api._object_mapping.object_from_json("engagement", self._response_json)
+        return []
 
     def get_next_page(self, **kwargs):
         """ Retrieve the next page of results using the `next_page_url` key. """
-        url = self._response_json.get('next_page_url')
+        url = self._response_json.get("next_page_url")
         if url:
-            log.debug(f'There are more results via url={url}, retrieving')
+            log.debug(f"There are more results via url={url}, retrieving")
             response = self.response_handler.api._get(url, raw_response=True)
             return response.json()
         else:
-            log.debug('No more results available, stopping iteration')
+            log.debug("No more results available, stopping iteration")
             raise StopIteration()
             

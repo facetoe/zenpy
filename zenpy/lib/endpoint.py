@@ -572,30 +572,22 @@ class WebhookEndpoint(BaseEndpoint):
 
         return Url(path, params)
 
-class EngagementEndpoint(BaseEndpoint):
+class EngagementEndpoint(PrimaryEndpoint):
+    """
+    Custom endpoint for handling Engagements.
+    """
     def __call__(self, **kwargs):
         path = self.endpoint
-        params = {}
-        for key, value in kwargs.items():
-            if key == 'agent_id':
-                params['agent_id'] = value
-            elif key == 'channel':
-                params['channel'] = value
-            elif key == 'end_time':
-                params['end_time'] = value
-            elif key == 'filter_by':
-                if value in ['engagement_end_time', 'engagement_start_time']:
-                    params['filter_by'] = value
-                else:
-                    raise ZenpyException("filter_by must be one of (engagement_end_time, engagement_start_time)")
-            elif key == 'page_size':
-                params['page[size]'] = value
-            elif key == 'start_time':
-                params['start_time'] = value
-            elif key == 'ticket_id':
-                params['ticket_id'] = value
+        parameters = {}
 
-        return Url(path, params)
+        if 'id' in kwargs:
+            path += f"/{kwargs['id']}"
+        else:
+            for key, value in kwargs.items():
+                if key in ('agent_id', 'channel', 'end_time', 'filter_by', 'page_size', 'start_time', 'ticket_id'):
+                    parameters[key] = value
+
+        return Url(path=path, params=parameters)
 
 class EndpointFactory(object):
     """
