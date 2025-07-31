@@ -333,6 +333,9 @@ class SearchEndpoint(BaseEndpoint):
                 modifiers.append(self.format_between(key, value))
             elif key in ('sort_by', 'sort_order'):
                 params[key] = value
+            elif key == "include" and isinstance(value, str):
+                # https://developer.zendesk.com/api-reference/ticketing/ticket-management/search/#side-loading
+                params[key] = value
             elif key.endswith('_after'):
                 renamed_kwargs[key.replace('_after', '>')] = kwargs[key]
             elif key.endswith('_before'):
