@@ -3230,6 +3230,12 @@
         "mandatory": "no",
         "comment": "Whether the section is out of date"
       },
+      "parent_section_id": {
+        "type": "integer",
+        "read-only": "yes",
+        "mandatory": "no",
+        "comment": "The id of the section to which this section belongs"
+      },
       "position": {
         "type": "integer",
         "read-only": "no",

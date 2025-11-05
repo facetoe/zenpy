@@ -1090,6 +1090,7 @@ class Section(BaseObject):
                  manageable_by=None,
                  name=None,
                  outdated=None,
+                 parent_section_id=None,
                  position=None,
                  sorting=None,
                  source_locale=None,
@@ -1153,6 +1154,12 @@ class Section(BaseObject):
         # Read-only: yes
         # Type: boolean
         self.outdated = outdated
+
+        # Comment: The id of the section to which this section belongs
+        # Mandatory: no
+        # Read-only: yes
+        # Type: integer
+        self.parent_section_id = parent_section_id
 
         # Comment: The position of this section in the section list. By default the section is added to the end of the list
         # Mandatory: no
@@ -1221,6 +1228,20 @@ class Section(BaseObject):
     def created(self, created):
         if created:
             self.created_at = created
+
+    @property
+    def parent_section(self):
+        """
+        |  Comment: The id of the section to which this section belongs
+        """
+        if self.api and self.parent_section_id:
+            return self.api._get_parent_section(self.parent_section_id)
+
+    @parent_section.setter
+    def parent_section(self, parent_section):
+        if parent_section:
+            self.parent_section_id = parent_section.id
+            self._parent_section = parent_section
 
     @property
     def updated(self):
