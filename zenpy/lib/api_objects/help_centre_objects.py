@@ -1094,6 +1094,7 @@ class Section(BaseObject):
                  position=None,
                  sorting=None,
                  source_locale=None,
+                 theme_template=None,
                  updated_at=None,
                  url=None,
                  user_segment_id=None,
@@ -1173,6 +1174,12 @@ class Section(BaseObject):
         # Read-only: yes
         # Type: string
         self.source_locale = source_locale
+
+        # Comment: The theme template name used to display this section in Help Center
+        # Mandatory: no
+        # Read-only: no
+        # Type: string
+        self.theme_template = theme_template
 
         # Comment: The time at which the section was last updated
         # Mandatory: no
