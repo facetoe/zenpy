@@ -3230,6 +3230,18 @@
         "mandatory": "no",
         "comment": "Whether the section is out of date"
       },
+      "parent_section_id": {
+        "type": "integer",
+        "read-only": "yes",
+        "mandatory": "no",
+        "comment": "The id of the section to which this section belongs"
+      },
+      "theme_template": {
+        "type": "string",
+        "read-only": "no",
+        "mandatory": "no",
+        "comment": "The theme template name used to display this section in Help Center"
+      },
       "position": {
         "type": "integer",
         "read-only": "no",

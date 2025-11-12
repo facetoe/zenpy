@@ -1090,9 +1090,11 @@ class Section(BaseObject):
                  manageable_by=None,
                  name=None,
                  outdated=None,
+                 parent_section_id=None,
                  position=None,
                  sorting=None,
                  source_locale=None,
+                 theme_template=None,
                  updated_at=None,
                  url=None,
                  user_segment_id=None,
@@ -1154,6 +1156,12 @@ class Section(BaseObject):
         # Type: boolean
         self.outdated = outdated
 
+        # Comment: The id of the section to which this section belongs
+        # Mandatory: no
+        # Read-only: yes
+        # Type: integer
+        self.parent_section_id = parent_section_id
+
         # Comment: The position of this section in the section list. By default the section is added to the end of the list
         # Mandatory: no
         # Read-only: no
@@ -1166,6 +1174,12 @@ class Section(BaseObject):
         # Read-only: yes
         # Type: string
         self.source_locale = source_locale
+
+        # Comment: The theme template name used to display this section in Help Center
+        # Mandatory: no
+        # Read-only: no
+        # Type: string
+        self.theme_template = theme_template
 
         # Comment: The time at which the section was last updated
         # Mandatory: no
@@ -1221,6 +1235,20 @@ class Section(BaseObject):
     def created(self, created):
         if created:
             self.created_at = created
+
+    @property
+    def parent_section(self):
+        """
+        |  Comment: The id of the section to which this section belongs
+        """
+        if self.api and self.parent_section_id:
+            return self.api._get_parent_section(self.parent_section_id)
+
+    @parent_section.setter
+    def parent_section(self, parent_section):
+        if parent_section:
+            self.parent_section_id = parent_section.id
+            self._parent_section = parent_section
 
     @property
     def updated(self):
