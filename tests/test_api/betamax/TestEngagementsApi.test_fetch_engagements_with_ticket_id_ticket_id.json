@@ -1,0 +1,86 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2025-06-29T08:14:32",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": ""
+        },
+        "headers": {
+          "Accept": [
+            "*/*"
+          ],
+          "Accept-Encoding": [
+            "gzip, deflate"
+          ],
+          "Authorization": [
+            "Basic <ZENPY-CREDENTIALS>"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "User-Agent": [
+            "Zenpy/2.0.56"
+          ]
+        },
+        "method": "GET",
+        "uri": "https://d3v-zenpydev.zendesk.com/api/v2/engagements?ticket_id=94579"
+      },
+      "response": {
+        "body": {
+          "base64_string": "H4sIAAAAAAAAA4ySXU/CMBSG7/0Vy64labd1H9yBDGKimIgfF8YsDTvAwtZi24FK+O+2ZYsokHB30vd5z9ue0+2V47h0DkxlwOa6qEyZU0Vdp+u8OVuta+JAK3KjuDju9wZBP7rBgyhNSUzQkAyTAJHEj3tBGLrXe6cqpktoXUlAoqQR9qH78ygMPezHSejHftToc8Hr1aGO4wQlPmr9Aj5qkApEw8RhEhKCIhIRhBuGz2ZaV0UFmYQpZ7k0pNfeQMpizuyjFM9mhZAqE7Aqv44c6M+dK5BSVzKb8pqpY930KE7JiitaZr8X39BCHWVhRBq85EynqMsN0wVlDEq7n/t0MumNbsejdhEHK5SKCtOWSs4s3LOTgPwsazIt6SGPdFDYQfgJoS7yul50wgQsP2sJutj79zl0hqrlPspaxunraUQ3tsDk4e4lHZxJPnjYM1syvmHOI1R8DS1P1yC04fLBmq611NyJ1Wti57wb0GXwqbKV6VwLuwVWl6VVFlRmFRd2IDNaSrCnFpXFtz3GV7sfAAAA//8DAJrI226NAwAA",
+          "encoding": "utf-8",
+          "string": ""
+        },
+        "headers": {
+          "Connection": [
+            "keep-alive"
+          ],
+          "Content-Type": [
+            "application/json"
+          ],
+          "Date": [
+            "Sun, 29 Jun 2025 08:14:32 GMT"
+          ],
+          "Server": [
+            "openresty"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "content-encoding": [
+            "gzip"
+          ],
+          "vary": [
+            "Accept-Encoding"
+          ],
+          "via": [
+            "zorg"
+          ],
+          "x-envoy-decorator-operation": [
+            "/api/v2/engagements"
+          ],
+          "x-envoy-upstream-service-time": [
+            "13"
+          ],
+          "x-request-id": [
+            "eaa6ad854ad5dd2e649775fe6d0dc903"
+          ],
+          "x-zendesk-zorg": [
+            "yes"
+          ],
+          "zendesk-service": [
+            "agent-engagement-api-service"
+          ]
+        },
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "url": "https://d3v-zenpydev.zendesk.com/api/v2/engagements?ticket_id=94579"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.9.0"
+}

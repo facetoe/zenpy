@@ -572,6 +572,22 @@ class WebhookEndpoint(BaseEndpoint):
 
         return Url(path, params)
 
+class EngagementEndpoint(PrimaryEndpoint):
+    """
+    Custom endpoint for handling Engagements.
+    """
+    def __call__(self, **kwargs):
+        path = self.endpoint
+        parameters = {}
+
+        if 'id' in kwargs:
+            path += f"/{kwargs['id']}"
+        else:
+            for key, value in kwargs.items():
+                if key in ('agent_id', 'channel', 'end_time', 'filter_by', 'page_size', 'start_time', 'ticket_id'):
+                    parameters[key] = value
+
+        return Url(path=path, params=parameters)
 
 class EndpointFactory(object):
     """
@@ -993,6 +1009,8 @@ class EndpointFactory(object):
         'webhooks/{}/invocations/{}/attempts')
     webhooks.test = WebhookEndpoint('webhooks/test')
     webhooks.secret = SecondaryEndpoint('webhooks/%(id)s/signing_secret')
+
+    engagements = EngagementEndpoint('engagements')
 
     def __new__(cls, endpoint_name):
         return getattr(cls, endpoint_name)
