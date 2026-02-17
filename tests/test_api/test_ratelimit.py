@@ -135,7 +135,9 @@ class TestRatelimitBudgetExceeded(TestCase):
         with self.assertRaises(RatelimitBudgetExceeded) as ctx:
             api._call_api(http_method, "https://test.zendesk.com/api/v2/tickets.json")
 
-        self.assertEqual(ctx.exception.retry_after, 30)
+        # retry_after reflects remaining seconds, not the original header value.
+        # Budget=1 is exhausted after the first sleep tick, at which point 29s remain.
+        self.assertEqual(ctx.exception.retry_after, 29)
         self.assertIs(ctx.exception.response, response_429)
 
     def test_budget_check_without_budget_does_not_raise(self):
@@ -177,3 +179,42 @@ class TestRatelimitBudgetExceededException(TestCase):
         exc = RatelimitBudgetExceeded("budget exceeded")
         self.assertIsNone(exc.retry_after)
         self.assertIsNone(exc.response)
+
+
+class TestParseRetryAfter(TestCase):
+    """Tests for defensive Retry-After header parsing."""
+
+    def test_parses_integer_string(self):
+        api = make_base_api()
+        response = make_response(429, {'retry-after': '42'})
+        self.assertEqual(api._parse_retry_after(response), 42)
+
+    def test_returns_zero_for_missing_header(self):
+        api = make_base_api()
+        response = make_response(429, {})
+        self.assertEqual(api._parse_retry_after(response), 0)
+
+    def test_returns_zero_for_non_integer_value(self):
+        api = make_base_api()
+        response = make_response(429, {
+            'retry-after': 'Thu, 01 Dec 2025 16:00:00 GMT'
+        })
+        self.assertEqual(api._parse_retry_after(response), 0)
+
+    def test_returns_zero_for_empty_string(self):
+        api = make_base_api()
+        response = make_response(429, {'retry-after': ''})
+        self.assertEqual(api._parse_retry_after(response), 0)
+
+    def test_raise_on_ratelimit_with_non_integer_retry_after(self):
+        """Ensure RateLimitError is raised even with unparseable header."""
+        api = make_base_api(raise_on_ratelimit=True)
+        response_429 = make_response(429, {
+            'retry-after': 'Thu, 01 Dec 2025 16:00:00 GMT'
+        })
+        http_method = make_http_method(return_value=response_429)
+
+        with self.assertRaises(RateLimitError) as ctx:
+            api._call_api(http_method, "https://test.zendesk.com/api/v2/tickets.json")
+
+        self.assertEqual(ctx.exception.retry_after, 0)

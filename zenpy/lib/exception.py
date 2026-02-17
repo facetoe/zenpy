@@ -32,7 +32,7 @@ class RatelimitBudgetExceeded(ZenpyException):
     """
     A ``RatelimitBudgetExceeded`` is raised when the ratelimit_budget has been spent.
 
-    :param retry_after: seconds remaining on the current ``Retry-After`` period (if available)
+    :param retry_after: seconds remaining until the rate limit resets (if available)
     :param response: the raw :class:`requests.Response` object (if available)
     """
     def __init__(self, message, retry_after=None, response=None):

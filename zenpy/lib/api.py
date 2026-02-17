@@ -70,7 +70,7 @@ class BaseApi(object):
 
     def __init__(self, subdomain, session, timeout, ratelimit,
                  ratelimit_budget, ratelimit_request_interval,
-                 raise_on_ratelimit, cache, domain):
+                 raise_on_ratelimit=False, cache=None, domain=None):
         self.domain = domain
         self.subdomain = subdomain
         self.session = session
@@ -213,8 +213,7 @@ class BaseApi(object):
 
         # If we are being rate-limited, either raise or wait depending on configuration.
         if response.status_code == 429:
-            retry_after_seconds = int(
-                response.headers.get('retry-after', 0))
+            retry_after_seconds = self._parse_retry_after(response)
 
             if self.raise_on_ratelimit:
                 raise RateLimitError(
@@ -224,9 +223,9 @@ class BaseApi(object):
                     response=response,
                 )
 
-            while 'retry-after' in response.headers and int(
-                    response.headers['retry-after']) > 0:
-                retry_after_seconds = int(response.headers['retry-after'])
+            while 'retry-after' in response.headers \
+                    and self._parse_retry_after(response) > 0:
+                retry_after_seconds = self._parse_retry_after(response)
                 log.warning(
                     "Waiting for requested retry-after period: %s seconds" %
                     retry_after_seconds)
@@ -234,8 +233,7 @@ class BaseApi(object):
                     retry_after_seconds -= 1
                     self.check_ratelimit_budget(
                         1,
-                        retry_after=int(
-                            response.headers.get('retry-after', 0)),
+                        retry_after=retry_after_seconds,
                         response=response,
                     )
                     log.debug("    -> sleeping: %s more seconds" %
@@ -258,6 +256,17 @@ class BaseApi(object):
                     retry_after=retry_after,
                     response=response,
                 )
+
+    @staticmethod
+    def _parse_retry_after(response):
+        """Safely parse the Retry-After header value as an integer.
+
+        Returns 0 if the header is missing or cannot be parsed.
+        """
+        try:
+            return int(response.headers.get('retry-after', 0))
+        except (ValueError, TypeError):
+            return 0
 
     def _ratelimit(self, http_method, url, **kwargs):
         """ Ensure we do not hit the rate limit. """
