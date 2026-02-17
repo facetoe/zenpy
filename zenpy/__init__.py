@@ -84,6 +84,7 @@ class Zenpy(object):
         proactive_ratelimit=None,
         proactive_ratelimit_request_interval=10,
         disable_cache=False,
+        raise_on_ratelimit=False,
         password_treatment_level="warning"
     ):
         """
@@ -108,6 +109,11 @@ class Zenpy(object):
         :param proactive_ratelimit_request_interval:
         seconds to wait when over proactive_ratelimit.
         :param disable_cache: disable caching of objects
+        :param raise_on_ratelimit: if True, raise a
+        :class:`~zenpy.lib.exception.RateLimitError` immediately on HTTP 429
+        instead of sleeping and retrying. The exception carries
+        ``retry_after`` and ``response`` so callers (e.g. Celery tasks)
+        can reschedule the work themselves.
         """
         if password_treatment_level == "warning":
             if password is not None:
@@ -137,6 +143,7 @@ class Zenpy(object):
             if ratelimit_budget is not None
             else None,
             ratelimit_request_interval=int(proactive_ratelimit_request_interval),
+            raise_on_ratelimit=raise_on_ratelimit,
             cache=self.cache,
         )
 
