@@ -535,6 +535,11 @@ class Api(BaseApi):
                                    'category',
                                    id=category_id)
 
+    def _get_parent_section(self, parent_section_id):
+        return self._query_zendesk(EndpointFactory('help_centre').categories,
+                                   'section',
+                                   id=parent_section_id)
+
     def _get_macro(self, macro_id):
         return self._query_zendesk(EndpointFactory('macros'),
                                    'macro',
