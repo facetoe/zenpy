@@ -19,8 +19,8 @@ from zenpy.lib.api_objects.help_centre_objects import (
     Topic, Post, Subscription)
 from zenpy.lib.api_objects.talk_objects import (
     CallPe)
-from zenpy.lib.exception import RatelimitBudgetExceeded, APIException, \
-    RecordNotFoundException, SearchResponseLimitExceeded
+from zenpy.lib.exception import RateLimitError, RatelimitBudgetExceeded, \
+    APIException, RecordNotFoundException, SearchResponseLimitExceeded
 from zenpy.lib.mapping import ZendeskObjectMapping, \
     ChatObjectMapping, HelpCentreObjectMapping, \
     TalkObjectMapping, CallPEObjectMapping
@@ -69,13 +69,15 @@ class BaseApi(object):
     """
 
     def __init__(self, subdomain, session, timeout, ratelimit,
-                 ratelimit_budget, ratelimit_request_interval, cache, domain):
+                 ratelimit_budget, ratelimit_request_interval,
+                 raise_on_ratelimit=False, cache=None, domain=None):
         self.domain = domain
         self.subdomain = subdomain
         self.session = session
         self.timeout = timeout
         self.ratelimit = ratelimit
         self.ratelimit_budget = ratelimit_budget
+        self.raise_on_ratelimit = raise_on_ratelimit
         self.cache = cache
         self.protocol = 'https'
         self.api_prefix = 'api/v2'
@@ -209,17 +211,31 @@ class BaseApi(object):
         else:
             response = http_method(url, **kwargs)
 
-        # If we are being rate-limited, wait the required period before trying again.
+        # If we are being rate-limited, either raise or wait depending on configuration.
         if response.status_code == 429:
-            while 'retry-after' in response.headers and int(
-                    response.headers['retry-after']) > 0:
-                retry_after_seconds = int(response.headers['retry-after'])
+            retry_after_seconds = self._parse_retry_after(response)
+
+            if self.raise_on_ratelimit:
+                raise RateLimitError(
+                    "Rate limited by Zendesk (retry after %s seconds)"
+                    % retry_after_seconds,
+                    retry_after=retry_after_seconds,
+                    response=response,
+                )
+
+            while 'retry-after' in response.headers \
+                    and self._parse_retry_after(response) > 0:
+                retry_after_seconds = self._parse_retry_after(response)
                 log.warning(
                     "Waiting for requested retry-after period: %s seconds" %
                     retry_after_seconds)
                 while retry_after_seconds > 0:
                     retry_after_seconds -= 1
-                    self.check_ratelimit_budget(1)
+                    self.check_ratelimit_budget(
+                        1,
+                        retry_after=retry_after_seconds,
+                        response=response,
+                    )
                     log.debug("    -> sleeping: %s more seconds" %
                               retry_after_seconds)
                     sleep(1)
@@ -229,12 +245,28 @@ class BaseApi(object):
         self._update_callsafety(response)
         return response
 
-    def check_ratelimit_budget(self, seconds_waited):
+    def check_ratelimit_budget(self, seconds_waited, retry_after=None,
+                               response=None):
         """ If we have a ratelimit_budget, ensure it is not exceeded. """
         if self.ratelimit_budget is not None:
             self.ratelimit_budget -= seconds_waited
             if self.ratelimit_budget < 1:
-                raise RatelimitBudgetExceeded("Rate limit budget exceeded!")
+                raise RatelimitBudgetExceeded(
+                    "Rate limit budget exceeded!",
+                    retry_after=retry_after,
+                    response=response,
+                )
+
+    @staticmethod
+    def _parse_retry_after(response):
+        """Safely parse the Retry-After header value as an integer.
+
+        Returns 0 if the header is missing or cannot be parsed.
+        """
+        try:
+            return int(response.headers.get('retry-after', 0))
+        except (ValueError, TypeError):
+            return 0
 
     def _ratelimit(self, http_method, url, **kwargs):
         """ Ensure we do not hit the rate limit. """
