@@ -100,7 +100,11 @@ class ClientCredentialsSession(requests.Session):
         if self._cc_expires_in is not None:
             data["expires_in"] = self._cc_expires_in
         response = requests.post(url, json=data)
-        response.raise_for_status()
+        if not response.ok:
+            raise requests.exceptions.HTTPError(
+                "{} {}: {}".format(response.status_code, response.reason, response.text),
+                response=response,
+            )
         self._cc_token = response.json()["access_token"]
         self.headers.update({"Authorization": "Bearer {}".format(self._cc_token)})
 

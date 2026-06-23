@@ -178,10 +178,13 @@ class TestClientCredentialsSessionTokenRefresh(TestCase):
     @patch("requests.Session.request")
     @patch("requests.post")
     def test_token_fetch_error_propagates(self, mock_post, mock_request):
-        """HTTP error on token endpoint propagates to caller."""
+        """HTTP error on token endpoint propagates to caller with response body in message."""
         import requests as req
         error_response = MagicMock()
-        error_response.raise_for_status.side_effect = req.exceptions.HTTPError("401 Unauthorized")
+        error_response.ok = False
+        error_response.status_code = 400
+        error_response.reason = "Bad Request"
+        error_response.text = '{"error":"invalid_client","error_description":"Client not found."}'
         mock_post.return_value = error_response
 
         session = ClientCredentialsSession(
@@ -190,9 +193,10 @@ class TestClientCredentialsSessionTokenRefresh(TestCase):
             client_secret="client_secret",
             scope="read",
         )
-        with self.assertRaises(req.exceptions.HTTPError):
+        with self.assertRaises(req.exceptions.HTTPError) as ctx:
             session.request("GET", "https://testdomain.zendesk.com/api/v2/tickets.json")
 
+        self.assertIn("invalid_client", str(ctx.exception))
         mock_request.assert_not_called()
 
 
