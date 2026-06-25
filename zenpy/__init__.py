@@ -99,7 +99,8 @@ class ClientCredentialsSession(requests.Session):
         }
         if self._cc_expires_in is not None:
             data["expires_in"] = self._cc_expires_in
-        response = requests.post(url, json=data)
+        # Bypass super().post() to avoid recursion: Session.post() calls self.request().
+        response = super().request("POST", url, json=data, timeout=Zenpy.DEFAULT_TIMEOUT)
         if not response.ok:
             raise requests.exceptions.HTTPError(
                 "{} {}: {}".format(response.status_code, response.reason, response.text),
