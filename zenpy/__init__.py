@@ -100,7 +100,12 @@ class ClientCredentialsSession(requests.Session):
         if self._cc_expires_in is not None:
             data["expires_in"] = self._cc_expires_in
         # Bypass super().post() to avoid recursion: Session.post() calls self.request().
-        response = super().request("POST", url, json=data, timeout=Zenpy.DEFAULT_TIMEOUT)
+        # A None header value is removed by requests before sending (documented merge_setting
+        # behavior), so this omits the stale Authorization header on refresh.
+        response = super().request(
+            "POST", url, json=data, timeout=Zenpy.DEFAULT_TIMEOUT,
+            headers={"Authorization": None},
+        )
         if not response.ok:
             raise requests.exceptions.HTTPError(
                 "{} {}: {}".format(response.status_code, response.reason, response.text),
