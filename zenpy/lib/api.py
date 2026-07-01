@@ -837,6 +837,7 @@ class IncrementalCursorApi(IncrementalApi):
         :param include: list of objects to sideload. `Side-loading API Docs
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param per_page: number of results per page, up to max 1000
+        :param support_type_scope: one of "agent","ai_agent","all". Default: "agent"
         """
         if (all_are_none(start_time, cursor)
                 or all_are_not_none(start_time, cursor)):
