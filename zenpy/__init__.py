@@ -68,7 +68,7 @@ __version__ = "2.0.57"
 class ClientCredentialsSession(requests.Session):
     """
     Session that manages OAuth 2.0 Client Credentials Grant tokens automatically.
-    Tokens are fetched lazily on first request and refreshed before expiry.
+    Tokens are fetched lazily on first request and refreshed reactively after a 401 response.
     """
 
     # Signals _init_session to skip the standard credential check
