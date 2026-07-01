@@ -307,7 +307,11 @@ class Zenpy(object):
                 not anonymous:
             # session is not an OAuth session that has been authorized
             # so authorize the session.
-            if not password and not token and not oath_token:
+            if any((client_id, client_secret, scope)) and not all((client_id, client_secret, scope)):
+                raise ZenpyException(
+                    "client_id, client_secret, and scope must all be set to use the Client Credentials Grant!"
+                )
+            elif not password and not token and not oath_token:
                 raise ZenpyException(
                     "password, token or oauth_token are required! {}".format(locals())
                 )
