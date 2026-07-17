@@ -56,6 +56,14 @@ First, create a :class:`Zenpy` object:
         'subdomain': 'yoursubdomain'
     }
 
+    # OAuth client credentials grant type
+    creds = {
+        'subdomain': 'yoursubdomain',
+        'client_id': 'yourclientid',
+        'client_secret': 'yourclientsecret',
+        'scope': 'yourscope'
+    }
+
     # Import the Zenpy Class
     from zenpy import Zenpy
 
