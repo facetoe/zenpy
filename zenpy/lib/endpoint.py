@@ -124,6 +124,7 @@ class PrimaryEndpoint(BaseEndpoint):
                     'limit',
                     'cursor',
                     'filter_by',
+                    'support_type_scope'
             ):
                 parameters[key] = value
             elif key == 'since':
@@ -209,7 +210,7 @@ class IncrementalEndpoint(BaseEndpoint):
     :param include: list of items to sideload
     """
 
-    def __call__(self, start_time=None, include=None, per_page=None):
+    def __call__(self, start_time=None, include=None, per_page=None, support_type_scope=None):
         if start_time is None:
             raise ZenpyException(
                 "Incremental Endpoint requires a start_time parameter!")
@@ -227,6 +228,8 @@ class IncrementalEndpoint(BaseEndpoint):
                 params.update(dict(include=",".join(include)))
             else:
                 params.update(dict(include=include))
+        if support_type_scope:
+            params["support_type_scope"] = support_type_scope
         return Url(self.endpoint, params=params)
 
 

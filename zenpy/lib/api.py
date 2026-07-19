@@ -784,7 +784,7 @@ class IncrementalApi(Api):
     IncrementalApi supports the incremental endpoint.
     """
 
-    def incremental(self, start_time, include=None, per_page=None):
+    def incremental(self, start_time, include=None, per_page=None, support_type_scope=None):
         """
         Retrieve bulk data from the incremental API.
 
@@ -794,7 +794,7 @@ class IncrementalApi(Api):
         """
         return self._query_zendesk(self.endpoint.incremental, self.object_type,
                                    start_time=start_time, include=include,
-                                   per_page=per_page)
+                                   per_page=per_page, support_type_scope=support_type_scope)
 
 
 class IncrementalCursorApi(IncrementalApi):
@@ -803,7 +803,8 @@ class IncrementalCursorApi(IncrementalApi):
                     paginate_by_time=False,
                     cursor=None,
                     include=None,
-                    per_page=None):
+                    per_page=None,
+                    support_type_scope=None):
         """
         Incrementally retrieve Tickets or Users.
 
@@ -836,6 +837,7 @@ class IncrementalCursorApi(IncrementalApi):
         :param include: list of objects to sideload. `Side-loading API Docs
             <https://developer.zendesk.com/rest_api/docs/core/side_loading>`__.
         :param per_page: number of results per page, up to max 1000
+        :param support_type_scope: one of "agent","ai_agent","all". Default: "agent"
         """
         if (all_are_none(start_time, cursor)
                 or all_are_not_none(start_time, cursor)):
@@ -845,21 +847,24 @@ class IncrementalCursorApi(IncrementalApi):
         if start_time is not None and paginate_by_time is True:
             return super(IncrementalCursorApi, self).incremental(start_time=start_time,
                                                                  include=include,
-                                                                 per_page=per_page)
+                                                                 per_page=per_page,
+                                                                 support_type_scope=support_type_scope)
 
         elif start_time is not None and paginate_by_time is False:
             return self._query_zendesk(self.endpoint.incremental.cursor_start,
                                        self.object_type,
                                        start_time=start_time,
                                        include=include,
-                                       per_page=per_page)
+                                       per_page=per_page,
+                                       support_type_scope=support_type_scope)
 
         elif cursor and paginate_by_time is False:
             return self._query_zendesk(self.endpoint.incremental.cursor,
                                        self.object_type,
                                        cursor=cursor,
                                        include=include,
-                                       per_page=per_page)
+                                       per_page=per_page,
+                                       support_type_scope=support_type_scope)
         else:
             raise ValueError(
                 "Can't set cursor param and paginate_by_time=True")
@@ -1590,7 +1595,7 @@ class TicketApi(RateableApi, TaggableApi, IncrementalCursorApi, CRUDApi):
 
         return self._put(url, payload=None)
 
-    def events(self, start_time, include=None, per_page=None):
+    def events(self, start_time, include=None, per_page=None, support_type_scope=None):
         """
         Retrieve TicketEvents
 
@@ -1600,7 +1605,7 @@ class TicketApi(RateableApi, TaggableApi, IncrementalCursorApi, CRUDApi):
         """
         return self._query_zendesk(self.endpoint.events, 'ticket_event',
                                    start_time=start_time, include=include,
-                                   per_page=per_page)
+                                   per_page=per_page, support_type_scope=support_type_scope)
 
     @extract_id(Ticket)
     def audits(self, ticket=None, include=None, **kwargs):
