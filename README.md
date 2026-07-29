@@ -63,7 +63,7 @@ zenpy_client = Zenpy(
 
 ### OAuth 2.0 Client Credentials Grant
 
-Tokens are fetched automatically on the first API call and refreshed transparently on expiry (HTTP 401).
+Tokens are fetched automatically on the first API call and renewed transparently before they expire.
 
 ```python
 from zenpy import Zenpy

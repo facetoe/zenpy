@@ -3,6 +3,7 @@ import requests
 import os
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3 import Retry
+from requests_oauth2client import OAuth2Client, OAuth2ClientCredentialsAuth, ClientSecretPost
 
 from zenpy.lib.api import (
     UserApi,
@@ -67,8 +68,8 @@ __version__ = "2.0.57"
 
 class ClientCredentialsSession(requests.Session):
     """
-    Session that manages OAuth 2.0 Client Credentials Grant tokens automatically.
-    Tokens are fetched lazily on first request and refreshed reactively after a 401 response.
+    Session that manages OAuth 2.0 Client Credentials Grant tokens automatically:
+    fetched lazily on first request and renewed proactively before expiry.
     """
 
     # Signals _init_session to skip the standard credential check
@@ -76,52 +77,21 @@ class ClientCredentialsSession(requests.Session):
 
     def __init__(self, subdomain, client_id, client_secret, scope, expires_in=None, domain="zendesk.com"):
         super().__init__()
-        self._cc_subdomain = subdomain
-        self._cc_client_id = client_id
-        self._cc_client_secret = client_secret
-        self._cc_scope = scope
-        self._cc_expires_in = expires_in
-        self._cc_domain = domain
-        self._cc_token = None
         self.mount("https://", HTTPAdapter(max_retries=Retry(
             total=3,
             status_forcelist=[r for r in Retry.RETRY_AFTER_STATUS_CODES if r != 429],
             respect_retry_after_header=False,
         )))
-
-    def _fetch_token(self):
-        url = "https://{}.{}/oauth/tokens".format(self._cc_subdomain, self._cc_domain)
-        data: dict = {
-            "grant_type": "client_credentials",
-            "client_id": self._cc_client_id,
-            "client_secret": self._cc_client_secret,
-            "scope": self._cc_scope,
-        }
-        if self._cc_expires_in is not None:
-            data["expires_in"] = self._cc_expires_in
-        # Bypass super().post() to avoid recursion: Session.post() calls self.request().
-        # A None header value is removed by requests before sending (documented merge_setting
-        # behavior), so this omits the stale Authorization header on refresh.
-        response = super().request(
-            "POST", url, json=data, timeout=Zenpy.DEFAULT_TIMEOUT,
-            headers={"Authorization": None},
+        token_endpoint = "https://{}.{}/oauth/tokens".format(subdomain, domain)
+        oauth2_client = OAuth2Client(
+            token_endpoint=token_endpoint,
+            auth=ClientSecretPost(client_id, client_secret),
+            session=self,
         )
-        if not response.ok:
-            raise requests.exceptions.HTTPError(
-                "{} {}: {}".format(response.status_code, response.reason, response.text),
-                response=response,
-            )
-        self._cc_token = response.json()["access_token"]
-        self.headers.update({"Authorization": "Bearer {}".format(self._cc_token)})
-
-    def request(self, method, url, **kwargs):
-        if self._cc_token is None:
-            self._fetch_token()
-        response = super().request(method, url, **kwargs)
-        if response.status_code == 401:
-            self._fetch_token()
-            response = super().request(method, url, **kwargs)
-        return response
+        token_kwargs = dict(scope=scope)
+        if expires_in is not None:
+            token_kwargs["expires_in"] = expires_in
+        self.auth = OAuth2ClientCredentialsAuth(oauth2_client, **token_kwargs)
 
 
 class Zenpy(object):
