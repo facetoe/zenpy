@@ -3,7 +3,6 @@ import requests
 import os
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3 import Retry
-from requests_oauth2client import OAuth2Client, OAuth2ClientCredentialsAuth, ClientSecretPost
 
 from zenpy.lib.api import (
     UserApi,
@@ -65,35 +64,6 @@ __author__ = "facetoe"
 __version__ = "2.0.57"
 
 
-
-class ClientCredentialsSession(requests.Session):
-    """
-    Session that manages OAuth 2.0 Client Credentials Grant tokens automatically:
-    fetched lazily on first request and renewed proactively before expiry.
-    """
-
-    # Signals _init_session to skip the standard credential check
-    authorized = True
-
-    def __init__(self, subdomain, client_id, client_secret, scope, expires_in=None, domain="zendesk.com"):
-        super().__init__()
-        self.mount("https://", HTTPAdapter(max_retries=Retry(
-            total=3,
-            status_forcelist=[r for r in Retry.RETRY_AFTER_STATUS_CODES if r != 429],
-            respect_retry_after_header=False,
-        )))
-        token_endpoint = "https://{}.{}/oauth/tokens".format(subdomain, domain)
-        oauth2_client = OAuth2Client(
-            token_endpoint=token_endpoint,
-            auth=ClientSecretPost(client_id, client_secret),
-            session=self,
-        )
-        token_kwargs = dict(scope=scope)
-        if expires_in is not None:
-            token_kwargs["expires_in"] = expires_in
-        self.auth = OAuth2ClientCredentialsAuth(oauth2_client, **token_kwargs)
-
-
 class Zenpy(object):
     """"""
 
@@ -107,10 +77,6 @@ class Zenpy(object):
         token=None,
         oauth_token=None,
         password=None,
-        client_id=None,
-        client_secret=None,
-        scope=None,
-        expires_in=None,
         session=None,
         anonymous=False,
         timeout=None,
@@ -128,7 +94,6 @@ class Zenpy(object):
             * Email and password
             * Email and Zendesk API token
             * Email and OAuth token
-            * OAuth 2.0 Client Credentials Grant (client_id + client_secret + scope)
             * Existing authenticated Requests Session object.
 
 
@@ -137,10 +102,6 @@ class Zenpy(object):
         :param token: Zendesk API token
         :param oauth_token: OAuth token
         :param password: Zendesk password
-        :param client_id: OAuth client ID (Client Credentials Grant)
-        :param client_secret: OAuth client secret (Client Credentials Grant)
-        :param scope: OAuth scope, e.g. "read write" (Client Credentials Grant)
-        :param expires_in: access token lifetime in seconds, 300-172800 (Client Credentials Grant, optional)
         :param session: existing Requests Session object
         :param timeout: global timeout on API requests.
         :param ratelimit_budget: maximum time to spend being rate limited
@@ -164,9 +125,7 @@ class Zenpy(object):
                 raise ZenpyException("ERROR **** PASSWORDS WILL BE DISABLED **** https://github.com/facetoe/zenpy/issues/651 https://support.zendesk.com/hc/en-us/articles/7386291855386-Announcing-the-deprecation-of-password-access-for-APIs")
 
         session = self._init_session(email, token, oauth_token,
-                                     password, session, anonymous,
-                                     client_id, client_secret, scope, expires_in,
-                                     subdomain, domain)
+                                     password, session, anonymous)
 
         timeout = timeout or self.DEFAULT_TIMEOUT
 
@@ -262,26 +221,17 @@ class Zenpy(object):
             )
         )
 
-    def _init_session(self, email, token, oath_token, password, session, anonymous,
-                      client_id=None, client_secret=None, scope=None, expires_in=None,
-                      subdomain=None, domain="zendesk.com"):
+    def _init_session(self, email, token, oath_token, password, session, anonymous):
         if not session:
-            if client_id and client_secret and scope:
-                session = ClientCredentialsSession(subdomain, client_id, client_secret, scope, expires_in, domain)
-            else:
-                session = requests.Session()
-                # Workaround for possible race condition - https://github.com/kennethreitz/requests/issues/3661
-                session.mount("https://", HTTPAdapter(**self.http_adapter_kwargs()))
+            session = requests.Session()
+            # Workaround for possible race condition - https://github.com/kennethreitz/requests/issues/3661
+            session.mount("https://", HTTPAdapter(**self.http_adapter_kwargs()))
 
         if (not hasattr(session, "authorized") or not session.authorized) and \
                 not anonymous:
             # session is not an OAuth session that has been authorized
             # so authorize the session.
-            if any((client_id, client_secret, scope)) and not all((client_id, client_secret, scope)):
-                raise ZenpyException(
-                    "client_id, client_secret, and scope must all be set to use the Client Credentials Grant!"
-                )
-            elif not password and not token and not oath_token:
+            if not password and not token and not oath_token:
                 raise ZenpyException(
                     "password, token or oauth_token are required! {}".format(locals())
                 )

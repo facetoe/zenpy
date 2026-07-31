@@ -67,14 +67,16 @@ Tokens are fetched automatically on the first API call and renewed transparently
 
 ```python
 from zenpy import Zenpy
+from zenpy.oauth import ClientCredentialsSession
 
-zenpy_client = Zenpy(
+session = ClientCredentialsSession(
     subdomain="yoursubdomain",
     client_id="your_client_id",
     client_secret="your_client_secret",
     scope="read write",
     expires_in=3600,  # optional, seconds (300-172800)
 )
+zenpy_client = Zenpy(subdomain="yoursubdomain", session=session)
 
 # Token is fetched here on first use
 ticket = zenpy_client.tickets(100)

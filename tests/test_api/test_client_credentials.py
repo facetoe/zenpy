@@ -9,7 +9,8 @@ from unittest.mock import patch
 import requests
 from requests_oauth2client.exceptions import InvalidClient
 
-from zenpy import Zenpy, ClientCredentialsSession
+from zenpy import Zenpy
+from zenpy.oauth import ClientCredentialsSession
 
 TOKEN_URL = "https://testdomain.zendesk.com/oauth/tokens"
 API_URL = "https://testdomain.zendesk.com/api/v2/tickets.json"
@@ -189,16 +190,12 @@ class TestClientCredentialsSessionTokenFetchErrors(TestCase):
 
 
 class TestZenpyClientCredentialsInit(TestCase):
-    """Zenpy creates ClientCredentialsSession when client credentials are provided."""
+    """Zenpy uses a ClientCredentialsSession passed in via the session param as-is."""
 
-    def test_creates_client_credentials_session(self):
-        client = Zenpy(
-            subdomain="testdomain",
-            client_id="client_id",
-            client_secret="client_secret",
-            scope="read",
-        )
-        self.assertIsInstance(client.users.session, ClientCredentialsSession)
+    def test_accepts_client_credentials_session_via_session_param(self):
+        session = new_session()
+        client = Zenpy(subdomain="testdomain", session=session)
+        self.assertIs(client.users.session, session)
 
     def test_creates_regular_session_for_token_auth(self):
         client = Zenpy(
