@@ -1,3 +1,8 @@
 exclude = [
     "zenpy/lib/api_objects/*"
 ]
+
+[lint]
+# Pin the rule set explicitly so a ruff version bump doesn't silently
+# expand the default rules and flag the existing codebase.
+select = ["E4", "E7", "E9", "F"]

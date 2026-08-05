@@ -65,6 +65,18 @@ First, create a :class:`Zenpy` object:
     # Alternatively you can provide your own requests.Session object
     zenpy_client = Zenpy(**creds, session=some_session)
 
+    # OAuth 2.0 Client Credentials Grant: build a ClientCredentialsSession and
+    # pass it in as the session - Zenpy uses it as-is.
+    from zenpy.oauth import ClientCredentialsSession
+
+    session = ClientCredentialsSession(
+        subdomain='yoursubdomain',
+        client_id='yourclientid',
+        client_secret='yourclientsecret',
+        scope='yourscope',
+    )
+    zenpy_client = Zenpy(subdomain='yoursubdomain', session=session)
+
     # If you are providing your own HTTPAdapter object, Zenpy provides defaults via the
     # Zenpy.http_adapter_kwargs() method. You can choose to use these defaults like so:
     session = requests.Session()

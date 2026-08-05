@@ -34,6 +34,54 @@ Please report bugs!
 * [Documentation](#documentation)
 * [Contributions](#contributions)
 
+## Authentication
+
+Zenpy supports several authentication methods.
+
+### Email and API token (recommended)
+
+```python
+from zenpy import Zenpy
+
+zenpy_client = Zenpy(
+    subdomain="yoursubdomain",
+    email="user@example.com",
+    token="your_api_token",
+)
+```
+
+### OAuth token
+
+```python
+from zenpy import Zenpy
+
+zenpy_client = Zenpy(
+    subdomain="yoursubdomain",
+    oauth_token="your_oauth_token",
+)
+```
+
+### OAuth 2.0 Client Credentials Grant
+
+Tokens are fetched automatically on the first API call and renewed transparently before they expire.
+
+```python
+from zenpy import Zenpy
+from zenpy.oauth import ClientCredentialsSession
+
+session = ClientCredentialsSession(
+    subdomain="yoursubdomain",
+    client_id="your_client_id",
+    client_secret="your_client_secret",
+    scope="read write",
+    expires_in=3600,  # optional, seconds (300-172800)
+)
+zenpy_client = Zenpy(subdomain="yoursubdomain", session=session)
+
+# Token is fetched here on first use
+ticket = zenpy_client.tickets(100)
+```
+
 ## Quickstart
 
 ```python
