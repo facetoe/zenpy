@@ -1,9 +1,10 @@
 name: Publish to PyPI
 
-# Triggered when a GitHub Release is published (i.e. a maintainer tags a
-# commit and publishes a release from it). Builds the sdist/wheel and
-# uploads them to PyPI using Trusted Publishing (OIDC) - no long-lived
-# API token needs to be stored as a repo secret.
+# Triggered when a full (non pre-release) GitHub Release is published
+# (i.e. a maintainer tags a commit and publishes a release from it).
+# Publishing a release marked "pre-release" does NOT trigger this. Builds
+# the sdist/wheel and uploads them to PyPI using Trusted Publishing (OIDC)
+# - no long-lived API token needs to be stored as a repo secret.
 #
 # One-time setup required on PyPI (by a project owner):
 #   https://pypi.org/manage/project/zenpy/settings/publishing/

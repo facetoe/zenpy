@@ -2,7 +2,8 @@
 
 Releases are published to PyPI automatically by
 [`.github/workflows/publish.yml`](.github/workflows/publish.yml) whenever a
-GitHub Release is published. To cut a release:
+full (non pre-release) GitHub Release is published - marking a release as
+a pre-release will *not* trigger it. To cut a release:
 
 1. Bump the version in `zenpy/__init__.py` (`__version__`) and `setup.py`
    (`version` and `download_url`).
@@ -12,7 +13,8 @@ GitHub Release is published. To cut a release:
 4. Tag the commit with the new version number (no `v` prefix, e.g. `2.0.58`)
    and push the tag.
 5. Create a GitHub Release from that tag and publish it
-   (https://github.com/facetoe/zenpy/releases/new).
+   (https://github.com/facetoe/zenpy/releases/new). Leave "Set as a
+   pre-release" unchecked - a pre-release will not trigger publishing.
 
 Publishing the release triggers the `publish.yml` workflow, which builds the
 sdist/wheel and uploads them to PyPI. The workflow fails if the tag doesn't
