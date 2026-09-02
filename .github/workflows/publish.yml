@@ -1,0 +1,89 @@
+name: Publish to PyPI
+
+# Triggered when a full (non pre-release) GitHub Release is published
+# (i.e. a maintainer tags a commit and publishes a release from it).
+# Publishing a release marked "pre-release" does NOT trigger this.
+#
+# Build and publish are split into two jobs, per PyPA's Trusted Publishing
+# guidance: the build job runs untrusted code (pip install, setup.py via
+# `python -m build`) and has no PyPI credential; only the publish job -
+# which does nothing but upload a pre-built artifact - holds the
+# short-lived OIDC token.
+#
+# One-time setup required on PyPI (by a project owner):
+#   https://pypi.org/manage/project/zenpy/settings/publishing/
+#   Add a GitHub publisher with:
+#     Owner:      facetoe
+#     Repository: zenpy
+#     Workflow:   publish.yml
+#     Environment: (leave blank, or "pypi" if you also add that
+#                   environment name to the publish job below)
+#
+# See DEPLOY.md for the full release process.
+
+on:
+  release:
+    # 'released' excludes pre-releases (unlike 'published', which fires for
+    # them too) - see https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#release
+    types: [released]
+
+jobs:
+  build:
+    # Belt-and-suspenders: skip if this run was somehow triggered for a
+    # pre-release (e.g. the trigger type above is changed later). The
+    # publish job below has no separate guard - it depends on this job via
+    # 'needs', and GitHub Actions skips a job whose dependency was skipped.
+    if: github.event.release.prerelease == false
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Verify release tag matches package version
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME}"
+          INIT_VERSION="$(python -c "import re, sys; m = re.search(r'^__version__ = \"(.*?)\"\$', open('zenpy/__init__.py').read(), re.MULTILINE); print(m.group(1)) if m else sys.exit('zenpy/__init__.py: __version__ not found')")"
+          SETUP_VERSION="$(python -c "import re, sys; m = re.search(r\"version='(.*?)'\", open('setup.py').read()); print(m.group(1)) if m else sys.exit('setup.py: version not found')")"
+          if [ "$TAG_VERSION" != "$INIT_VERSION" ] || [ "$TAG_VERSION" != "$SETUP_VERSION" ]; then
+            echo "::error::Version mismatch - tag=$TAG_VERSION, zenpy/__init__.py=$INIT_VERSION, setup.py=$SETUP_VERSION. All three must match before releasing."
+            exit 1
+          fi
+
+      - name: Install build tool
+        run: pip install build
+
+      - name: Build sdist and wheel
+        run: python -m build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write  # required for PyPI Trusted Publishing
+
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Publish to PyPI
+        # Pinned to v1.14.2 by commit SHA rather than the release/v1 tag,
+        # since a floating tag could be repointed to malicious content.
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33
+        with:
+          skip-existing: true
