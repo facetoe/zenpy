@@ -18,10 +18,15 @@ name: Publish to PyPI
 
 on:
   release:
-    types: [published]
+    # 'released' excludes pre-releases (unlike 'published', which fires for
+    # them too) - see https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#release
+    types: [released]
 
 jobs:
   publish:
+    # Belt-and-suspenders: skip if this run was somehow triggered for a
+    # pre-release (e.g. the trigger type above is changed later).
+    if: github.event.release.prerelease == false
     runs-on: ubuntu-latest
     permissions:
       id-token: write  # required for PyPI Trusted Publishing
@@ -50,4 +55,6 @@ jobs:
         run: python -m build
 
       - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+        # Pinned to v1.14.2 by commit SHA rather than the release/v1 tag,
+        # since a floating tag could be repointed to malicious content.
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33
