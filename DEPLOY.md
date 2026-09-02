@@ -15,11 +15,17 @@ a pre-release will *not* trigger it. To cut a release:
 5. Create a GitHub Release from that tag and publish it
    (https://github.com/facetoe/zenpy/releases/new). Leave "Set as a
    pre-release" unchecked - a pre-release will not trigger publishing.
+   (Editing an existing pre-release to unmark it as a pre-release also
+   triggers publishing, per GitHub's semantics for release events - so
+   don't do that unless you actually mean to publish it.)
+6. Check the Actions tab for the `publish.yml` run, and confirm the new
+   version shows up at https://pypi.org/project/zenpy/ - the Release page
+   itself doesn't reflect whether the PyPI upload succeeded.
 
 Publishing the release triggers the `publish.yml` workflow, which builds the
 sdist/wheel and uploads them to PyPI. The workflow fails if the tag doesn't
-match `zenpy/__init__.py`'s `__version__`, so step 1 must happen before
-tagging.
+match the version in *both* `zenpy/__init__.py` and `setup.py`, so step 1
+must happen before tagging.
 
 ## One-time setup (PyPI project owner only)
 
@@ -27,20 +33,23 @@ The workflow publishes via [PyPI Trusted
 Publishing](https://docs.pypi.org/trusted-publishers/) (OIDC), so no PyPI API
 token needs to be stored as a GitHub secret. Before the first automated
 release, a `zenpy` project owner needs to add a publisher at
-https://pypi.org/manage/project/zenpy/settings/publishing/ with:
-
-- Owner: `facetoe`
-- Repository: `zenpy`
-- Workflow: `publish.yml`
-- Environment: leave blank
+https://pypi.org/manage/project/zenpy/settings/publishing/ with the exact
+values in `publish.yml`'s header comment (owner, repository, workflow
+filename, environment) - see that file rather than duplicating them here.
 
 ## Manual fallback
 
-If you need to publish manually instead:
+The automated workflow above is now the intended path. If it's broken and
+you need to publish manually, you'll first need to create your own PyPI API
+token (Trusted Publishing only authorizes GitHub Actions, not local
+`twine`), then:
 
 ```
 make clean
-pip install build
+pip install build twine
 python -m build
 twine upload dist/*
 ```
+
+This skips the tag/version consistency check the workflow performs, so
+double-check `zenpy/__init__.py` and `setup.py` agree before uploading.
