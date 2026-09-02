@@ -50,7 +50,7 @@ jobs:
         run: |
           TAG_VERSION="${GITHUB_REF_NAME}"
           INIT_VERSION="$(python -c "import re, sys; m = re.search(r'^__version__ = \"(.*?)\"\$', open('zenpy/__init__.py').read(), re.MULTILINE); print(m.group(1)) if m else sys.exit('zenpy/__init__.py: __version__ not found')")"
-          SETUP_VERSION="$(python setup.py --version)"
+          SETUP_VERSION="$(python -c "import re, sys; m = re.search(r\"version='(.*?)'\", open('setup.py').read()); print(m.group(1)) if m else sys.exit('setup.py: version not found')")"
           if [ "$TAG_VERSION" != "$INIT_VERSION" ] || [ "$TAG_VERSION" != "$SETUP_VERSION" ]; then
             echo "::error::Version mismatch - tag=$TAG_VERSION, zenpy/__init__.py=$INIT_VERSION, setup.py=$SETUP_VERSION. All three must match before releasing."
             exit 1
